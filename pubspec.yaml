@@ -51,10 +51,10 @@ dependencies:
   image_picker: ^1.0.7
   
   # Firebase (optional - for authentication, storage, etc.)
-  # firebase_core: ^3.6.0
-  # firebase_auth: ^5.3.1
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.1
   # firebase_storage: ^12.3.2
-  # cloud_firestore: ^5.4.3
+  cloud_firestore: ^5.4.3
   
   # UI Components
   cached_network_image: ^3.3.1
