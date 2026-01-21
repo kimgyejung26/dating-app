@@ -1,12 +1,59 @@
-import '../models/user_model.dart';
-// TODO: Uncomment when implementing actual API calls
-// import 'api_service.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:uuid/uuid.dart';
+import '../models/user_model.dart';
+import 'user_service.dart';
 
 class AuthService {
   // TODO: Uncomment when implementing actual API calls
   // final ApiService _apiService = ApiService();
   final _uuid = const Uuid();
+  final _userService = UserService();
+
+  Future<Map<String, dynamic>> loginWithKakao() async {
+    try {
+      if (kIsWeb) {
+        // Web: JS SDK 기반 카카오 계정 로그인
+        await UserApi.instance.loginWithKakaoAccount();
+      } else {
+        // Android/iOS: 네이티브 환경에서 카카오 계정 로그인
+        await UserApi.instance.loginWithKakaoAccount();
+      }
+      final user = await UserApi.instance.me();
+
+      final kakaoUserId = user.id.toString();
+
+      final userInfo = {
+        'id': kakaoUserId,
+        'nickname': user.kakaoAccount?.profile?.nickname,
+        'profileImageUrl': user.kakaoAccount?.profile?.profileImageUrl,
+        'email': user.kakaoAccount?.email,
+      };
+
+      return userInfo;
+    } on KakaoException catch (e) {
+      final detail = e.message ?? e.toString();
+      throw Exception('카카오 로그인 실패: $detail');
+    } catch (e) {
+      throw Exception('로그인 실패: $e');
+    }
+  }
+
+  Future<bool> kakaoUserExists(String kakaoUserId) async {
+    return await _userService.existsKakaoUser(kakaoUserId);
+  }
+
+  Future<bool> isInitialSetupComplete(String kakaoUserId) async {
+    return await _userService.isInitialSetupComplete(kakaoUserId);
+  }
+
+  Future<bool> hasSeenTutorial(String kakaoUserId) async {
+    return await _userService.hasSeenTutorial(kakaoUserId);
+  }
+
+  Future<void> setTutorialSeen(String kakaoUserId) async {
+    await _userService.setTutorialSeen(kakaoUserId);
+  }
 
   Future<UserModel?> signUp({
     required String phoneNumber,

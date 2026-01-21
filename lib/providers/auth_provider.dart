@@ -10,10 +10,18 @@ class AuthProvider with ChangeNotifier {
   UserModel? _currentUser;
   bool _isLoading = false;
   bool _isAuthenticated = false;
+  String? _kakaoUserId;
+  Map<String, dynamic>? _kakaoUserInfo;
+  bool _needsInitialSetup = true;
+  bool _hasSeenTutorial = false;
 
   UserModel? get currentUser => _currentUser;
   bool get isLoading => _isLoading;
   bool get isAuthenticated => _isAuthenticated;
+  String? get kakaoUserId => _kakaoUserId;
+  Map<String, dynamic>? get kakaoUserInfo => _kakaoUserInfo;
+  bool get needsInitialSetup => _needsInitialSetup;
+  bool get hasSeenTutorial => _hasSeenTutorial;
 
   AuthProvider() {
     _checkAuthStatus();
@@ -24,13 +32,55 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final userId = await _storageService.getUserId();
-      if (userId != null) {
-        _currentUser = await _authService.getUser(userId);
-        _isAuthenticated = _currentUser != null;
+      await _storageService.clearKakaoUserId();
+      await _storageService.clearUserId();
+      _kakaoUserId = null;
+      _isAuthenticated = false;
+      _needsInitialSetup = true;
+      _hasSeenTutorial = false;
+
+      final kakaoUserId = await _storageService.getKakaoUserId();
+      if (kakaoUserId != null &&
+          await _authService.kakaoUserExists(kakaoUserId)) {
+        _kakaoUserId = kakaoUserId;
+        _isAuthenticated = true;
+        _needsInitialSetup = !(await _authService.isInitialSetupComplete(
+          kakaoUserId,
+        ));
+        _hasSeenTutorial = await _authService.hasSeenTutorial(kakaoUserId);
+      } else {
+        await _storageService.clearKakaoUserId();
+        _kakaoUserId = null;
+        _isAuthenticated = false;
+        _needsInitialSetup = true;
+        _hasSeenTutorial = false;
       }
     } catch (e) {
       debugPrint('Error checking auth status: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> setKakaoLogin(
+    String kakaoUserId, {
+    Map<String, dynamic>? userInfo,
+  }) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      await _storageService.saveKakaoUserId(kakaoUserId);
+      _kakaoUserId = kakaoUserId;
+      _isAuthenticated = true;
+      _kakaoUserInfo = userInfo;
+      _needsInitialSetup = !(await _authService.isInitialSetupComplete(
+        kakaoUserId,
+      ));
+      _hasSeenTutorial = await _authService.hasSeenTutorial(kakaoUserId);
+    } catch (e) {
+      debugPrint('Error saving kakao user id: $e');
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -123,14 +173,30 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  void markInitialSetupComplete() {
+    _needsInitialSetup = false;
+    notifyListeners();
+  }
+
+  Future<void> markTutorialSeen() async {
+    final kakaoUserId = _kakaoUserId;
+    if (kakaoUserId == null) return;
+    await _authService.setTutorialSeen(kakaoUserId);
+    _hasSeenTutorial = true;
+    notifyListeners();
+  }
+
   Future<void> logout() async {
     _isLoading = true;
     notifyListeners();
 
     try {
       await _storageService.clearUserId();
+      await _storageService.clearKakaoUserId();
       _currentUser = null;
       _isAuthenticated = false;
+      _kakaoUserId = null;
+      _hasSeenTutorial = false;
     } catch (e) {
       debugPrint('Error during logout: $e');
     } finally {
