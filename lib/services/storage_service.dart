@@ -2,6 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class StorageService {
   static const String _userIdKey = 'user_id';
+  static const String _kakaoUserIdKey = 'kakao_user_id';
   static const String _isFirstLaunchKey = 'is_first_launch';
   static const String _hasSeenTutorialKey = 'has_seen_tutorial';
 
@@ -18,6 +19,21 @@ class StorageService {
   Future<void> clearUserId() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_userIdKey);
+  }
+
+  Future<void> saveKakaoUserId(String kakaoUserId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_kakaoUserIdKey, kakaoUserId);
+  }
+
+  Future<String?> getKakaoUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_kakaoUserIdKey);
+  }
+
+  Future<void> clearKakaoUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_kakaoUserIdKey);
   }
 
   Future<bool> isFirstLaunch() async {
