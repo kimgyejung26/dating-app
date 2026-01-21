@@ -30,6 +30,13 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <!-- Kakao SDK: Native App Key (TODO: replace with real key) -->
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="cb08e2aea50a58b7d0c5e610e0c5a644" />
+        <!-- Kakao Developers 체크리스트:
+             - Android 플랫폼 등록(패키지명 + 키 해시)
+             - (웹 사용 시) JS SDK 도메인 등록 -->
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

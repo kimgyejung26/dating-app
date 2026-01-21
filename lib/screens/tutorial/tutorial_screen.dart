@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../services/storage_service.dart';
+import 'package:provider/provider.dart';
+import '../../providers/auth_provider.dart';
 
 class TutorialScreen extends StatefulWidget {
   const TutorialScreen({super.key});
@@ -11,7 +12,6 @@ class TutorialScreen extends StatefulWidget {
 
 class _TutorialScreenState extends State<TutorialScreen> {
   final PageController _pageController = PageController();
-  final StorageService _storageService = StorageService();
   int _currentPage = 0;
 
   final List<TutorialPage> _pages = [
@@ -152,9 +152,9 @@ class _TutorialScreenState extends State<TutorialScreen> {
   }
 
   void _completeTutorial() async {
-    await _storageService.setTutorialSeen();
+    await context.read<AuthProvider>().markTutorialSeen();
     if (mounted) {
-      context.go('/main');
+      context.go('/home');
     }
   }
 }
