@@ -1,46 +1,68 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/auth_provider.dart';
+import '../../services/user_service.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
+  static final _userService = UserService();
+
   @override
   Widget build(BuildContext context) {
+    final kakaoUserId = context.select<AuthProvider, String?>(
+      (provider) => provider.kakaoUserId,
+    );
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('내 페이지'),
-      ),
+      appBar: AppBar(title: const Text('내 페이지')),
       body: ListView(
         children: [
           // Profile Header
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                CircleAvatar(
-                  radius: 50,
-                  child: Icon(Icons.person, size: 50),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  '사용자 이름',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '닉네임',
-                  style: TextStyle(
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: FutureBuilder<Map<String, dynamic>?>(
+              future: kakaoUserId != null
+                  ? _userService.getUserProfile(kakaoUserId)
+                  : Future.value(null),
+              builder: (context, snapshot) {
+                final isLoading =
+                    kakaoUserId != null &&
+                    snapshot.connectionState == ConnectionState.waiting;
+                final data = snapshot.data;
+                final displayName = data?['name']?.toString() ?? '사용자 이름';
+                final displayNickname = data?['nickname']?.toString() ?? '닉네임';
+                return Column(
+                  children: [
+                    const CircleAvatar(
+                      radius: 50,
+                      child: Icon(Icons.person, size: 50),
+                    ),
+                    const SizedBox(height: 16),
+                    if (isLoading)
+                      const CircularProgressIndicator()
+                    else ...[
+                      Text(
+                        displayName,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        displayNickname,
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ],
+                );
+              },
             ),
           ),
-          
+
           const Divider(),
-          
+
           // Menu Items
           _buildMenuItem(
             icon: Icons.person_outline,
@@ -84,9 +106,9 @@ class ProfileScreen extends StatelessWidget {
               // TODO: Navigate to terms
             },
           ),
-          
+
           const Divider(),
-          
+
           // Logout
           _buildMenuItem(
             icon: Icons.logout,
@@ -109,10 +131,7 @@ class ProfileScreen extends StatelessWidget {
   }) {
     return ListTile(
       leading: Icon(icon, color: textColor),
-      title: Text(
-        title,
-        style: TextStyle(color: textColor),
-      ),
+      title: Text(title, style: TextStyle(color: textColor)),
       trailing: const Icon(Icons.chevron_right),
       onTap: onTap,
     );

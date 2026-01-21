@@ -1,9 +1,11 @@
 import 'package:go_router/go_router.dart';
+import '../providers/auth_provider.dart';
 import '../screens/auth/welcome_screen.dart';
 import '../screens/auth/terms_screen.dart';
 import '../screens/auth/signup_screen.dart';
 import '../screens/auth/student_verification_screen.dart';
 import '../screens/auth/initial_setup_screen.dart';
+import '../screens/auth/kakao_callback_screen.dart';
 import '../screens/main/main_screen.dart';
 import '../screens/matching/matching_screen.dart';
 import '../screens/chat/chat_list_screen.dart';
@@ -13,14 +15,64 @@ import '../screens/profile/profile_screen.dart';
 import '../screens/tutorial/tutorial_screen.dart';
 
 class AppRouter {
-  static final GoRouter router = GoRouter(
+  static GoRouter router(AuthProvider authProvider) => GoRouter(
     initialLocation: '/welcome',
+    refreshListenable: authProvider,
+    redirect: (context, state) {
+      final isLoggedIn = authProvider.isAuthenticated;
+      final needsSetup = authProvider.needsInitialSetup;
+      final hasSeenTutorial = authProvider.hasSeenTutorial;
+      final location = state.matchedLocation;
+
+      final isLoginRoute = location == '/login' || location == '/signup';
+      final isCallbackRoute = location == '/auth/kakao/callback';
+      final isPublicRoute =
+          location == '/welcome' ||
+          location == '/terms' ||
+          isLoginRoute ||
+          isCallbackRoute;
+
+      if (!isLoggedIn && !isPublicRoute) {
+        return '/login';
+      }
+
+      if (isLoggedIn && needsSetup && location != '/initial-setup') {
+        return '/initial-setup';
+      }
+
+      if (isLoggedIn &&
+          !needsSetup &&
+          !hasSeenTutorial &&
+          location != '/tutorial') {
+        return '/tutorial';
+      }
+
+      if (isLoggedIn && hasSeenTutorial && location == '/tutorial') {
+        return '/home';
+      }
+
+      if (isLoggedIn && !needsSetup && isPublicRoute) {
+        return '/home';
+      }
+
+      return null;
+    },
     routes: [
       // Auth Flow
       GoRoute(
         path: '/welcome',
         name: 'welcome',
         builder: (context, state) => const WelcomeScreen(),
+      ),
+      GoRoute(
+        path: '/login',
+        name: 'login',
+        builder: (context, state) => const SignupScreen(),
+      ),
+      GoRoute(
+        path: '/auth/kakao/callback',
+        name: 'kakao-callback',
+        builder: (context, state) => const KakaoCallbackScreen(),
       ),
       GoRoute(
         path: '/terms',
@@ -42,15 +94,20 @@ class AppRouter {
         name: 'initial-setup',
         builder: (context, state) => const InitialSetupScreen(),
       ),
-      
+
       // Tutorial
       GoRoute(
         path: '/tutorial',
         name: 'tutorial',
         builder: (context, state) => const TutorialScreen(),
       ),
-      
+
       // Main App (with bottom navigation)
+      GoRoute(
+        path: '/home',
+        name: 'home',
+        builder: (context, state) => const MainScreen(),
+      ),
       GoRoute(
         path: '/main',
         name: 'main',
