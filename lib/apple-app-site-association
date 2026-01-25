@@ -1,0 +1,11 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "9A59VHDQDV.com.yonsei.dating",
+        "paths": [ "/auth/email-link/*", "/auth/email-link", "/*" ]
+      }
+    ]
+  }
+}

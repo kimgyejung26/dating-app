@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/auth_provider.dart';
+
 import '../screens/auth/welcome_screen.dart';
 import '../screens/auth/terms_screen.dart';
 import '../screens/auth/signup_screen.dart';
@@ -16,130 +18,178 @@ import '../screens/tutorial/tutorial_screen.dart';
 
 class AppRouter {
   static GoRouter router(AuthProvider authProvider) => GoRouter(
-    initialLocation: '/welcome',
+    initialLocation: '/splash', // ✅ 변경
     refreshListenable: authProvider,
     redirect: (context, state) {
+      debugPrint(
+        '[Router] loc=${state.matchedLocation} '
+        'init=${authProvider.isInitialized} '
+        'loading=${authProvider.isLoading} '
+        'authed=${authProvider.isAuthenticated} '
+        'verified=${authProvider.isStudentVerified} '
+        'setup=${authProvider.isInitialSetupComplete} '
+        'tutorial=${authProvider.hasSeenTutorial}',
+      );
+
+      final loc = state.matchedLocation;
+
+      // ✅ 1) 초기화/로딩 중엔 splash로 고정 (핵심)
+      if (!authProvider.isInitialized || authProvider.isLoading) {
+        return loc == '/splash' ? null : '/splash';
+      }
+
       final isLoggedIn = authProvider.isAuthenticated;
-      final needsSetup = authProvider.needsInitialSetup;
+      final isStudentVerified = authProvider.isStudentVerified;
+      final isInitialSetupComplete = authProvider.isInitialSetupComplete;
       final hasSeenTutorial = authProvider.hasSeenTutorial;
-      final location = state.matchedLocation;
 
-      final isLoginRoute = location == '/login' || location == '/signup';
-      final isCallbackRoute = location == '/auth/kakao/callback';
-      final isPublicRoute =
-          location == '/welcome' ||
-          location == '/terms' ||
-          isLoginRoute ||
-          isCallbackRoute;
+      final isPublic =
+          loc == '/welcome' ||
+          loc == '/terms' ||
+          loc == '/login' ||
+          loc == '/signup' ||
+          loc == '/auth/kakao/callback';
 
-      if (!isLoggedIn && !isPublicRoute) {
-        return '/login';
+      // ✅ 2) 로그인 전: public 외에는 welcome(or login)로
+      if (!isLoggedIn) {
+        // 앱 정책상 welcome -> terms -> signup 흐름 강제하고 싶으면 welcome으로 보내는 게 깔끔
+        if (loc == '/welcome' ||
+            loc == '/terms' ||
+            loc == '/signup' ||
+            loc == '/login')
+          return null;
+        return '/welcome';
       }
 
-      if (isLoggedIn && needsSetup && location != '/initial-setup') {
-        return '/initial-setup';
+      // ✅ 3) 로그인 후 학생 인증 전: verify로 강제
+      if (isLoggedIn && !isStudentVerified) {
+        if (loc == '/student-verification' || loc == '/auth/email-link')
+          return null;
+        return '/student-verification';
       }
 
-      if (isLoggedIn &&
-          !needsSetup &&
-          !hasSeenTutorial &&
-          location != '/tutorial') {
-        return '/tutorial';
+      // ✅ 4) 학생 인증 후 초기설정 전: initial-setup으로
+      if (isStudentVerified && !isInitialSetupComplete) {
+        return loc == '/initial-setup' ? null : '/initial-setup';
       }
 
-      if (isLoggedIn && hasSeenTutorial && location == '/tutorial') {
-        return '/home';
+      // ✅ 5) 초기설정 후 튜토리얼 안봤으면 튜토리얼로
+      if (isInitialSetupComplete && !hasSeenTutorial) {
+        return loc == '/tutorial' ? null : '/tutorial';
       }
 
-      if (isLoggedIn && !needsSetup && isPublicRoute) {
-        return '/home';
+      // ✅ 6) 다 끝났으면 홈으로, public route 접근 시 홈으로 밀어냄
+      if (isInitialSetupComplete && hasSeenTutorial) {
+        if (isPublic ||
+            loc == '/tutorial' ||
+            loc == '/initial-setup' ||
+            loc == '/student-verification') {
+          return '/home';
+        }
       }
 
       return null;
     },
     routes: [
+      // ✅ Splash 추가
+      GoRoute(path: '/splash', builder: (_, __) => const _SplashScreen()),
+
       // Auth Flow
       GoRoute(
         path: '/welcome',
         name: 'welcome',
-        builder: (context, state) => const WelcomeScreen(),
-      ),
-      GoRoute(
-        path: '/login',
-        name: 'login',
-        builder: (context, state) => const SignupScreen(),
-      ),
-      GoRoute(
-        path: '/auth/kakao/callback',
-        name: 'kakao-callback',
-        builder: (context, state) => const KakaoCallbackScreen(),
+        builder: (_, __) => const WelcomeScreen(),
       ),
       GoRoute(
         path: '/terms',
         name: 'terms',
-        builder: (context, state) => const TermsScreen(),
+        builder: (_, __) => const TermsScreen(),
+      ),
+      GoRoute(
+        path: '/login',
+        name: 'login',
+        builder: (_, __) => const SignupScreen(),
       ),
       GoRoute(
         path: '/signup',
         name: 'signup',
-        builder: (context, state) => const SignupScreen(),
+        builder: (_, __) => const SignupScreen(),
+      ),
+      GoRoute(
+        path: '/auth/kakao/callback',
+        name: 'kakao-callback',
+        builder: (_, __) => const KakaoCallbackScreen(),
+      ),
+      GoRoute(
+        path: '/auth/email-link',
+        name: 'email-link',
+        builder: (_, __) => const StudentVerificationScreen(),
       ),
       GoRoute(
         path: '/student-verification',
         name: 'student-verification',
-        builder: (context, state) => const StudentVerificationScreen(),
+        builder: (_, __) => const StudentVerificationScreen(),
       ),
       GoRoute(
         path: '/initial-setup',
         name: 'initial-setup',
-        builder: (context, state) => const InitialSetupScreen(),
+        builder: (_, __) => const InitialSetupScreen(),
       ),
 
       // Tutorial
       GoRoute(
         path: '/tutorial',
         name: 'tutorial',
-        builder: (context, state) => const TutorialScreen(),
+        builder: (_, __) => const TutorialScreen(),
       ),
 
-      // Main App (with bottom navigation)
+      // Main
       GoRoute(
         path: '/home',
         name: 'home',
-        builder: (context, state) => const MainScreen(),
+        builder: (_, __) => const MainScreen(),
       ),
       GoRoute(
         path: '/main',
         name: 'main',
-        builder: (context, state) => const MainScreen(),
+        builder: (_, __) => const MainScreen(),
         routes: [
           GoRoute(
             path: 'matching',
             name: 'matching',
-            builder: (context, state) => const MatchingScreen(),
+            builder: (_, __) => const MatchingScreen(),
           ),
           GoRoute(
             path: 'chat',
             name: 'chat',
-            builder: (context, state) => const ChatListScreen(),
+            builder: (_, __) => const ChatListScreen(),
           ),
           GoRoute(
             path: 'event',
             name: 'event',
-            builder: (context, state) => const EventScreen(),
+            builder: (_, __) => const EventScreen(),
           ),
           GoRoute(
             path: 'community',
             name: 'community',
-            builder: (context, state) => const CommunityScreen(),
+            builder: (_, __) => const CommunityScreen(),
           ),
           GoRoute(
             path: 'profile',
             name: 'profile',
-            builder: (context, state) => const ProfileScreen(),
+            builder: (_, __) => const ProfileScreen(),
           ),
         ],
       ),
     ],
   );
+}
+
+class _SplashScreen extends StatelessWidget {
+  const _SplashScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: CircularProgressIndicator()));
+  }
 }

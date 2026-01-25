@@ -1,1 +1,36 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"seolleyeon","appId":"1:623093454373:android:33bcee0a14a1044b0251cc","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"seolleyeon","configurations":{"android":"1:623093454373:android:33bcee0a14a1044b0251cc","web":"1:623093454373:web:57be6c4135b9027b0251cc"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "seolleyeon",
+          "appId": "1:623093454373:android:33bcee0a14a1044b0251cc",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "seolleyeon",
+          "configurations": {
+            "android": "1:623093454373:android:33bcee0a14a1044b0251cc",
+            "web": "1:623093454373:web:57be6c4135b9027b0251cc"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
