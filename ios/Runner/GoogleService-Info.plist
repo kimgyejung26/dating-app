@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.datingApp</string>
+	<string>com.yonsei.dating</string>
 	<key>PROJECT_ID</key>
 	<string>seolleyeon</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:623093454373:ios:a544d772c790c4df0251cc</string>
+	<string>1:623093454373:ios:fa6d8e4c2cc2b0890251cc</string>
 </dict>
 </plist>

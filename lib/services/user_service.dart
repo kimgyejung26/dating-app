@@ -71,4 +71,29 @@ class UserService {
     final doc = await _firestore.collection('users').doc(kakaoUserId).get();
     return doc.data();
   }
+
+  Future<bool> isStudentVerified(String kakaoUserId) async {
+    final doc = await _firestore.collection('users').doc(kakaoUserId).get();
+    if (!doc.exists) return false;
+    final data = doc.data();
+    return data?['isStudentVerified'] == true;
+  }
+
+  Future<String?> getStudentEmail(String kakaoUserId) async {
+    final doc = await _firestore.collection('users').doc(kakaoUserId).get();
+    if (!doc.exists) return null;
+    final data = doc.data();
+    return data?['studentEmail']?.toString();
+  }
+
+  Future<void> setStudentVerification({
+    required String kakaoUserId,
+    required String studentEmail,
+  }) async {
+    await _firestore.collection('users').doc(kakaoUserId).set({
+      'studentEmail': studentEmail,
+      'isStudentVerified': true,
+      'studentVerifiedAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+  }
 }

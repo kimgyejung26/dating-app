@@ -5,6 +5,8 @@ class StorageService {
   static const String _kakaoUserIdKey = 'kakao_user_id';
   static const String _isFirstLaunchKey = 'is_first_launch';
   static const String _hasSeenTutorialKey = 'has_seen_tutorial';
+  static const String _studentEmailKeyPrefix = 'student_email_';
+  static const String _studentVerifiedKeyPrefix = 'student_verified_';
 
   Future<void> saveUserId(String userId) async {
     final prefs = await SharedPreferences.getInstance();
@@ -54,5 +56,31 @@ class StorageService {
   Future<void> setTutorialSeen() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_hasSeenTutorialKey, true);
+  }
+
+  Future<void> saveStudentEmail(String kakaoUserId, String email) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('$_studentEmailKeyPrefix$kakaoUserId', email);
+  }
+
+  Future<String?> getStudentEmail(String kakaoUserId) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('$_studentEmailKeyPrefix$kakaoUserId');
+  }
+
+  Future<void> setStudentVerified(String kakaoUserId, bool isVerified) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('$_studentVerifiedKeyPrefix$kakaoUserId', isVerified);
+  }
+
+  Future<bool> isStudentVerified(String kakaoUserId) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('$_studentVerifiedKeyPrefix$kakaoUserId') ?? false;
+  }
+
+  Future<void> clearStudentVerification(String kakaoUserId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('$_studentEmailKeyPrefix$kakaoUserId');
+    await prefs.remove('$_studentVerifiedKeyPrefix$kakaoUserId');
   }
 }
