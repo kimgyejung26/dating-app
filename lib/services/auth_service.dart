@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
 import '../models/user_model.dart';
 import 'user_service.dart';
@@ -9,6 +10,7 @@ class AuthService {
   // final ApiService _apiService = ApiService();
   final _uuid = const Uuid();
   final _userService = UserService();
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   Future<Map<String, dynamic>> loginWithKakao() async {
     try {
@@ -53,6 +55,57 @@ class AuthService {
 
   Future<void> setTutorialSeen(String kakaoUserId) async {
     await _userService.setTutorialSeen(kakaoUserId);
+  }
+
+  Future<bool> isStudentVerified(String kakaoUserId) async {
+    return await _userService.isStudentVerified(kakaoUserId);
+  }
+
+  Future<String?> getStudentEmail(String kakaoUserId) async {
+    return await _userService.getStudentEmail(kakaoUserId);
+  }
+
+  Future<void> setStudentVerified({
+    required String kakaoUserId,
+    required String studentEmail,
+  }) async {
+    await _userService.setStudentVerification(
+      kakaoUserId: kakaoUserId,
+      studentEmail: studentEmail,
+    );
+  }
+
+  Future<void> sendStudentEmailLink({
+    required String email,
+    required String continueUrl,
+  }) async {
+    final acs = ActionCodeSettings(
+      url: continueUrl, // ✅ Dynamic Link로
+      handleCodeInApp: true,
+      iOSBundleId: 'com.yonsei.dating', // ✅ 너희 iOS 번들 ID
+      androidPackageName: 'com.your.package',
+      androidInstallApp: true,
+      androidMinimumVersion: '21',
+    );
+
+    await FirebaseAuth.instance.sendSignInLinkToEmail(
+      email: email,
+      actionCodeSettings: acs,
+    );
+  }
+
+  bool isSignInWithEmailLink(String link) {
+    return FirebaseAuth.instance.isSignInWithEmailLink(link);
+  }
+
+  Future<void> signInWithEmailLink({
+    required String email,
+    required String emailLink,
+  }) async {
+    await FirebaseAuth.instance.signInWithEmailLink(
+      email: email,
+      emailLink: emailLink,
+    );
   }
 
   Future<UserModel?> signUp({

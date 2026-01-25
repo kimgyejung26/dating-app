@@ -25,7 +25,9 @@ class SignupScreen extends StatelessWidget {
       debugPrint('profileImageUrl: ${userInfo['profileImageUrl']}');
 
       if (!context.mounted) return;
-      if (authProvider.needsInitialSetup) {
+      if (!authProvider.isStudentVerified) {
+        context.go('/student-verification');
+      } else if (!authProvider.isInitialSetupComplete) {
         context.go('/initial-setup');
       } else {
         context.go('/home');
