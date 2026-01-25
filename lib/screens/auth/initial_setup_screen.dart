@@ -85,6 +85,7 @@ class _InitialSetupScreenState extends State<InitialSetupScreen> {
 
     setState(() => _isLoading = true);
 
+    final authProvider = context.read<AuthProvider>();
     final extraFields = {
       'name': _userNameController.text.trim(),
       'nickname': _nicknameController.text.trim(),
@@ -105,6 +106,13 @@ class _InitialSetupScreenState extends State<InitialSetupScreen> {
       'initialSetupComplete': true,
     };
 
+    if (authProvider.isStudentVerified &&
+        authProvider.studentEmail != null &&
+        authProvider.studentEmail!.isNotEmpty) {
+      extraFields['studentEmail'] = authProvider.studentEmail;
+      extraFields['isStudentVerified'] = true;
+    }
+
     try {
       await _userService.upsertKakaoUser(
         kakaoUserId: _kakaoUserId!,
@@ -115,7 +123,6 @@ class _InitialSetupScreenState extends State<InitialSetupScreen> {
       );
 
       if (!mounted) return;
-      final authProvider = context.read<AuthProvider>();
       authProvider.markInitialSetupComplete();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -123,7 +130,7 @@ class _InitialSetupScreenState extends State<InitialSetupScreen> {
           backgroundColor: Colors.green,
         ),
       );
-      context.go('/tutorial');
+      context.go('/home');
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

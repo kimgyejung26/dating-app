@@ -63,7 +63,9 @@ class _KakaoCallbackScreenState extends State<KakaoCallbackScreen> {
       if (!mounted) return;
       setState(() => _statusMessage = '로그인 완료! 이동 중...');
 
-      if (authProvider.needsInitialSetup) {
+      if (!authProvider.isStudentVerified) {
+        context.go('/student-verification');
+      } else if (!authProvider.isInitialSetupComplete) {
         context.go('/initial-setup');
       } else {
         context.go('/home');
@@ -84,10 +86,7 @@ class _KakaoCallbackScreenState extends State<KakaoCallbackScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('카카오 로그인 콜백')),
       body: Center(
-        child: Text(
-          _statusMessage,
-          style: const TextStyle(fontSize: 16),
-        ),
+        child: Text(_statusMessage, style: const TextStyle(fontSize: 16)),
       ),
     );
   }
