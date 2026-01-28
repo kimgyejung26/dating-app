@@ -21,8 +21,10 @@ class AppRouter {
     initialLocation: '/splash', // ✅ 변경
     refreshListenable: authProvider,
     redirect: (context, state) {
+      final loc = state.matchedLocation;
+
       debugPrint(
-        '[Router] loc=${state.matchedLocation} '
+        '[Router] loc=$loc '
         'init=${authProvider.isInitialized} '
         'loading=${authProvider.isLoading} '
         'authed=${authProvider.isAuthenticated} '
@@ -31,11 +33,14 @@ class AppRouter {
         'tutorial=${authProvider.hasSeenTutorial}',
       );
 
-      final loc = state.matchedLocation;
-
-      // ✅ 1) 초기화/로딩 중엔 splash로 고정 (핵심)
+      // ✅ 0) 초기화/로딩 중엔 splash 고정
       if (!authProvider.isInitialized || authProvider.isLoading) {
         return loc == '/splash' ? null : '/splash';
+      }
+
+      // ✅ 0-1) 이메일 링크 인증은 무조건 허용 (중요)
+      if (loc == '/auth/email-link') {
+        return null;
       }
 
       final isLoggedIn = authProvider.isAuthenticated;
@@ -50,42 +55,43 @@ class AppRouter {
           loc == '/signup' ||
           loc == '/auth/kakao/callback';
 
-      // ✅ 2) 로그인 전: public 외에는 welcome(or login)로
+      // 1) 로그인 전
       if (!isLoggedIn) {
-        // 앱 정책상 welcome -> terms -> signup 흐름 강제하고 싶으면 welcome으로 보내는 게 깔끔
-        if (loc == '/welcome' ||
-            loc == '/terms' ||
-            loc == '/signup' ||
-            loc == '/login')
-          return null;
-        return '/welcome';
+        return isPublic ? null : '/welcome';
       }
 
-      // ✅ 3) 로그인 후 학생 인증 전: verify로 강제
-      if (isLoggedIn && !isStudentVerified) {
-        if (loc == '/student-verification' || loc == '/auth/email-link')
-          return null;
-        return '/student-verification';
+      // 2) 학생 인증 전
+      if (!isStudentVerified) {
+        return loc == '/student-verification' ? null : '/student-verification';
       }
 
-      // ✅ 4) 학생 인증 후 초기설정 전: initial-setup으로
-      if (isStudentVerified && !isInitialSetupComplete) {
+      // 3) 초기 설정
+      if (!isInitialSetupComplete) {
         return loc == '/initial-setup' ? null : '/initial-setup';
       }
 
-      // ✅ 5) 초기설정 후 튜토리얼 안봤으면 튜토리얼로
-      if (isInitialSetupComplete && !hasSeenTutorial) {
+      // 4) 튜토리얼
+      if (!hasSeenTutorial) {
         return loc == '/tutorial' ? null : '/tutorial';
       }
 
-      // ✅ 6) 다 끝났으면 홈으로, public route 접근 시 홈으로 밀어냄
-      if (isInitialSetupComplete && hasSeenTutorial) {
-        if (isPublic ||
-            loc == '/tutorial' ||
-            loc == '/initial-setup' ||
-            loc == '/student-verification') {
-          return '/home';
-        }
+      // 5) 다 끝났으면 홈
+      if (isPublic ||
+          loc == '/tutorial' ||
+          loc == '/initial-setup' ||
+          loc == '/student-verification') {
+        return '/home';
+      }
+
+      // 🔥 최종 안전망: 다 끝났는데 splash에 있으면 홈으로
+      if (authProvider.isInitialized &&
+          !authProvider.isLoading &&
+          authProvider.isAuthenticated &&
+          authProvider.isStudentVerified &&
+          authProvider.isInitialSetupComplete &&
+          authProvider.hasSeenTutorial &&
+          loc == '/splash') {
+        return '/home';
       }
 
       return null;
@@ -185,11 +191,91 @@ class AppRouter {
   );
 }
 
-class _SplashScreen extends StatelessWidget {
+class _SplashScreen extends StatefulWidget {
   const _SplashScreen();
 
   @override
+  State<_SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<_SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _fade;
+  late final Animation<double> _scale;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 650),
+    );
+
+    _fade = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
+    _scale = Tween<double>(
+      begin: 0.96,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    return Scaffold(
+      backgroundColor: const Color(0xFF0B0B0F), // 어두운 배경 (원하면 바꿔)
+      body: SafeArea(
+        child: Center(
+          child: FadeTransition(
+            opacity: _fade,
+            child: ScaleTransition(
+              scale: _scale,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Text(
+                    '설레연',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                      letterSpacing: 1.0,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    '만남이 시작되는 곳',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFFB7B7C2),
+                    ),
+                  ),
+                  SizedBox(height: 26),
+                  SizedBox(
+                    height: 18,
+                    width: 18,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
