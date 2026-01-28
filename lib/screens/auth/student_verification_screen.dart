@@ -4,6 +4,9 @@ import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../services/auth_service.dart';
 import '../../services/storage_service.dart';
+import '../../utils/open_mail_app.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:uuid/uuid.dart';
 
 class StudentVerificationScreen extends StatefulWidget {
   const StudentVerificationScreen({super.key});
@@ -102,31 +105,110 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
     });
 
     try {
-      final basePort = Uri.base.hasPort ? Uri.base.port : 80;
-      // TODO: 모바일 딥링크 환경에서는 커스텀 스킴/링크로 교체해야 합니다.
-      final continueUrl = 'https://seolleyeon.web.app/auth/email-link'; //예시값
+      final token = const Uuid().v4();
+
+      // 1) 토큰 문서 저장 (웹이 이걸 읽어서 email/kakaoUserId를 알아냄)
+      await FirebaseFirestore.instance
+          .collection('emailLinkTokens')
+          .doc(token)
+          .set({
+            'email': email,
+            'kakaoUserId': kakaoUserId,
+            'createdAt': FieldValue.serverTimestamp(),
+            'expiresAt': Timestamp.fromDate(
+              DateTime.now().add(const Duration(minutes: 30)),
+            ),
+          });
+
+      // 2) continueUrl에 토큰 붙이기 (핵심)
+      final continueUrl = 'https://seolleyeon.web.app/auth/email-link?t=$token';
+
+      // 3) Firebase 이메일 링크 전송
       await _authService.sendStudentEmailLink(
         email: email,
         continueUrl: continueUrl,
       );
 
+      // 4) 로컬에 이메일 저장 (웹 인증 후 앱에서 확인용)
       await _storageService.saveStudentEmail(kakaoUserId, email);
       await _storageService.setStudentVerified(kakaoUserId, false);
 
       if (!mounted) return;
-      setState(() => _statusMessage = '인증 링크가 전송되었습니다.');
+
+      setState(() {
+        _statusMessage = '인증 링크가 전송되었습니다. 메일을 확인해주세요.';
+      });
+
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('이메일로 인증 링크를 보냈습니다.')));
-    } catch (e) {
+      ).showSnackBar(const SnackBar(content: Text('연세 이메일로 인증 링크를 보냈습니다.')));
+    } catch (e, stack) {
+      debugPrint('❌ 이메일 인증 링크 전송 실패');
+      debugPrint(e.toString());
+      debugPrint(stack.toString());
+
       if (!mounted) return;
-      setState(() => _statusMessage = '전송 실패: ${e.toString()}');
+
+      setState(() {
+        _statusMessage = '전송 실패: ${e.toString()}';
+      });
+
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('전송 실패: ${e.toString()}')));
+      ).showSnackBar(SnackBar(content: Text('인증 링크 전송 실패: ${e.toString()}')));
     } finally {
       if (mounted) {
         setState(() => _isSending = false);
+      }
+    }
+  }
+
+  Future<void> _checkVerificationStatus() async {
+    setState(() {
+      _isVerifying = true;
+      _statusMessage = '인증 상태를 확인하는 중...';
+    });
+
+    try {
+      final authProvider = context.read<AuthProvider>();
+      final kakaoUserId = authProvider.kakaoUserId;
+
+      if (kakaoUserId == null) {
+        throw Exception('카카오 로그인 정보가 없습니다.');
+      }
+
+      // 🔥 Firestore에서 최신 학생 인증 상태 다시 조회
+      final isVerified = await _authService.isStudentVerified(kakaoUserId);
+
+      if (isVerified) {
+        // Provider 상태도 최신화
+        final email =
+            await _authService.getStudentEmail(kakaoUserId) ??
+            await _storageService.getStudentEmail(kakaoUserId);
+
+        if (email != null) {
+          await authProvider.setStudentVerified(email);
+        }
+
+        if (!mounted) return;
+        setState(() => _statusMessage = '학생 인증이 확인되었습니다!');
+        context.go('/initial-setup');
+      } else {
+        if (!mounted) return;
+        setState(() => _statusMessage = '아직 이메일 인증이 완료되지 않았습니다.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('아직 인증이 완료되지 않았습니다. 메일을 확인해주세요.')),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _statusMessage = '확인 실패: ${e.toString()}');
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('확인 실패: ${e.toString()}')));
+    } finally {
+      if (mounted) {
+        setState(() => _isVerifying = false);
       }
     }
   }
@@ -187,6 +269,29 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
                       )
                     : const Text('인증 링크 보내기'),
               ),
+
+              ElevatedButton.icon(
+                onPressed: () => openGmailApp(context),
+                icon: const Icon(Icons.mail_outline),
+                label: const Text('메일 앱 열기'),
+              ),
+
+              const SizedBox(height: 12),
+              ElevatedButton(
+                onPressed: _isVerifying ? null : _checkVerificationStatus,
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50),
+                  backgroundColor: Colors.grey.shade700,
+                ),
+                child: _isVerifying
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Text('인증 완료 확인'),
+              ),
+
               const SizedBox(height: 16),
               if (_isVerifying)
                 const Center(child: CircularProgressIndicator()),

@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
 
   app_links: ^6.3.2
+  url_launcher: ^6.2.5
   
   # State Management
   provider: ^6.1.2
@@ -67,7 +68,7 @@ dependencies:
   
   # Utilities
   intl: ^0.19.0
-  uuid: ^4.3.3
+  uuid: ^4.5.1
 
 dev_dependencies:
   flutter_test:
