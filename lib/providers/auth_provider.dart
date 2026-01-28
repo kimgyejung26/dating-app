@@ -61,6 +61,7 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> _checkAuthStatus() async {
     _isLoading = true;
+    await Future.delayed(const Duration(milliseconds: 1200));
     _isInitialized = false;
     notifyListeners();
 

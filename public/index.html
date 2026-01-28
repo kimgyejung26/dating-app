@@ -1,89 +1,184 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Welcome to Firebase Hosting</title>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>연세 이메일 인증</title>
 
-    <!-- update the version number as needed -->
-    <script defer src="/__/firebase/12.8.0/firebase-app-compat.js"></script>
-    <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/12.8.0/firebase-auth-compat.js"></script>
-    <script defer src="/__/firebase/12.8.0/firebase-database-compat.js"></script>
-    <script defer src="/__/firebase/12.8.0/firebase-firestore-compat.js"></script>
-    <script defer src="/__/firebase/12.8.0/firebase-functions-compat.js"></script>
-    <script defer src="/__/firebase/12.8.0/firebase-messaging-compat.js"></script>
-    <script defer src="/__/firebase/12.8.0/firebase-storage-compat.js"></script>
-    <script defer src="/__/firebase/12.8.0/firebase-analytics-compat.js"></script>
-    <script defer src="/__/firebase/12.8.0/firebase-remote-config-compat.js"></script>
-    <script defer src="/__/firebase/12.8.0/firebase-performance-compat.js"></script>
-    <!-- 
-      initialize the SDK after all desired features are loaded, set useEmulator to false
-      to avoid connecting the SDK to running emulators.
-    -->
-    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+  <!-- ✅ Firebase SDK: gstatic에서 직접 로드 -->
+  <script src="https://www.gstatic.com/firebasejs/12.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore-compat.js"></script>
 
-    <style media="screen">
-      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
-      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
-      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
-      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
-      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
-      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
-      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
-      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
-      @media (max-width: 600px) {
-        body, #message { margin-top: 0; background: white; box-shadow: none; }
-        body { border-top: 16px solid #ffa100; }
-      }
-    </style>
-  </head>
-  <body>
-    <div id="message">
-      <h2>Welcome</h2>
-      <h1>Firebase Hosting Setup Complete</h1>
-      <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
-      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
-    </div>
-    <p id="load">Firebase SDK Loading&hellip;</p>
+  <!-- ✅ Hosting이 자동 주입하는 init (firebase.initializeApp 포함) -->
+  <script src="/__/firebase/init.js"></script>
 
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const loadEl = document.querySelector('#load');
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-        // // The Firebase SDK is initialized and available here!
-        //
-        // firebase.auth().onAuthStateChanged(user => { });
-        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-        // firebase.firestore().doc('/foo/bar').get().then(() => { });
-        // firebase.functions().httpsCallable('yourFunction')().then(() => { });
-        // firebase.messaging().requestPermission().then(() => { });
-        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-        // firebase.analytics(); // call to activate
-        // firebase.analytics().logEvent('tutorial_completed');
-        // firebase.performance(); // call to activate
-        //
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+  <style>
+    body { font-family:-apple-system,BlinkMacSystemFont,sans-serif; background:#f5f6f8; margin:0; }
+    .container { max-width:420px; margin:120px auto; background:#fff; padding:32px; border-radius:12px;
+      box-shadow:0 4px 20px rgba(0,0,0,.08); text-align:center; }
+    h1 { font-size:20px; margin:0 0 16px; }
+    p { font-size:14px; color:#555; line-height:1.6; margin:0; }
+    .success { color:#2e7d32; font-weight:600; }
+    .error { color:#c62828; font-weight:600; }
+    .muted { color:#888; font-size:12px; margin-top:10px; }
+    code { background:#f1f3f5; padding:2px 6px; border-radius:6px; }
+  </style>
+</head>
 
-        try {
-          let app = firebase.app();
-          let features = [
-            'auth', 
-            'database', 
-            'firestore',
-            'functions',
-            'messaging', 
-            'storage', 
-            'analytics', 
-            'remoteConfig',
-            'performance',
-          ].filter(feature => typeof app[feature] === 'function');
-          loadEl.textContent = `Firebase SDK loaded with ${features.join(', ')}`;
-        } catch (e) {
-          console.error(e);
-          loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
+<body>
+  <div class="container">
+    <h1>학생 인증 처리 중입니다…</h1>
+    <p id="status">잠시만 기다려 주세요.</p>
+    <p class="muted" id="debug"></p>
+  </div>
+
+  <script>
+    (async () => {
+      // 중복 실행 방지
+      if (window.__EMAIL_LINK_RUNNING__) return;
+      window.__EMAIL_LINK_RUNNING__ = true;
+
+      const statusEl = document.getElementById('status');
+      const debugEl = document.getElementById('debug');
+
+      const setStatus = (html) => { statusEl.innerHTML = html; };
+      const setDebug = (html) => { if (debugEl) debugEl.innerHTML = html; };
+
+      // firebase 객체 준비 대기
+      const waitFirebase = async (timeoutMs = 12000) => {
+        const start = Date.now();
+        while (Date.now() - start < timeoutMs) {
+          if (window.firebase && firebase.apps && firebase.apps.length >= 0 && firebase.auth && firebase.firestore) {
+            // init.js가 실행되어 initializeApp까지 끝났는지 체크
+            try {
+              firebase.app();
+              return true;
+            } catch (_) {
+              // 아직 initializeApp 안 됐을 수 있음
+            }
+          }
+          await new Promise(r => setTimeout(r, 80));
         }
-      });
-    </script>
-  </body>
+        return false;
+      };
+
+      // ✅ t 추출: 1) 현재 URL 쿼리스트링 2) continueUrl 파라미터 내부
+      function extractTokenFromUrl(href) {
+        try {
+          const u = new URL(href);
+          // 1) 직접 t=...
+          let t = u.searchParams.get('t');
+          if (t) return t;
+
+          // 2) continueUrl 내부에 t가 들어있는 케이스
+          // 예: ...&continueUrl=https%3A%2F%2Fseolleyeon.web.app%2Fauth%2Femail-link%3Ft%3Dxxxx
+          const cont = u.searchParams.get('continueUrl');
+          if (cont) {
+            const decoded = decodeURIComponent(cont);
+            const cu = new URL(decoded);
+            t = cu.searchParams.get('t');
+            if (t) return t;
+          }
+
+          // 3) 혹시 query 전체가 encode된 특이케이스 대비
+          // (마지막 보험)
+          const m = href.match(/[?&]t=([^&]+)/);
+          if (m && m[1]) return decodeURIComponent(m[1]);
+        } catch (e) {}
+        return null;
+      }
+
+      // ✅ firebase email-link URL은 현재 location.href가 아니라 "원본 링크"를 써야 함
+      // 보통은 location.href 그대로 OK. 다만 일부 인앱 브라우저에서 fragment/param 변형이 있음.
+      const rawUrl = window.location.href;
+
+      try {
+        setStatus('⏳ Firebase 준비 중…');
+        const ok = await waitFirebase();
+        if (!ok) {
+          throw new Error('Firebase SDK/init 로드 실패. (Hosting init.js 또는 네트워크 문제)');
+        }
+
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // token 추출
+        const token = extractTokenFromUrl(rawUrl);
+        setDebug(`URL: <code>${rawUrl.replace(/</g, '&lt;')}</code><br/>t: <code>${token || 'null'}</code>`);
+
+        setStatus('⏳ 링크 확인 중…');
+
+        // Firebase email link인지 확인
+        if (!auth.isSignInWithEmailLink(rawUrl)) {
+          throw new Error('유효하지 않은 인증 링크입니다. (Firebase 이메일 링크 아님)');
+        }
+
+        if (!token) {
+          throw new Error('토큰(t)을 찾을 수 없습니다. 앱에서 다시 인증 링크를 보내주세요.');
+        }
+
+        setStatus('⏳ 토큰 조회 중…');
+
+        const tokenRef = db.collection('emailLinkTokens').doc(token);
+        const tokenSnap = await tokenRef.get();
+
+        if (!tokenSnap.exists) {
+          throw new Error('토큰 문서가 없습니다. (만료/삭제/권한 문제 가능)');
+        }
+
+        const data = tokenSnap.data() || {};
+        const email = data.email;
+        const kakaoUserId = data.kakaoUserId;
+        const expiresAt = data.expiresAt;
+
+        if (!email || !kakaoUserId) {
+          throw new Error('토큰 데이터(email/kakaoUserId)가 올바르지 않습니다.');
+        }
+
+        // 만료 체크 (있으면)
+        if (expiresAt && typeof expiresAt.toDate === 'function') {
+          const exp = expiresAt.toDate();
+          if (Date.now() > exp.getTime()) {
+            // 만료면 토큰 삭제 시도 후 종료
+            try { await tokenRef.delete(); } catch (_) {}
+            throw new Error('토큰이 만료되었습니다. 앱에서 다시 인증 링크를 보내주세요.');
+          }
+        }
+
+        setStatus('⏳ 이메일 인증 처리 중…');
+
+        // 이메일 링크 로그인
+        const result = await auth.signInWithEmailLink(email, rawUrl);
+        if (!result || !result.user) {
+          throw new Error('인증 실패(user 없음).');
+        }
+
+        setStatus('⏳ 학생 인증 저장 중…');
+
+        // 학생 인증 완료 표시
+        await db.collection('users').doc(String(kakaoUserId)).set({
+          isStudentVerified: true,
+          studentEmail: email,
+          verifiedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        }, { merge: true });
+
+        // 토큰 재사용 방지 삭제
+        try { await tokenRef.delete(); } catch (_) {}
+
+        setStatus(
+          '<span class="success">🎉 인증이 완료되었습니다!<br/>앱으로 돌아가서 다음을 진행해 주세요.</span>'
+        );
+
+      } catch (e) {
+        console.error(e);
+        const msg = (e && e.message) ? e.message : String(e);
+
+        setStatus(
+          '<span class="error">인증 중 오류: ' + msg + '<br/>앱에서 다시 시도해 주세요.</span>'
+        );
+      }
+    })();
+  </script>
+</body>
 </html>

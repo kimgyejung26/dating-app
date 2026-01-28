@@ -9,34 +9,30 @@ import 'firebase_options.dart';
 import 'providers/auth_provider.dart';
 import 'routes/app_router.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  const String kakaoNativeAppKey = 'cb08e2aea50a58b7d0c5e610e0c5a644';
-  const String kakaoJavaScriptKey = 'bff1db6356fcd7aaf5dc466080359ce0';
-
-  KakaoSdk.init(
-    nativeAppKey: kIsWeb ? null : kakaoNativeAppKey,
-    javaScriptAppKey: kIsWeb ? kakaoJavaScriptKey : null,
-  );
-
-  // ✅ Firebase 초기화가 진짜 되는지 로그로 확인
-  await runZonedGuarded(
+void main() {
+  runZonedGuarded(
     () async {
+      WidgetsFlutterBinding.ensureInitialized();
+
+      const String kakaoNativeAppKey = 'cb08e2aea50a58b7d0c5e610e0c5a644';
+      const String kakaoJavaScriptKey = 'bff1db6356fcd7aaf5dc466080359ce0';
+
+      KakaoSdk.init(
+        nativeAppKey: kIsWeb ? null : kakaoNativeAppKey,
+        javaScriptAppKey: kIsWeb ? kakaoJavaScriptKey : null,
+      );
+
       try {
         if (kIsWeb) {
-          debugPrint('[Firebase] init WEB with options');
+          debugPrint('[Firebase] init WEB');
           await Firebase.initializeApp(
             options: DefaultFirebaseOptions.currentPlatform,
           );
         } else {
-          // ✅ iOS/Android는 각 플랫폼 설정(ios는 GoogleService-Info.plist)을 우선 사용
-          debugPrint('[Firebase] init NATIVE default (plist/google-services)');
+          debugPrint('[Firebase] init NATIVE');
           await Firebase.initializeApp();
         }
-        debugPrint(
-          '[Firebase] init DONE: ${Firebase.apps.map((e) => e.name).toList()}',
-        );
+        debugPrint('[Firebase] init DONE');
       } catch (e, st) {
         debugPrint('[Firebase] init FAILED: $e\n$st');
         rethrow;
@@ -45,7 +41,7 @@ Future<void> main() async {
       runApp(const DatingApp());
     },
     (error, stack) {
-      debugPrint('[ZONED] Uncaught error: $error\n$stack');
+      debugPrint('[GLOBAL] Uncaught error: $error\n$stack');
     },
   );
 }
