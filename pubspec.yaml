@@ -60,7 +60,9 @@ dependencies:
   cloud_firestore: ^5.4.3
   
   # Kakao Login
-  kakao_flutter_sdk_user: ^1.9.0
+  kakao_flutter_sdk_user: ^1.10.0
+  kakao_flutter_sdk_common: ^1.10.0
+  kakao_flutter_sdk_talk: ^1.10.0
   
   # UI Components
   cached_network_image: ^3.3.1
