@@ -1,4 +1,4 @@
-# dating_app
+# seolleyeon
 
 A new Flutter project.
 
