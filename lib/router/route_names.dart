@@ -7,6 +7,7 @@ class RouteNames {
   static const String login = '/login';
   static const String kakaoAuth = '/kakao-auth';
   static const String terms = '/terms';
+  static const String studentVerification = '/student-verification';
 
   // Onboarding
   static const String onboardingBasicInfo = '/onboarding/basic-info';

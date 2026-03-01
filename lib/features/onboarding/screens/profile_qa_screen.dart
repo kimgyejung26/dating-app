@@ -13,6 +13,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../router/route_names.dart';
+import '../../../services/storage_service.dart';
 
 // =============================================================================
 // 색상 상수
@@ -196,9 +197,28 @@ class _ProfileQaScreenState extends State<ProfileQaScreen> {
                       if (widget.onComplete != null) {
                         widget.onComplete!.call();
                       } else {
-                        Navigator.of(
-                          context,
-                        ).pushNamed(RouteNames.onboardingKeywords);
+                        () async {
+                          final storage = StorageService();
+                          final kakaoUserId = await storage.getKakaoUserId();
+                          if (kakaoUserId != null) {
+                            await storage.mergeOnboardingDraft(kakaoUserId, {
+                              'profileQa': _questions
+                                  .map(
+                                    (q) => {
+                                      'id': q.id,
+                                      'question': q.question,
+                                      'answer': (q.answer ?? '').trim(),
+                                    },
+                                  )
+                                  .toList(),
+                            });
+                          }
+
+                          if (!context.mounted) return;
+                          Navigator.of(
+                            context,
+                          ).pushNamed(RouteNames.onboardingKeywords);
+                        }();
                       }
                     },
                     child: Container(

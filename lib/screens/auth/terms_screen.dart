@@ -86,7 +86,7 @@ class _TermsScreenState extends State<TermsScreen> {
             ElevatedButton(
               onPressed: _requiredTermsAgreed
                   ? () {
-                      context.push('/signup');
+                      context.push('/auth/kakao');
                     }
                   : null,
               style: ElevatedButton.styleFrom(

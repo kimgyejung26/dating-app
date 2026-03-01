@@ -13,6 +13,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../router/route_names.dart';
+import '../../../services/storage_service.dart';
 
 // =============================================================================
 // 색상 상수
@@ -649,9 +650,31 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                         _relationship,
                       );
                     } else {
-                      Navigator.of(
-                        context,
-                      ).pushNamed(RouteNames.onboardingInterestsSelection);
+                      () async {
+                        final storage = StorageService();
+                        final kakaoUserId = await storage.getKakaoUserId();
+                        if (kakaoUserId != null) {
+                          await storage.mergeOnboardingDraft(kakaoUserId, {
+                            'basicInfo': {
+                              'nickname': _nicknameController.text.trim(),
+                              'gender': _gender?.name,
+                              'region': _selectedRegion,
+                              'education': _selectedEducation,
+                              'height': int.tryParse(_heightController.text),
+                              'age': _age.round(),
+                              'mbti':
+                                  '${_mbtiE.name.toUpperCase()}${_mbtiN.name.toUpperCase()}${_mbtiF.name.toUpperCase()}${_mbtiJ.name.toUpperCase()}',
+                              'loveLanguages': _loveLanguages,
+                              'relationshipPreference': _relationship.name,
+                            },
+                          });
+                        }
+
+                        if (!context.mounted) return;
+                        Navigator.of(
+                          context,
+                        ).pushNamed(RouteNames.onboardingInterestsSelection);
+                      }();
                     }
                   },
                 ),

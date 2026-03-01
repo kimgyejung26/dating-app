@@ -91,9 +91,23 @@ class UserService {
     required String studentEmail,
   }) async {
     await _firestore.collection('users').doc(kakaoUserId).set({
+      'kakaoUserId': kakaoUserId,
       'studentEmail': studentEmail,
       'isStudentVerified': true,
       'studentVerifiedAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+  }
+
+  Future<void> upsertOnboardingData({
+    required String kakaoUserId,
+    required Map<String, dynamic> onboardingData,
+  }) async {
+    await _firestore.collection('users').doc(kakaoUserId).set({
+      'kakaoUserId': kakaoUserId,
+      'onboarding': onboardingData,
+      'initialSetupComplete': true,
+      'initialSetupCompletedAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
   }
 }
