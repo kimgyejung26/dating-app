@@ -6,6 +6,7 @@ import 'route_names.dart';
 import '../features/splash/splash_screen.dart';
 import '../features/auth/screens/login_screen.dart';
 import '../features/auth/screens/kakao_auth_screen.dart';
+import '../features/auth/screens/student_verification_screen.dart';
 import '../features/onboarding/screens/terms_screen.dart';
 
 // Onboarding
@@ -100,6 +101,8 @@ class AppRouter {
         return _cupertino(const KakaoAuthScreen());
       case RouteNames.terms:
         return _cupertino(const TermsScreen());
+      case RouteNames.studentVerification:
+        return _cupertino(const StudentVerificationScreen());
 
       // Onboarding
       case RouteNames.onboardingBasicInfo:

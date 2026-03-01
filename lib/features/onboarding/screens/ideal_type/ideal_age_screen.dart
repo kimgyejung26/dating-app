@@ -13,6 +13,7 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart'; // RangeSlider 사용을 위해 필요
 import 'package:flutter/services.dart';
+import '../../../../services/storage_service.dart';
 
 // =============================================================================
 // 색상 상수
@@ -141,10 +142,21 @@ class _IdealAgeScreenState extends State<IdealAgeScreen> {
                   onNext: () {
                     HapticFeedback.mediumImpact();
                     widget.onNext?.call(_currentRangeValues);
-                    Navigator.of(context).pop({
-                      'minAge': _currentRangeValues.start.round(),
-                      'maxAge': _currentRangeValues.end.round(),
-                    });
+                    () async {
+                      final minAge = _currentRangeValues.start.round();
+                      final maxAge = _currentRangeValues.end.round();
+
+                      final storage = StorageService();
+                      final kakaoUserId = await storage.getKakaoUserId();
+                      if (kakaoUserId != null) {
+                        await storage.mergeOnboardingDraft(kakaoUserId, {
+                          'idealAge': {'min': minAge, 'max': maxAge},
+                        });
+                      }
+
+                      if (!context.mounted) return;
+                      Navigator.of(context).pop({'minAge': minAge, 'maxAge': maxAge});
+                    }();
                   },
                 ),
               ],

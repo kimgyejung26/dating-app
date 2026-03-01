@@ -10,6 +10,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import '../../../../services/storage_service.dart';
 
 // =============================================================================
 // 색상 상수
@@ -113,9 +114,21 @@ class _IdealHeightScreenState extends State<IdealHeightScreen> {
       final maxH = _currentPickerHeight < (_selectedMinHeight ?? 0)
           ? _selectedMinHeight
           : _currentPickerHeight;
-      Navigator.of(
-        context,
-      ).pop({'minHeight': _selectedMinHeight, 'maxHeight': maxH});
+      () async {
+        final minH = _selectedMinHeight;
+        final storage = StorageService();
+        final kakaoUserId = await storage.getKakaoUserId();
+        if (kakaoUserId != null) {
+          await storage.mergeOnboardingDraft(kakaoUserId, {
+            'idealHeight': {'min': minH, 'max': maxH},
+          });
+        }
+
+        if (!mounted) return;
+        Navigator.of(
+          context,
+        ).pop({'minHeight': minH, 'maxHeight': maxH});
+      }();
     }
   }
 

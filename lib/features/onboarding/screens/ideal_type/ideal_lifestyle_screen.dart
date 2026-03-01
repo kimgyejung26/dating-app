@@ -13,6 +13,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../router/route_names.dart';
+import '../../../../services/storage_service.dart';
+import '../../../../services/user_service.dart';
 
 // =============================================================================
 // 색상 상수
@@ -72,6 +74,61 @@ class _IdealLifestyleScreenState extends State<IdealLifestyleScreen> {
   SmokingStatus? _smoking = SmokingStatus.nonSmoker;
   ExerciseFrequency? _exercise = ExerciseFrequency.breathingOnly;
   Religion? _religion;
+
+  final _storageService = StorageService();
+  final _userService = UserService();
+  bool _isUploading = false;
+
+  Future<void> _uploadAndGoNext() async {
+    if (_isUploading) return;
+    setState(() => _isUploading = true);
+
+    try {
+      final kakaoUserId = await _storageService.getKakaoUserId();
+      if (kakaoUserId == null) {
+        throw Exception('카카오 로그인 정보가 없습니다.');
+      }
+
+      // 마지막 단계 값도 draft에 포함
+      await _storageService.mergeOnboardingDraft(kakaoUserId, {
+        'idealLifestyle': {
+          'drinking': _drinking?.name,
+          'smoking': _smoking?.name,
+          'exercise': _exercise?.name,
+          'religion': _religion?.name,
+        },
+      });
+
+      final draft = await _storageService.getOnboardingDraft(kakaoUserId);
+
+      await _userService.upsertOnboardingData(
+        kakaoUserId: kakaoUserId,
+        onboardingData: draft,
+      );
+
+      await _storageService.clearOnboardingDraft(kakaoUserId);
+
+      if (!mounted) return;
+      Navigator.of(context).pushReplacementNamed(RouteNames.welcomeTutorial);
+    } catch (e) {
+      if (!mounted) return;
+      await showDialog<void>(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text('저장 실패'),
+          content: Text(e.toString().replaceFirst('Exception: ', '')),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('확인'),
+            ),
+          ],
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isUploading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -270,9 +327,7 @@ class _IdealLifestyleScreenState extends State<IdealLifestyleScreen> {
                       _religion,
                     );
                   } else {
-                    Navigator.of(
-                      context,
-                    ).pushReplacementNamed(RouteNames.welcomeTutorial);
+                    _uploadAndGoNext();
                   }
                 },
               ),
