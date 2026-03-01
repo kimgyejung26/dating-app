@@ -123,7 +123,7 @@ class _TermsScreenState extends State<TermsScreen> {
       HapticFeedback.mediumImpact();
       Navigator.of(
         context,
-      ).pushReplacementNamed(RouteNames.onboardingBasicInfo);
+      ).pushReplacementNamed(RouteNames.kakaoAuth);
     }
   }
 

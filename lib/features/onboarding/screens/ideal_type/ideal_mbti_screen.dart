@@ -10,6 +10,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import '../../../../services/storage_service.dart';
 
 // =============================================================================
 // 색상 상수
@@ -78,7 +79,18 @@ class _IdealMbtiScreenState extends State<IdealMbtiScreen> {
 
   void _onNext() {
     HapticFeedback.mediumImpact();
-    Navigator.of(context).pop({'mbti': _selection});
+    () async {
+      final storage = StorageService();
+      final kakaoUserId = await storage.getKakaoUserId();
+      if (kakaoUserId != null) {
+        await storage.mergeOnboardingDraft(kakaoUserId, {
+          'idealMbti': _selection,
+        });
+      }
+
+      if (!mounted) return;
+      Navigator.of(context).pop({'mbti': _selection});
+    }();
   }
 
   @override
