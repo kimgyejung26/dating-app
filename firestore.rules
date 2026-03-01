@@ -1,0 +1,100 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isYonseiEmail(email) {
+      return email != null && email.matches('^.+@yonsei\\.ac\\.kr$');
+    }
+
+    // -----------------------------------------------------------------------
+    // Email-link token exchange (앱 -> Firestore token 저장, Web -> token 조회)
+    // -----------------------------------------------------------------------
+    match /emailLinkTokens/{token} {
+      // 앱(로그인 전)이 토큰 문서를 생성해야 하므로 create는 공개 허용 (UUID 기반)
+      allow create: if request.resource.data.keys().hasOnly([
+            'email',
+            'kakaoUserId',
+            'createdAt',
+            'expiresAt'
+          ]) &&
+          request.resource.data.email is string &&
+          request.resource.data.kakaoUserId is string &&
+          isYonseiEmail(request.resource.data.email) &&
+          request.resource.data.expiresAt is timestamp &&
+          request.resource.data.expiresAt > request.time &&
+          request.resource.data.expiresAt <= request.time + duration.value(30, 'm');
+
+      // Web 페이지가 토큰을 읽어 email/kakaoUserId를 알아내야 함
+      // - 토큰이 없을 때도 "permission-denied"로 떨어지지 않게 get은 허용
+      //   (존재 여부는 앱/웹에서 tokenSnap.exists로 판단)
+      allow get: if true;
+
+      // 나머지는 차단
+      allow list: if false;
+      allow update: if false;
+
+      // Web에서 이메일 링크 로그인 완료 후 토큰 재사용 방지 삭제 (로그인 후에만)
+      allow delete: if request.auth != null;
+    }
+
+    // -----------------------------------------------------------------------
+    // Student verification writeback (Web or Flutter Web after email link sign-in)
+    // -----------------------------------------------------------------------
+    match /users/{kakaoUserId} {
+      // 앱에서 인증 상태 확인/존재 확인에 사용 (필요 최소 get만 허용)
+      allow get: if true;
+      allow list: if false;
+
+      // 이메일 링크 로그인(FirebaseAuth) 후에만 학생 인증 필드 기록 허용
+      allow create: if request.auth != null &&
+          isYonseiEmail(request.auth.token.email) &&
+          request.resource.data.keys().hasOnly([
+            'kakaoUserId',
+            'isStudentVerified',
+            'studentEmail',
+            'studentVerifiedAt',
+            'verifiedAt'
+          ]) &&
+          (request.resource.data.kakaoUserId == null ||
+            request.resource.data.kakaoUserId == kakaoUserId) &&
+          request.resource.data.studentEmail is string &&
+          isYonseiEmail(request.resource.data.studentEmail) &&
+          request.resource.data.isStudentVerified == true;
+
+      allow update: if (
+            // (A) 이메일 링크 로그인(FirebaseAuth) 후 학생 인증 업데이트
+            request.auth != null &&
+          isYonseiEmail(request.auth.token.email) &&
+          request.resource.data.studentEmail is string &&
+          isYonseiEmail(request.resource.data.studentEmail) &&
+          request.resource.data.isStudentVerified == true &&
+          // 변경되는 키를 인증 관련 필드로 제한 (merge/set 모두 고려)
+          request.resource.data.diff(resource.data).changedKeys().hasOnly([
+            'kakaoUserId',
+            'isStudentVerified',
+            'studentEmail',
+            'studentVerifiedAt',
+            'verifiedAt'
+          ])
+          ) || (
+            // (B) 학생 인증이 완료된 문서에 한해 온보딩 데이터 업로드 허용 (앱에서 사용)
+            resource.data.isStudentVerified == true &&
+            request.resource.data.isStudentVerified == true &&
+            request.resource.data.kakaoUserId == kakaoUserId &&
+            request.resource.data.diff(resource.data).changedKeys().hasOnly([
+              'kakaoUserId',
+              'onboarding',
+              'initialSetupComplete',
+              'initialSetupCompletedAt',
+              'updatedAt'
+            ])
+          );
+    }
+
+    // 기본 차단 (명시된 것만 허용)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+

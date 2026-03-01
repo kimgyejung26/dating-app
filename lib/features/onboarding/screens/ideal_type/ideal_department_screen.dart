@@ -12,6 +12,7 @@
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import '../../../../services/storage_service.dart';
 
 // =============================================================================
 // 색상 상수 (V3 테마)
@@ -168,7 +169,18 @@ class _IdealDepartmentScreenState extends State<IdealDepartmentScreen> {
                 if (widget.onNext != null) {
                   widget.onNext!.call(_selectedMajor);
                 } else {
-                  Navigator.of(context).pop();
+                  () async {
+                    final storage = StorageService();
+                    final kakaoUserId = await storage.getKakaoUserId();
+                    if (kakaoUserId != null) {
+                      await storage.mergeOnboardingDraft(kakaoUserId, {
+                        'idealDepartment': _selectedMajor?.name,
+                      });
+                    }
+
+                    if (!context.mounted) return;
+                    Navigator.of(context).pop();
+                  }();
                 }
               },
             ),

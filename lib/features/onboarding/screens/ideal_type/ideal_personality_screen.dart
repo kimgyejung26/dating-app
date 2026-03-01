@@ -11,6 +11,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import '../../../../router/route_names.dart';
+import '../../../../services/storage_service.dart';
 
 // =============================================================================
 // 색상 상수
@@ -81,7 +82,18 @@ class _IdealPersonalityScreenState extends State<IdealPersonalityScreen> {
   void _onSavePressed() {
     if (_canProceed) {
       HapticFeedback.mediumImpact();
-      Navigator.of(context).pushNamed(RouteNames.onboardingIdealLifestyle);
+      () async {
+        final storage = StorageService();
+        final kakaoUserId = await storage.getKakaoUserId();
+        if (kakaoUserId != null) {
+          await storage.mergeOnboardingDraft(kakaoUserId, {
+            'idealPersonalityKeywords': _selectedKeywords.toList(),
+          });
+        }
+
+        if (!mounted) return;
+        Navigator.of(context).pushNamed(RouteNames.onboardingIdealLifestyle);
+      }();
     }
   }
 

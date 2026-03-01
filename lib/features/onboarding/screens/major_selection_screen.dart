@@ -14,6 +14,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../router/route_names.dart';
+import '../../../services/storage_service.dart';
 
 // =============================================================================
 // 색상 상수
@@ -171,7 +172,18 @@ class _MajorSelectionScreenState extends State<MajorSelectionScreen> {
                 if (widget.onNext != null) {
                   widget.onNext!.call(_selectedMajor);
                 } else {
-                  Navigator.of(context).pushNamed(RouteNames.onboardingPhoto);
+                  () async {
+                    final storage = StorageService();
+                    final kakaoUserId = await storage.getKakaoUserId();
+                    if (kakaoUserId != null) {
+                      await storage.mergeOnboardingDraft(kakaoUserId, {
+                        'major': _selectedMajor,
+                      });
+                    }
+
+                    if (!context.mounted) return;
+                    Navigator.of(context).pushNamed(RouteNames.onboardingPhoto);
+                  }();
                 }
               },
             ),

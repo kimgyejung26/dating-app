@@ -13,6 +13,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../router/route_names.dart';
+import '../../../services/storage_service.dart';
 
 // =============================================================================
 // 색상 상수
@@ -176,9 +177,20 @@ class _SelfIntroductionScreenState extends State<SelfIntroductionScreen> {
                     if (widget.onNext != null) {
                       widget.onNext!.call(_controller.text);
                     } else {
-                      Navigator.of(
-                        context,
-                      ).pushNamed(RouteNames.onboardingProfileQa);
+                      () async {
+                        final storage = StorageService();
+                        final kakaoUserId = await storage.getKakaoUserId();
+                        if (kakaoUserId != null) {
+                          await storage.mergeOnboardingDraft(kakaoUserId, {
+                            'introduction': _controller.text.trim(),
+                          });
+                        }
+
+                        if (!context.mounted) return;
+                        Navigator.of(
+                          context,
+                        ).pushNamed(RouteNames.onboardingProfileQa);
+                      }();
                     }
                   },
                 ),
