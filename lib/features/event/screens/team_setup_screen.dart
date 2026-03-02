@@ -225,52 +225,54 @@ class _UserSlot extends StatelessWidget {
         aspectRatio: 3 / 4,
         child: Stack(
           children: [
-            // 내용물
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // 아바타
-                Container(
-                  width: 64,
-                  height: 64,
-                  margin: const EdgeInsets.only(bottom: 12),
-                  decoration: BoxDecoration(
-                    color: _AppColors.gray200,
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: _AppColors.primary.withValues(alpha: 0.2),
-                      width: 2,
+            Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // 아바타
+                  Container(
+                    width: 64,
+                    height: 64,
+                    margin: const EdgeInsets.only(bottom: 12),
+                    decoration: BoxDecoration(
+                      color: _AppColors.gray200,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: _AppColors.primary.withValues(alpha: 0.2),
+                        width: 2,
+                      ),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: const Icon(
+                      CupertinoIcons.person_fill,
+                      color: Colors.white,
+                      size: 40,
                     ),
                   ),
-                  clipBehavior: Clip.antiAlias,
-                  // 실제 이미지가 있다면 Image.network 사용, 여기는 임시 아이콘
-                  child: const Icon(
-                    CupertinoIcons.person_fill,
-                    color: Colors.white,
-                    size: 40,
+                  // 이름
+                  Text(
+                    name,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: _AppColors.textMain,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                // 이름
-                Text(
-                  name,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: _AppColors.textMain,
+                  const SizedBox(height: 2),
+                  // MBTI
+                  Text(
+                    mbti,
+                    style: const TextStyle(
+                      fontSize: 10,
+                      color: _AppColors.gray400,
+                    ),
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 2),
-                // MBTI
-                Text(
-                  mbti,
-                  style: const TextStyle(
-                    fontSize: 10,
-                    color: _AppColors.gray400,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
             // ME 뱃지
             if (isMe)
@@ -333,39 +335,43 @@ class _InviteSlot extends StatelessWidget {
         ),
         child: AspectRatio(
           aspectRatio: 3 / 4,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                margin: const EdgeInsets.only(bottom: 12),
-                decoration: const BoxDecoration(
-                  color: _AppColors.surfaceLight,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  margin: const EdgeInsets.only(bottom: 12),
+                  decoration: const BoxDecoration(
+                    color: _AppColors.surfaceLight,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 4,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.add_rounded,
+                    color: _AppColors.primary,
+                    size: 24,
+                  ),
                 ),
-                child: const Icon(
-                  Icons.add_rounded,
-                  color: _AppColors.primary,
-                  size: 24,
+                const Text(
+                  '친구 초대',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: _AppColors.primary,
+                  ),
                 ),
-              ),
-              const Text(
-                '친구 초대',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: _AppColors.primary,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

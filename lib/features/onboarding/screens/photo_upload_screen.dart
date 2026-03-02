@@ -14,7 +14,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../router/route_names.dart';
-import '../../../services/storage_service.dart';
+import '../../../services/onboarding_save_helper.dart';
 
 // =============================================================================
 // 색상 상수
@@ -173,23 +173,14 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
                 onNext: () {
                   if (_photoCount >= _minRequiredPhotos) {
                     HapticFeedback.mediumImpact();
+                    final validPhotos = _photos.whereType<String>().toList();
+                    OnboardingSaveHelper.savePhotos(validPhotos);
                     if (widget.onNext != null) {
-                      widget.onNext!.call(_photos.whereType<String>().toList());
+                      widget.onNext!.call(validPhotos);
                     } else {
-                      () async {
-                        final storage = StorageService();
-                        final kakaoUserId = await storage.getKakaoUserId();
-                        if (kakaoUserId != null) {
-                          await storage.mergeOnboardingDraft(kakaoUserId, {
-                            'photos': _photos.whereType<String>().toList(),
-                          });
-                        }
-
-                        if (!context.mounted) return;
-                        Navigator.of(
-                          context,
-                        ).pushNamed(RouteNames.onboardingSelfIntro);
-                      }();
+                      Navigator.of(
+                        context,
+                      ).pushNamed(RouteNames.onboardingSelfIntro);
                     }
                   } else {
                     HapticFeedback.heavyImpact();
