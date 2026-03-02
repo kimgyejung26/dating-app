@@ -13,7 +13,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../router/route_names.dart';
-import '../../../services/storage_service.dart';
+import '../../../services/onboarding_save_helper.dart';
 
 // =============================================================================
 // 색상 상수
@@ -194,31 +194,18 @@ class _ProfileQaScreenState extends State<ProfileQaScreen> {
                     padding: EdgeInsets.zero,
                     onPressed: () {
                       HapticFeedback.mediumImpact();
+                      OnboardingSaveHelper.saveProfileQa(
+                        _questions
+                            .where((q) => q.answer != null && q.answer!.isNotEmpty)
+                            .map((q) => {'question': q.question, 'answer': q.answer!})
+                            .toList(),
+                      );
                       if (widget.onComplete != null) {
                         widget.onComplete!.call();
                       } else {
-                        () async {
-                          final storage = StorageService();
-                          final kakaoUserId = await storage.getKakaoUserId();
-                          if (kakaoUserId != null) {
-                            await storage.mergeOnboardingDraft(kakaoUserId, {
-                              'profileQa': _questions
-                                  .map(
-                                    (q) => {
-                                      'id': q.id,
-                                      'question': q.question,
-                                      'answer': (q.answer ?? '').trim(),
-                                    },
-                                  )
-                                  .toList(),
-                            });
-                          }
-
-                          if (!context.mounted) return;
-                          Navigator.of(
-                            context,
-                          ).pushNamed(RouteNames.onboardingKeywords);
-                        }();
+                        Navigator.of(
+                          context,
+                        ).pushNamed(RouteNames.onboardingKeywords);
                       }
                     },
                     child: Container(
