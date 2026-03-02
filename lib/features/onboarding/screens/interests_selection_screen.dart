@@ -13,7 +13,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../router/route_names.dart';
-import '../../../services/storage_service.dart';
+import '../../../services/onboarding_save_helper.dart';
 
 // =============================================================================
 // 색상 상수
@@ -382,20 +382,12 @@ class _InterestsSelectionScreenState extends State<InterestsSelectionScreen> {
                 onNext:
                     widget.onComplete ??
                     () {
-                      () async {
-                        final storage = StorageService();
-                        final kakaoUserId = await storage.getKakaoUserId();
-                        if (kakaoUserId != null) {
-                          await storage.mergeOnboardingDraft(kakaoUserId, {
-                            'interests': _selectedInterests,
-                          });
-                        }
-
-                        if (!context.mounted) return;
-                        Navigator.of(
-                          context,
-                        ).pushNamed(RouteNames.onboardingLifestyle);
-                      }();
+                      OnboardingSaveHelper.saveInterests(
+                        _selectedInterests.toList(),
+                      );
+                      Navigator.of(
+                        context,
+                      ).pushNamed(RouteNames.onboardingLifestyle);
                     },
               ),
             ),

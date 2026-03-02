@@ -13,7 +13,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../router/route_names.dart';
-import '../../../services/storage_service.dart';
+import '../../../services/onboarding_save_helper.dart';
 
 // =============================================================================
 // 색상 상수
@@ -263,6 +263,12 @@ class _LifestyleScreenState extends State<LifestyleScreen> {
               child: _BottomButton(
                 onNext: () {
                   HapticFeedback.mediumImpact();
+                  OnboardingSaveHelper.saveLifestyle(
+                    drinking: _drinking?.name,
+                    smoking: _smoking?.name,
+                    exercise: _exercise?.name,
+                    religion: _religion?.name,
+                  );
                   if (widget.onNext != null) {
                     widget.onNext!.call(
                       _drinking,
@@ -271,23 +277,7 @@ class _LifestyleScreenState extends State<LifestyleScreen> {
                       _religion,
                     );
                   } else {
-                    () async {
-                      final storage = StorageService();
-                      final kakaoUserId = await storage.getKakaoUserId();
-                      if (kakaoUserId != null) {
-                        await storage.mergeOnboardingDraft(kakaoUserId, {
-                          'lifestyle': {
-                            'drinking': _drinking?.name,
-                            'smoking': _smoking?.name,
-                            'exercise': _exercise?.name,
-                            'religion': _religion?.name,
-                          },
-                        });
-                      }
-
-                      if (!context.mounted) return;
-                      Navigator.of(context).pushNamed(RouteNames.onboardingMajor);
-                    }();
+                    Navigator.of(context).pushNamed(RouteNames.onboardingMajor);
                   }
                 },
               ),
