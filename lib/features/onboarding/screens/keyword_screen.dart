@@ -11,7 +11,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import '../../../router/route_names.dart';
-import '../../../services/storage_service.dart';
+import '../../../services/onboarding_save_helper.dart';
 
 // =============================================================================
 // 색상 상수
@@ -82,18 +82,8 @@ class _KeywordScreenState extends State<KeywordScreen> {
   void _onSavePressed() {
     if (_canProceed) {
       HapticFeedback.mediumImpact();
-      () async {
-        final storage = StorageService();
-        final kakaoUserId = await storage.getKakaoUserId();
-        if (kakaoUserId != null) {
-          await storage.mergeOnboardingDraft(kakaoUserId, {
-            'keywords': _selectedKeywords.toList(),
-          });
-        }
-
-        if (!mounted) return;
-        Navigator.of(context).pushNamed(RouteNames.onboardingIdealType);
-      }();
+      OnboardingSaveHelper.saveKeywords(_selectedKeywords.toList());
+      Navigator.of(context).pushNamed(RouteNames.onboardingIdealType);
     }
   }
 

@@ -11,6 +11,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import '../../../../router/route_names.dart';
+import '../../../../services/onboarding_save_helper.dart';
 
 // =============================================================================
 // 색상 상수
@@ -44,6 +45,21 @@ class _IdealTypeScreenState extends State<IdealTypeScreen> {
   final String _age = '20 - 24';
   final String _mbti = 'E, N, F, J';
   final String _major = '예체능 계열';
+
+  bool _isSkipping = false;
+
+  void _onSkipPressed() {
+    if (_isSkipping) return;
+    HapticFeedback.lightImpact();
+    OnboardingSaveHelper.skipIdealType();
+    setState(() => _isSkipping = true);
+    Future.delayed(const Duration(milliseconds: 160), () {
+      if (!mounted) return;
+      Navigator.of(context, rootNavigator: true).pushReplacementNamed(
+        RouteNames.welcomeTutorial,
+      );
+    });
+  }
 
   void _onHeightTap() {
     HapticFeedback.selectionClick();
@@ -80,57 +96,64 @@ class _IdealTypeScreenState extends State<IdealTypeScreen> {
             bottom: false,
             child: Column(
               children: [
-                // 헤더
                 _Header(
                   onBackPressed: () => Navigator.of(context).pop(),
+                  onSkipPressed: _isSkipping ? null : _onSkipPressed,
                   currentStep: 1,
                   totalSteps: 3,
                 ),
-                // 스크롤 영역
                 Expanded(
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 120),
-                    child: _CardContainer(
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 24),
-                          // 타이틀
-                          const _TitleSection(),
-                          const SizedBox(height: 32),
-                          // 입력 필드들
-                          _InputField(
-                            label: '키',
-                            value: _height,
-                            suffix: 'cm',
-                            icon: CupertinoIcons.resize_v,
-                            onTap: _onHeightTap,
+                  child: AnimatedOpacity(
+                    opacity: _isSkipping ? 0.0 : 1.0,
+                    duration: const Duration(milliseconds: 150),
+                    curve: Curves.easeOut,
+                    child: AnimatedScale(
+                      scale: _isSkipping ? 0.96 : 1.0,
+                      duration: const Duration(milliseconds: 150),
+                      curve: Curves.easeOut,
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 120),
+                        child: _CardContainer(
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 24),
+                              const _TitleSection(),
+                              const SizedBox(height: 32),
+                              _InputField(
+                                label: '키',
+                                value: _height,
+                                suffix: 'cm',
+                                icon: CupertinoIcons.resize_v,
+                                onTap: _onHeightTap,
+                              ),
+                              const SizedBox(height: 20),
+                              _InputField(
+                                label: '나이',
+                                value: _age,
+                                suffix: '살',
+                                icon: CupertinoIcons.gift,
+                                onTap: _onAgeTap,
+                              ),
+                              const SizedBox(height: 20),
+                              _InputField(
+                                label: 'MBTI',
+                                value: _mbti,
+                                icon: CupertinoIcons.circle_grid_hex,
+                                onTap: _onMbtiTap,
+                              ),
+                              const SizedBox(height: 20),
+                              _InputField(
+                                label: '학과',
+                                labelSuffix: '(중복 선택 가능)',
+                                value: _major,
+                                icon: CupertinoIcons.book,
+                                onTap: _onMajorTap,
+                              ),
+                              const SizedBox(height: 32),
+                            ],
                           ),
-                          const SizedBox(height: 20),
-                          _InputField(
-                            label: '나이',
-                            value: _age,
-                            suffix: '살',
-                            icon: CupertinoIcons.gift,
-                            onTap: _onAgeTap,
-                          ),
-                          const SizedBox(height: 20),
-                          _InputField(
-                            label: 'MBTI',
-                            value: _mbti,
-                            icon: CupertinoIcons.circle_grid_hex,
-                            onTap: _onMbtiTap,
-                          ),
-                          const SizedBox(height: 20),
-                          _InputField(
-                            label: '학과',
-                            labelSuffix: '(중복 선택 가능)',
-                            value: _major,
-                            icon: CupertinoIcons.book,
-                            onTap: _onMajorTap,
-                          ),
-                          const SizedBox(height: 32),
-                        ],
+                        ),
                       ),
                     ),
                   ),
@@ -138,12 +161,16 @@ class _IdealTypeScreenState extends State<IdealTypeScreen> {
               ],
             ),
           ),
-          // 하단 CTA 버튼
           Positioned(
             left: 0,
             right: 0,
             bottom: 0,
-            child: _BottomCTA(onPressed: _onNextPressed),
+            child: AnimatedOpacity(
+              opacity: _isSkipping ? 0.0 : 1.0,
+              duration: const Duration(milliseconds: 150),
+              curve: Curves.easeOut,
+              child: _BottomCTA(onPressed: _onNextPressed),
+            ),
           ),
         ],
       ),
@@ -156,11 +183,13 @@ class _IdealTypeScreenState extends State<IdealTypeScreen> {
 // =============================================================================
 class _Header extends StatelessWidget {
   final VoidCallback onBackPressed;
+  final VoidCallback? onSkipPressed;
   final int currentStep;
   final int totalSteps;
 
   const _Header({
     required this.onBackPressed,
+    this.onSkipPressed,
     required this.currentStep,
     required this.totalSteps,
   });
@@ -201,7 +230,30 @@ class _Header extends StatelessWidget {
               }),
             ),
           ),
-          const SizedBox(width: 44),
+          SizedBox(
+            width: 80,
+            height: 44,
+            child: CupertinoButton(
+              padding: EdgeInsets.zero,
+              minSize: 44,
+              onPressed: onSkipPressed,
+              child: Semantics(
+                label: '이상형 설정 건너뛰기',
+                button: true,
+                child: Text(
+                  '건너뛰기',
+                  style: TextStyle(
+                    fontFamily: '.SF Pro Text',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: onSkipPressed != null
+                        ? _AppColors.textSub
+                        : _AppColors.gray200,
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
