@@ -304,6 +304,7 @@ class _InitialSetupScreenState extends State<InitialSetupScreen> {
           labelText: label,
           border: const OutlineInputBorder(),
         ),
+        // ignore: deprecated_member_use
         value: value,
         items: items
             .map((item) => DropdownMenuItem(value: item, child: Text(item)))
@@ -311,7 +312,7 @@ class _InitialSetupScreenState extends State<InitialSetupScreen> {
         onChanged: onChanged,
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return '${label}을(를) 선택해주세요';
+            return '$label을(를) 선택해주세요';
           }
           return null;
         },

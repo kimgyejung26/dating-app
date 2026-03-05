@@ -26,7 +26,6 @@ class _AppColors {
   static const Color textMain = Color(0xFF181113);
   static const Color textSub = Color(0xFF6B7280);
   static const Color chipDefault = Color(0xFFF4F0F2);
-  static const Color progressBg = Color(0xFFE6DBDF);
   static const Color dotInactive = Color(0xFFE5E7EB);
 }
 
