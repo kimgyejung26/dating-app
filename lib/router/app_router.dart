@@ -51,6 +51,7 @@ import '../shared/layouts/main_scaffold.dart';
 import '../features/matching/screens/mystery_card_screen.dart';
 import '../features/matching/screens/profile_discovery_screen.dart';
 import '../features/matching/screens/profile_card_screen.dart';
+import '../features/matching/screens/ai_preference_screen.dart';
 import '../features/matching/screens/ai_match_card_screen.dart';
 import '../features/matching/screens/profile_specific_detail_screen.dart';
 
@@ -181,6 +182,8 @@ class AppRouter {
         return _cupertino(const ProfileDiscoveryScreen());
       case RouteNames.profileCard:
         return _cupertino(const ProfileCardScreen());
+      case RouteNames.aiPreference:
+        return _cupertino(const AiPreferenceScreen());
       case RouteNames.aiMatchCard:
         return _cupertino(const AiMatchCardScreen());
       case RouteNames.profileSpecificDetail:

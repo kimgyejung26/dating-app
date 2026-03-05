@@ -9,6 +9,12 @@
 # packages, and plugins designed to encourage good coding practices.
 include: package:flutter_lints/flutter.yaml
 
+analyzer:
+  exclude:
+    # This repo contains a nested legacy Flutter package under `dating-app/`.
+    # Exclude it so `flutter analyze` reports issues for the actual app only.
+    - dating-app/**
+
 linter:
   # The lint rules applied to this project can be customized in the
   # section below to disable rules from the `package:flutter_lints/flutter.yaml`

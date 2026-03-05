@@ -12,6 +12,7 @@
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import '../../../router/route_names.dart';
 
 // =============================================================================
 // 색상 상수
@@ -115,7 +116,12 @@ class ProfileDiscoveryScreen extends StatelessWidget {
                 // 헤더
                 _Header(
                   notificationCount: notificationCount,
-                  onAiPreference: onAiPreference,
+                  onAiPreference:
+                      onAiPreference ??
+                      () => Navigator.of(
+                        context,
+                        rootNavigator: true,
+                      ).pushNamed(RouteNames.aiPreference),
                   onNotification: onNotification,
                 ),
                 // 메인 콘텐츠
@@ -258,7 +264,7 @@ class _Header extends StatelessWidget {
                       ),
                       const SizedBox(width: 6),
                       const Text(
-                        'AI에게 내 취향 알려주기',
+                        'AI에게 내 취향 더 잘 알려주기',
                         style: TextStyle(
                           fontFamily: '.SF Pro Text',
                           fontSize: 12,
