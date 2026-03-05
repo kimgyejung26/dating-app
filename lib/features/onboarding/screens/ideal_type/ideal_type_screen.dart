@@ -24,7 +24,6 @@ class _AppColors {
   static const Color textSub = Color(0xFF6B7280);
   static const Color gray50 = Color(0xFFF9FAFB);
   static const Color gray100 = Color(0xFFF3F4F6);
-  static const Color gray200 = Color(0xFFE5E7EB);
   static const Color gray400 = Color(0xFF9CA3AF);
   static const Color dotInactive = Color(0xFFE5E7EB);
 }

@@ -57,6 +57,7 @@ class _KakaoCallbackScreenState extends State<KakaoCallbackScreen> {
       };
 
       // 3) 여기서 "로그인 상태"를 진짜로 true로 만든다 (라우터 redirect가 여기 보고 판단함)
+      if (!mounted) return;
       final authProvider = context.read<AuthProvider>();
       await authProvider.setKakaoLogin(kakaoUserId, userInfo: userInfo);
 

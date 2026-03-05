@@ -1,4 +1,4 @@
-﻿// =============================================================================
+// =============================================================================
 // 오늘의 인연 (미스터리 카드) 화면
 // 경로: lib/features/matching/screens/mystery_card_screen.dart
 //
@@ -150,7 +150,7 @@ class MysteryCardScreen extends StatelessWidget {
                       () => Navigator.of(
                         context,
                         rootNavigator: true,
-                      ).pushNamed(RouteNames.profileCard),
+                      ).pushNamed(RouteNames.aiPreference),
                   onNotification: onNotification,
                 ),
                 // 메인 콘텐츠 (StatefulWidget으로 인디케이터 관리)
@@ -290,7 +290,7 @@ class _Header extends StatelessWidget {
                       ),
                       const SizedBox(width: 6),
                       const Text(
-                        'AI에게 내 취향 알려주기',
+                        'AI에게 내 취향 더 잘 알려주기',
                         style: TextStyle(
                           fontFamily: '.SF Pro Text',
                           fontSize: 12,

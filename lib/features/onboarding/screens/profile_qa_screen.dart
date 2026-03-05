@@ -178,8 +178,8 @@ class _ProfileQaScreenState extends State<ProfileQaScreen> {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        _AppColors.backgroundLight.withOpacity(0),
-                        _AppColors.backgroundLight.withOpacity(0.95),
+                        _AppColors.backgroundLight.withValues(alpha: 0),
+                        _AppColors.backgroundLight.withValues(alpha: 0.95),
                         _AppColors.backgroundLight,
                       ],
                     ),
@@ -215,7 +215,7 @@ class _ProfileQaScreenState extends State<ProfileQaScreen> {
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: _AppColors.primary.withOpacity(0.3),
+                            color: _AppColors.primary.withValues(alpha: 0.3),
                             blurRadius: 12,
                             offset: const Offset(0, 6),
                           ),
