@@ -266,7 +266,7 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
                   const Text(
                     '연세대학교 이메일\n인증이 필요해요',
                     style: TextStyle(
-                      fontFamily: '.SF Pro Display',
+                      fontFamily: 'Noto Sans KR',
                       fontSize: 26,
                       fontWeight: FontWeight.w800,
                       height: 1.25,
@@ -278,7 +278,7 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
                   const Text(
                     '@yonsei.ac.kr 메일로 인증 링크를 보내드릴게요.\n메일에서 인증을 완료한 뒤, 아래에서 확인을 눌러주세요.',
                     style: TextStyle(
-                      fontFamily: '.SF Pro Text',
+                      fontFamily: 'Noto Sans KR',
                       fontSize: 15,
                       height: 1.5,
                       color: _AppColors.textSub,
@@ -338,7 +338,7 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
                     Text(
                       _statusMessage!,
                       style: const TextStyle(
-                        fontFamily: '.SF Pro Text',
+                        fontFamily: 'Noto Sans KR',
                         fontSize: 13,
                         height: 1.35,
                         color: _AppColors.textSub,
@@ -377,7 +377,7 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
                             : const Text(
                                 '인증 링크 보내기',
                                 style: TextStyle(
-                                  fontFamily: '.SF Pro Text',
+                                  fontFamily: 'Noto Sans KR',
                                   fontSize: 17,
                                   fontWeight: FontWeight.w700,
                                   color: Colors.white,
@@ -404,7 +404,7 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
                                   Text(
                                     '메일 앱 열기',
                                     style: TextStyle(
-                                      fontFamily: '.SF Pro Text',
+                                      fontFamily: 'Noto Sans KR',
                                       fontSize: 15,
                                       fontWeight: FontWeight.w600,
                                       color: _AppColors.textMain,
@@ -429,7 +429,7 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
                                   : const Text(
                                       '인증 완료 확인',
                                       style: TextStyle(
-                                        fontFamily: '.SF Pro Text',
+                                        fontFamily: 'Noto Sans KR',
                                         fontSize: 15,
                                         fontWeight: FontWeight.w700,
                                         color: Colors.white,

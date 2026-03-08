@@ -14,6 +14,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../router/route_names.dart';
 import '../../../services/onboarding_save_helper.dart';
+import '../../../services/storage_service.dart';
+import '../../../services/user_service.dart';
 
 // =============================================================================
 // 색상 상수
@@ -74,6 +76,60 @@ class _ProfileQaScreenState extends State<ProfileQaScreen> {
   ];
 
   int? _expandedIndex = 0; // 초기에 첫 번째 질문 펼침
+  final StorageService _storageService = StorageService();
+  final UserService _userService = UserService();
+  bool _isSavingOnExit = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadExistingProfileQa();
+  }
+
+  Future<void> _loadExistingProfileQa() async {
+    final kakaoUserId = await _storageService.getKakaoUserId();
+    if (kakaoUserId == null || kakaoUserId.isEmpty) return;
+    final data = await _userService.getUserProfile(kakaoUserId);
+    if (!mounted || data == null) return;
+    final onboarding = data['onboarding'];
+    if (onboarding is! Map) return;
+    final profileQaRaw = onboarding['profileQa'];
+    if (profileQaRaw is! List || profileQaRaw.isEmpty) return;
+    for (final item in profileQaRaw) {
+      if (item is! Map) continue;
+      final q = item['question']?.toString() ?? '';
+      final a = item['answer']?.toString() ?? '';
+      if (q.isEmpty) continue;
+      final idx = _questions.indexWhere((x) => x.question == q);
+      if (idx >= 0) _questions[idx].answer = a.isNotEmpty ? a : null;
+    }
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _saveCurrentProfileQa() async {
+    if (_isSavingOnExit) return;
+    _isSavingOnExit = true;
+    try {
+      await OnboardingSaveHelper.saveProfileQa(
+        _questions
+            .where((q) => q.answer != null && q.answer!.isNotEmpty)
+            .map((q) => {'question': q.question, 'answer': q.answer!})
+            .toList(),
+      );
+    } finally {
+      _isSavingOnExit = false;
+    }
+  }
+
+  Future<void> _handleBack() async {
+    await _saveCurrentProfileQa();
+    if (!mounted) return;
+    if (widget.onBack != null) {
+      widget.onBack!();
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
 
   void _toggleExpand(int index) {
     HapticFeedback.lightImpact();
@@ -94,22 +150,28 @@ class _ProfileQaScreenState extends State<ProfileQaScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        backgroundColor: _AppColors.backgroundLight,
-        resizeToAvoidBottomInset: true,
-        body: SafeArea(
-          child: Stack(
-            children: [
-              Column(
-                children: [
-                  // 헤더
-                  _Header(
-                    currentStep: widget.currentStep,
-                    totalSteps: widget.totalSteps,
-                    onBack: widget.onBack,
-                  ),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await _handleBack();
+      },
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          backgroundColor: _AppColors.backgroundLight,
+          resizeToAvoidBottomInset: true,
+          body: SafeArea(
+            child: Stack(
+              children: [
+                Column(
+                  children: [
+                    // 헤더
+                    _Header(
+                      currentStep: widget.currentStep,
+                      totalSteps: widget.totalSteps,
+                      onBack: _handleBack,
+                    ),
                   // 메인 콘텐츠
                   Expanded(
                     child: SingleChildScrollView(
@@ -192,20 +254,15 @@ class _ProfileQaScreenState extends State<ProfileQaScreen> {
                   ),
                   child: CupertinoButton(
                     padding: EdgeInsets.zero,
-                    onPressed: () {
+                    onPressed: () async {
                       HapticFeedback.mediumImpact();
-                      OnboardingSaveHelper.saveProfileQa(
-                        _questions
-                            .where((q) => q.answer != null && q.answer!.isNotEmpty)
-                            .map((q) => {'question': q.question, 'answer': q.answer!})
-                            .toList(),
-                      );
+                      await _saveCurrentProfileQa();
+                      if (!mounted) return;
                       if (widget.onComplete != null) {
                         widget.onComplete!.call();
                       } else {
-                        Navigator.of(
-                          context,
-                        ).pushNamed(RouteNames.onboardingKeywords);
+                        Navigator.of(context)
+                            .pushNamed(RouteNames.onboardingKeywords);
                       }
                     },
                     child: Container(
@@ -240,6 +297,7 @@ class _ProfileQaScreenState extends State<ProfileQaScreen> {
           ),
         ),
       ),
+    ),
     );
   }
 }
@@ -323,7 +381,7 @@ class _Headline extends StatelessWidget {
         const Text(
           '프로필 문답',
           style: TextStyle(
-            fontFamily: 'Plus Jakarta Sans',
+            fontFamily: 'Noto Sans KR',
             fontSize: 28,
             fontWeight: FontWeight.bold,
             color: _AppColors.textMain,
@@ -434,7 +492,7 @@ class _QuestionCard extends StatelessWidget {
                         Text(
                           'QUESTION ${(index + 1).toString().padLeft(2, '0')}',
                           style: TextStyle(
-                            fontFamily: 'Plus Jakarta Sans',
+                            fontFamily: 'Noto Sans KR',
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
                             color: isExpanded
@@ -538,7 +596,7 @@ class _QuestionCard extends StatelessWidget {
                           child: Text(
                             '${question.answer?.length ?? 0}/100',
                             style: const TextStyle(
-                              fontFamily: 'Plus Jakarta Sans',
+                              fontFamily: 'Noto Sans KR',
                               fontSize: 11,
                               fontWeight: FontWeight.w500,
                               color: _AppColors.textGray,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-/// 로그인 화면
+import '../../../router/route_names.dart';
+
+/// 로그인 화면 (카카오톡으로 시작하기 → 카카오 인증 화면으로 이동)
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
@@ -29,10 +31,10 @@ class LoginScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 16, color: Color(0xFF666666)),
               ),
               const Spacer(),
-              // 카카오 로그인 버튼
+              // 카카오 로그인 버튼 → 카카오 인증 화면(연세메일/홈 분기)
               ElevatedButton(
                 onPressed: () {
-                  // TODO: 카카오 로그인 구현
+                  Navigator.of(context).pushReplacementNamed(RouteNames.kakaoAuth);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFFEE500),

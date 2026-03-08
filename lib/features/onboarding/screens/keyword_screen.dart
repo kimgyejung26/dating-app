@@ -12,6 +12,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import '../../../router/route_names.dart';
 import '../../../services/onboarding_save_helper.dart';
+import '../../../services/storage_service.dart';
+import '../../../services/user_service.dart';
 
 // =============================================================================
 // 색상 상수
@@ -65,8 +67,47 @@ class KeywordScreen extends StatefulWidget {
 class _KeywordScreenState extends State<KeywordScreen> {
   final Set<String> _selectedKeywords = {};
   static const int _maxSelection = 8;
+  final StorageService _storageService = StorageService();
+  final UserService _userService = UserService();
+  bool _isSavingOnExit = false;
 
   bool get _canProceed => _selectedKeywords.isNotEmpty;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadExistingKeywords();
+  }
+
+  Future<void> _loadExistingKeywords() async {
+    final kakaoUserId = await _storageService.getKakaoUserId();
+    if (kakaoUserId == null || kakaoUserId.isEmpty) return;
+    final data = await _userService.getUserProfile(kakaoUserId);
+    if (!mounted || data == null) return;
+    final onboarding = data['onboarding'];
+    if (onboarding is! Map) return;
+    final keywordsRaw = onboarding['keywords'];
+    if (keywordsRaw is List && keywordsRaw.isNotEmpty) {
+      _selectedKeywords.addAll(keywordsRaw.map((e) => e.toString()));
+      if (mounted) setState(() {});
+    }
+  }
+
+  Future<void> _saveCurrentKeywords() async {
+    if (_isSavingOnExit) return;
+    _isSavingOnExit = true;
+    try {
+      await OnboardingSaveHelper.saveKeywords(_selectedKeywords.toList());
+    } finally {
+      _isSavingOnExit = false;
+    }
+  }
+
+  Future<void> _handleBack() async {
+    await _saveCurrentKeywords();
+    if (!mounted) return;
+    Navigator.of(context).pop();
+  }
 
   void _toggleKeyword(String keyword) {
     setState(() {
@@ -79,27 +120,34 @@ class _KeywordScreenState extends State<KeywordScreen> {
     HapticFeedback.selectionClick();
   }
 
-  void _onSavePressed() {
+  Future<void> _onSavePressed() async {
     if (_canProceed) {
       HapticFeedback.mediumImpact();
-      OnboardingSaveHelper.saveKeywords(_selectedKeywords.toList());
+      await _saveCurrentKeywords();
+      if (!mounted) return;
       Navigator.of(context).pushNamed(RouteNames.onboardingIdealType);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      backgroundColor: _AppColors.backgroundLight,
-      child: Stack(
-        children: [
-          SafeArea(
-            bottom: false,
-            child: Column(
-              children: [
-                // 헤더
-                _Header(
-                  onBackPressed: () => Navigator.of(context).pop(),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await _handleBack();
+      },
+      child: CupertinoPageScaffold(
+        backgroundColor: _AppColors.backgroundLight,
+        child: Stack(
+          children: [
+            SafeArea(
+              bottom: false,
+              child: Column(
+                children: [
+                  // 헤더
+                  _Header(
+                    onBackPressed: _handleBack,
                   currentStep: 8,
                   totalSteps: 8,
                 ),
@@ -140,6 +188,7 @@ class _KeywordScreenState extends State<KeywordScreen> {
           ),
         ],
       ),
+    ),
     );
   }
 }
@@ -220,7 +269,7 @@ class _TitleSection extends StatelessWidget {
           Text(
             '나를 표현하는 키워드',
             style: TextStyle(
-              fontFamily: '.SF Pro Display',
+              fontFamily: 'Noto Sans KR',
               fontSize: 30,
               fontWeight: FontWeight.w700,
               height: 1.2,
@@ -232,7 +281,7 @@ class _TitleSection extends StatelessWidget {
           Text(
             '나를 가장 잘 나타내는 키워드를 8개까지 선택해 주세요.',
             style: TextStyle(
-              fontFamily: '.SF Pro Text',
+              fontFamily: 'Noto Sans KR',
               fontSize: 16,
               fontWeight: FontWeight.w400,
               height: 1.4,
@@ -284,7 +333,7 @@ class _KeywordChip extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                fontFamily: '.SF Pro Text',
+                fontFamily: 'Noto Sans KR',
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: isSelected
@@ -367,7 +416,7 @@ class _BottomCTA extends StatelessWidget {
               Text(
                 selectedCount > 0 ? '저장 ($selectedCount/8)' : '저장',
                 style: TextStyle(
-                  fontFamily: '.SF Pro Text',
+                  fontFamily: 'Noto Sans KR',
                   fontSize: 17,
                   fontWeight: FontWeight.w700,
                   color: isEnabled

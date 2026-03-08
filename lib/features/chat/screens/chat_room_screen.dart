@@ -238,7 +238,7 @@ class _Header extends StatelessWidget {
                     Text(
                       name,
                       style: const TextStyle(
-                        fontFamily: '.SF Pro Display',
+                        fontFamily: 'Noto Sans KR',
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                         letterSpacing: -0.3,
@@ -278,7 +278,7 @@ class _Header extends StatelessWidget {
                       Text(
                         university,
                         style: const TextStyle(
-                          fontFamily: '.SF Pro Text',
+                          fontFamily: 'Noto Sans KR',
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.3,
@@ -377,7 +377,7 @@ class _DateDivider extends StatelessWidget {
           child: Text(
             text,
             style: const TextStyle(
-              fontFamily: '.SF Pro Text',
+              fontFamily: 'Noto Sans KR',
               fontSize: 12,
               fontWeight: FontWeight.w500,
               color: _AppColors.textSubtle,
@@ -465,7 +465,7 @@ class _ReceivedMessage extends StatelessWidget {
                   child: Text(
                     text,
                     style: const TextStyle(
-                      fontFamily: '.SF Pro Text',
+                      fontFamily: 'Noto Sans KR',
                       fontSize: 15,
                       fontWeight: FontWeight.w400,
                       height: 1.5,
@@ -481,7 +481,7 @@ class _ReceivedMessage extends StatelessWidget {
             child: Text(
               time,
               style: const TextStyle(
-                fontFamily: '.SF Pro Text',
+                fontFamily: 'Noto Sans KR',
                 fontSize: 10,
                 color: _AppColors.stone400,
               ),
@@ -540,7 +540,7 @@ class _SentMessage extends StatelessWidget {
             child: Text(
               text,
               style: const TextStyle(
-                fontFamily: '.SF Pro Text',
+                fontFamily: 'Noto Sans KR',
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
                 height: 1.5,
@@ -564,7 +564,7 @@ class _SentMessage extends StatelessWidget {
                 Text(
                   time,
                   style: const TextStyle(
-                    fontFamily: '.SF Pro Text',
+                    fontFamily: 'Noto Sans KR',
                     fontSize: 10,
                     color: _AppColors.stone400,
                   ),
@@ -653,7 +653,7 @@ class _AiTipCard extends StatelessWidget {
                           Text(
                             'AI ASSISTANT',
                             style: TextStyle(
-                              fontFamily: '.SF Pro Text',
+                              fontFamily: 'Noto Sans KR',
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
                               letterSpacing: 1,
@@ -664,7 +664,7 @@ class _AiTipCard extends StatelessWidget {
                           Text(
                             text,
                             style: const TextStyle(
-                              fontFamily: '.SF Pro Text',
+                              fontFamily: 'Noto Sans KR',
                               fontSize: 12,
                               height: 1.5,
                               color: _AppColors.textMain,
@@ -748,12 +748,12 @@ class _InputBar extends StatelessWidget {
                 controller: controller,
                 placeholder: 'Write a message...',
                 placeholderStyle: const TextStyle(
-                  fontFamily: '.SF Pro Text',
+                  fontFamily: 'Noto Sans KR',
                   fontSize: 15,
                   color: _AppColors.stone400,
                 ),
                 style: const TextStyle(
-                  fontFamily: '.SF Pro Text',
+                  fontFamily: 'Noto Sans KR',
                   fontSize: 15,
                   color: _AppColors.textMain,
                 ),

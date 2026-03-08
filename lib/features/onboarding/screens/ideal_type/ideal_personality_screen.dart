@@ -12,6 +12,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import '../../../../router/route_names.dart';
 import '../../../../services/onboarding_save_helper.dart';
+import '../../../../services/storage_service.dart';
+import '../../../../services/user_service.dart';
 
 // =============================================================================
 // 색상 상수
@@ -65,8 +67,47 @@ class IdealPersonalityScreen extends StatefulWidget {
 class _IdealPersonalityScreenState extends State<IdealPersonalityScreen> {
   final Set<String> _selectedKeywords = {};
   static const int _maxSelection = 8;
+  final StorageService _storageService = StorageService();
+  final UserService _userService = UserService();
+  bool _isSavingOnExit = false;
 
   bool get _canProceed => _selectedKeywords.isNotEmpty;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadExistingIdealPersonality();
+  }
+
+  Future<void> _loadExistingIdealPersonality() async {
+    final kakaoUserId = await _storageService.getKakaoUserId();
+    if (kakaoUserId == null || kakaoUserId.isEmpty) return;
+    final data = await _userService.getUserProfile(kakaoUserId);
+    if (!mounted || data == null) return;
+    final idealType = data['idealType'];
+    if (idealType is! Map) return;
+    final raw = idealType['preferredPersonalities'];
+    if (raw is List && raw.isNotEmpty) {
+      _selectedKeywords.addAll(raw.map((e) => e.toString()));
+      if (mounted) setState(() {});
+    }
+  }
+
+  Future<void> _saveCurrentIdealPersonality() async {
+    if (_isSavingOnExit) return;
+    _isSavingOnExit = true;
+    try {
+      await OnboardingSaveHelper.saveIdealPersonality(_selectedKeywords.toList());
+    } finally {
+      _isSavingOnExit = false;
+    }
+  }
+
+  Future<void> _handleBack() async {
+    await _saveCurrentIdealPersonality();
+    if (!mounted) return;
+    Navigator.of(context).pop();
+  }
 
   void _toggleKeyword(String keyword) {
     setState(() {
@@ -79,27 +120,34 @@ class _IdealPersonalityScreenState extends State<IdealPersonalityScreen> {
     HapticFeedback.selectionClick();
   }
 
-  void _onSavePressed() {
+  Future<void> _onSavePressed() async {
     if (_canProceed) {
       HapticFeedback.mediumImpact();
-      OnboardingSaveHelper.saveIdealPersonality(_selectedKeywords.toList());
+      await _saveCurrentIdealPersonality();
+      if (!mounted) return;
       Navigator.of(context).pushNamed(RouteNames.onboardingIdealLifestyle);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      backgroundColor: _AppColors.backgroundLight,
-      child: Stack(
-        children: [
-          SafeArea(
-            bottom: false,
-            child: Column(
-              children: [
-                // 헤더
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await _handleBack();
+      },
+      child: CupertinoPageScaffold(
+        backgroundColor: _AppColors.backgroundLight,
+        child: Stack(
+          children: [
+            SafeArea(
+              bottom: false,
+              child: Column(
+                children: [
+                  // 헤더
                 _Header(
-                  onBackPressed: () => Navigator.of(context).pop(),
+                  onBackPressed: () => _handleBack(),
                   currentStep: 2,
                   totalSteps: 3,
                 ),
@@ -140,6 +188,7 @@ class _IdealPersonalityScreenState extends State<IdealPersonalityScreen> {
           ),
         ],
       ),
+    ),
     );
   }
 }
@@ -217,7 +266,7 @@ class _TitleSection extends StatelessWidget {
           Text(
             'STEP 4 OF 6',
             style: TextStyle(
-              fontFamily: '.SF Pro Text',
+              fontFamily: 'Noto Sans KR',
               fontSize: 13,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.2,
@@ -228,7 +277,7 @@ class _TitleSection extends StatelessWidget {
           Text(
             '나의 이상형의\n성격은?',
             style: TextStyle(
-              fontFamily: '.SF Pro Display',
+              fontFamily: 'Noto Sans KR',
               fontSize: 30,
               fontWeight: FontWeight.w700,
               height: 1.2,
@@ -240,7 +289,7 @@ class _TitleSection extends StatelessWidget {
           Text(
             '이상형의 성격을 가장 잘 나타내는 키워드를\n8개까지 선택해 주세요.',
             style: TextStyle(
-              fontFamily: '.SF Pro Text',
+              fontFamily: 'Noto Sans KR',
               fontSize: 16,
               fontWeight: FontWeight.w400,
               height: 1.4,
@@ -292,7 +341,7 @@ class _KeywordChip extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                fontFamily: '.SF Pro Text',
+                fontFamily: 'Noto Sans KR',
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: isSelected
@@ -374,7 +423,7 @@ class _BottomCTA extends StatelessWidget {
               Text(
                 selectedCount > 0 ? '저장 ($selectedCount/8)' : '저장',
                 style: TextStyle(
-                  fontFamily: '.SF Pro Text',
+                  fontFamily: 'Noto Sans KR',
                   fontSize: 17,
                   fontWeight: FontWeight.w700,
                   color: isEnabled

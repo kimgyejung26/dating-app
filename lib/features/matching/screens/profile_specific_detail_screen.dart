@@ -131,7 +131,7 @@ class AiMatchProfileScreen extends StatelessWidget {
         middle: Text(
           'AI MATCH',
           style: TextStyle(
-            fontFamily: '.SF Pro Text',
+            fontFamily: 'Noto Sans KR',
             fontSize: 14,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,
@@ -226,7 +226,7 @@ class _ProfileCard extends StatelessWidget {
                 Text(
                   '${profile.name}, ${profile.age}',
                   style: const TextStyle(
-                    fontFamily: '.SF Pro Display',
+                    fontFamily: 'Noto Sans KR',
                     fontSize: 36,
                     fontWeight: FontWeight.w800,
                     letterSpacing: -0.5,
@@ -245,7 +245,7 @@ class _ProfileCard extends StatelessWidget {
                     Text(
                       '${profile.university} • ${profile.major}',
                       style: const TextStyle(
-                        fontFamily: '.SF Pro Text',
+                        fontFamily: 'Noto Sans KR',
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                         color: _AppColors.textSub,
@@ -261,7 +261,7 @@ class _ProfileCard extends StatelessWidget {
                 const Text(
                   'About Me',
                   style: TextStyle(
-                    fontFamily: '.SF Pro Display',
+                    fontFamily: 'Noto Sans KR',
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                     color: _AppColors.textMain,
@@ -271,7 +271,7 @@ class _ProfileCard extends StatelessWidget {
                 Text(
                   profile.aboutMe,
                   style: const TextStyle(
-                    fontFamily: '.SF Pro Text',
+                    fontFamily: 'Noto Sans KR',
                     fontSize: 17,
                     height: 1.7,
                     color: _AppColors.textSub,
@@ -282,7 +282,7 @@ class _ProfileCard extends StatelessWidget {
                 const Text(
                   'Interests',
                   style: TextStyle(
-                    fontFamily: '.SF Pro Display',
+                    fontFamily: 'Noto Sans KR',
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                     color: _AppColors.textMain,
@@ -306,7 +306,7 @@ class _ProfileCard extends StatelessWidget {
                       child: Text(
                         interest,
                         style: const TextStyle(
-                          fontFamily: '.SF Pro Text',
+                          fontFamily: 'Noto Sans KR',
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: _AppColors.textMain,
@@ -398,7 +398,7 @@ class _HeroImage extends StatelessWidget {
                   Text(
                     '$matchPercent% Match',
                     style: const TextStyle(
-                      fontFamily: '.SF Pro Text',
+                      fontFamily: 'Noto Sans KR',
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
                       color: _AppColors.primary,
@@ -461,7 +461,7 @@ class _AiInsightBox extends StatelessWidget {
                 const Text(
                   'Why you match',
                   style: TextStyle(
-                    fontFamily: '.SF Pro Text',
+                    fontFamily: 'Noto Sans KR',
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                     color: _AppColors.primary,
@@ -471,7 +471,7 @@ class _AiInsightBox extends StatelessWidget {
                 Text(
                   reason,
                   style: const TextStyle(
-                    fontFamily: '.SF Pro Text',
+                    fontFamily: 'Noto Sans KR',
                     fontSize: 14,
                     height: 1.5,
                     color: _AppColors.textMain,

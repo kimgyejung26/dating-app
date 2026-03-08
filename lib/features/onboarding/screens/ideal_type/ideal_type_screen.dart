@@ -24,6 +24,7 @@ class _AppColors {
   static const Color textSub = Color(0xFF6B7280);
   static const Color gray50 = Color(0xFFF9FAFB);
   static const Color gray100 = Color(0xFFF3F4F6);
+  static const Color gray200 = Color(0xFFE5E7EB);
   static const Color gray400 = Color(0xFF9CA3AF);
   static const Color dotInactive = Color(0xFFE5E7EB);
 }
@@ -234,7 +235,6 @@ class _Header extends StatelessWidget {
             height: 44,
             child: CupertinoButton(
               padding: EdgeInsets.zero,
-              minSize: 44,
               onPressed: onSkipPressed,
               child: Semantics(
                 label: '이상형 설정 건너뛰기',
@@ -242,7 +242,7 @@ class _Header extends StatelessWidget {
                 child: Text(
                   '건너뛰기',
                   style: TextStyle(
-                    fontFamily: '.SF Pro Text',
+                    fontFamily: 'Noto Sans KR',
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                     color: onSkipPressed != null
@@ -303,7 +303,7 @@ class _TitleSection extends StatelessWidget {
         Text(
           '이상형 정보',
           style: TextStyle(
-            fontFamily: '.SF Pro Display',
+            fontFamily: 'Noto Sans KR',
             fontSize: 24,
             fontWeight: FontWeight.w800,
             color: _AppColors.textMain,
@@ -313,7 +313,7 @@ class _TitleSection extends StatelessWidget {
         Text(
           '매칭을 위해 이상형 정보를 입력해주세요.',
           style: TextStyle(
-            fontFamily: '.SF Pro Text',
+            fontFamily: 'Noto Sans KR',
             fontSize: 14,
             fontWeight: FontWeight.w400,
             color: _AppColors.textSub,
@@ -355,7 +355,7 @@ class _InputField extends StatelessWidget {
             Text(
               label,
               style: const TextStyle(
-                fontFamily: '.SF Pro Text',
+                fontFamily: 'Noto Sans KR',
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: _AppColors.textMain,
@@ -366,7 +366,7 @@ class _InputField extends StatelessWidget {
               Text(
                 labelSuffix!,
                 style: const TextStyle(
-                  fontFamily: '.SF Pro Text',
+                  fontFamily: 'Noto Sans KR',
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
                   color: _AppColors.gray400,
@@ -396,7 +396,7 @@ class _InputField extends StatelessWidget {
                   child: Text(
                     value,
                     style: const TextStyle(
-                      fontFamily: '.SF Pro Text',
+                      fontFamily: 'Noto Sans KR',
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                       color: _AppColors.textSub,
@@ -407,7 +407,7 @@ class _InputField extends StatelessWidget {
                   Text(
                     suffix!,
                     style: const TextStyle(
-                      fontFamily: '.SF Pro Text',
+                      fontFamily: 'Noto Sans KR',
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                       color: _AppColors.textSub,
@@ -469,7 +469,7 @@ class _BottomCTA extends StatelessWidget {
               Text(
                 '다음',
                 style: TextStyle(
-                  fontFamily: '.SF Pro Text',
+                  fontFamily: 'Noto Sans KR',
                   fontSize: 17,
                   fontWeight: FontWeight.w700,
                   color: CupertinoColors.white,
