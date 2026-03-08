@@ -14,6 +14,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../router/route_names.dart';
 import '../../../../services/onboarding_save_helper.dart';
+import '../../../../services/storage_service.dart';
+import '../../../../services/user_service.dart';
 
 // =============================================================================
 // 색상 상수
@@ -72,10 +74,70 @@ class _IdealLifestyleScreenState extends State<IdealLifestyleScreen> {
   SmokingStatus? _smoking = SmokingStatus.nonSmoker;
   ExerciseFrequency? _exercise = ExerciseFrequency.breathingOnly;
   Religion? _religion;
+  final StorageService _storageService = StorageService();
+  final UserService _userService = UserService();
+  bool _isSavingOnExit = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadExistingIdealLifestyle();
+  }
+
+  Future<void> _loadExistingIdealLifestyle() async {
+    final kakaoUserId = await _storageService.getKakaoUserId();
+    if (kakaoUserId == null || kakaoUserId.isEmpty) return;
+    final data = await _userService.getUserProfile(kakaoUserId);
+    if (!mounted || data == null) return;
+    final idealType = data['idealType'];
+    if (idealType is! Map) return;
+    final lifestyle = idealType['preferredLifestyles'];
+    if (lifestyle is! Map) return;
+    final d = lifestyle['drinking']?.toString();
+    final s = lifestyle['smoking']?.toString();
+    final e = lifestyle['exercise']?.toString();
+    final r = lifestyle['religion']?.toString();
+    if (d != null && d.isNotEmpty) { try { _drinking = DrinkingFrequency.values.firstWhere((v) => v.name == d); } catch (_) {} }
+    if (s != null && s.isNotEmpty) { try { _smoking = SmokingStatus.values.firstWhere((v) => v.name == s); } catch (_) {} }
+    if (e != null && e.isNotEmpty) { try { _exercise = ExerciseFrequency.values.firstWhere((v) => v.name == e); } catch (_) {} }
+    if (r != null && r.isNotEmpty) { try { _religion = Religion.values.firstWhere((v) => v.name == r); } catch (_) {} }
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _saveCurrentIdealLifestyle() async {
+    if (_isSavingOnExit) return;
+    _isSavingOnExit = true;
+    try {
+      await OnboardingSaveHelper.saveIdealLifestyleAndComplete(
+        drinking: _drinking?.name,
+        smoking: _smoking?.name,
+        exercise: _exercise?.name,
+        religion: _religion?.name,
+      );
+    } finally {
+      _isSavingOnExit = false;
+    }
+  }
+
+  Future<void> _handleBack() async {
+    await _saveCurrentIdealLifestyle();
+    if (!mounted) return;
+    if (widget.onBack != null) {
+      widget.onBack!();
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await _handleBack();
+      },
+      child: Scaffold(
       backgroundColor: _AppColors.backgroundLight,
       body: SafeArea(
         child: Stack(
@@ -86,7 +148,7 @@ class _IdealLifestyleScreenState extends State<IdealLifestyleScreen> {
                 _Header(
                   currentStep: widget.currentStep,
                   totalSteps: widget.totalSteps,
-                  onBack: widget.onBack ?? () => Navigator.of(context).pop(),
+                  onBack: _handleBack,
                 ),
                 // 메인 콘텐츠
                 Expanded(
@@ -260,14 +322,10 @@ class _IdealLifestyleScreenState extends State<IdealLifestyleScreen> {
               right: 0,
               bottom: 0,
               child: _BottomButton(
-                onNext: () {
+                onNext: () async {
                   HapticFeedback.mediumImpact();
-                  OnboardingSaveHelper.saveIdealLifestyleAndComplete(
-                    drinking: _drinking?.name,
-                    smoking: _smoking?.name,
-                    exercise: _exercise?.name,
-                    religion: _religion?.name,
-                  );
+                  await _saveCurrentIdealLifestyle();
+                  if (!mounted) return;
                   if (widget.onNext != null) {
                     widget.onNext!.call(
                       _drinking,
@@ -276,9 +334,8 @@ class _IdealLifestyleScreenState extends State<IdealLifestyleScreen> {
                       _religion,
                     );
                   } else {
-                    Navigator.of(
-                      context,
-                    ).pushReplacementNamed(RouteNames.welcomeTutorial);
+                    Navigator.of(context)
+                        .pushReplacementNamed(RouteNames.welcomeTutorial);
                   }
                 },
               ),
@@ -286,7 +343,8 @@ class _IdealLifestyleScreenState extends State<IdealLifestyleScreen> {
           ],
         ),
       ),
-    );
+    ),
+  );
   }
 
   void _updateDrinking(DrinkingFrequency value) {
@@ -384,7 +442,7 @@ class _TitleSection extends StatelessWidget {
         Text(
           'STEP 3 OF 6',
           style: TextStyle(
-            fontFamily: 'Plus Jakarta Sans',
+            fontFamily: 'Noto Sans KR',
             fontSize: 14,
             fontWeight: FontWeight.w600,
             color: _AppColors.primary,
@@ -395,7 +453,7 @@ class _TitleSection extends StatelessWidget {
         Text(
           '라이프 스타일',
           style: TextStyle(
-            fontFamily: 'Plus Jakarta Sans',
+            fontFamily: 'Noto Sans KR',
             fontSize: 32,
             fontWeight: FontWeight.bold,
             color: _AppColors.textMain,
@@ -556,7 +614,7 @@ class _BottomButton extends StatelessWidget {
               Text(
                 '다음',
                 style: TextStyle(
-                  fontFamily: 'Plus Jakarta Sans',
+                  fontFamily: 'Noto Sans KR',
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,

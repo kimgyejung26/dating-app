@@ -88,6 +88,9 @@ class _AiPreferenceScreenState extends State<AiPreferenceScreen> {
 
     final onboarding = profile['onboarding'];
     if (onboarding is Map) {
+      // 온보딩이 { gender: 'female', ... } 형태로 저장된 경우 (saveOnboardingBasicInfo가 basicInfo 객체를 onboarding에 그대로 저장)
+      final gAtOnboarding = onboarding['gender']?.toString();
+      if (gAtOnboarding != null && gAtOnboarding.trim().isNotEmpty) return gAtOnboarding.trim();
       final basicInfo = onboarding['basicInfo'];
       if (basicInfo is Map) {
         final g = basicInfo['gender']?.toString();
@@ -112,21 +115,31 @@ class _AiPreferenceScreenState extends State<AiPreferenceScreen> {
   }
 
   _TargetPool _decideTargetPool(String? userGender) {
-    final normalized = (userGender ?? '').trim().toLowerCase();
-    final isMale = normalized == 'male' || normalized == 'm' || userGender == '남성';
-    final isFemale =
-        normalized == 'female' || normalized == 'f' || userGender == '여성';
+    final raw = (userGender ?? '').trim();
+    final normalized = raw.toLowerCase();
+    // 남성: male, m, 남성, 남자, man
+    final isMale = normalized == 'male' ||
+        normalized == 'm' ||
+        raw == '남성' ||
+        raw == '남자' ||
+        normalized == 'man';
+    // 여성: female, f, 여성, 여자, woman
+    final isFemale = normalized == 'female' ||
+        normalized == 'f' ||
+        raw == '여성' ||
+        raw == '여자' ||
+        normalized == 'woman';
 
     if (isMale) {
-      // 남자 사용자 → 여자 카드만
+      // 남자 사용자 → 여자 AI 카드만 (251~500)
       return const _TargetPool(folder: 'female', minId: 251, maxId: 500);
     }
     if (isFemale) {
-      // 여자 사용자 → 남자 카드만
+      // 여자 사용자 → 남자 AI 카드만 (1~250)
       return const _TargetPool(folder: 'male', minId: 1, maxId: 250);
     }
 
-    // 성별을 못 알면: 둘 중 랜덤 (요구사항을 깨지 않게, 최대한 합리적 fallback)
+    // 성별을 못 알면: 둘 중 랜덤 fallback
     return _rng.nextBool()
         ? const _TargetPool(folder: 'female', minId: 251, maxId: 500)
         : const _TargetPool(folder: 'male', minId: 1, maxId: 250);

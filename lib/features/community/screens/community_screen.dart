@@ -423,7 +423,7 @@ class _HeaderArea extends StatelessWidget {
                           child: Text(
                             category,
                             style: TextStyle(
-                              fontFamily: 'Plus Jakarta Sans',
+                              fontFamily: 'Noto Sans KR',
                               fontSize: 14,
                               fontWeight: isSelected
                                   ? FontWeight.w600
@@ -928,7 +928,7 @@ class _NavItem extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              fontFamily: '.SF Pro Text',
+              fontFamily: 'Noto Sans KR',
               fontSize: 10,
               fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
               letterSpacing: -0.2,

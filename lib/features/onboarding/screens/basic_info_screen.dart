@@ -14,6 +14,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../router/route_names.dart';
 import '../../../services/onboarding_save_helper.dart';
+import '../../../services/storage_service.dart';
+import '../../../services/user_service.dart';
 
 // =============================================================================
 // 색상 상수
@@ -79,6 +81,8 @@ class BasicInfoScreen extends StatefulWidget {
 class _BasicInfoScreenState extends State<BasicInfoScreen> {
   final TextEditingController _nicknameController = TextEditingController();
   final TextEditingController _heightController = TextEditingController();
+  final StorageService _storageService = StorageService();
+  final UserService _userService = UserService();
 
   Gender? _gender = Gender.female;
   String? _selectedRegion;
@@ -93,6 +97,85 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
 
   final List<String> _loveLanguages = ['인정하는 말 💬', '스킨십 ❤️']; // 초기값 예시
   RelationshipPreference _relationship = RelationshipPreference.serious;
+  bool _isSavingOnExit = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadExistingBasicInfo();
+  }
+
+  Future<void> _loadExistingBasicInfo() async {
+    final kakaoUserId = await _storageService.getKakaoUserId();
+    if (kakaoUserId == null || kakaoUserId.isEmpty) return;
+    final data = await _userService.getUserProfile(kakaoUserId);
+    if (!mounted || data == null) return;
+    final onboarding = data['onboarding'];
+    if (onboarding is! Map) return;
+    final nickname = onboarding['nickname']?.toString() ?? '';
+    final genderStr = onboarding['gender']?.toString() ?? '';
+    final region = onboarding['region']?.toString();
+    final education = onboarding['education']?.toString();
+    final height = onboarding['height'];
+    final age = onboarding['age'];
+    final mbtiStr = (onboarding['mbti']?.toString() ?? '').toLowerCase();
+    final loveLanguagesRaw = onboarding['loveLanguages'];
+    final relationshipStr = onboarding['relationship']?.toString() ?? '';
+    if (nickname.isNotEmpty) _nicknameController.text = nickname;
+    if (height is int && height > 0) _heightController.text = height.toString();
+    if (age is int && age > 0) _age = age.toDouble();
+    if (region != null && region.isNotEmpty) _selectedRegion = region;
+    if (education != null && education.isNotEmpty) _selectedEducation = education;
+    if (genderStr == 'male') _gender = Gender.male;
+    else if (genderStr == 'female') _gender = Gender.female;
+    else if (genderStr == 'other') _gender = Gender.other;
+    if (mbtiStr.length >= 4) {
+      if (mbtiStr[0] == 'e') _mbtiE = MbtiE.e; else if (mbtiStr[0] == 'i') _mbtiE = MbtiE.i;
+      if (mbtiStr.length > 1) { if (mbtiStr[1] == 'n') _mbtiN = MbtiN.n; else if (mbtiStr[1] == 's') _mbtiN = MbtiN.s; }
+      if (mbtiStr.length > 2) { if (mbtiStr[2] == 'f') _mbtiF = MbtiF.f; else if (mbtiStr[2] == 't') _mbtiF = MbtiF.t; }
+      if (mbtiStr.length > 3) { if (mbtiStr[3] == 'j') _mbtiJ = MbtiJ.j; else if (mbtiStr[3] == 'p') _mbtiJ = MbtiJ.p; }
+    }
+    if (loveLanguagesRaw is List && loveLanguagesRaw.isNotEmpty) {
+      _loveLanguages
+        ..clear()
+        ..addAll(loveLanguagesRaw.map((e) => e.toString()));
+    }
+    if (relationshipStr == 'serious') _relationship = RelationshipPreference.serious;
+    else if (relationshipStr == 'friend') _relationship = RelationshipPreference.friend;
+    else if (relationshipStr == 'open') _relationship = RelationshipPreference.open;
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _saveCurrentBasicInfo() async {
+    if (_isSavingOnExit) return;
+    _isSavingOnExit = true;
+    try {
+      final mbti = '${_mbtiE.name.toUpperCase()}${_mbtiN.name.toUpperCase()}${_mbtiF.name.toUpperCase()}${_mbtiJ.name.toUpperCase()}';
+      await OnboardingSaveHelper.saveBasicInfo(
+        nickname: _nicknameController.text,
+        gender: _gender?.name ?? '',
+        region: _selectedRegion ?? '',
+        education: _selectedEducation ?? '',
+        height: int.tryParse(_heightController.text) ?? 0,
+        age: _age.round(),
+        mbti: mbti,
+        loveLanguages: _loveLanguages,
+        relationship: _relationship.name,
+      );
+    } finally {
+      _isSavingOnExit = false;
+    }
+  }
+
+  Future<void> _handleBack() async {
+    await _saveCurrentBasicInfo();
+    if (!mounted) return;
+    if (widget.onBack != null) {
+      widget.onBack!();
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
 
   @override
   void dispose() {
@@ -114,22 +197,28 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        backgroundColor: _AppColors.backgroundLight,
-        body: SafeArea(
-          child: Stack(
-            children: [
-              Column(
-                children: [
-                  // 헤더
-                  _Header(
-                    currentStep: widget.currentStep,
-                    totalSteps: widget.totalSteps,
-                    onBack: widget.onBack,
-                  ),
-                  // 메인 콘텐츠
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await _handleBack();
+      },
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          backgroundColor: _AppColors.backgroundLight,
+          body: SafeArea(
+            child: Stack(
+              children: [
+                Column(
+                  children: [
+                    // 헤더
+                    _Header(
+                      currentStep: widget.currentStep,
+                      totalSteps: widget.totalSteps,
+                      onBack: _handleBack,
+                    ),
+                    // 메인 콘텐츠
                   Expanded(
                     child: SingleChildScrollView(
                       physics: const BouncingScrollPhysics(),
@@ -161,7 +250,7 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                                 Text(
                                   '기본 정보',
                                   style: TextStyle(
-                                    fontFamily: 'Plus Jakarta Sans',
+                                    fontFamily: 'Noto Sans KR',
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
                                     color: _AppColors.textMain,
@@ -410,7 +499,7 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                                     Text(
                                       '${_age.round()}',
                                       style: const TextStyle(
-                                        fontFamily: 'Plus Jakarta Sans',
+                                        fontFamily: 'Noto Sans KR',
                                         fontSize: 24,
                                         fontWeight: FontWeight.bold,
                                         color: _AppColors.textMain,
@@ -635,20 +724,22 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                 right: 0,
                 bottom: 0,
                 child: _BottomButton(
-                  onNext: () {
+                  onNext: () async {
                     HapticFeedback.mediumImpact();
+                    try {
+                      await _saveCurrentBasicInfo();
+                    } catch (e) {
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('저장 실패: $e'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                      return;
+                    }
+                    if (!context.mounted) return;
                     final mbti = '${_mbtiE.name.toUpperCase()}${_mbtiN.name.toUpperCase()}${_mbtiF.name.toUpperCase()}${_mbtiJ.name.toUpperCase()}';
-                    OnboardingSaveHelper.saveBasicInfo(
-                      nickname: _nicknameController.text,
-                      gender: _gender?.name ?? '',
-                      region: _selectedRegion ?? '',
-                      education: _selectedEducation ?? '',
-                      height: int.tryParse(_heightController.text) ?? 0,
-                      age: _age.round(),
-                      mbti: mbti,
-                      loveLanguages: _loveLanguages,
-                      relationship: _relationship.name,
-                    );
                     if (widget.onNext != null) {
                       widget.onNext!.call(
                         _nicknameController.text,
@@ -662,9 +753,8 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
                         _relationship,
                       );
                     } else {
-                      Navigator.of(
-                        context,
-                      ).pushNamed(RouteNames.onboardingInterestsSelection);
+                      Navigator.of(context)
+                          .pushNamed(RouteNames.onboardingInterestsSelection);
                     }
                   },
                 ),
@@ -673,6 +763,7 @@ class _BasicInfoScreenState extends State<BasicInfoScreen> {
           ),
         ),
       ),
+    ),
     );
   }
 
@@ -1104,7 +1195,7 @@ class _BottomButton extends StatelessWidget {
               Text(
                 '다음',
                 style: TextStyle(
-                  fontFamily: 'Plus Jakarta Sans',
+                  fontFamily: 'Noto Sans KR',
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
