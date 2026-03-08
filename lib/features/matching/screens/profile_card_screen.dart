@@ -368,7 +368,7 @@ class _ProfileCard extends StatelessWidget {
                           const Text(
                             '접속 중',
                             style: TextStyle(
-                              fontFamily: '.SF Pro Text',
+                              fontFamily: 'Noto Sans KR',
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
                               color: _AppColors.emerald700,
@@ -389,7 +389,7 @@ class _ProfileCard extends StatelessWidget {
                           Text(
                             profile.name,
                             style: const TextStyle(
-                              fontFamily: '.SF Pro Display',
+                              fontFamily: 'Noto Sans KR',
                               fontSize: 32,
                               fontWeight: FontWeight.w700,
                               color: CupertinoColors.white,
@@ -399,7 +399,7 @@ class _ProfileCard extends StatelessWidget {
                           Text(
                             '${profile.age}',
                             style: TextStyle(
-                              fontFamily: '.SF Pro Display',
+                              fontFamily: 'Noto Sans KR',
                               fontSize: 24,
                               fontWeight: FontWeight.w300,
                               color: CupertinoColors.white.withValues(
@@ -453,7 +453,7 @@ class _ProfileCard extends StatelessWidget {
                       Text(
                         '기본 정보 및 라이프스타일',
                         style: TextStyle(
-                          fontFamily: '.SF Pro Text',
+                          fontFamily: 'Noto Sans KR',
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                           letterSpacing: 0.5,
@@ -502,7 +502,7 @@ class _ProfileCard extends StatelessWidget {
                                 Text(
                                   tag.label,
                                   style: const TextStyle(
-                                    fontFamily: '.SF Pro Text',
+                                    fontFamily: 'Noto Sans KR',
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                     color: CupertinoColors.white,

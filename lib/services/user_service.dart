@@ -59,7 +59,21 @@ class UserService {
     final doc = await _firestore.collection('users').doc(kakaoUserId).get();
     if (!doc.exists) return false;
     final data = doc.data();
-    return data?['initialSetupComplete'] == true;
+    final v = data?['initialSetupComplete'];
+    if (v == true || v == 'true' || (v is num && v != 0)) return true;
+    // 이미 onboarding + 연세 인증이 있으면 완료로 간주 (initialSetupComplete 필드 없이 저장된 기존 사용자)
+    final verified = data?['isStudentVerified'];
+    final isVerified =
+        verified == true ||
+        verified == 'true' ||
+        (verified is num && verified != 0);
+    if (!isVerified) return false;
+    final onboarding = data?['onboarding'];
+    if (onboarding is! Map || onboarding.isEmpty) return false;
+    final hasContent =
+        (onboarding['nickname']?.toString().trim().isNotEmpty == true) ||
+        (onboarding['gender']?.toString().trim().isNotEmpty == true);
+    return hasContent;
   }
 
   Future<bool> hasSeenTutorial(String kakaoUserId) async {
@@ -92,7 +106,8 @@ class UserService {
     final doc = await _firestore.collection('users').doc(kakaoUserId).get();
     if (!doc.exists) return false;
     final data = doc.data();
-    return data?['isStudentVerified'] == true;
+    final v = data?['isStudentVerified'];
+    return v == true || v == 'true' || (v is num && v != 0);
   }
 
   Future<String?> getStudentEmail(String kakaoUserId) async {
@@ -117,14 +132,29 @@ class UserService {
   // 온보딩 정보 저장 (단계별 merge)
   // ---------------------------------------------------------------------------
 
-  /// 온보딩 기본 정보 (성별, 나이, 키, MBTI, 대학, 학과 등)
+  /// 온보딩 기본 정보 (성별, 나이, 키, MBTI 등) — 기존 onboarding에 병합 후 저장, 완료 플래그 설정
   Future<void> saveOnboardingBasicInfo({
     required String kakaoUserId,
     required Map<String, dynamic> basicInfo,
   }) async {
-    await _firestore.collection('users').doc(kakaoUserId).set({
-      'onboarding': basicInfo,
+    final docRef = _firestore.collection('users').doc(kakaoUserId);
+    final doc = await docRef.get();
+    final Map<String, dynamic> mergedOnboarding = {};
+    if (doc.exists) {
+      final existing = doc.data()?['onboarding'];
+      if (existing is Map) {
+        for (final e in existing.entries) {
+          mergedOnboarding[e.key.toString()] = e.value;
+        }
+      }
+    }
+    for (final e in basicInfo.entries) {
+      mergedOnboarding[e.key.toString()] = e.value;
+    }
+    await docRef.set({
+      'onboarding': mergedOnboarding,
       'onboardingUpdatedAt': FieldValue.serverTimestamp(),
+      'initialSetupComplete': true,
     }, SetOptions(merge: true));
   }
 
@@ -133,8 +163,24 @@ class UserService {
     required String kakaoUserId,
     required List<String> photoUrls,
   }) async {
-    await _firestore.collection('users').doc(kakaoUserId).set({
-      'onboarding': {'photoUrls': photoUrls},
+    final docRef = _firestore.collection('users').doc(kakaoUserId);
+    final doc = await docRef.get();
+
+    final Map<String, dynamic> mergedOnboarding = {};
+
+    if (doc.exists) {
+      final existing = doc.data()?['onboarding'];
+      if (existing is Map) {
+        for (final e in existing.entries) {
+          mergedOnboarding[e.key.toString()] = e.value;
+        }
+      }
+    }
+
+    mergedOnboarding['photoUrls'] = photoUrls;
+
+    await docRef.set({
+      'onboarding': mergedOnboarding,
       'onboardingUpdatedAt': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
   }
@@ -145,11 +191,25 @@ class UserService {
     required List<String> keywords,
     required List<String> interests,
   }) async {
-    await _firestore.collection('users').doc(kakaoUserId).set({
-      'onboarding': {
-        'keywords': keywords,
-        'interests': interests,
-      },
+    final docRef = _firestore.collection('users').doc(kakaoUserId);
+    final doc = await docRef.get();
+
+    final Map<String, dynamic> mergedOnboarding = {};
+
+    if (doc.exists) {
+      final existing = doc.data()?['onboarding'];
+      if (existing is Map) {
+        for (final e in existing.entries) {
+          mergedOnboarding[e.key.toString()] = e.value;
+        }
+      }
+    }
+
+    mergedOnboarding['keywords'] = keywords;
+    mergedOnboarding['interests'] = interests;
+
+    await docRef.set({
+      'onboarding': mergedOnboarding,
       'onboardingUpdatedAt': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
   }
@@ -159,8 +219,24 @@ class UserService {
     required String kakaoUserId,
     required List<Map<String, String>> profileQa,
   }) async {
-    await _firestore.collection('users').doc(kakaoUserId).set({
-      'onboarding': {'profileQa': profileQa},
+    final docRef = _firestore.collection('users').doc(kakaoUserId);
+    final doc = await docRef.get();
+
+    final Map<String, dynamic> mergedOnboarding = {};
+
+    if (doc.exists) {
+      final existing = doc.data()?['onboarding'];
+      if (existing is Map) {
+        for (final e in existing.entries) {
+          mergedOnboarding[e.key.toString()] = e.value;
+        }
+      }
+    }
+
+    mergedOnboarding['profileQa'] = profileQa;
+
+    await docRef.set({
+      'onboarding': mergedOnboarding,
       'onboardingUpdatedAt': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
   }
@@ -213,5 +289,25 @@ class UserService {
     final doc = await _firestore.collection('users').doc(kakaoUserId).get();
     if (!doc.exists) return null;
     return doc.data()?['idealType'] as Map<String, dynamic>?;
+  }
+
+  Future<int> getOnboardingStep(String kakaoUserId) async {
+    final doc = await _firestore.collection('users').doc(kakaoUserId).get();
+
+    if (!doc.exists) return 0;
+
+    final data = doc.data();
+    final onboarding = data?['onboarding'];
+
+    if (onboarding == null) return 1;
+
+    if (onboarding['basicInfo'] == null) return 1;
+    if (onboarding['photoUrls'] == null ||
+        (onboarding['photoUrls'] as List).length < 2)
+      return 5;
+    if (onboarding['keywords'] == null) return 6;
+    if (onboarding['profileQa'] == null) return 7;
+
+    return 8;
   }
 }

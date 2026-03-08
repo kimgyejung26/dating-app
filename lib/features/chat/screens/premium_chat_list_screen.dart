@@ -221,7 +221,7 @@ class _Header extends StatelessWidget {
             const Text(
               '채팅',
               style: TextStyle(
-                fontFamily: '.SF Pro Display',
+                fontFamily: 'Noto Sans KR',
                 fontSize: 28,
                 fontWeight: FontWeight.w700,
                 letterSpacing: -0.5,
@@ -361,7 +361,7 @@ class _TabChip extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                fontFamily: '.SF Pro Text',
+                fontFamily: 'Noto Sans KR',
                 fontSize: 13,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 color: isSelected ? CupertinoColors.white : _AppColors.gray500,
@@ -411,7 +411,7 @@ class _ChatListItem extends StatelessWidget {
                       Text(
                         chat.name,
                         style: TextStyle(
-                          fontFamily: '.SF Pro Text',
+                          fontFamily: 'Noto Sans KR',
                           fontSize: 15,
                           fontWeight: chat.hasUnread
                               ? FontWeight.w700
@@ -423,7 +423,7 @@ class _ChatListItem extends StatelessWidget {
                       Text(
                         chat.time,
                         style: TextStyle(
-                          fontFamily: '.SF Pro Text',
+                          fontFamily: 'Noto Sans KR',
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
                           color: _AppColors.gray400,
@@ -440,7 +440,7 @@ class _ChatListItem extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            fontFamily: '.SF Pro Text',
+                            fontFamily: 'Noto Sans KR',
                             fontSize: 13,
                             fontWeight: chat.hasUnread
                                 ? FontWeight.w500
@@ -663,7 +663,7 @@ class _NavItem extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              fontFamily: '.SF Pro Text',
+              fontFamily: 'Noto Sans KR',
               fontSize: 10,
               fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
               letterSpacing: -0.2,

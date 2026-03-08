@@ -1,22 +1,17 @@
 // =============================================================================
 // 내 페이지 화면
 // 경로: lib/features/profile/screens/my_page_screen.dart
-//
-// 사용 예시:
-// Navigator.push(
-//   context,
-//   CupertinoPageRoute(builder: (_) => const MyPageScreen()),
-// );
 // =============================================================================
+
+import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'dart:ui';
-import '../../../router/route_names.dart';
 
-// =============================================================================
-// 색상 상수
-// =============================================================================
+import '../../../router/route_names.dart';
+import '../../../services/storage_service.dart';
+import '../../../services/user_service.dart';
+
 class _AppColors {
   static const Color primary = Color(0xFFF0428B);
   static const Color backgroundLight = Color(0xFFFFFFFF);
@@ -35,41 +30,54 @@ class _AppColors {
   static const Color emerald500 = Color(0xFF10B981);
 }
 
-// =============================================================================
-// 메인 화면
-// =============================================================================
-class MyPageScreen extends StatelessWidget {
-  final String userName;
-  final String nickname;
-  final String? avatarUrl;
-  final int receivedHearts;
-  final int friendsCount;
-  final VoidCallback? onSettings;
-  final VoidCallback? onEditAvatar;
-  final VoidCallback? onEditProfile;
-  final VoidCallback? onRecharge;
-  final VoidCallback? onInviteFriends;
-  final VoidCallback? onLogout;
-  final Function(int index)? onNavTap;
+class MyPageScreen extends StatefulWidget {
+  final Function(int)? onNavTap;
 
-  const MyPageScreen({
-    super.key,
-    this.userName = '사용자 이름',
-    this.nickname = '닉네임',
-    this.avatarUrl,
-    this.receivedHearts = 128,
-    this.friendsCount = 42,
-    this.onSettings,
-    this.onEditAvatar,
-    this.onEditProfile,
-    this.onRecharge,
-    this.onInviteFriends,
-    this.onLogout,
-    this.onNavTap,
-  });
+  const MyPageScreen({super.key, this.onNavTap});
 
-  static const String _defaultAvatarUrl =
+  @override
+  State<MyPageScreen> createState() => _MyPageScreenState();
+}
+
+class _MyPageScreenState extends State<MyPageScreen> {
+  final _userService = UserService();
+  final _storageService = StorageService();
+
+  String userName = '사용자 이름';
+  String nickname = '닉네임';
+  String? avatarUrl;
+
+  int receivedHearts = 0;
+  int friendsCount = 0;
+
+  static const String defaultAvatarUrl =
       'https://lh3.googleusercontent.com/aida-public/AB6AXuAlamN6vna7onuxl6KAi_ZQF4inDOBV3szCSXLpbhKJBNMkA0GXEDwrk5twXPOs4LXS0G6ll7xVVnOu1xZIw3T23aOT20DZSwGXtD9KIye2kWfMoFNzq5XlSx8ubmnLS6wjbHBO_4uLkcv1ZGtJsN4_0SNfDo3apAeahRCJaJrzcoXrOl2m4mBTntOfUhvYG_8NcfWaWWb6x_3H0pxtW_aiZouvzrVG0P3gcL7VaYRfb2ifME_bMeHZSrJbaMnA3yGCgQH5eufdWC1f';
+
+  @override
+  void initState() {
+    super.initState();
+    loadUser();
+  }
+
+  Future<void> loadUser() async {
+    final kakaoUserId = await _storageService.getKakaoUserId();
+    if (kakaoUserId == null || kakaoUserId.isEmpty) return;
+
+    final user = await _userService.getUserProfile(kakaoUserId);
+    if (!mounted || user == null) return;
+
+    final onboarding = user['onboarding'];
+
+    setState(() {
+      nickname = (onboarding is Map && onboarding['nickname'] != null)
+          ? onboarding['nickname'].toString()
+          : '닉네임';
+      userName = nickname;
+      avatarUrl = user['profileImageUrl']?.toString();
+      receivedHearts = (user['receivedHearts'] as num?)?.toInt() ?? 0;
+      friendsCount = (user['friendsCount'] as num?)?.toInt() ?? 0;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,30 +87,34 @@ class MyPageScreen extends StatelessWidget {
       backgroundColor: _AppColors.surface,
       child: Stack(
         children: [
-          // 메인 콘텐츠
           CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: [
-              // 헤더
               SliverToBoxAdapter(
                 child: _Header(
-                  onSettings:
-                      onSettings ??
-                      () => Navigator.of(
-                        context,
-                        rootNavigator: true,
-                      ).pushNamed(RouteNames.settings),
+                  onSettings: () async {
+                    await Navigator.of(
+                      context,
+                      rootNavigator: true,
+                    ).pushNamed(RouteNames.settings);
+                    await loadUser();
+                  },
                 ),
               ),
-              // 프로필 카드
               SliverToBoxAdapter(
                 child: _ProfileCard(
                   userName: userName,
                   nickname: nickname,
-                  avatarUrl: avatarUrl ?? _defaultAvatarUrl,
+                  avatarUrl: avatarUrl ?? defaultAvatarUrl,
                   receivedHearts: receivedHearts,
                   friendsCount: friendsCount,
-                  onEditAvatar: onEditAvatar,
+                  onEditAvatar: () async {
+                    await Navigator.of(
+                      context,
+                      rootNavigator: true,
+                    ).pushNamed(RouteNames.profileEdit);
+                    await loadUser();
+                  },
                   onReceivedHeartsTap: () => Navigator.of(
                     context,
                     rootNavigator: true,
@@ -113,41 +125,49 @@ class MyPageScreen extends StatelessWidget {
                   ).pushNamed(RouteNames.friendsList),
                 ),
               ),
-              // 메뉴 리스트
               SliverToBoxAdapter(
                 child: _MenuList(
-                  onEditProfile:
-                      onEditProfile ??
-                      () => Navigator.of(
-                        context,
-                        rootNavigator: true,
-                      ).pushNamed(RouteNames.profileEdit),
-                  onRecharge:
-                      onRecharge ??
-                      () => Navigator.of(
-                        context,
-                        rootNavigator: true,
-                      ).pushNamed(RouteNames.heartCharge),
-                  onInviteFriends:
-                      onInviteFriends ??
-                      () => Navigator.of(
-                        context,
-                        rootNavigator: true,
-                      ).pushNamed(RouteNames.friendsList),
+                  onEditProfile: () async {
+                    await Navigator.of(
+                      context,
+                      rootNavigator: true,
+                    ).pushNamed(RouteNames.profileEdit);
+                    await loadUser();
+                  },
+                  onRecharge: () => Navigator.of(
+                    context,
+                    rootNavigator: true,
+                  ).pushNamed(RouteNames.heartCharge),
+                  onInviteFriends: () => Navigator.of(
+                    context,
+                    rootNavigator: true,
+                  ).pushNamed(RouteNames.friendsList),
                 ),
               ),
-              // 로그아웃
-              SliverToBoxAdapter(child: _LogoutButton(onLogout: onLogout)),
-              // 하단 여백
+              SliverToBoxAdapter(
+                child: _LogoutButton(
+                  onLogout: () async {
+                    await _storageService.clearAll();
+                    if (!mounted) return;
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      RouteNames.kakaoAuth,
+                      (route) => false,
+                    );
+                  },
+                ),
+              ),
               SliverToBoxAdapter(child: SizedBox(height: bottomPadding + 100)),
             ],
           ),
-          // 하단 네비게이션
           Positioned(
             left: 24,
             right: 24,
             bottom: bottomPadding + 16,
-            child: _FloatingNavBar(onTap: onNavTap),
+            child: _FloatingNavBar(
+              onTap: (index) {
+                widget.onNavTap?.call(index);
+              },
+            ),
           ),
         ],
       ),
@@ -155,9 +175,6 @@ class MyPageScreen extends StatelessWidget {
   }
 }
 
-// =============================================================================
-// 헤더
-// =============================================================================
 class _Header extends StatelessWidget {
   final VoidCallback? onSettings;
 
@@ -178,7 +195,7 @@ class _Header extends StatelessWidget {
             const Text(
               '내 페이지',
               style: TextStyle(
-                fontFamily: '.SF Pro Display',
+                fontFamily: 'Noto Sans KR',
                 fontSize: 21,
                 fontWeight: FontWeight.w700,
                 letterSpacing: -0.3,
@@ -209,9 +226,6 @@ class _Header extends StatelessWidget {
   }
 }
 
-// =============================================================================
-// 프로필 카드
-// =============================================================================
 class _ProfileCard extends StatelessWidget {
   final String userName;
   final String nickname;
@@ -254,7 +268,6 @@ class _ProfileCard extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          // 배경 그라데이션
           Positioned(
             top: -100,
             left: -50,
@@ -271,10 +284,8 @@ class _ProfileCard extends StatelessWidget {
               ),
             ),
           ),
-          // 콘텐츠
           Column(
             children: [
-              // 아바타
               Stack(
                 children: [
                   Container(
@@ -303,7 +314,7 @@ class _ProfileCard extends StatelessWidget {
                         shape: BoxShape.circle,
                       ),
                       child: Container(
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           shape: BoxShape.circle,
                           color: _AppColors.pink50,
                         ),
@@ -320,7 +331,6 @@ class _ProfileCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // 편집 버튼
                   Positioned(
                     bottom: 4,
                     right: 4,
@@ -355,11 +365,10 @@ class _ProfileCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 20),
-              // 이름 & 닉네임
               Text(
                 userName,
                 style: const TextStyle(
-                  fontFamily: '.SF Pro Display',
+                  fontFamily: 'Noto Sans KR',
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
                   color: _AppColors.textMain,
@@ -369,14 +378,13 @@ class _ProfileCard extends StatelessWidget {
               Text(
                 nickname,
                 style: const TextStyle(
-                  fontFamily: '.SF Pro Text',
+                  fontFamily: 'Noto Sans KR',
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color: _AppColors.textSub,
                 ),
               ),
               const SizedBox(height: 24),
-              // 통계 (받은 하트 / 친구 탭 시 해당 화면으로)
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -417,7 +425,7 @@ class _StatItem extends StatelessWidget {
         Text(
           '$value',
           style: const TextStyle(
-            fontFamily: '.SF Pro Display',
+            fontFamily: 'Noto Sans KR',
             fontSize: 18,
             fontWeight: FontWeight.w700,
             color: _AppColors.gray800,
@@ -427,7 +435,7 @@ class _StatItem extends StatelessWidget {
         Text(
           label,
           style: const TextStyle(
-            fontFamily: '.SF Pro Text',
+            fontFamily: 'Noto Sans KR',
             fontSize: 12,
             color: _AppColors.gray400,
           ),
@@ -437,9 +445,6 @@ class _StatItem extends StatelessWidget {
   }
 }
 
-// =============================================================================
-// 메뉴 리스트
-// =============================================================================
 class _MenuList extends StatelessWidget {
   final VoidCallback? onEditProfile;
   final VoidCallback? onRecharge;
@@ -542,7 +547,7 @@ class _MenuItem extends StatelessWidget {
               child: Text(
                 label,
                 style: const TextStyle(
-                  fontFamily: '.SF Pro Text',
+                  fontFamily: 'Noto Sans KR',
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
                   color: _AppColors.gray800,
@@ -561,9 +566,6 @@ class _MenuItem extends StatelessWidget {
   }
 }
 
-// =============================================================================
-// 로그아웃 버튼
-// =============================================================================
 class _LogoutButton extends StatelessWidget {
   final VoidCallback? onLogout;
 
@@ -580,7 +582,7 @@ class _LogoutButton extends StatelessWidget {
           child: const Text(
             '로그아웃',
             style: TextStyle(
-              fontFamily: '.SF Pro Text',
+              fontFamily: 'Noto Sans KR',
               fontSize: 12,
               fontWeight: FontWeight.w500,
               color: _AppColors.gray400,
@@ -592,9 +594,6 @@ class _LogoutButton extends StatelessWidget {
   }
 }
 
-// =============================================================================
-// 플로팅 네비게이션
-// =============================================================================
 class _FloatingNavBar extends StatelessWidget {
   final Function(int index)? onTap;
 
@@ -689,7 +688,7 @@ class _NavItem extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                fontFamily: '.SF Pro Text',
+                fontFamily: 'Noto Sans KR',
                 fontSize: 10,
                 fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
                 color: isActive ? _AppColors.primary : _AppColors.gray400,

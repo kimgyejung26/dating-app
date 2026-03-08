@@ -13,6 +13,9 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import '../../../router/route_names.dart';
+import '../../../services/onboarding_save_helper.dart';
+import '../../../services/storage_service.dart';
+import '../../../services/user_service.dart';
 
 // =============================================================================
 // 색상 상수
@@ -52,6 +55,9 @@ class HeightSelectionScreen extends StatefulWidget {
 class _HeightSelectionScreenState extends State<HeightSelectionScreen> {
   late FixedExtentScrollController _scrollController;
   late int _selectedHeight;
+  final StorageService _storageService = StorageService();
+  final UserService _userService = UserService();
+  bool _isSavingOnExit = false;
 
   @override
   void initState() {
@@ -60,6 +66,65 @@ class _HeightSelectionScreenState extends State<HeightSelectionScreen> {
     _scrollController = FixedExtentScrollController(
       initialItem: widget.initialHeight - widget.minHeight,
     );
+    _loadExistingHeight();
+  }
+
+  Future<void> _loadExistingHeight() async {
+    final kakaoUserId = await _storageService.getKakaoUserId();
+    if (kakaoUserId == null || kakaoUserId.isEmpty) return;
+
+    final profile = await _userService.getUserProfile(kakaoUserId);
+    final onboarding = profile?['onboarding'];
+    if (onboarding is! Map) return;
+
+    final raw = onboarding['height'];
+    final parsed =
+        raw is int ? raw : int.tryParse(raw?.toString().trim() ?? '');
+    if (parsed == null) return;
+
+    final clamped = parsed.clamp(widget.minHeight, widget.maxHeight).toInt();
+    if (!mounted) return;
+    setState(() => _selectedHeight = clamped);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      if (!_scrollController.hasClients) return;
+      final index = clamped - widget.minHeight;
+      final maxIndex = widget.maxHeight - widget.minHeight;
+      if (index < 0 || index > maxIndex) return;
+      _scrollController.jumpToItem(index);
+    });
+  }
+
+  Future<void> _saveCurrentHeight() async {
+    if (_isSavingOnExit) return;
+    _isSavingOnExit = true;
+    try {
+      await OnboardingSaveHelper.saveHeight(_selectedHeight);
+    } finally {
+      _isSavingOnExit = false;
+    }
+  }
+
+  Future<void> _handleBack() async {
+    await _saveCurrentHeight();
+    if (!mounted) return;
+    if (widget.onBack != null) {
+      widget.onBack!();
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
+
+  Future<void> _handleComplete() async {
+    HapticFeedback.mediumImpact();
+    await _saveCurrentHeight();
+    if (!mounted) return;
+    if (widget.onComplete != null) {
+      widget.onComplete!.call(_selectedHeight);
+    } else {
+      Navigator.of(context).pushNamed(RouteNames.onboardingBasicInfo);
+    }
   }
 
   @override
@@ -70,62 +135,62 @@ class _HeightSelectionScreenState extends State<HeightSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      backgroundColor: _AppColors.backgroundLight,
-      child: Stack(
-        children: [
-          // 배경 그라데이션
-          _BackgroundGradients(),
-          // 메인 콘텐츠
-          SafeArea(
-            child: Column(
-              children: [
-                // 상단 로고
-                const SizedBox(height: 48),
-                Center(
-                  child: Opacity(
-                    opacity: 0.5,
-                    child: const Text(
-                      '설레연',
-                      style: TextStyle(
-                        fontFamily: '.SF Pro Display',
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: -0.3,
-                        color: _AppColors.textSecondaryLight,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await _handleBack();
+      },
+      child: CupertinoPageScaffold(
+        backgroundColor: _AppColors.backgroundLight,
+        child: Stack(
+          children: [
+            // 배경 그라데이션
+            _BackgroundGradients(),
+            // 메인 콘텐츠
+            SafeArea(
+              child: Column(
+                children: [
+                  // 상단 로고
+                  const SizedBox(height: 48),
+                  Center(
+                    child: Opacity(
+                      opacity: 0.5,
+                      child: const Text(
+                        '설레연',
+                        style: TextStyle(
+                          fontFamily: 'Noto Sans KR',
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -0.3,
+                          color: _AppColors.textSecondaryLight,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 32),
-                // 메인 카드
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: _SelectionCard(
-                      selectedHeight: _selectedHeight,
-                      minHeight: widget.minHeight,
-                      maxHeight: widget.maxHeight,
-                      scrollController: _scrollController,
-                      onHeightChanged: (height) {
-                        setState(() => _selectedHeight = height);
-                      },
-                      onComplete: () {
-                        HapticFeedback.mediumImpact();
-                        if (widget.onComplete != null) {
-                          widget.onComplete!.call(_selectedHeight);
-                        } else {
-                          Navigator.of(context).pushNamed(RouteNames.onboardingBasicInfo);
-                        }
-                      },
+                  const SizedBox(height: 32),
+                  // 메인 카드
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: _SelectionCard(
+                        selectedHeight: _selectedHeight,
+                        minHeight: widget.minHeight,
+                        maxHeight: widget.maxHeight,
+                        scrollController: _scrollController,
+                        onHeightChanged: (height) {
+                          setState(() => _selectedHeight = height);
+                        },
+                        onComplete: _handleComplete,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 24),
-              ],
+                  const SizedBox(height: 24),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -185,7 +250,7 @@ class _SelectionCard extends StatelessWidget {
   final int maxHeight;
   final FixedExtentScrollController scrollController;
   final Function(int height) onHeightChanged;
-  final VoidCallback onComplete;
+  final Future<void> Function() onComplete;
 
   const _SelectionCard({
     required this.selectedHeight,
@@ -219,7 +284,7 @@ class _SelectionCard extends StatelessWidget {
             const Text(
               '키를 알려주세요',
               style: TextStyle(
-                fontFamily: '.SF Pro Display',
+                fontFamily: 'Noto Sans KR',
                 fontSize: 26,
                 fontWeight: FontWeight.w700,
                 letterSpacing: -0.5,
@@ -230,7 +295,7 @@ class _SelectionCard extends StatelessWidget {
             const Text(
               '솔직하게 입력해 주세요',
               style: TextStyle(
-                fontFamily: '.SF Pro Text',
+                fontFamily: 'Noto Sans KR',
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: _AppColors.textSecondaryLight,
@@ -257,7 +322,7 @@ class _SelectionCard extends StatelessWidget {
               child: Text(
                 '${selectedHeight}cm',
                 style: const TextStyle(
-                  fontFamily: '.SF Pro Display',
+                  fontFamily: 'Noto Sans KR',
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                   color: _AppColors.textMainLight,
@@ -268,7 +333,9 @@ class _SelectionCard extends StatelessWidget {
             // 완료 버튼
             CupertinoButton(
               padding: EdgeInsets.zero,
-              onPressed: onComplete,
+              onPressed: () async {
+                await onComplete();
+              },
               child: Container(
                 width: double.infinity,
                 height: 56,
@@ -287,7 +354,7 @@ class _SelectionCard extends StatelessWidget {
                   child: Text(
                     '완료',
                     style: TextStyle(
-                      fontFamily: '.SF Pro Text',
+                      fontFamily: 'Noto Sans KR',
                       fontSize: 17,
                       fontWeight: FontWeight.w700,
                       color: CupertinoColors.white,
@@ -373,7 +440,7 @@ class _HeightPicker extends StatelessWidget {
                     Text(
                       '$height',
                       style: const TextStyle(
-                        fontFamily: '.SF Pro Display',
+                        fontFamily: 'Noto Sans KR',
                         fontSize: 32,
                         fontWeight: FontWeight.w700,
                         letterSpacing: -0.5,
@@ -384,7 +451,7 @@ class _HeightPicker extends StatelessWidget {
                     const Text(
                       'cm',
                       style: TextStyle(
-                        fontFamily: '.SF Pro Text',
+                        fontFamily: 'Noto Sans KR',
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
                         color: _AppColors.textSecondaryLight,

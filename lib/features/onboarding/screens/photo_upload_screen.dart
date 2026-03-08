@@ -1,24 +1,16 @@
-// =============================================================================
-// 프로필 사진 등록 화면 (온보딩 Step 4)
-// 경로: lib/features/onboarding/screens/photo_upload_screen.dart
-//
-// 사용 예시:
-// Navigator.push(
-//   context,
-//   CupertinoPageRoute(builder: (_) => const PhotoUploadScreen()),
-// );
-// =============================================================================
+import 'dart:io';
 
-import 'dart:ui';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
+
 import '../../../router/route_names.dart';
 import '../../../services/onboarding_save_helper.dart';
+import '../../../services/storage_service.dart';
+import '../../../services/user_service.dart';
 
-// =============================================================================
-// 색상 상수
-// =============================================================================
 class _AppColors {
   static const Color primary = Color(0xFFEF3976);
   static const Color backgroundLight = Color(0xFFF8F6F6);
@@ -30,9 +22,6 @@ class _AppColors {
   static const Color progressBg = Color(0xFFE6DBDF);
 }
 
-// =============================================================================
-// 메인 화면
-// =============================================================================
 class PhotoUploadScreen extends StatefulWidget {
   final int currentStep;
   final int totalSteps;
@@ -52,152 +41,296 @@ class PhotoUploadScreen extends StatefulWidget {
 }
 
 class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
-  // 초기 더미 데이터 (HTML 예시 반영)
-  final List<String?> _photos = [
-    'https://lh3.googleusercontent.com/aida-public/AB6AXuD-ahgOxjDASwoIQylq-wRkziL385-3iWMgRMD_38gGtXlc0Lk5Yxs7oV7Qd2DIq8fBYJYO2twuahC5Q6vqtcYZ5Gd_iypFUS_K5q1F0WFgxgcBsJ4Qe_972QxVV2pbb4sU_y0UVckr4ax4CLNR-DWY9QdBnovKApjHoNuUQ3bFRa5FIE3-KGGVR3QqXEfEY3CsXUMmwYnsDtyUzv1UwYVdPHka9yGc68VNDMBQVpQpbYuA8-rMD6B55bzV2QwaywiyETeAsAnrqqm7',
-    'https://lh3.googleusercontent.com/aida-public/AB6AXuC1-nxbGqLKDJGtbcjqyydLskV9I_DldOWh9wVoAH59QyMYPqbHs-uHd56bpcNYmGq5_QD00ol-PkFwwE6S9j6n-LC-bW87x95jk72qG7Vt9VUTG9xncZ6FG-DArLAoGNsMV0CauC9tjjJGnYvHIw8nNZ8oYBdlO4Dod3TBQ6lqthdMPRF99HATRh8ABEfaOQD5GxGvUOavqIV-HPv_m31_s2hr-qa04bgItWbWfYGz7nHsvFceNacf3XO6bgJe0UwhRqhDr5TcA_VK',
-    null,
-    null,
-    null,
-    null,
-  ];
-
   static const int _minRequiredPhotos = 2;
 
-  void _addPhoto(int index) {
-    // 실제 구현에서는 이미지 피커 연동 필요
-    HapticFeedback.lightImpact();
-    // 더미 동작: 사진 추가
+  final ImagePicker _imagePicker = ImagePicker();
+  final StorageService _storageService = StorageService();
+
+  final List<String?> _photos = List<String?>.filled(6, null);
+  final List<bool> _isUploading = List<bool>.filled(6, false);
+
+  final UserService _userService = UserService();
+  bool _isSavingOnExit = false;
+
+  int get _photoCount => _photos.where((p) => p != null).length;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadExistingPhotos();
+  }
+
+  Future<void> _loadExistingPhotos() async {
+    final kakaoUserId = await _storageService.getKakaoUserId();
+    if (kakaoUserId == null || kakaoUserId.isEmpty) return;
+
+    final data = await _userService.getUserProfile(kakaoUserId);
+    if (!mounted || data == null) return;
+
+    final onboarding = data['onboarding'];
+    if (onboarding is! Map) return;
+
+    final photoUrlsRaw = onboarding['photoUrls'];
+    if (photoUrlsRaw is! List) return;
+
+    final photoUrls = photoUrlsRaw.whereType<String>().toList();
+
     setState(() {
-      _photos[index] = 'https://picsum.photos/400/600?random=$index';
+      for (int i = 0; i < photoUrls.length && i < _photos.length; i++) {
+        _photos[i] = photoUrls[i];
+      }
     });
+  }
+
+  Future<void> _addPhoto(int index) async {
+    HapticFeedback.lightImpact();
+
+    try {
+      final XFile? pickedFile = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 88,
+      );
+
+      if (pickedFile == null) {
+        return;
+      }
+
+      setState(() {
+        _isUploading[index] = true;
+      });
+
+      final String? kakaoUserId = await _storageService.getKakaoUserId();
+      if (kakaoUserId == null || kakaoUserId.isEmpty) {
+        throw Exception('사용자 정보를 찾을 수 없습니다. 다시 로그인해주세요.');
+      }
+
+      final File file = File(pickedFile.path);
+      final String extension = pickedFile.path.split('.').last.isNotEmpty
+          ? pickedFile.path.split('.').last
+          : 'jpg';
+
+      final String fileName =
+          '${DateTime.now().millisecondsSinceEpoch}_slot$index.$extension';
+
+      final Reference ref = FirebaseStorage.instance.ref().child(
+        'users/$kakaoUserId/onboarding/photos/$fileName',
+      );
+
+      final SettableMetadata metadata = SettableMetadata(
+        contentType: 'image/$extension',
+      );
+
+      await ref.putFile(file, metadata);
+      final String downloadUrl = await ref.getDownloadURL();
+
+      if (!mounted) return;
+
+      setState(() {
+        _photos[index] = downloadUrl;
+        _isUploading[index] = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _isUploading[index] = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('사진 업로드에 실패했어요: $e'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
   }
 
   void _removePhoto(int index) {
     HapticFeedback.lightImpact();
     setState(() {
       _photos[index] = null;
-      // 빈 슬롯 정리 (뒤쪽 사진을 앞으로 당기기 등) 로직은 선택 사항
-      // 여기서는 단순히 해당 슬롯만 비움
+      _isUploading[index] = false;
     });
   }
 
-  int get _photoCount => _photos.where((p) => p != null).length;
+  Future<void> _handleNext() async {
+    if (_photoCount < _minRequiredPhotos) {
+      HapticFeedback.heavyImpact();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('사진을 최소 2장 이상 등록해주세요.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    if (_isUploading.any((e) => e)) {
+      HapticFeedback.heavyImpact();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('사진 업로드가 끝난 뒤 다음으로 넘어가주세요.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    try {
+      HapticFeedback.mediumImpact();
+
+      final validPhotos = _photos.whereType<String>().toList();
+
+      await OnboardingSaveHelper.savePhotos(validPhotos);
+
+      if (!mounted) return;
+
+      debugPrint(
+        'photo upload next -> saved photos count: ${validPhotos.length}',
+      );
+      debugPrint(
+        'photo upload next -> navigating to: ${RouteNames.onboardingSelfIntro}',
+      );
+
+      if (widget.onNext != null) {
+        widget.onNext!.call(validPhotos);
+      } else {
+        Navigator.of(context).pushNamed(RouteNames.onboardingSelfIntro);
+      }
+    } catch (e, st) {
+      debugPrint('photo upload next error: $e');
+      debugPrint('$st');
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('사진 저장 중 오류가 발생했어요: $e'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
+  Future<void> _saveCurrentPhotos() async {
+    if (_isSavingOnExit) return;
+    _isSavingOnExit = true;
+
+    try {
+      final validPhotos = _photos.whereType<String>().toList();
+      await OnboardingSaveHelper.savePhotos(validPhotos);
+    } finally {
+      _isSavingOnExit = false;
+    }
+  }
+
+  Future<void> _handleBack() async {
+    await _saveCurrentPhotos();
+    if (!mounted) return;
+
+    if (widget.onBack != null) {
+      widget.onBack!();
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: _AppColors.backgroundLight,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                // 헤더
-                _Header(
-                  currentStep: widget.currentStep,
-                  totalSteps: widget.totalSteps,
-                  onBack: widget.onBack,
-                ),
-                // 메인 콘텐츠
-                Expanded(
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    padding: const EdgeInsets.fromLTRB(24, 8, 24, 120),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // 타이틀
-                        const _TitleSection(),
-                        const SizedBox(height: 24),
-                        // 사진 그리드
-                        GridView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                childAspectRatio: 3 / 4,
-                                crossAxisSpacing: 12,
-                                mainAxisSpacing: 12,
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await _handleBack();
+      },
+      child: Scaffold(
+        backgroundColor: _AppColors.backgroundLight,
+        body: SafeArea(
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  _Header(
+                    currentStep: widget.currentStep,
+                    totalSteps: widget.totalSteps,
+                    onBack: _handleBack,
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.fromLTRB(24, 8, 24, 120),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const _TitleSection(),
+                          const SizedBox(height: 24),
+                          GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  childAspectRatio: 3 / 4,
+                                  crossAxisSpacing: 12,
+                                  mainAxisSpacing: 12,
+                                ),
+                            itemCount: 6,
+                            itemBuilder: (context, index) {
+                              return _PhotoSlot(
+                                index: index,
+                                photoUrl: _photos[index],
+                                isUploading: _isUploading[index],
+                                onAdd: () => _addPhoto(index),
+                                onRemove: () => _removePhoto(index),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 24),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: const [
+                              Icon(
+                                Icons.info_outline_rounded,
+                                color: _AppColors.primary,
+                                size: 18,
                               ),
-                          itemCount: 6,
-                          itemBuilder: (context, index) {
-                            final photoUrl = _photos[index];
-                            return _PhotoSlot(
-                              index: index,
-                              photoUrl: photoUrl,
-                              onAdd: () => _addPhoto(index),
-                              onRemove: () => _removePhoto(index),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 24),
-                        // 안내 문구
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Icon(
-                              Icons.info_outline_rounded,
-                              color: _AppColors.primary,
-                              size: 18,
-                            ),
-                            SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                '본인이 나오지 않거나 불쾌감을 주는 사진은 통보 없이 삭제될 수 있습니다.',
-                                style: TextStyle(
-                                  fontFamily: 'Noto Sans KR',
-                                  fontSize: 12,
-                                  color: _AppColors.textSub,
-                                  height: 1.4,
+                              SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  '본인이 나오지 않거나 불쾌감을 주는 사진은 통보 없이 삭제될 수 있습니다.',
+                                  style: TextStyle(
+                                    fontFamily: 'Noto Sans KR',
+                                    fontSize: 12,
+                                    color: _AppColors.textSub,
+                                    height: 1.4,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            // 하단 버튼
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: _BottomActionBar(
-                photoCount: _photoCount,
-                minRequired: _minRequiredPhotos,
-                onNext: () {
-                  if (_photoCount >= _minRequiredPhotos) {
-                    HapticFeedback.mediumImpact();
-                    final validPhotos = _photos.whereType<String>().toList();
-                    OnboardingSaveHelper.savePhotos(validPhotos);
-                    if (widget.onNext != null) {
-                      widget.onNext!.call(validPhotos);
-                    } else {
-                      Navigator.of(
-                        context,
-                      ).pushNamed(RouteNames.onboardingSelfIntro);
-                    }
-                  } else {
-                    HapticFeedback.heavyImpact();
-                  }
-                },
+                ],
               ),
-            ),
-          ],
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: _BottomActionBar(
+                  photoCount: _photoCount,
+                  minRequired: _minRequiredPhotos,
+                  isUploading: _isUploading.any((e) => e),
+                  onNext: _handleNext,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-// =============================================================================
-// 헤더
-// =============================================================================
 class _Header extends StatelessWidget {
   final int currentStep;
   final int totalSteps;
@@ -236,7 +369,6 @@ class _Header extends StatelessWidget {
               backgroundColor: Colors.transparent,
             ),
           ),
-          // 커스텀 프로그레스 인디케이터
           Row(
             children: List.generate(totalSteps, (index) {
               final isCurrent = index == currentStep - 1;
@@ -259,9 +391,6 @@ class _Header extends StatelessWidget {
   }
 }
 
-// =============================================================================
-// 타이틀 섹션
-// =============================================================================
 class _TitleSection extends StatelessWidget {
   const _TitleSection();
 
@@ -273,7 +402,7 @@ class _TitleSection extends StatelessWidget {
         Text(
           '프로필 사진 등록',
           style: TextStyle(
-            fontFamily: 'Plus Jakarta Sans',
+            fontFamily: 'Noto Sans KR',
             fontSize: 26,
             fontWeight: FontWeight.bold,
             color: _AppColors.textMain,
@@ -304,31 +433,57 @@ class _TitleSection extends StatelessWidget {
   }
 }
 
-// =============================================================================
-// 사진 슬롯
-// =============================================================================
 class _PhotoSlot extends StatelessWidget {
   final int index;
   final String? photoUrl;
+  final bool isUploading;
   final VoidCallback onAdd;
   final VoidCallback onRemove;
 
   const _PhotoSlot({
     required this.index,
     required this.photoUrl,
+    required this.isUploading,
     required this.onAdd,
     required this.onRemove,
   });
 
   @override
   Widget build(BuildContext context) {
+    if (isUploading) {
+      return Container(
+        decoration: BoxDecoration(
+          color: _AppColors.surfaceLight,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: _AppColors.borderDashed),
+        ),
+        child: const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 28,
+                height: 28,
+                child: CircularProgressIndicator(strokeWidth: 2.5),
+              ),
+              SizedBox(height: 12),
+              Text(
+                '업로드 중...',
+                style: TextStyle(
+                  fontFamily: 'Noto Sans KR',
+                  fontSize: 13,
+                  color: _AppColors.textSub,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     if (photoUrl != null) {
-      // 채워진 상태
       return GestureDetector(
-        onTap: () {
-          // 수정 로직 (여기서는 추가와 동일하게 처리하거나 별도 구현)
-          onAdd();
-        },
+        onTap: onAdd,
         child: Stack(
           children: [
             Container(
@@ -348,7 +503,6 @@ class _PhotoSlot extends StatelessWidget {
                 ],
               ),
             ),
-            // 대표 뱃지 (첫 번째 슬롯)
             if (index == 0)
               Positioned(
                 top: 8,
@@ -380,7 +534,6 @@ class _PhotoSlot extends StatelessWidget {
                   ),
                 ),
               ),
-            // 삭제 버튼
             Positioned(
               top: -8,
               right: -8,
@@ -411,66 +564,62 @@ class _PhotoSlot extends StatelessWidget {
           ],
         ),
       );
-    } else {
-      // 빈 상태
-      return GestureDetector(
-        onTap: onAdd,
-        child: Container(
-          decoration: BoxDecoration(
-            color: _AppColors.surfaceLight,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: _AppColors.borderDashed,
-              width: 2,
-              style: BorderStyle
-                  .none, // Dotted/Dashed는 CustomPainter 필요하나, 간단히 실선 혹은 구현 타협
-            ),
+    }
+
+    return GestureDetector(
+      onTap: onAdd,
+      child: Container(
+        decoration: BoxDecoration(
+          color: _AppColors.surfaceLight,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: _AppColors.borderDashed,
+            width: 2,
+            style: BorderStyle.none,
           ),
-          // Dashed Border 효과를 위해 CustomPaint를 사용할 수 있으나 복잡도 줄이기 위해 스타일링 대체
-          child: CustomPaint(
-            painter: _DashedBorderPainter(
-              color: _AppColors.borderDashed,
-              strokeWidth: 2,
-              gap: 4,
-            ),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: _AppColors.backgroundLight,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.add_rounded,
-                      color: _AppColors.textGray,
-                      size: 24,
-                    ),
+        ),
+        child: CustomPaint(
+          painter: _DashedBorderPainter(
+            color: _AppColors.borderDashed,
+            strokeWidth: 2,
+            gap: 4,
+          ),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: _AppColors.backgroundLight,
+                    shape: BoxShape.circle,
                   ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    '추가',
-                    style: TextStyle(
-                      fontFamily: 'Noto Sans KR',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: _AppColors.textSub,
-                    ),
+                  child: const Icon(
+                    Icons.add_rounded,
+                    color: _AppColors.textGray,
+                    size: 24,
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  '추가',
+                  style: TextStyle(
+                    fontFamily: 'Noto Sans KR',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: _AppColors.textSub,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
-      );
-    }
+      ),
+    );
   }
 }
 
-// Dashed Border Painter
 class _DashedBorderPainter extends CustomPainter {
   final Color color;
   final double strokeWidth;
@@ -500,7 +649,7 @@ class _DashedBorderPainter extends CustomPainter {
     final Path dashPath = Path();
     final double dashWidth = 8.0;
 
-    for (final PathMetric metric in path.computeMetrics()) {
+    for (final metric in path.computeMetrics()) {
       double distance = 0.0;
       while (distance < metric.length) {
         dashPath.addPath(
@@ -518,85 +667,91 @@ class _DashedBorderPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-// =============================================================================
-// 하단 액션바
-// =============================================================================
 class _BottomActionBar extends StatelessWidget {
   final int photoCount;
   final int minRequired;
-  final VoidCallback onNext;
+  final bool isUploading;
+  final Future<void> Function() onNext;
 
   const _BottomActionBar({
     required this.photoCount,
     required this.minRequired,
+    required this.isUploading,
     required this.onNext,
   });
 
   @override
   Widget build(BuildContext context) {
-    final bool isEnabled = photoCount >= minRequired;
+    final bool canProceed = photoCount >= minRequired && !isUploading;
 
     return Container(
-      padding: EdgeInsets.fromLTRB(
-        24,
-        16,
-        24,
-        MediaQuery.of(context).padding.bottom + 24,
-      ),
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
       decoration: BoxDecoration(
-        color: _AppColors.backgroundLight.withValues(alpha: 0.95),
-        border: const Border(top: BorderSide(color: Colors.transparent)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            '최소 $minRequired장 업로드를 권장해요',
-            style: const TextStyle(
-              fontFamily: 'Noto Sans KR',
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: _AppColors.textGray,
-            ),
+        color: _AppColors.surfaceLight,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 14,
+            offset: const Offset(0, -4),
           ),
-          const SizedBox(height: 12),
-          CupertinoButton(
-            padding: EdgeInsets.zero,
-            onPressed: onNext,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              height: 56,
-              decoration: BoxDecoration(
-                color: isEnabled
-                    ? _AppColors.primary
-                    : _AppColors.primary.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: isEnabled
-                    ? [
-                        BoxShadow(
-                          color: _AppColors.primary.withValues(alpha: 0.3),
-                          blurRadius: 12,
-                          offset: const Offset(0, 6),
-                        ),
-                      ]
-                    : null,
-              ),
-              child: Center(
+        ],
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                Text(
+                  '$photoCount / 6장',
+                  style: const TextStyle(
+                    fontFamily: 'Noto Sans KR',
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: _AppColors.textSub,
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  '최소 $minRequired장 필요',
+                  style: const TextStyle(
+                    fontFamily: 'Noto Sans KR',
+                    fontSize: 12,
+                    color: _AppColors.textGray,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            SizedBox(
+              width: double.infinity,
+              height: 54,
+              child: ElevatedButton(
+                onPressed: onNext,
+                style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  backgroundColor: canProceed
+                      ? _AppColors.primary
+                      : _AppColors.primary.withValues(alpha: 0.35),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
                 child: Text(
-                  '다음',
-                  style: TextStyle(
-                    fontFamily: 'Plus Jakarta Sans',
+                  isUploading ? '업로드 중...' : '다음',
+                  style: const TextStyle(
+                    fontFamily: 'Noto Sans KR',
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white.withValues(
-                      alpha: isEnabled ? 1.0 : 0.8,
-                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

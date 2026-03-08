@@ -243,7 +243,7 @@ class _Header extends StatelessWidget {
               '약관 동의',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontFamily: '.SF Pro Display',
+                fontFamily: 'Noto Sans KR',
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: _AppColors.textMain,
@@ -268,7 +268,7 @@ class _Headline extends StatelessWidget {
     return RichText(
       text: const TextSpan(
         style: TextStyle(
-          fontFamily: '.SF Pro Display',
+          fontFamily: 'Noto Sans KR',
           fontSize: 28,
           fontWeight: FontWeight.w700,
           height: 1.3,
@@ -374,7 +374,7 @@ class _TermsCard extends StatelessWidget {
                       child: RichText(
                         text: const TextSpan(
                           style: TextStyle(
-                            fontFamily: '.SF Pro Text',
+                            fontFamily: 'Noto Sans KR',
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
                             color: _AppColors.textSecondary,
@@ -454,7 +454,7 @@ class _AllAgreeRow extends StatelessWidget {
                   const Text(
                     '약관 전체 동의',
                     style: TextStyle(
-                      fontFamily: '.SF Pro Display',
+                      fontFamily: 'Noto Sans KR',
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
                       color: _AppColors.textMain,
@@ -464,7 +464,7 @@ class _AllAgreeRow extends StatelessWidget {
                   Text(
                     '선택 포함 모든 약관에 동의합니다',
                     style: TextStyle(
-                      fontFamily: '.SF Pro Text',
+                      fontFamily: 'Noto Sans KR',
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                       color: _AppColors.textMuted,
@@ -509,7 +509,7 @@ class _TermsItemRow extends StatelessWidget {
               child: RichText(
                 text: TextSpan(
                   style: const TextStyle(
-                    fontFamily: '.SF Pro Text',
+                    fontFamily: 'Noto Sans KR',
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
                     color: _AppColors.textSecondary,
@@ -606,7 +606,7 @@ class _ToggleOption extends StatelessWidget {
         Text(
           label,
           style: const TextStyle(
-            fontFamily: '.SF Pro Text',
+            fontFamily: 'Noto Sans KR',
             fontSize: 14,
             fontWeight: FontWeight.w500,
             color: _AppColors.textMuted,
@@ -675,7 +675,7 @@ class _BottomCTA extends StatelessWidget {
             child: Text(
               '동의하고 시작하기',
               style: TextStyle(
-                fontFamily: '.SF Pro Text',
+                fontFamily: 'Noto Sans KR',
                 fontSize: 17,
                 fontWeight: FontWeight.w700,
                 color: isEnabled
