@@ -264,7 +264,7 @@ class _AnimatedHighlightButton extends StatelessWidget {
                       Text(
                         'AI에게 내 취향 알려주기',
                         style: TextStyle(
-                          fontFamily: '.SF Pro Text',
+                          fontFamily: 'Noto Sans KR',
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
                           color: Color(0xFF1F2937),
@@ -356,7 +356,7 @@ class _TutorialContent extends StatelessWidget {
                 'AI에게 당신의 취향을\n학습시켜 보세요',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontFamily: '.SF Pro Display',
+                  fontFamily: 'Noto Sans KR',
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
                   color: _AppColors.textMain,
@@ -371,7 +371,7 @@ class _TutorialContent extends StatelessWidget {
                 '위 버튼을 눌러 AI 취향 학습을 시작하면\n매칭 추천이 더욱 정확해집니다.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontFamily: '.SF Pro Text',
+                  fontFamily: 'Noto Sans KR',
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
                   color: _AppColors.textSub,
@@ -402,7 +402,7 @@ class _TutorialContent extends StatelessWidget {
                     child: Text(
                       '시작하기',
                       style: TextStyle(
-                        fontFamily: '.SF Pro Text',
+                        fontFamily: 'Noto Sans KR',
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                         color: CupertinoColors.white,
@@ -526,7 +526,7 @@ class _FakeMainScreen extends StatelessWidget {
                       Text(
                         '설레연',
                         style: TextStyle(
-                          fontFamily: '.SF Pro Display',
+                          fontFamily: 'Noto Sans KR',
                           fontSize: 24,
                           fontWeight: FontWeight.w900,
                           color: _AppColors.textMain,
@@ -552,7 +552,7 @@ class _FakeMainScreen extends StatelessWidget {
                           child: const Text(
                             'AI 취향...',
                             style: TextStyle(
-                              fontFamily: '.SF Pro Text',
+                              fontFamily: 'Noto Sans KR',
                               fontSize: 12,
                               color: _AppColors.gray400,
                             ),
@@ -591,7 +591,7 @@ class _FakeMainScreen extends StatelessWidget {
                         child: const Text(
                           'AI CURATED',
                           style: TextStyle(
-                            fontFamily: '.SF Pro Text',
+                            fontFamily: 'Noto Sans KR',
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
                             color: Color(0xFF9333EA), // purple-600
@@ -602,7 +602,7 @@ class _FakeMainScreen extends StatelessWidget {
                       const Text(
                         'Nov 14',
                         style: TextStyle(
-                          fontFamily: '.SF Pro Text',
+                          fontFamily: 'Noto Sans KR',
                           fontSize: 12,
                           color: _AppColors.gray400,
                         ),
@@ -616,7 +616,7 @@ class _FakeMainScreen extends StatelessWidget {
                       Text(
                         '오늘의 설레연',
                         style: TextStyle(
-                          fontFamily: '.SF Pro Display',
+                          fontFamily: 'Noto Sans KR',
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
                           color: _AppColors.textMain,
@@ -666,7 +666,7 @@ class _FakeMainScreen extends StatelessWidget {
                                       Text(
                                         'Ji-min',
                                         style: TextStyle(
-                                          fontFamily: '.SF Pro Display',
+                                          fontFamily: 'Noto Sans KR',
                                           fontSize: 32,
                                           fontWeight: FontWeight.bold,
                                           color: _AppColors.textMain.withValues(
@@ -690,7 +690,7 @@ class _FakeMainScreen extends StatelessWidget {
                                         child: const Text(
                                           '94%',
                                           style: TextStyle(
-                                            fontFamily: '.SF Pro Text',
+                                            fontFamily: 'Noto Sans KR',
                                             fontSize: 10,
                                             color: _AppColors.textSub,
                                           ),

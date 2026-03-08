@@ -14,6 +14,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../router/route_names.dart';
 import '../../../services/onboarding_save_helper.dart';
+import '../../../services/storage_service.dart';
+import '../../../services/user_service.dart';
 
 // =============================================================================
 // 색상 상수
@@ -270,6 +272,51 @@ class _InterestsSelectionScreenState extends State<InterestsSelectionScreen> {
     '한강에서 치맥',
     '넷플릭스',
   }; // 초기 데이터 예시
+  final StorageService _storageService = StorageService();
+  final UserService _userService = UserService();
+  bool _isSavingOnExit = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadExistingInterests();
+  }
+
+  Future<void> _loadExistingInterests() async {
+    final kakaoUserId = await _storageService.getKakaoUserId();
+    if (kakaoUserId == null || kakaoUserId.isEmpty) return;
+    final data = await _userService.getUserProfile(kakaoUserId);
+    if (!mounted || data == null) return;
+    final onboarding = data['onboarding'];
+    if (onboarding is! Map) return;
+    final interestsRaw = onboarding['interests'];
+    if (interestsRaw is List && interestsRaw.isNotEmpty) {
+      _selectedInterests
+        ..clear()
+        ..addAll(interestsRaw.map((e) => e.toString()));
+      if (mounted) setState(() {});
+    }
+  }
+
+  Future<void> _saveCurrentInterests() async {
+    if (_isSavingOnExit) return;
+    _isSavingOnExit = true;
+    try {
+      await OnboardingSaveHelper.saveInterests(_selectedInterests.toList());
+    } finally {
+      _isSavingOnExit = false;
+    }
+  }
+
+  Future<void> _handleBack() async {
+    await _saveCurrentInterests();
+    if (!mounted) return;
+    if (widget.onBack != null) {
+      widget.onBack!();
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
 
   void _toggleInterest(String interest) {
     HapticFeedback.lightImpact();
@@ -289,19 +336,25 @@ class _InterestsSelectionScreenState extends State<InterestsSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: _AppColors.backgroundLight,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                // 헤더
-                _Header(
-                  currentStep: widget.currentStep,
-                  totalSteps: widget.totalSteps,
-                  onBack: widget.onBack,
-                ),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await _handleBack();
+      },
+      child: Scaffold(
+        backgroundColor: _AppColors.backgroundLight,
+        body: SafeArea(
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  // 헤더
+                  _Header(
+                    currentStep: widget.currentStep,
+                    totalSteps: widget.totalSteps,
+                    onBack: _handleBack,
+                  ),
                 // 메인 콘텐츠
                 Expanded(
                   child: SingleChildScrollView(
@@ -381,20 +434,19 @@ class _InterestsSelectionScreenState extends State<InterestsSelectionScreen> {
               child: _BottomFloatingArea(
                 onNext:
                     widget.onComplete ??
-                    () {
-                      OnboardingSaveHelper.saveInterests(
-                        _selectedInterests.toList(),
-                      );
-                      Navigator.of(
-                        context,
-                      ).pushNamed(RouteNames.onboardingLifestyle);
+                    () async {
+                      await _saveCurrentInterests();
+                      if (!mounted) return;
+                      Navigator.of(context)
+                          .pushNamed(RouteNames.onboardingLifestyle);
                     },
               ),
             ),
           ],
         ),
       ),
-    );
+    ),
+  );
   }
 }
 

@@ -128,7 +128,9 @@ class StorageService {
   ) async {
     final prefs = await SharedPreferences.getInstance();
     final current = await getOnboardingDraft(kakaoUserId);
-    current.addAll(_jsonFriendly(partial) as Map<String, dynamic>); // shallow merge
+    current.addAll(
+      _jsonFriendly(partial) as Map<String, dynamic>,
+    ); // shallow merge
     await prefs.setString(
       '$_onboardingDraftKeyPrefix$kakaoUserId',
       jsonEncode(current),
@@ -138,5 +140,10 @@ class StorageService {
   Future<void> clearOnboardingDraft(String kakaoUserId) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('$_onboardingDraftKeyPrefix$kakaoUserId');
+  }
+
+  Future<void> clearAll() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
   }
 }

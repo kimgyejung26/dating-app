@@ -15,6 +15,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../router/route_names.dart';
 import '../../../services/onboarding_save_helper.dart';
+import '../../../services/storage_service.dart';
+import '../../../services/user_service.dart';
 
 // =============================================================================
 // 색상 상수
@@ -81,6 +83,51 @@ class MajorSelectionScreen extends StatefulWidget {
 
 class _MajorSelectionScreenState extends State<MajorSelectionScreen> {
   MajorType? _selectedMajor;
+  final StorageService _storageService = StorageService();
+  final UserService _userService = UserService();
+  bool _isSavingOnExit = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadExistingMajor();
+  }
+
+  Future<void> _loadExistingMajor() async {
+    final kakaoUserId = await _storageService.getKakaoUserId();
+    if (kakaoUserId == null || kakaoUserId.isEmpty) return;
+    final data = await _userService.getUserProfile(kakaoUserId);
+    if (!mounted || data == null) return;
+    final onboarding = data['onboarding'];
+    if (onboarding is! Map) return;
+    final majorStr = onboarding['major']?.toString();
+    if (majorStr != null && majorStr.isNotEmpty) {
+      try {
+        _selectedMajor = MajorType.values.firstWhere((v) => v.name == majorStr);
+      } catch (_) {}
+      if (mounted) setState(() {});
+    }
+  }
+
+  Future<void> _saveCurrentMajor() async {
+    if (_isSavingOnExit) return;
+    _isSavingOnExit = true;
+    try {
+      await OnboardingSaveHelper.saveMajor(_selectedMajor?.name);
+    } finally {
+      _isSavingOnExit = false;
+    }
+  }
+
+  Future<void> _handleBack() async {
+    await _saveCurrentMajor();
+    if (!mounted) return;
+    if (widget.onBack != null) {
+      widget.onBack!();
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
 
   static const List<_MajorOption> _options = [
     _MajorOption(
@@ -117,22 +164,28 @@ class _MajorSelectionScreenState extends State<MajorSelectionScreen> {
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).padding.bottom;
 
-    return CupertinoPageScaffold(
-      backgroundColor: _AppColors.backgroundLight,
-      child: Stack(
-        children: [
-          // 배경 그라데이션
-          _BackgroundGradients(),
-          // 메인 콘텐츠
-          SafeArea(
-            child: Column(
-              children: [
-                // 헤더
-                _Header(
-                  currentStep: widget.currentStep,
-                  totalSteps: widget.totalSteps,
-                  onBack: widget.onBack,
-                ),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await _handleBack();
+      },
+      child: CupertinoPageScaffold(
+        backgroundColor: _AppColors.backgroundLight,
+        child: Stack(
+          children: [
+            // 배경 그라데이션
+            _BackgroundGradients(),
+            // 메인 콘텐츠
+            SafeArea(
+              child: Column(
+                children: [
+                  // 헤더
+                  _Header(
+                    currentStep: widget.currentStep,
+                    totalSteps: widget.totalSteps,
+                    onBack: _handleBack,
+                  ),
                 // 콘텐츠
                 Expanded(
                   child: SingleChildScrollView(
@@ -167,9 +220,10 @@ class _MajorSelectionScreenState extends State<MajorSelectionScreen> {
             child: _BottomButtons(
               bottomPadding: bottomPadding,
               onSkip: widget.onSkip,
-              onNext: () {
+              onNext: () async {
                 HapticFeedback.mediumImpact();
-                OnboardingSaveHelper.saveMajor(_selectedMajor?.name);
+                await _saveCurrentMajor();
+                if (!mounted) return;
                 if (widget.onNext != null) {
                   widget.onNext!.call(_selectedMajor);
                 } else {
@@ -180,6 +234,7 @@ class _MajorSelectionScreenState extends State<MajorSelectionScreen> {
           ),
         ],
       ),
+    ),
     );
   }
 }
@@ -321,7 +376,7 @@ class _TitleSection extends StatelessWidget {
           '어느 학과/계열\n소속이신가요?',
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontFamily: '.SF Pro Display',
+            fontFamily: 'Noto Sans KR',
             fontSize: 24,
             fontWeight: FontWeight.w700,
             height: 1.3,
@@ -333,7 +388,7 @@ class _TitleSection extends StatelessWidget {
         const Text(
           '비슷한 전공의 친구를 찾을 때 도움이 돼요',
           style: TextStyle(
-            fontFamily: '.SF Pro Text',
+            fontFamily: 'Noto Sans KR',
             fontSize: 14,
             color: _AppColors.gray500,
           ),
@@ -459,7 +514,7 @@ class _OptionCard extends StatelessWidget {
                 Text(
                   option.title,
                   style: const TextStyle(
-                    fontFamily: '.SF Pro Display',
+                    fontFamily: 'Noto Sans KR',
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                     color: _AppColors.gray800,
@@ -470,7 +525,7 @@ class _OptionCard extends StatelessWidget {
                 Text(
                   option.subtitle,
                   style: const TextStyle(
-                    fontFamily: '.SF Pro Text',
+                    fontFamily: 'Noto Sans KR',
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                     color: _AppColors.gray400,
@@ -546,7 +601,7 @@ class _BottomButtons extends StatelessWidget {
                   child: Text(
                     '상관없어요',
                     style: TextStyle(
-                      fontFamily: '.SF Pro Text',
+                      fontFamily: 'Noto Sans KR',
                       fontSize: 17,
                       fontWeight: FontWeight.w700,
                       color: _AppColors.gray500,
@@ -585,7 +640,7 @@ class _BottomButtons extends StatelessWidget {
                     Text(
                       '다음',
                       style: TextStyle(
-                        fontFamily: '.SF Pro Text',
+                        fontFamily: 'Noto Sans KR',
                         fontSize: 17,
                         fontWeight: FontWeight.w700,
                         color: CupertinoColors.white,

@@ -78,7 +78,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         middle: const Text(
           '설정',
           style: TextStyle(
-            fontFamily: '.SF Pro Display',
+            fontFamily: 'Noto Sans KR',
             fontSize: 18,
             fontWeight: FontWeight.w700,
             color: _AppColors.textMain,
@@ -156,7 +156,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           child: const Text(
                             '카카오 연동됨',
                             style: TextStyle(
-                              fontFamily: '.SF Pro Text',
+                              fontFamily: 'Noto Sans KR',
                               fontSize: 11,
                               fontWeight: FontWeight.w700,
                               color: _AppColors.kakaoBrown,
@@ -186,7 +186,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         trailing: const Text(
                           '켜짐',
                           style: TextStyle(
-                            fontFamily: '.SF Pro Text',
+                            fontFamily: 'Noto Sans KR',
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                             color: _AppColors.primary,
@@ -255,7 +255,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     child: Text(
                       '버전 1.0.0',
                       style: TextStyle(
-                        fontFamily: '.SF Pro Text',
+                        fontFamily: 'Noto Sans KR',
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                         color: _AppColors.gray400,
@@ -287,7 +287,7 @@ class _SectionTitle extends StatelessWidget {
       child: Text(
         title.toUpperCase(),
         style: const TextStyle(
-          fontFamily: '.SF Pro Text',
+          fontFamily: 'Noto Sans KR',
           fontSize: 12,
           fontWeight: FontWeight.w700,
           letterSpacing: 1,
@@ -376,7 +376,7 @@ class _SettingsItem extends StatelessWidget {
                   Text(
                     title,
                     style: const TextStyle(
-                      fontFamily: '.SF Pro Text',
+                      fontFamily: 'Noto Sans KR',
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                       color: _AppColors.textMain,
@@ -387,7 +387,7 @@ class _SettingsItem extends StatelessWidget {
                     Text(
                       subtitle!,
                       style: const TextStyle(
-                        fontFamily: '.SF Pro Text',
+                        fontFamily: 'Noto Sans KR',
                         fontSize: 13,
                         color: _AppColors.textSecondary,
                       ),
@@ -449,7 +449,7 @@ class _SettingsToggle extends StatelessWidget {
             child: Text(
               title,
               style: const TextStyle(
-                fontFamily: '.SF Pro Text',
+                fontFamily: 'Noto Sans KR',
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
                 color: _AppColors.textMain,

@@ -1,19 +1,16 @@
 // =============================================================================
 // 자기소개 작성 화면 (온보딩 Step 5)
 // 경로: lib/features/onboarding/screens/self_introduction_screen.dart
-//
-// 사용 예시:
-// Navigator.push(
-//   context,
-//   CupertinoPageRoute(builder: (_) => const SelfIntroductionScreen()),
-// );
 // =============================================================================
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import '../../../router/route_names.dart';
 import '../../../services/onboarding_save_helper.dart';
+import '../../../services/storage_service.dart';
+import '../../../services/user_service.dart';
 
 // =============================================================================
 // 색상 상수
@@ -52,17 +49,60 @@ class SelfIntroductionScreen extends StatefulWidget {
 class _SelfIntroductionScreenState extends State<SelfIntroductionScreen> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
+  final UserService _userService = UserService();
+  final StorageService _storageService = StorageService();
+
   int _charCount = 0;
+  bool _isSavingOnExit = false;
+
   static const int _maxLength = 300;
 
   @override
   void initState() {
     super.initState();
+    _loadExistingSelfIntroduction();
     _controller.addListener(() {
       setState(() {
         _charCount = _controller.text.length;
       });
     });
+  }
+
+  Future<void> _loadExistingSelfIntroduction() async {
+    final kakaoUserId = await _storageService.getKakaoUserId();
+    if (kakaoUserId == null || kakaoUserId.isEmpty) return;
+
+    final data = await _userService.getUserProfile(kakaoUserId);
+    if (!mounted || data == null) return;
+
+    final onboarding = data['onboarding'];
+    if (onboarding is! Map) return;
+
+    final intro = onboarding['selfIntroduction']?.toString() ?? '';
+    _controller.text = intro;
+    _charCount = intro.length;
+  }
+
+  Future<void> _saveCurrentSelfIntroduction() async {
+    if (_isSavingOnExit) return;
+    _isSavingOnExit = true;
+
+    try {
+      await OnboardingSaveHelper.saveSelfIntroduction(_controller.text.trim());
+    } finally {
+      _isSavingOnExit = false;
+    }
+  }
+
+  Future<void> _handleBack() async {
+    await _saveCurrentSelfIntroduction();
+    if (!mounted) return;
+
+    if (widget.onBack != null) {
+      widget.onBack!();
+    } else {
+      Navigator.of(context).pop();
+    }
   }
 
   @override
@@ -87,105 +127,107 @@ class _SelfIntroductionScreenState extends State<SelfIntroductionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        backgroundColor: _AppColors.backgroundLight,
-        resizeToAvoidBottomInset: false, // 하단 버튼 처리를 위해 수동 조절
-        body: SafeArea(
-          child: Stack(
-            children: [
-              Column(
-                children: [
-                  // 헤더
-                  _Header(
-                    currentStep: widget.currentStep,
-                    totalSteps: widget.totalSteps,
-                    onBack: widget.onBack,
-                  ),
-                  // 메인 콘텐츠
-                  Expanded(
-                    child: SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      padding: const EdgeInsets.fromLTRB(24, 0, 24, 100),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 16),
-                          // 헤드라인
-                          const Text(
-                            '자기 소개',
-                            style: TextStyle(
-                              fontFamily: 'Plus Jakarta Sans',
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              height: 1.2,
-                              color: _AppColors.textMain,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await _handleBack();
+      },
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          backgroundColor: _AppColors.backgroundLight,
+          resizeToAvoidBottomInset: false,
+          body: SafeArea(
+            child: Stack(
+              children: [
+                Column(
+                  children: [
+                    _Header(
+                      currentStep: widget.currentStep,
+                      totalSteps: widget.totalSteps,
+                      onBack: _handleBack,
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        padding: const EdgeInsets.fromLTRB(24, 0, 24, 100),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 16),
+                            const Text(
+                              '자기 소개',
+                              style: TextStyle(
+                                fontFamily: 'Noto Sans KR',
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                                height: 1.2,
+                                color: _AppColors.textMain,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 12),
-                          const Text(
-                            '어떤 사람인지 알려주세요',
-                            style: TextStyle(
-                              fontFamily: 'Noto Sans KR',
-                              fontSize: 15,
-                              height: 1.5,
-                              color: _AppColors.textMuted,
+                            const SizedBox(height: 12),
+                            const Text(
+                              '어떤 사람인지 알려주세요',
+                              style: TextStyle(
+                                fontFamily: 'Noto Sans KR',
+                                fontSize: 15,
+                                height: 1.5,
+                                color: _AppColors.textMuted,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 4),
-                          const Text(
-                            '상대방에게 매력을 어필할 수 있는 기회예요.\n솔직하고 담백하게 작성해보세요.',
-                            style: TextStyle(
-                              fontFamily: 'Noto Sans KR',
-                              fontSize: 15,
-                              height: 1.5,
-                              color: _AppColors.textMuted,
+                            const SizedBox(height: 4),
+                            const Text(
+                              '상대방에게 매력을 어필할 수 있는 기회예요.\n솔직하고 담백하게 작성해보세요.',
+                              style: TextStyle(
+                                fontFamily: 'Noto Sans KR',
+                                fontSize: 15,
+                                height: 1.5,
+                                color: _AppColors.textMuted,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 32),
-                          // 입력 영역
-                          _InputArea(
-                            controller: _controller,
-                            focusNode: _focusNode,
-                            maxLength: _maxLength,
-                            charCount: _charCount,
-                          ),
-                          const SizedBox(height: 32),
-                          // 추천 키워드
-                          _SuggestionChipsArea(
-                            onSuggestionSelected: _addSuggestion,
-                          ),
-                          // 키보드 높이만큼 여백 (스크롤 가능하도록)
-                          SizedBox(
-                            height: MediaQuery.of(context).viewInsets.bottom,
-                          ),
-                        ],
+                            const SizedBox(height: 32),
+                            _InputArea(
+                              controller: _controller,
+                              focusNode: _focusNode,
+                              maxLength: _maxLength,
+                              charCount: _charCount,
+                            ),
+                            const SizedBox(height: 32),
+                            _SuggestionChipsArea(
+                              onSuggestionSelected: _addSuggestion,
+                            ),
+                            SizedBox(
+                              height: MediaQuery.of(context).viewInsets.bottom,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              // 하단 버튼
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: _BottomButton(
-                  onNext: () {
-                    HapticFeedback.mediumImpact();
-                    OnboardingSaveHelper.saveSelfIntroduction(_controller.text);
-                    if (widget.onNext != null) {
-                      widget.onNext!.call(_controller.text);
-                    } else {
-                      Navigator.of(
-                        context,
-                      ).pushNamed(RouteNames.onboardingProfileQa);
-                    }
-                  },
+                  ],
                 ),
-              ),
-            ],
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: _BottomButton(
+                    onNext: () async {
+                      HapticFeedback.mediumImpact();
+                      await _saveCurrentSelfIntroduction();
+                      if (!mounted) return;
+
+                      if (widget.onNext != null) {
+                        widget.onNext!.call(_controller.text);
+                      } else {
+                        Navigator.of(
+                          context,
+                        ).pushNamed(RouteNames.onboardingProfileQa);
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -216,10 +258,10 @@ class _Header extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           IconButton(
-            onPressed: () {
+            onPressed: () async {
               HapticFeedback.lightImpact();
               if (onBack != null) {
-                onBack!.call();
+                onBack!();
               } else {
                 Navigator.of(context).pop();
               }
@@ -234,7 +276,6 @@ class _Header extends StatelessWidget {
               backgroundColor: Colors.transparent,
             ),
           ),
-          // 커스텀 프로그레스 인디케이터
           Row(
             children: List.generate(totalSteps, (index) {
               final isCurrent = index == currentStep - 1;
@@ -315,7 +356,7 @@ class _InputArea extends StatelessWidget {
               ),
               border: InputBorder.none,
               contentPadding: EdgeInsets.fromLTRB(20, 20, 20, 40),
-              counterText: '', // 기본 카운터 숨김
+              counterText: '',
             ),
             cursorColor: _AppColors.primary,
           ),
@@ -333,7 +374,7 @@ class _InputArea extends StatelessWidget {
                   Text(
                     '$charCount',
                     style: const TextStyle(
-                      fontFamily: 'Plus Jakarta Sans',
+                      fontFamily: 'Noto Sans KR',
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                       color: _AppColors.primary,
@@ -342,7 +383,7 @@ class _InputArea extends StatelessWidget {
                   Text(
                     ' / $maxLength',
                     style: const TextStyle(
-                      fontFamily: 'Plus Jakarta Sans',
+                      fontFamily: 'Noto Sans KR',
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                       color: _AppColors.textMuted,
@@ -513,7 +554,7 @@ class _BottomButton extends StatelessWidget {
               Text(
                 '다음',
                 style: TextStyle(
-                  fontFamily: 'Zero Sans KR',
+                  fontFamily: 'Noto Sans KR',
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,

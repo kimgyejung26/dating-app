@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'route_names.dart';
 
-// Splash & Auth
+// Splash & Auth (로그인 화면 없음: /login → 카카오 인증 화면으로 통일)
 import '../features/splash/splash_screen.dart';
-import '../features/auth/screens/login_screen.dart';
 import '../features/auth/screens/kakao_auth_screen.dart';
 import '../features/auth/screens/student_verification_screen.dart';
+import '../screens/auth/kakao_callback_screen.dart';
 import '../features/onboarding/screens/terms_screen.dart';
 
 // Onboarding
@@ -92,12 +92,20 @@ import '../features/meeting/screens/meeting_application_screen.dart';
 /// 앱 라우터 (CupertinoPageRoute, 흐름도 단일 소스)
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
-    switch (settings.name) {
+    final name = settings.name ?? '';
+
+    // 카카오 OAuth 콜백: 앱이 /?code=... 로 열렸을 때 (iOS/Android 딥링크)
+    if (name.contains('code=') || name.startsWith('/?')) {
+      return _cupertino(
+        KakaoCallbackScreen(callbackPathAndQuery: name),
+      );
+    }
+
+    switch (name) {
       // Auth
       case RouteNames.splash:
         return _cupertino(const SplashScreen());
       case RouteNames.login:
-        return _cupertino(const LoginScreen());
       case RouteNames.kakaoAuth:
         return _cupertino(const KakaoAuthScreen());
       case RouteNames.terms:

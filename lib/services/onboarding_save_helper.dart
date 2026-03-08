@@ -83,6 +83,16 @@ class OnboardingSaveHelper {
     );
   }
 
+  /// 키 단일 저장 (height_selection_screen 등에서 사용)
+  static Future<void> saveHeight(int height) async {
+    final uid = await _getUserId();
+    if (uid == null) return;
+    await _userService.saveOnboardingBasicInfo(
+      kakaoUserId: uid,
+      basicInfo: {'height': height},
+    );
+  }
+
   /// Step 5: 사진
   static Future<void> savePhotos(List<String> photoUrls) async {
     final uid = await _getUserId();
@@ -164,5 +174,16 @@ class OnboardingSaveHelper {
     final uid = await _getUserId();
     if (uid == null) return;
     await _userService.skipIdealType(uid);
+  }
+
+  /// 이상형 단일 필드 저장 (ideal_age, ideal_height, ideal_mbti, ideal_department 등)
+  static Future<void> saveIdealTypeField(String fieldName, dynamic value) async {
+    final uid = await _getUserId();
+    if (uid == null) return;
+    await _userService.updateIdealTypeField(
+      kakaoUserId: uid,
+      fieldName: fieldName,
+      value: value,
+    );
   }
 }
