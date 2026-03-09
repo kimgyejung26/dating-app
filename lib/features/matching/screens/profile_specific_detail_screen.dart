@@ -11,6 +11,8 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../../services/interaction_service.dart';
 
 // =============================================================================
 // 색상 상수
@@ -30,6 +32,7 @@ class _AppColors {
 // 프로필 모델
 // =============================================================================
 class _MatchProfile {
+  final String id;
   final String name;
   final int age;
   final String university;
@@ -41,6 +44,7 @@ class _MatchProfile {
   final List<String> interests;
 
   const _MatchProfile({
+    required this.id,
     required this.name,
     required this.age,
     required this.university,
@@ -75,6 +79,7 @@ class AiMatchProfileScreen extends StatelessWidget {
   });
 
   static const _profile = _MatchProfile(
+    id: 'target_jimin',
     name: 'Jimin',
     age: 22,
     university: 'Seoul National Univ',
@@ -131,7 +136,7 @@ class AiMatchProfileScreen extends StatelessWidget {
         middle: Text(
           'AI MATCH',
           style: TextStyle(
-            fontFamily: 'Noto Sans KR',
+            fontFamily: '.SF Pro Text',
             fontSize: 14,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,
@@ -140,7 +145,7 @@ class AiMatchProfileScreen extends StatelessWidget {
         ),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
-          onPressed: onMore,
+          onPressed: onMore ?? () => _showMoreOptions(context),
           child: Container(
             width: 40,
             height: 40,
@@ -181,6 +186,119 @@ class AiMatchProfileScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void _showMoreOptions(BuildContext context) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext ctx) {
+        return CupertinoActionSheet(
+          actions: <CupertinoActionSheetAction>[
+            CupertinoActionSheetAction(
+              isDestructiveAction: true,
+              onPressed: () {
+                Navigator.pop(ctx);
+                _showReportDialog(context, _profile.id);
+              },
+              child: const Text(
+                '신고 및 차단',
+                style: TextStyle(fontFamily: '.SF Pro Text'),
+              ),
+            ),
+          ],
+          cancelButton: CupertinoActionSheetAction(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text(
+              '취소',
+              style: TextStyle(fontFamily: '.SF Pro Text'),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showReportDialog(BuildContext context, String targetUserId) {
+    final TextEditingController reasonController = TextEditingController();
+    showCupertinoDialog(
+      context: context,
+      builder: (ctx) {
+        bool isSubmitting = false;
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return CupertinoAlertDialog(
+              title: const Text(
+                '신고 및 차단',
+                style: TextStyle(fontFamily: '.SF Pro Display'),
+              ),
+              content: Column(
+                children: [
+                  const SizedBox(height: 10),
+                  const Text(
+                    '이 사용자를 신고하고 추천에서 차단하시겠습니까?\n사유를 간략히 적어주세요.',
+                    style: TextStyle(fontFamily: '.SF Pro Text'),
+                  ),
+                  const SizedBox(height: 16),
+                  CupertinoTextField(
+                    controller: reasonController,
+                    placeholder: '신고 사유 입력',
+                    style: const TextStyle(fontFamily: '.SF Pro Text'),
+                  ),
+                ],
+              ),
+              actions: [
+                CupertinoDialogAction(
+                  isDestructiveAction: true,
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text(
+                    '취소',
+                    style: TextStyle(fontFamily: '.SF Pro Text'),
+                  ),
+                ),
+                CupertinoDialogAction(
+                  isDefaultAction: true,
+                  onPressed: isSubmitting
+                      ? null
+                      : () async {
+                          if (reasonController.text.isEmpty) return;
+                          setState(() => isSubmitting = true);
+                          try {
+                            final currentUserId =
+                                FirebaseAuth.instance.currentUser?.uid;
+                            if (currentUserId == null) {
+                              if (ctx.mounted) Navigator.pop(ctx);
+                              return;
+                            }
+
+                            await InteractionService().blockAndReportUser(
+                              fromUserId: currentUserId,
+                              toUserId: targetUserId,
+                              reason: reasonController.text,
+                            );
+
+                            if (ctx.mounted) {
+                              Navigator.pop(ctx); // close dialog
+                              // pop the profile screen returning to the previous screen
+                              Navigator.of(context).pop();
+                            }
+                          } catch (e) {
+                            setState(() => isSubmitting = false);
+                            debugPrint('Report error: \$e');
+                          }
+                        },
+                  child: isSubmitting
+                      ? const CupertinoActivityIndicator()
+                      : const Text(
+                          '확인',
+                          style: TextStyle(fontFamily: '.SF Pro Text'),
+                        ),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 }
@@ -226,7 +344,7 @@ class _ProfileCard extends StatelessWidget {
                 Text(
                   '${profile.name}, ${profile.age}',
                   style: const TextStyle(
-                    fontFamily: 'Noto Sans KR',
+                    fontFamily: '.SF Pro Display',
                     fontSize: 36,
                     fontWeight: FontWeight.w800,
                     letterSpacing: -0.5,
@@ -245,7 +363,7 @@ class _ProfileCard extends StatelessWidget {
                     Text(
                       '${profile.university} • ${profile.major}',
                       style: const TextStyle(
-                        fontFamily: 'Noto Sans KR',
+                        fontFamily: '.SF Pro Text',
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                         color: _AppColors.textSub,
@@ -261,7 +379,7 @@ class _ProfileCard extends StatelessWidget {
                 const Text(
                   'About Me',
                   style: TextStyle(
-                    fontFamily: 'Noto Sans KR',
+                    fontFamily: '.SF Pro Display',
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                     color: _AppColors.textMain,
@@ -271,7 +389,7 @@ class _ProfileCard extends StatelessWidget {
                 Text(
                   profile.aboutMe,
                   style: const TextStyle(
-                    fontFamily: 'Noto Sans KR',
+                    fontFamily: '.SF Pro Text',
                     fontSize: 17,
                     height: 1.7,
                     color: _AppColors.textSub,
@@ -282,7 +400,7 @@ class _ProfileCard extends StatelessWidget {
                 const Text(
                   'Interests',
                   style: TextStyle(
-                    fontFamily: 'Noto Sans KR',
+                    fontFamily: '.SF Pro Display',
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                     color: _AppColors.textMain,
@@ -306,7 +424,7 @@ class _ProfileCard extends StatelessWidget {
                       child: Text(
                         interest,
                         style: const TextStyle(
-                          fontFamily: 'Noto Sans KR',
+                          fontFamily: '.SF Pro Text',
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: _AppColors.textMain,
@@ -398,7 +516,7 @@ class _HeroImage extends StatelessWidget {
                   Text(
                     '$matchPercent% Match',
                     style: const TextStyle(
-                      fontFamily: 'Noto Sans KR',
+                      fontFamily: '.SF Pro Text',
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
                       color: _AppColors.primary,
@@ -461,7 +579,7 @@ class _AiInsightBox extends StatelessWidget {
                 const Text(
                   'Why you match',
                   style: TextStyle(
-                    fontFamily: 'Noto Sans KR',
+                    fontFamily: '.SF Pro Text',
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                     color: _AppColors.primary,
@@ -471,7 +589,7 @@ class _AiInsightBox extends StatelessWidget {
                 Text(
                   reason,
                   style: const TextStyle(
-                    fontFamily: 'Noto Sans KR',
+                    fontFamily: '.SF Pro Text',
                     fontSize: 14,
                     height: 1.5,
                     color: _AppColors.textMain,

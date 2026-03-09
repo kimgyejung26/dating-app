@@ -91,6 +91,29 @@ service cloud.firestore {
           );
     }
 
+    // -----------------------------------------------------------------------
+    // Blocks and Reports (신고 및 차단)
+    // -----------------------------------------------------------------------
+    match /blocks/{viewerUid}/targets/{targetUid} {
+      // 본인의 차단 목록에만 생성 허용
+      allow create: if request.auth != null && request.auth.uid == viewerUid;
+      allow read: if request.auth != null && request.auth.uid == viewerUid;
+    }
+
+    match /reports/{reportId} {
+      // 누구나(인증된 경우) 신고 생성 허용.
+      allow create: if request.auth != null;
+    }
+
+    // -----------------------------------------------------------------------
+    // recEvents — 추천 학습용 이벤트 (KNN/SVD 등)
+    // recEvents/{userId}/events/{eventId} — 본인만 자신의 이벤트 문서 생성
+    // -----------------------------------------------------------------------
+    match /recEvents/{userId}/events/{eventId} {
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow read, update, delete: if false;
+    }
+
     // 기본 차단 (명시된 것만 허용)
     match /{document=**} {
       allow read, write: if false;
