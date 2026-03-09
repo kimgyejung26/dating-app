@@ -1,19 +1,19 @@
 // =============================================================================
 // 채팅 목록 화면
 // 경로: lib/features/chat/screens/chat_list_screen.dart
-//
-// 사용 예시:
-// Navigator.push(
-//   context,
-//   CupertinoPageRoute(builder: (_) => const ChatListScreen()),
-// );
 // =============================================================================
 
 import 'dart:ui';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+
 import '../../../router/route_names.dart';
+import '../../../services/storage_service.dart';
 import '../models/chat_room_data.dart';
+import '../services/chat_service.dart';
 
 // =============================================================================
 // 색상 상수
@@ -36,10 +36,13 @@ class _ChatItem {
   final String avatarUrl;
   final String lastMessage;
   final String time;
+  final String? chatRoomId;
   final bool isOnline;
   final bool hasUnread;
   final bool hasGradientBorder;
   final bool isGrayscale;
+  final int sortOrder;
+  final bool isFakeAccountRoom;
 
   const _ChatItem({
     required this.id,
@@ -47,17 +50,20 @@ class _ChatItem {
     required this.avatarUrl,
     required this.lastMessage,
     required this.time,
+    this.chatRoomId,
     this.isOnline = false,
     this.hasUnread = false,
     this.hasGradientBorder = false,
     this.isGrayscale = false,
+    this.sortOrder = 0,
+    this.isFakeAccountRoom = false,
   });
 }
 
 // =============================================================================
 // 메인 화면
 // =============================================================================
-class ChatListScreen extends StatelessWidget {
+class ChatListScreen extends StatefulWidget {
   final VoidCallback? onFilter;
   final Function(String chatId)? onChatTap;
   final Function(int tabIndex)? onTabChange;
@@ -71,7 +77,18 @@ class ChatListScreen extends StatelessWidget {
     this.onNavTap,
   });
 
-  static const List<_ChatItem> _chats = [
+  @override
+  State<ChatListScreen> createState() => _ChatListScreenState();
+}
+
+class _ChatListScreenState extends State<ChatListScreen> {
+  final StorageService _storageService = StorageService();
+  final ChatService _chatService = ChatService();
+
+  String? _currentKakaoUserId;
+  bool _isLoading = true;
+
+  static const List<_ChatItem> _baseChats = [
     _ChatItem(
       id: '1',
       name: '김지수',
@@ -81,6 +98,7 @@ class ChatListScreen extends StatelessWidget {
       time: '방금 전',
       isOnline: true,
       hasUnread: true,
+      sortOrder: 500,
     ),
     _ChatItem(
       id: '2',
@@ -91,6 +109,7 @@ class ChatListScreen extends StatelessWidget {
       time: '10분 전',
       hasUnread: true,
       hasGradientBorder: true,
+      sortOrder: 400,
     ),
     _ChatItem(
       id: '3',
@@ -99,6 +118,7 @@ class ChatListScreen extends StatelessWidget {
           'https://lh3.googleusercontent.com/aida-public/AB6AXuCaoLaT2eg0Mr_CWMHTb5DFnC5NtnwIvbYSr7QlFAo429bhcRjjwZ9eM3KXCGGry_-VwTlGW47t69Ak613q9yN48tItC8XhxXVqQ86xWtAwYvjMYdr_P9OK5iF8KAOItKthh-1k1Yyb8Hw9Xsg0sNvpr2Lk-jPDZV8ycVaam8IOELv_NnjuKvJTEjGQ4_0BXIEfDkJW9k_eUdW51hXHAqnnL2vhABTODCwEnScNf9OS2fWATu403bThgZNQPrpzISgd7fJTNXMop1Xu',
       lastMessage: '네 알겠습니다~ 그럼 주말에 뵙는 걸로 할게요!',
       time: '1시간 전',
+      sortOrder: 300,
     ),
     _ChatItem(
       id: '4',
@@ -108,6 +128,7 @@ class ChatListScreen extends StatelessWidget {
       lastMessage: '사진 보내드렸습니다. 확인해주세요.',
       time: '어제',
       isGrayscale: true,
+      sortOrder: 200,
     ),
     _ChatItem(
       id: '5',
@@ -116,58 +137,398 @@ class ChatListScreen extends StatelessWidget {
           'https://lh3.googleusercontent.com/aida-public/AB6AXuD5daUKQ65R86r5mD6ge1Dbq2r2x9s6mfF64QKG-Ok03q5Bk0RKkYndnQPpn2_qabOdm5-c4EXRI0RcmvAMRcdizRxM_MdpXu6n29zGbZckSgCt-BkONB0jM-ABrBhZOSyiQCZF1u9d7ukDbTa1eRA1CW7xgYecLFR_MFTngH-H503o6iKizja6XfMSkR7958WwJEMQ9lQ1lZAyr0rIZAP4-gQOOnEFV1H0w8SADoT7BJvmFJa6q5CKX4NFUuEur0R27-wnqmopSJM1',
       lastMessage: '즐거운 하루 보내세요 :)',
       time: '어제',
+      sortOrder: 100,
     ),
   ];
+
+  static const _ChatItem _fakeChat = _ChatItem(
+    id: 'fake_user_1',
+    name: '가짜 계정 1',
+    avatarUrl: '',
+    lastMessage: '채팅을 시작해 보세요!',
+    time: '',
+    isOnline: true,
+    hasUnread: false,
+    hasGradientBorder: false,
+    isGrayscale: false,
+    sortOrder: 999999,
+    isFakeAccountRoom: true,
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCurrentUser();
+  }
+
+  Future<void> _loadCurrentUser() async {
+    final kakaoUserId = await _storageService.getKakaoUserId();
+
+    debugPrint('CHAT LIST current user: $kakaoUserId');
+
+    if (!mounted) return;
+
+    setState(() {
+      _currentKakaoUserId = kakaoUserId;
+      _isLoading = false;
+    });
+  }
+
+  String _formatLastMessageTime(dynamic ts) {
+    if (ts is! Timestamp) return '';
+    final dt = ts.toDate();
+    final now = DateTime.now();
+
+    final isToday =
+        dt.year == now.year && dt.month == now.month && dt.day == now.day;
+
+    if (isToday) {
+      final hour = dt.hour > 12 ? dt.hour - 12 : (dt.hour == 0 ? 12 : dt.hour);
+      final minute = dt.minute.toString().padLeft(2, '0');
+      final period = dt.hour >= 12 ? '오후' : '오전';
+      return '$period $hour:$minute';
+    }
+
+    return '${dt.month}/${dt.day}';
+  }
+
+  _ChatItem _mapRoomDocToChatItem(
+    QueryDocumentSnapshot<Map<String, dynamic>> doc,
+    String currentUserId,
+  ) {
+    final data = doc.data();
+
+    final participantIds = List<String>.from(data['participantIds'] ?? []);
+
+    // 현재 유저 본인을 제외한 상대방 id 찾기
+    final otherParticipants = participantIds
+        .where((id) => id != currentUserId)
+        .toList();
+
+    final partnerId = otherParticipants.isNotEmpty
+        ? otherParticipants.first
+        : '';
+
+    final participantInfo = Map<String, dynamic>.from(
+      data['participantInfo'] ?? {},
+    );
+
+    final partnerInfo = partnerId.isNotEmpty
+        ? Map<String, dynamic>.from(participantInfo[partnerId] ?? {})
+        : <String, dynamic>{};
+
+    final fallbackName = partnerId == 'fake_user_1' ? '가짜 계정 1' : '알 수 없음';
+
+    return _ChatItem(
+      id: partnerId,
+      chatRoomId: doc.id,
+      name: (partnerInfo['nickname']?.toString().isNotEmpty ?? false)
+          ? partnerInfo['nickname'].toString()
+          : fallbackName,
+      avatarUrl: partnerInfo['avatarUrl']?.toString() ?? '',
+      lastMessage: (data['lastMessage']?.toString().isNotEmpty ?? false)
+          ? data['lastMessage'].toString()
+          : '채팅을 시작해 보세요!',
+      time: _formatLastMessageTime(data['lastMessageAt']),
+      isOnline: partnerId == 'fake_user_1',
+      hasUnread: false,
+      hasGradientBorder: false,
+      isGrayscale: false,
+      sortOrder: 999999,
+      isFakeAccountRoom: partnerId == 'fake_user_1',
+    );
+  }
+
+  _ChatItem _buildFakeRoomItem(String currentUserId) {
+    final roomId = _chatService.buildDirectRoomId(currentUserId, 'fake_user_1');
+
+    return _ChatItem(
+      id: 'fake_user_1',
+      chatRoomId: roomId,
+      name: '가짜 계정 1',
+      avatarUrl: '',
+      lastMessage: '채팅을 시작해 보세요!',
+      time: '',
+      isOnline: true,
+      hasUnread: false,
+      hasGradientBorder: false,
+      isGrayscale: false,
+      sortOrder: 999999,
+      isFakeAccountRoom: true,
+    );
+  }
+
+  List<_ChatItem> get _sortedChats {
+    final chats = [..._baseChats];
+
+    if (_currentKakaoUserId != null && _currentKakaoUserId != 'fake_user_1') {
+      chats.add(_fakeChat);
+    }
+
+    chats.sort((a, b) => b.sortOrder.compareTo(a.sortOrder));
+    return chats;
+  }
 
   @override
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).padding.bottom;
+    final currentUserId = _currentKakaoUserId ?? '';
+
+    if (_isLoading) {
+      return const CupertinoPageScaffold(
+        child: Center(child: CupertinoActivityIndicator()),
+      );
+    }
 
     return CupertinoPageScaffold(
       backgroundColor: CupertinoColors.white,
       child: Stack(
         children: [
-          // 메인 콘텐츠
           CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: [
-              // 헤더
-              SliverToBoxAdapter(child: _Header(onFilter: onFilter)),
-              // 탭 바
-              SliverToBoxAdapter(child: _TabBar(onTabChange: onTabChange)),
-              // 채팅 리스트
-              SliverPadding(
-                padding: EdgeInsets.fromLTRB(24, 8, 24, bottomPadding + 120),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) => _ChatListItem(
-                      chat: _chats[index],
-                      onTap: () {
-                        if (onChatTap != null) {
-                          onChatTap!(_chats[index].id);
-                        } else {
-                          final chat = _chats[index];
-                          Navigator.of(context, rootNavigator: true).pushNamed(
-                            RouteNames.chatRoom,
-                            arguments: ChatRoomData(
-                              chatRoomId: chat.id,
-                              partnerId: chat.id,
-                              partnerName: chat.name,
-                              partnerAvatarUrl: chat.avatarUrl,
-                              lastMessage: chat.lastMessage,
-                              lastMessageTime: chat.time,
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                    childCount: _chats.length,
-                  ),
-                ),
+              SliverToBoxAdapter(child: _Header(onFilter: widget.onFilter)),
+              SliverToBoxAdapter(
+                child: _TabBar(onTabChange: widget.onTabChange),
               ),
+              if (currentUserId.isEmpty)
+                const SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 80),
+                    child: Center(child: CupertinoActivityIndicator()),
+                  ),
+                )
+              else
+                StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                  stream: _chatService.chatRoomsStream(currentUserId),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      debugPrint('CHAT LIST ERROR: ${snapshot.error}');
+
+                      if (currentUserId != 'fake_user_1') {
+                        final fallbackChats = <_ChatItem>[
+                          _buildFakeRoomItem(currentUserId),
+                        ];
+
+                        return SliverPadding(
+                          padding: EdgeInsets.fromLTRB(
+                            24,
+                            8,
+                            24,
+                            bottomPadding + 120,
+                          ),
+                          sliver: SliverList(
+                            delegate: SliverChildBuilderDelegate((
+                              context,
+                              index,
+                            ) {
+                              final chat = fallbackChats[index];
+
+                              return _ChatListItem(
+                                chat: chat,
+                                onTap: () {
+                                  if (widget.onChatTap != null) {
+                                    widget.onChatTap!(
+                                      chat.chatRoomId ?? chat.id,
+                                    );
+                                  } else {
+                                    Navigator.of(
+                                      context,
+                                      rootNavigator: true,
+                                    ).pushNamed(
+                                      RouteNames.chatRoom,
+                                      arguments: ChatRoomData(
+                                        chatRoomId: chat.chatRoomId ?? '',
+                                        partnerId: chat.id,
+                                        partnerName: chat.name,
+                                        partnerAvatarUrl: chat.avatarUrl,
+                                        lastMessage: chat.lastMessage,
+                                        lastMessageTime: chat.time,
+                                      ),
+                                    );
+                                  }
+                                },
+                              );
+                            }, childCount: fallbackChats.length),
+                          ),
+                        );
+                      }
+
+                      return const SliverToBoxAdapter(
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 80),
+                          child: Center(
+                            child: Text(
+                              '채팅 목록을 불러오지 못했어요',
+                              style: TextStyle(
+                                fontFamily: 'Noto Sans KR',
+                                fontSize: 15,
+                                color: _AppColors.gray500,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+
+                    if (!snapshot.hasData) {
+                      if (currentUserId != 'fake_user_1') {
+                        final fallbackChats = <_ChatItem>[
+                          _buildFakeRoomItem(currentUserId),
+                        ];
+
+                        return SliverPadding(
+                          padding: EdgeInsets.fromLTRB(
+                            24,
+                            8,
+                            24,
+                            bottomPadding + 120,
+                          ),
+                          sliver: SliverList(
+                            delegate: SliverChildBuilderDelegate((
+                              context,
+                              index,
+                            ) {
+                              final chat = fallbackChats[index];
+
+                              return _ChatListItem(
+                                chat: chat,
+                                onTap: () {
+                                  if (widget.onChatTap != null) {
+                                    widget.onChatTap!(
+                                      chat.chatRoomId ?? chat.id,
+                                    );
+                                  } else {
+                                    Navigator.of(
+                                      context,
+                                      rootNavigator: true,
+                                    ).pushNamed(
+                                      RouteNames.chatRoom,
+                                      arguments: ChatRoomData(
+                                        chatRoomId: chat.chatRoomId ?? '',
+                                        partnerId: chat.id,
+                                        partnerName: chat.name,
+                                        partnerAvatarUrl: chat.avatarUrl,
+                                        lastMessage: chat.lastMessage,
+                                        lastMessageTime: chat.time,
+                                      ),
+                                    );
+                                  }
+                                },
+                              );
+                            }, childCount: fallbackChats.length),
+                          ),
+                        );
+                      }
+
+                      return const SliverToBoxAdapter(
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 80),
+                          child: Center(child: CupertinoActivityIndicator()),
+                        ),
+                      );
+                    }
+
+                    final docs = [...snapshot.data!.docs];
+
+                    docs.sort((a, b) {
+                      final aTs = a.data()['lastMessageAt'] as Timestamp?;
+                      final bTs = b.data()['lastMessageAt'] as Timestamp?;
+
+                      final aMs = aTs?.millisecondsSinceEpoch ?? 0;
+                      final bMs = bTs?.millisecondsSinceEpoch ?? 0;
+
+                      return bMs.compareTo(aMs);
+                    });
+
+                    final mappedChats = <_ChatItem>[];
+                    for (final doc in docs) {
+                      mappedChats.add(
+                        _mapRoomDocToChatItem(doc, currentUserId),
+                      );
+                    }
+
+                    _ChatItem? fakeChatRoom;
+                    final normalChats = <_ChatItem>[];
+
+                    for (final chat in mappedChats) {
+                      if (chat.id == 'fake_user_1') {
+                        fakeChatRoom = chat;
+                      } else {
+                        normalChats.add(chat);
+                      }
+                    }
+
+                    if (currentUserId != 'fake_user_1') {
+                      fakeChatRoom ??= _buildFakeRoomItem(currentUserId);
+                    }
+
+                    final firestoreChats = <_ChatItem>[
+                      if (fakeChatRoom != null) fakeChatRoom,
+                      ...normalChats,
+                    ];
+
+                    if (firestoreChats.isEmpty) {
+                      return SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 80),
+                          child: Center(
+                            child: Text(
+                              currentUserId == 'fake_user_1'
+                                  ? '아직 받은 채팅이 없어요'
+                                  : '채팅을 시작해 보세요!',
+                              style: const TextStyle(
+                                fontFamily: 'Noto Sans KR',
+                                fontSize: 15,
+                                color: _AppColors.gray500,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+
+                    return SliverPadding(
+                      padding: EdgeInsets.fromLTRB(
+                        24,
+                        8,
+                        24,
+                        bottomPadding + 120,
+                      ),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          final chat = firestoreChats[index];
+
+                          return _ChatListItem(
+                            chat: chat,
+                            onTap: () {
+                              if (widget.onChatTap != null) {
+                                widget.onChatTap!(chat.chatRoomId ?? chat.id);
+                              } else {
+                                Navigator.of(
+                                  context,
+                                  rootNavigator: true,
+                                ).pushNamed(
+                                  RouteNames.chatRoom,
+                                  arguments: ChatRoomData(
+                                    chatRoomId: chat.chatRoomId ?? '',
+                                    partnerId: chat.id,
+                                    partnerName: chat.name,
+                                    partnerAvatarUrl: chat.avatarUrl,
+                                    lastMessage: chat.lastMessage,
+                                    lastMessageTime: chat.time,
+                                  ),
+                                );
+                              }
+                            },
+                          );
+                        }, childCount: firestoreChats.length),
+                      ),
+                    );
+                  },
+                ),
             ],
           ),
-          // 하단 그라데이션
           Positioned(
             left: 0,
             right: 0,
@@ -188,12 +549,11 @@ class ChatListScreen extends StatelessWidget {
               ),
             ),
           ),
-          // 하단 네비게이션
           Positioned(
             left: 24,
             right: 24,
             bottom: bottomPadding + 32,
-            child: _BottomNavBar(onTap: onNavTap),
+            child: _BottomNavBar(onTap: widget.onNavTap),
           ),
         ],
       ),
@@ -392,7 +752,6 @@ class _ChatListItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 12),
         child: Row(
           children: [
-            // 아바타
             _Avatar(
               imageUrl: chat.avatarUrl,
               isOnline: chat.isOnline,
@@ -400,7 +759,6 @@ class _ChatListItem extends StatelessWidget {
               isGrayscale: chat.isGrayscale,
             ),
             const SizedBox(width: 16),
-            // 정보
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -420,15 +778,16 @@ class _ChatListItem extends StatelessWidget {
                           color: _AppColors.textMain,
                         ),
                       ),
-                      Text(
-                        chat.time,
-                        style: TextStyle(
-                          fontFamily: 'Noto Sans KR',
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                          color: _AppColors.gray400,
+                      if (chat.time.isNotEmpty)
+                        Text(
+                          chat.time,
+                          style: TextStyle(
+                            fontFamily: 'Noto Sans KR',
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
+                            color: _AppColors.gray400,
+                          ),
                         ),
-                      ),
                     ],
                   ),
                   const SizedBox(height: 4),
@@ -501,23 +860,47 @@ class _Avatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final safeImageUrl = imageUrl;
     Widget avatar = Container(
       width: 60,
       height: 60,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(color: _AppColors.gray100),
+        color: _AppColors.gray100,
       ),
       clipBehavior: Clip.antiAlias,
-      child: isGrayscale
+      child: safeImageUrl.isEmpty
+          ? const Icon(
+              CupertinoIcons.person_fill,
+              color: _AppColors.gray400,
+              size: 28,
+            )
+          : isGrayscale
           ? ColorFiltered(
               colorFilter: const ColorFilter.mode(
                 CupertinoColors.systemGrey,
                 BlendMode.saturation,
               ),
-              child: Image.network(imageUrl, fit: BoxFit.cover),
+              child: Image.network(
+                safeImageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => const Icon(
+                  CupertinoIcons.person_fill,
+                  color: _AppColors.gray400,
+                  size: 28,
+                ),
+              ),
             )
-          : Image.network(imageUrl, fit: BoxFit.cover),
+          : Image.network(
+              safeImageUrl,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => const Icon(
+                CupertinoIcons.person_fill,
+                color: _AppColors.gray400,
+                size: 28,
+              ),
+            ),
     );
 
     if (hasGradientBorder) {
@@ -539,7 +922,14 @@ class _Avatar extends StatelessWidget {
             border: Border.all(color: CupertinoColors.white, width: 2),
           ),
           clipBehavior: Clip.antiAlias,
-          child: Image.network(imageUrl, fit: BoxFit.cover),
+          child: Image.network(
+            safeImageUrl,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => const Icon(
+              CupertinoIcons.person_fill,
+              color: _AppColors.gray400,
+            ),
+          ),
         ),
       );
     }
