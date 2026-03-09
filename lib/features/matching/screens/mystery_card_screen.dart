@@ -9,9 +9,12 @@
 
 import 'dart:math';
 import 'dart:ui';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import '../../../router/route_names.dart';
+import '../../../services/rec_event_service.dart';
+import '../../../services/ai_recommendation_service.dart';
 
 // =============================================================================
 // 색상 상수
@@ -29,83 +32,6 @@ class _AppColors {
   static const Color pink100 = Color(0xFFFCE7F3);
   static const Color pink500 = Color(0xFFEC4899);
 }
-
-// =============================================================================
-// 프로필 데이터 모델 (목업)
-// =============================================================================
-class _MockProfile {
-  final String id;
-  final String name;
-  final int matchPercent;
-  final String major;
-  final String year;
-  final List<String> tags;
-  final String imageUrl;
-
-  const _MockProfile({
-    required this.id,
-    required this.name,
-    required this.matchPercent,
-    required this.major,
-    required this.year,
-    required this.tags,
-    required this.imageUrl,
-  });
-}
-
-// 목업 프로필 5개
-const List<_MockProfile> _mockProfiles = [
-  _MockProfile(
-    id: 'p1',
-    name: 'Ji-min',
-    matchPercent: 94,
-    major: 'Business Admin',
-    year: "'01",
-    tags: ['TRAVEL', 'COFFEE', 'MUSIC'],
-    imageUrl:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuA-iKoOfd7mUBhLCu8omhZBXx588zQSVaTuUyPxd8tn5HGIqbofexG6xV_wpU-m1DwzanC-9eZa9On_1heZiGjjrRZfW2q-4u5XMCegZ3-FWSb_vFcW2Q-ekVQFZTaKtT8ja--_6YV71R2iJjLA0J91Y1Jnp0SbXNEjmIBvH9TIoHyXY-ErSnUZaRjEhcBVmhOpChRqBrF0r5YpiKtqSi8G8DdMop8R7kiJGLKFoChyCmRyqHE7EB-Km7q6kjBctextaAUtbZwKHDEX',
-  ),
-  _MockProfile(
-    id: 'p2',
-    name: 'Soo-yeon',
-    matchPercent: 91,
-    major: 'Visual Design',
-    year: "'02",
-    tags: ['ART', 'YOGA', 'READING'],
-    imageUrl:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuDpIxhHnYDkmD9z4U531npC8ZOpcgsNx5XJm96MbnNDjgdLpbH0-ZITCknT1WQTMor_kO8HJdn9gYk-VqSrCCin6Lx5nw-vM6QKH_lv1Mh8MPEypmEUXk3zczihAiAPhOMJYJgtEyA6ObIcE6qlGhH-23M6k6HTvLH57RtTbCprjgrx7Wg7Dy55ajq_YM9ABafQfkWyfZeAAX0qoE69mVQk2hACXRj6HRcmBira18n_hGrYPZEdP209XcwjPxAWn_op8Va1qvtAaD6P',
-  ),
-  _MockProfile(
-    id: 'p3',
-    name: 'Ha-eun',
-    matchPercent: 88,
-    major: 'Computer Science',
-    year: "'00",
-    tags: ['GAMING', 'COOKING', 'K-POP'],
-    imageUrl:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuAH9LSr17vPuJIj8r0HFM32qC-F4R82GKlZPXkHBeBzABCbmz34c6lD28TrhlsHLm1FjEx_bbK50RrE0y_qMRJkmAuZpJDwgarEozkvS9AMZ7YNakmwZd2utYjJQRK34IDrApfQIcjNA2owpPx2hAP0Qs4QBx16UgAaCd6WoQQPEzyM8J7dQFvy-bVjKEvlFmPUXYeYwtNEeSjuZN6XFDwesfWAvBndhVt9wWu3hLo2J3LrVEbzUr5N-Scj5PZPfLbscATh-7qgtWzB',
-  ),
-  _MockProfile(
-    id: 'p4',
-    name: 'Ye-jin',
-    matchPercent: 85,
-    major: 'Psychology',
-    year: "'01",
-    tags: ['FILM', 'CAFE', 'HIKING'],
-    imageUrl:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuBdDzeTNFzJ93Ao1Ro1vOQA6dFa-jLmjdHvDmahzvVkE3zoMZkpdM9qvXEKKrar6Zz-OxEeTQ3-tsnLbNsNpawJKdQuUDC7w794c2LbS7jyga-5qbK_Cg-JOBw56EBUe9YAv3v5hME6IG-2yVgc1Y5kZG44wzXy9gdb6I40-yNOBrvZtDDFcJWOtQi4TMCc24XYEKi-sGP4grGxPQ8ifSO9BKc7b0TK_UH39lb7hIq0N1Rp9SDeCqGYla6MHfghw1A56h6ivxEke0HR',
-  ),
-  _MockProfile(
-    id: 'p5',
-    name: 'Min-seo',
-    matchPercent: 82,
-    major: 'Architecture',
-    year: "'03",
-    tags: ['PHOTO', 'DANCE', 'WINE'],
-    imageUrl:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuA-iKoOfd7mUBhLCu8omhZBXx588zQSVaTuUyPxd8tn5HGIqbofexG6xV_wpU-m1DwzanC-9eZa9On_1heZiGjjrRZfW2q-4u5XMCegZ3-FWSb_vFcW2Q-ekVQFZTaKtT8ja--_6YV71R2iJjLA0J91Y1Jnp0SbXNEjmIBvH9TIoHyXY-ErSnUZaRjEhcBVmhOpChRqBrF0r5YpiKtqSi8G8DdMop8R7kiJGLKFoChyCmRyqHE7EB-Km7q6kjBctextaAUtbZwKHDEX',
-  ),
-];
 
 // =============================================================================
 // 메인 화면
@@ -191,7 +117,7 @@ class _BackgroundGradients extends StatelessWidget {
             width: 400,
             height: 400,
             decoration: BoxDecoration(
-              color: const Color(0xFFFBCFE8).withValues(alpha: 0.3),
+              color: const Color(0xFFFBCFE8).withOpacity(0.3),
               shape: BoxShape.circle,
             ),
             child: BackdropFilter(
@@ -207,7 +133,7 @@ class _BackgroundGradients extends StatelessWidget {
             width: 500,
             height: 500,
             decoration: BoxDecoration(
-              color: const Color(0xFFE9D5FF).withValues(alpha: 0.3),
+              color: const Color(0xFFE9D5FF).withOpacity(0.3),
               shape: BoxShape.circle,
             ),
             child: BackdropFilter(
@@ -264,89 +190,95 @@ class _Header extends StatelessWidget {
             ],
           ),
           // 버튼들
-          Row(
-            children: [
-              // AI 취향 버튼
-              CupertinoButton(
-                padding: EdgeInsets.zero,
-                onPressed: onAiPreference,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: _AppColors.pink50,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: _AppColors.pink100),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        CupertinoIcons.sparkles,
-                        size: 16,
-                        color: _AppColors.pink500,
-                      ),
-                      const SizedBox(width: 6),
-                      const Text(
-                        'AI에게 내 취향 더 잘 알려주기',
-                        style: TextStyle(
-                          fontFamily: 'Noto Sans KR',
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: _AppColors.gray900,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              // 알림 버튼
-              CupertinoButton(
-                padding: EdgeInsets.zero,
-                onPressed: onNotification,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    const Icon(
-                      CupertinoIcons.bell,
-                      size: 24,
-                      color: _AppColors.gray500,
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // AI 취향 버튼
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: onAiPreference,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 6,
                     ),
-                    if (notificationCount > 0)
-                      Positioned(
-                        top: -4,
-                        right: -4,
-                        child: Container(
-                          width: 16,
-                          height: 16,
-                          decoration: BoxDecoration(
-                            color: _AppColors.primary,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: CupertinoColors.white,
-                              width: 2,
+                    decoration: BoxDecoration(
+                      color: _AppColors.pink50,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: _AppColors.pink100),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          CupertinoIcons.sparkles,
+                          size: 16,
+                          color: _AppColors.pink500,
+                        ),
+                        const SizedBox(width: 4),
+                        const Flexible(
+                          child: Text(
+                            'AI에게 내 취향 알려주기',
+                            style: TextStyle(
+                              fontFamily: 'Noto Sans KR',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: _AppColors.gray900,
                             ),
                           ),
-                          child: Center(
-                            child: Text(
-                              '$notificationCount',
-                              style: const TextStyle(
-                                fontFamily: 'Noto Sans KR',
-                                fontSize: 10,
-                                fontWeight: FontWeight.w700,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                // 알림 버튼
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: onNotification,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      const Icon(
+                        CupertinoIcons.bell,
+                        size: 24,
+                        color: _AppColors.gray500,
+                      ),
+                      if (notificationCount > 0)
+                        Positioned(
+                          top: -4,
+                          right: -4,
+                          child: Container(
+                            width: 16,
+                            height: 16,
+                            decoration: BoxDecoration(
+                              color: _AppColors.primary,
+                              shape: BoxShape.circle,
+                              border: Border.all(
                                 color: CupertinoColors.white,
+                                width: 2,
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                '$notificationCount',
+                                style: const TextStyle(
+                                  fontFamily: 'Noto Sans KR',
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w700,
+                                  color: CupertinoColors.white,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
@@ -368,7 +300,73 @@ class _MainContent extends StatefulWidget {
 }
 
 class _MainContentState extends State<_MainContent> {
+  late PageController _pageController;
   int _currentIndex = 0;
+  List<AiRecommendedProfile> _profiles = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    // 뷰포트 대비 0.85 정도로 양옆 카드가 살짝 보이게
+    _pageController = PageController(viewportFraction: 0.85);
+
+    _loadRecommendations();
+  }
+
+  Future<void> _loadRecommendations() async {
+    final aiService = AiRecommendationService();
+    final feed = await aiService.fetchMysteryFeed(limit: 3);
+
+    if (!mounted) return;
+    setState(() {
+      _profiles = feed;
+      _isLoading = false;
+    });
+
+    if (_profiles.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _recordImpression(0);
+      });
+    }
+  }
+
+  void _recordImpression(int index) {
+    if (index >= _profiles.length) return;
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
+
+    final profile = _profiles[index];
+
+    final Map<String, dynamic> contextMetadata = {
+      'screen': 'mystery_card_screen',
+      'position': index,
+    };
+    if (profile.rank != 999) contextMetadata['rank'] = profile.rank;
+    if (profile.sourceScores != null)
+      contextMetadata['score'] = profile.sourceScores!;
+    if (profile.finalScore != null)
+      contextMetadata['finalScore'] = profile.finalScore!;
+    contextMetadata['algorithmVersion'] = profile.primaryAlgo;
+
+    RecEventService().logEvent(
+      userId: uid,
+      targetType: 'user_profile',
+      targetId: profile.candidateUid,
+      candidateUserId: profile.candidateUid,
+      eventType: 'impression',
+      surface: 'mystery_card',
+      cardVariant: 'real_profile',
+      exposureId: profile.exposureId,
+      context: contextMetadata,
+    );
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -452,113 +450,70 @@ class _MainContentState extends State<_MainContent> {
           const SizedBox(height: 24),
           // ─── PageView 기반 카드 캐러셀 ───
           Expanded(
-            child: _CardCarousel(
-              profiles: _mockProfiles,
-              onPageChanged: (index) {
-                setState(() => _currentIndex = index);
-              },
-            ),
+            child: _isLoading
+                ? const Center(child: CupertinoActivityIndicator())
+                : _profiles.isEmpty
+                ? Center(
+                    child: Text(
+                      '오늘의 미스터리 카드가 모두 소진되었습니다.',
+                      style: TextStyle(
+                        color: _AppColors.gray500,
+                        fontFamily: 'Noto Sans KR',
+                      ),
+                    ),
+                  )
+                : PageView.builder(
+                    controller: _pageController,
+                    itemCount: _profiles.length,
+                    physics: const BouncingScrollPhysics(),
+                    onPageChanged: (idx) {
+                      setState(() => _currentIndex = idx);
+                      _recordImpression(idx); // 새 카드 노출(impression)
+                    },
+                    itemBuilder: (context, index) {
+                      final isActive = index == _currentIndex;
+                      return AnimatedScale(
+                        scale: isActive ? 1.0 : 0.95,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeOutCubic,
+                        child: AnimatedOpacity(
+                          opacity: isActive ? 1.0 : 0.55,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeOutCubic,
+                          child: Center(
+                            child: _MysteryCard(
+                              key: ValueKey(_profiles[index].candidateUid),
+                              profile: _profiles[index],
+                              isActive: isActive,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
           ),
           const SizedBox(height: 24),
           // ─── 동적 인디케이터 (profiles.length 기반) ───
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(_mockProfiles.length, (i) {
-              return Container(
-                width: 8,
-                height: 8,
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                decoration: BoxDecoration(
-                  color: i == _currentIndex
-                      ? _AppColors.gray900
-                      : _AppColors.gray300,
-                  shape: BoxShape.circle,
-                ),
-              );
-            }),
-          ),
-          const SizedBox(height: 24),
-          // 남은 매치 안내
-          Text(
-            'You have ${widget.remainingMatches} curated matches remaining today',
-            style: const TextStyle(
-              fontFamily: 'Noto Sans KR',
-              fontSize: 12,
-              fontWeight: FontWeight.w300,
-              color: _AppColors.gray400,
+          if (!_isLoading && _profiles.isNotEmpty)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(_profiles.length, (i) {
+                return Container(
+                  width: 8,
+                  height: 8,
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  decoration: BoxDecoration(
+                    color: i == _currentIndex
+                        ? _AppColors.gray900
+                        : _AppColors.gray300,
+                    shape: BoxShape.circle,
+                  ),
+                );
+              }),
             ),
-          ),
           const SizedBox(height: 100),
         ],
       ),
-    );
-  }
-}
-
-// =============================================================================
-// 카드 캐러셀 (PageView.builder 기반)
-//
-// - PageController(viewportFraction: 0.82) → 다음 카드 일부 보임
-// - onPageChanged → 부모에 currentIndex 전달
-// - 활성 페이지: scale 1.0, opacity 1.0
-// - 비활성 페이지: scale 0.95, opacity 0.55
-// =============================================================================
-class _CardCarousel extends StatefulWidget {
-  final List<_MockProfile> profiles;
-  final ValueChanged<int>? onPageChanged;
-
-  const _CardCarousel({required this.profiles, this.onPageChanged});
-
-  @override
-  State<_CardCarousel> createState() => _CardCarouselState();
-}
-
-class _CardCarouselState extends State<_CardCarousel> {
-  late final PageController _pageController;
-  int _currentIndex = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _pageController = PageController(viewportFraction: 0.82);
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return PageView.builder(
-      controller: _pageController,
-      itemCount: widget.profiles.length,
-      physics: const BouncingScrollPhysics(),
-      onPageChanged: (index) {
-        setState(() => _currentIndex = index);
-        widget.onPageChanged?.call(index);
-      },
-      itemBuilder: (context, index) {
-        final isActive = index == _currentIndex;
-        return AnimatedScale(
-          scale: isActive ? 1.0 : 0.95,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOutCubic,
-          child: AnimatedOpacity(
-            opacity: isActive ? 1.0 : 0.55,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOutCubic,
-            child: Center(
-              child: _MysteryCard(
-                key: ValueKey(widget.profiles[index].id),
-                profile: widget.profiles[index],
-                isActive: isActive,
-              ),
-            ),
-          ),
-        );
-      },
     );
   }
 }
@@ -571,7 +526,7 @@ class _CardCarouselState extends State<_CardCarousel> {
 // - 2차 탭: ai_match_card_screen 이동
 // =============================================================================
 class _MysteryCard extends StatefulWidget {
-  final _MockProfile profile;
+  final AiRecommendedProfile profile;
   final bool isActive;
 
   const _MysteryCard({
@@ -626,8 +581,33 @@ class _MysteryCardState extends State<_MysteryCard>
         ).pushNamed(RouteNames.profileSpecificDetail);
       });
     } else {
-      // 1차 탭: 플립 애니메이션으로 프로필 공개
+      // 1차 탭: 플립 애니메이션으로 프로필 공개 + recEvents open 기록
       HapticFeedback.mediumImpact();
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid != null) {
+        final Map<String, dynamic> contextMetadata = {
+          'screen': 'mystery_card_screen',
+        };
+        if (widget.profile.rank != 999)
+          contextMetadata['rank'] = widget.profile.rank;
+        if (widget.profile.sourceScores != null)
+          contextMetadata['score'] = widget.profile.sourceScores!;
+        if (widget.profile.finalScore != null)
+          contextMetadata['finalScore'] = widget.profile.finalScore!;
+        contextMetadata['algorithmVersion'] = widget.profile.primaryAlgo;
+
+        RecEventService().logEvent(
+          userId: uid,
+          targetType: 'user_profile',
+          targetId: widget.profile.candidateUid,
+          candidateUserId: widget.profile.candidateUid,
+          eventType: 'open',
+          surface: 'mystery_card',
+          cardVariant: 'real_profile',
+          exposureId: widget.profile.exposureId,
+          context: contextMetadata,
+        );
+      }
       _controller.forward().then((_) {
         if (mounted) setState(() => _isRevealed = true);
       });
@@ -781,12 +761,14 @@ class _MysteryCardState extends State<_MysteryCard>
           fit: StackFit.expand,
           children: [
             // 프로필 이미지
-            Image.network(
-              profile.imageUrl,
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) =>
-                  Container(color: _AppColors.gray300),
-            ),
+            widget.profile.imageUrls.isNotEmpty
+                ? Image.network(
+                    widget.profile.imageUrls.first,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) =>
+                        Container(color: _AppColors.gray300),
+                  )
+                : Container(color: _AppColors.gray300),
             // 그라데이션 오버레이
             Container(
               decoration: BoxDecoration(
@@ -848,7 +830,7 @@ class _MysteryCardState extends State<_MysteryCard>
                               ),
                             ),
                             child: Text(
-                              '${profile.matchPercent}% Match',
+                              '${profile.sourceScores != null ? (profile.sourceScores! * 100).toInt() : 85}% Match',
                               style: const TextStyle(
                                 fontFamily: 'Noto Sans KR',
                                 fontSize: 12,
@@ -864,7 +846,7 @@ class _MysteryCardState extends State<_MysteryCard>
                   const SizedBox(height: 4),
                   // 학과 + 학번
                   Text(
-                    "${profile.major} • ${profile.year}",
+                    "${profile.major} • ${profile.age}",
                     style: TextStyle(
                       fontFamily: 'Noto Sans KR',
                       fontSize: 14,
@@ -879,7 +861,7 @@ class _MysteryCardState extends State<_MysteryCard>
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children: profile.tags.map((tag) {
+                    children: profile.tags.take(3).map((tag) {
                       return ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: BackdropFilter(

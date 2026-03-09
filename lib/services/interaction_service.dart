@@ -225,4 +225,50 @@ class InteractionService {
       'unmatchedAt': FieldValue.serverTimestamp(),
     });
   }
+
+  // ---------------------------------------------------------------------------
+  // 신고 및 차단
+  // ---------------------------------------------------------------------------
+
+  /// 유저 신고 및 차단
+  /// 1. blocks/{fromUserId}/targets/{toUserId} 에 차단 기록 생성 (추천에서 제외됨)
+  /// 2. reports/ 컬렉션에 신고 상세 내용 저장
+  Future<void> blockAndReportUser({
+    required String fromUserId,
+    required String toUserId,
+    required String reason,
+    String? details,
+  }) async {
+    // 1. 차단 기록 (Python 모델에서 읽어 추천 제외)
+    await _firestore
+        .collection('blocks')
+        .doc(fromUserId)
+        .collection('targets')
+        .doc(toUserId)
+        .set({
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+
+    // 2. 신고 기록
+    await _firestore.collection('reports').add({
+      'reporterId': fromUserId,
+      'reportedId': toUserId,
+      'reason': reason,
+      'details': details,
+      'status': 'pending',
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+
+    // 3. 기존 매치가 있다면 해제 처리
+    final existingMatch = await _matchesRef
+        .where('userIds', arrayContains: fromUserId)
+        .get();
+
+    for (final doc in existingMatch.docs) {
+      final ids = List<String>.from(doc.data()['userIds'] ?? []);
+      if (ids.contains(toUserId)) {
+        await unmatch(doc.id);
+      }
+    }
+  }
 }
