@@ -12,20 +12,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import '../../../router/route_names.dart';
 import 'terms_detail_sheet.dart';
+import '../../../services/storage_service.dart';
 
 // =============================================================================
 // 색상 상수
 // =============================================================================
 class _AppColors {
-  static const Color primary = Color(0xFFEF3994);
-  static const Color backgroundLight = Color(0xFFF8F6F7);
+  static const Color primary = Color(0xFFF0537A);
+  static const Color backgroundLight = Color(0xFFF8F6F6);
   static const Color surfaceLight = Color(0xFFFFFFFF);
-  static const Color textMain = Color(0xFF0F172A);
-  static const Color textSecondary = Color(0xFF475569);
-  static const Color textMuted = Color(0xFF94A3B8);
-  static const Color gray100 = Color(0xFFF1F5F9);
-  static const Color gray200 = Color(0xFFE2E8F0);
-  static const Color gray300 = Color(0xFFCBD5E1);
+  static const Color textMain = Color(0xFF1B0D11);
+  static const Color textSecondary = Color(0xFF6B7280);
+  static const Color textMuted = Color(0xFF9CA3AF);
+  static const Color gray100 = Color(0xFFF3F4F6);
+  static const Color gray200 = Color(0xFFE5E7EB);
+  static const Color gray300 = Color(0xFFD1D5DB);
 }
 
 // =============================================================================
@@ -83,6 +84,17 @@ class _TermsScreenState extends State<TermsScreen> {
 
   bool get _allChecked => _allRequiredChecked && _marketingChecked;
 
+  Future<void> _enterWithTestAccount() async {
+    final storage = StorageService();
+    await storage.saveKakaoUserId("fake_user_1");
+
+    if (!mounted) return;
+
+    Navigator.of(
+      context,
+    ).pushNamedAndRemoveUntil(RouteNames.main, (route) => false);
+  }
+
   void _toggleAll(bool value) {
     setState(() {
       for (var item in _requiredTerms) {
@@ -121,9 +133,7 @@ class _TermsScreenState extends State<TermsScreen> {
   void _onSubmit() {
     if (_allRequiredChecked) {
       HapticFeedback.mediumImpact();
-      Navigator.of(
-        context,
-      ).pushReplacementNamed(RouteNames.kakaoAuth);
+      Navigator.of(context).pushReplacementNamed(RouteNames.kakaoAuth);
     }
   }
 
@@ -161,7 +171,7 @@ class _TermsScreenState extends State<TermsScreen> {
                 Expanded(
                   child: SingleChildScrollView(
                     physics: const BouncingScrollPhysics(),
-                    padding: const EdgeInsets.fromLTRB(24, 16, 24, 120),
+                    padding: const EdgeInsets.fromLTRB(24, 16, 24, 180),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -203,9 +213,15 @@ class _TermsScreenState extends State<TermsScreen> {
             left: 0,
             right: 0,
             bottom: 0,
-            child: _BottomCTA(
-              isEnabled: _allRequiredChecked,
-              onPressed: _onSubmit,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _BottomCTA(
+                  isEnabled: _allRequiredChecked,
+                  onPressed: _onSubmit,
+                ),
+                _TestAccountButton(onPressed: _enterWithTestAccount),
+              ],
             ),
           ),
         ],
@@ -243,7 +259,7 @@ class _Header extends StatelessWidget {
               '약관 동의',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontFamily: 'Noto Sans KR',
+                fontFamily: '.SF Pro Display',
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: _AppColors.textMain,
@@ -268,7 +284,7 @@ class _Headline extends StatelessWidget {
     return RichText(
       text: const TextSpan(
         style: TextStyle(
-          fontFamily: 'Noto Sans KR',
+          fontFamily: '.SF Pro Display',
           fontSize: 28,
           fontWeight: FontWeight.w700,
           height: 1.3,
@@ -374,7 +390,7 @@ class _TermsCard extends StatelessWidget {
                       child: RichText(
                         text: const TextSpan(
                           style: TextStyle(
-                            fontFamily: 'Noto Sans KR',
+                            fontFamily: '.SF Pro Text',
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
                             color: _AppColors.textSecondary,
@@ -454,7 +470,7 @@ class _AllAgreeRow extends StatelessWidget {
                   const Text(
                     '약관 전체 동의',
                     style: TextStyle(
-                      fontFamily: 'Noto Sans KR',
+                      fontFamily: '.SF Pro Display',
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
                       color: _AppColors.textMain,
@@ -464,7 +480,7 @@ class _AllAgreeRow extends StatelessWidget {
                   Text(
                     '선택 포함 모든 약관에 동의합니다',
                     style: TextStyle(
-                      fontFamily: 'Noto Sans KR',
+                      fontFamily: '.SF Pro Text',
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                       color: _AppColors.textMuted,
@@ -509,7 +525,7 @@ class _TermsItemRow extends StatelessWidget {
               child: RichText(
                 text: TextSpan(
                   style: const TextStyle(
-                    fontFamily: 'Noto Sans KR',
+                    fontFamily: '.SF Pro Text',
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
                     color: _AppColors.textSecondary,
@@ -606,7 +622,7 @@ class _ToggleOption extends StatelessWidget {
         Text(
           label,
           style: const TextStyle(
-            fontFamily: 'Noto Sans KR',
+            fontFamily: '.SF Pro Text',
             fontSize: 14,
             fontWeight: FontWeight.w500,
             color: _AppColors.textMuted,
@@ -675,12 +691,51 @@ class _BottomCTA extends StatelessWidget {
             child: Text(
               '동의하고 시작하기',
               style: TextStyle(
-                fontFamily: 'Noto Sans KR',
+                fontFamily: '.SF Pro Text',
                 fontSize: 17,
                 fontWeight: FontWeight.w700,
                 color: isEnabled
                     ? CupertinoColors.white
                     : CupertinoColors.white.withValues(alpha: 0.7),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TestAccountButton extends StatelessWidget {
+  final VoidCallback onPressed;
+
+  const _TestAccountButton({required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
+    return Container(
+      padding: EdgeInsets.fromLTRB(24, 0, 24, bottomPadding + 12),
+      child: CupertinoButton(
+        padding: EdgeInsets.zero,
+        onPressed: onPressed,
+        child: Container(
+          width: double.infinity,
+          height: 48,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: _AppColors.primary, width: 1.5),
+            color: CupertinoColors.white,
+          ),
+          child: const Center(
+            child: Text(
+              '테스트 계정으로 둘러보기',
+              style: TextStyle(
+                fontFamily: '.SF Pro Text',
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: _AppColors.primary,
               ),
             ),
           ),
