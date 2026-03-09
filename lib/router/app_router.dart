@@ -96,9 +96,7 @@ class AppRouter {
 
     // 카카오 OAuth 콜백: 앱이 /?code=... 로 열렸을 때 (iOS/Android 딥링크)
     if (name.contains('code=') || name.startsWith('/?')) {
-      return _cupertino(
-        KakaoCallbackScreen(callbackPathAndQuery: name),
-      );
+      return _cupertino(KakaoCallbackScreen(callbackPathAndQuery: name));
     }
 
     switch (name) {
@@ -204,6 +202,8 @@ class AppRouter {
         final data = settings.arguments as ChatRoomData?;
         return _cupertino(
           ChatRoomScreen(
+            chatRoomId: data?.chatRoomId ?? '',
+            partnerId: data?.partnerId ?? '',
             partnerName: data?.partnerName ?? 'Kim Min-jun',
             partnerUniversity: data?.partnerUniversity ?? "Seoul Nat'l Univ",
             partnerAvatarUrl: data?.partnerAvatarUrl,

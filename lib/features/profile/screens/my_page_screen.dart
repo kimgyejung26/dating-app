@@ -7,6 +7,7 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/material.dart' show showCupertinoDialog;
 
 import '../../../router/route_names.dart';
 import '../../../services/storage_service.dart';
@@ -79,6 +80,39 @@ class _MyPageScreenState extends State<MyPageScreen> {
     });
   }
 
+  Future<void> _confirmLogout() async {
+    final shouldLogout = await showCupertinoDialog<bool>(
+      context: context,
+      useRootNavigator: true,
+      builder: (dialogContext) => CupertinoAlertDialog(
+        title: const Text('로그아웃'),
+        content: const Text('정말 로그아웃 하시겠습니까?'),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('취소'),
+          ),
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('확인'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldLogout != true) return;
+
+    await _storageService.clearAll();
+
+    if (!mounted) return;
+
+    Navigator.of(
+      context,
+      rootNavigator: true,
+    ).pushNamedAndRemoveUntil(RouteNames.terms, (route) => false);
+  }
+
   @override
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).padding.bottom;
@@ -145,16 +179,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                 ),
               ),
               SliverToBoxAdapter(
-                child: _LogoutButton(
-                  onLogout: () async {
-                    await _storageService.clearAll();
-                    if (!mounted) return;
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      RouteNames.kakaoAuth,
-                      (route) => false,
-                    );
-                  },
-                ),
+                child: _LogoutButton(onLogout: _confirmLogout),
               ),
               SliverToBoxAdapter(child: SizedBox(height: bottomPadding + 100)),
             ],
