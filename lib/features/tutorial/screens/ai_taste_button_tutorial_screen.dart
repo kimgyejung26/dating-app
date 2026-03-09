@@ -24,6 +24,7 @@ class _AppColors {
   static const Color gray400 = Color(0xFF9CA3AF);
   static const Color pink50 = Color(0xFFFDF2F8);
   static const Color pink100 = Color(0xFFFCE7F3);
+  static const Color pink500 = Color(0xFFEC4899);
 }
 
 // =============================================================================
@@ -124,10 +125,11 @@ class _AiTasteButtonTutorialScreenState
           // 3. 하이라이트된 버튼 (원본 위치에 겹침) + 리플 + 글로우
           SafeArea(
             child: Stack(
+              clipBehavior: Clip.none,
               children: [
                 Positioned(
                   top: 16,
-                  right: 64,
+                  right: 60,
                   child: FadeTransition(
                     opacity: _fadeAnimation,
                     child: _AnimatedHighlightButton(
@@ -206,78 +208,83 @@ class _AnimatedHighlightButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 220,
-      height: 100,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          // 리플 레이어
-          AnimatedBuilder(
-            animation: rippleController,
-            builder: (context, child) {
-              return CustomPaint(
-                size: const Size(220, 100),
-                painter: _RipplePainter(progress: rippleController.value),
-              );
-            },
+    return Stack(
+      alignment: Alignment.center,
+      clipBehavior: Clip.none,
+      children: [
+        // 리플 레이어
+        Positioned(
+          child: IgnorePointer(
+            child: AnimatedBuilder(
+              animation: rippleController,
+              builder: (context, child) {
+                return CustomPaint(
+                  size: const Size(220, 100),
+                  painter: _RipplePainter(progress: rippleController.value),
+                );
+              },
+            ),
           ),
-          // 글로우 + 버튼
-          AnimatedBuilder(
-            animation: glowController,
-            builder: (context, child) {
-              final glowValue = 0.3 + 0.4 * glowController.value;
-              return CupertinoButton(
-                padding: EdgeInsets.zero,
-                onPressed: onPressed,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 8,
+        ),
+        // 글로우 + 버튼
+        AnimatedBuilder(
+          animation: glowController,
+          builder: (context, child) {
+            final glowValue = 0.3 + 0.4 * glowController.value;
+            return CupertinoButton(
+              padding: EdgeInsets.zero,
+              onPressed: onPressed,
+              child: Container(
+                constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width - 180,
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: _AppColors.pink50,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: _AppColors.primary.withValues(alpha: 0.8),
+                    width: 1.5,
                   ),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFFCE7F3), Color(0xFFF3E8FF)],
+                  boxShadow: [
+                    BoxShadow(
+                      color: _AppColors.primary.withValues(alpha: glowValue),
+                      blurRadius: 15 + 10 * glowController.value,
+                      spreadRadius: 2 * glowController.value,
                     ),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: _AppColors.primary.withValues(alpha: 0.8),
-                      width: 2,
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(
+                      CupertinoIcons.sparkles,
+                      size: 16,
+                      color: _AppColors.pink500,
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: _AppColors.primary.withValues(alpha: glowValue),
-                        blurRadius: 20 + 10 * glowController.value,
-                        spreadRadius: 2 * glowController.value,
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: const [
-                      Icon(
-                        Icons.auto_awesome_rounded,
-                        size: 14,
-                        color: _AppColors.primary,
-                      ),
-                      SizedBox(width: 6),
-                      Text(
-                        'AI에게 내 취향 알려주기',
+                    SizedBox(width: 6),
+                    Flexible(
+                      child: Text(
+                        'AI에게 내 취향 더 잘 알려주기',
                         style: TextStyle(
                           fontFamily: 'Noto Sans KR',
                           fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF1F2937),
+                          fontWeight: FontWeight.w500,
+                          color: _AppColors.textMain,
                         ),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              );
-            },
-          ),
-        ],
-      ),
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }
@@ -511,7 +518,7 @@ class _FakeMainScreen extends StatelessWidget {
           SafeArea(
             bottom: false,
             child: Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -520,52 +527,73 @@ class _FakeMainScreen extends StatelessWidget {
                       Icon(
                         CupertinoIcons.heart_fill,
                         color: _AppColors.primary,
-                        size: 28,
+                        size: 24,
                       ),
                       SizedBox(width: 8),
                       Text(
                         '설레연',
                         style: TextStyle(
                           fontFamily: 'Noto Sans KR',
-                          fontSize: 24,
-                          fontWeight: FontWeight.w900,
+                          fontSize: 21,
+                          fontWeight: FontWeight.w700,
                           color: _AppColors.textMain,
-                          letterSpacing: -1,
+                          letterSpacing: -0.3,
                         ),
                       ),
                     ],
                   ),
-                  Row(
-                    children: [
-                      // 버튼 자리 (실제로는 비워둠, 오버레이가 덮음)
-                      Opacity(
-                        opacity: 0.3,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _AppColors.gray100,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const Text(
-                            'AI 취향...',
-                            style: TextStyle(
-                              fontFamily: 'Noto Sans KR',
-                              fontSize: 12,
-                              color: _AppColors.gray400,
+                  Flexible(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // 버튼 자리 (실제로는 비워둠, 오버레이가 덮음)
+                        Flexible(
+                          child: Opacity(
+                            opacity: 0.3,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: _AppColors.pink50,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: _AppColors.pink100),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: const [
+                                  Icon(
+                                    CupertinoIcons.sparkles,
+                                    size: 16,
+                                    color: _AppColors.pink500,
+                                  ),
+                                  SizedBox(width: 6),
+                                  Flexible(
+                                    child: Text(
+                                      'AI에게 내 취향 더 잘 알려주기',
+                                      style: TextStyle(
+                                        fontFamily: 'Noto Sans KR',
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                        color: _AppColors.textMain,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      const Icon(
-                        CupertinoIcons.bell,
-                        size: 28,
-                        color: _AppColors.gray400,
-                      ),
-                    ],
+                        const SizedBox(width: 12),
+                        const Icon(
+                          CupertinoIcons.bell,
+                          size: 24,
+                          color: _AppColors.gray400,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
