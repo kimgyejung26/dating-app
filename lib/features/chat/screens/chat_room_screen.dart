@@ -1,16 +1,15 @@
 // =============================================================================
 // 채팅방 화면
 // 경로: lib/features/chat/screens/chat_room_screen.dart
-//
-// 사용 예시:
-// Navigator.push(
-//   context,
-//   CupertinoPageRoute(builder: (_) => const ChatRoomScreen()),
-// );
 // =============================================================================
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+
+import '../services/chat_service.dart';
+import '../../../services/storage_service.dart';
+import '../../../services/user_service.dart';
 
 // =============================================================================
 // 색상 상수
@@ -31,20 +30,18 @@ class _AppColors {
 // =============================================================================
 // 메시지 모델
 // =============================================================================
-enum MessageType { received, sent, aiTip, dateDivider }
+enum MessageType { received, sent }
 
 class _ChatMessage {
   final MessageType type;
-  final String? text;
-  final String? time;
-  final String? avatarUrl;
+  final String text;
+  final String time;
   final bool isRead;
 
   const _ChatMessage({
     required this.type,
-    this.text,
-    this.time,
-    this.avatarUrl,
+    required this.text,
+    required this.time,
     this.isRead = false,
   });
 }
@@ -53,6 +50,8 @@ class _ChatMessage {
 // 메인 화면
 // =============================================================================
 class ChatRoomScreen extends StatefulWidget {
+  final String chatRoomId;
+  final String partnerId;
   final String partnerName;
   final String partnerUniversity;
   final String? partnerAvatarUrl;
@@ -62,6 +61,8 @@ class ChatRoomScreen extends StatefulWidget {
 
   const ChatRoomScreen({
     super.key,
+    this.chatRoomId = '',
+    this.partnerId = '',
     this.partnerName = 'Kim Min-jun',
     this.partnerUniversity = "Seoul Nat'l Univ",
     this.partnerAvatarUrl,
@@ -79,47 +80,170 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   static const String _defaultAvatarUrl =
       'https://lh3.googleusercontent.com/aida-public/AB6AXuBbzHXe44kKkm38LFzZYDrJgB6VdcFI1wOqXLhzmXLluq6QpZFzdN4Kwf2jgvTVY0ulkwDXqpPKoaA8SnoMT5qhSFFGurIjc409LZqO6cs9LiNr2XWRHXHTIQhT0_trL5o9o3NSs5xIr8H1FtojhKTzR0P0wp5-9pIeGcdDl9D6vK5Fxv6IA8lfddlamHK7vlvzUfH7SNwgZ7OBgfMReB4O7jfppVehNPNaM5xl6dsuqMZKa2J3QbWJdkCeYQ20949IQZKdQuyh5Iqz';
+  static const double _headerHeight = 120;
 
-  static const List<_ChatMessage> _messages = [
-    _ChatMessage(type: MessageType.dateDivider, text: 'Today'),
-    _ChatMessage(
-      type: MessageType.received,
-      text:
-          'Have you finished your midterms yet? The library was so crowded today.',
-      time: '14:20 PM',
-      avatarUrl: _defaultAvatarUrl,
-    ),
-    _ChatMessage(
-      type: MessageType.sent,
-      text: 'Almost! Just one more paper to go. I need a coffee break badly ☕️',
-      time: '14:22 PM',
-      isRead: true,
-    ),
-    _ChatMessage(
-      type: MessageType.aiTip,
-      text:
-          'Tip: Ask about their favorite study spot to keep the conversation flowing naturally.',
-    ),
-    _ChatMessage(
-      type: MessageType.received,
-      text: 'I know a great quiet cafe near campus. We should go sometime.',
-      time: '14:24 PM',
-      avatarUrl: _defaultAvatarUrl,
-    ),
-  ];
+  final StorageService _storageService = StorageService();
+  final UserService _userService = UserService();
+  final ChatService _chatService = ChatService();
+  final ScrollController _scrollController = ScrollController();
+
+  String? _currentUserId;
+  String _currentUserName = '나';
+  String? _currentUserAvatarUrl;
+  String _roomId = '';
+  String? _initError;
+  bool _isReady = false;
+  bool _isSending = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initChat();
+  }
 
   @override
   void dispose() {
     _messageController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
-  void _handleSend() {
-    final text = _messageController.text.trim();
-    if (text.isNotEmpty) {
-      widget.onSend?.call(text);
-      _messageController.clear();
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_scrollController.hasClients) return;
+
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+      );
+    });
+  }
+
+  Future<void> _initChat() async {
+    try {
+      final kakaoUserId = await _storageService.getKakaoUserId();
+
+      if (kakaoUserId == null || kakaoUserId.isEmpty) return;
+      debugPrint('CHAT kakaoUserId: $kakaoUserId');
+      debugPrint('CHAT partnerId: ${widget.partnerId}');
+      debugPrint('CHAT chatRoomId: ${widget.chatRoomId}');
+
+      if (widget.partnerId.isEmpty) {
+        throw Exception('partnerId 없음');
+      }
+
+      final user = await _userService.getUserProfile(kakaoUserId);
+      final onboarding = user?['onboarding'];
+
+      _currentUserId = kakaoUserId;
+      _currentUserName = (onboarding is Map && onboarding['nickname'] != null)
+          ? onboarding['nickname'].toString()
+          : (user?['nickname']?.toString() ?? '나');
+      String? resolvedAvatarUrl;
+
+      if (onboarding is Map) {
+        final photoUrlsRaw = onboarding['photoUrls'];
+        if (photoUrlsRaw is List && photoUrlsRaw.isNotEmpty) {
+          final firstPhoto = photoUrlsRaw.first?.toString() ?? '';
+          if (firstPhoto.isNotEmpty) {
+            resolvedAvatarUrl = firstPhoto;
+          }
+        }
+      }
+
+      resolvedAvatarUrl ??= user?['profileImageUrl']?.toString();
+
+      _currentUserAvatarUrl = resolvedAvatarUrl;
+
+      _roomId = _chatService.buildDirectRoomId(kakaoUserId, widget.partnerId);
+
+      await _chatService.ensureDirectRoom(
+        currentUserId: kakaoUserId,
+        partnerId: widget.partnerId,
+        currentUserName: _currentUserName,
+        partnerName: widget.partnerName,
+        currentUserAvatarUrl: _currentUserAvatarUrl,
+        partnerAvatarUrl: widget.partnerAvatarUrl,
+      );
+
+      if (!mounted) return;
+      setState(() {
+        _isReady = true;
+      });
+    } catch (e) {
+      debugPrint('CHAT INIT ERROR: $e');
+      if (!mounted) return;
+      setState(() {
+        _isReady = false;
+        _initError = e.toString();
+      });
     }
+  }
+
+  Future<void> _handleSend() async {
+    final text = _messageController.text.trim();
+    if (text.isEmpty ||
+        _currentUserId == null ||
+        _roomId.isEmpty ||
+        _isSending) {
+      return;
+    }
+
+    setState(() {
+      _isSending = true;
+    });
+
+    try {
+      _messageController.clear();
+
+      await _chatService.sendTextMessage(
+        roomId: _roomId,
+        senderId: _currentUserId!,
+        text: text,
+      );
+
+      widget.onSend?.call(text);
+      _scrollToBottom();
+    } finally {
+      if (!mounted) return;
+      setState(() {
+        _isSending = false;
+      });
+    }
+  }
+
+  String _formatTime(dynamic ts) {
+    if (ts is! Timestamp) return '';
+    final dt = ts.toDate();
+    final hour = dt.hour > 12 ? dt.hour - 12 : (dt.hour == 0 ? 12 : dt.hour);
+    final minute = dt.minute.toString().padLeft(2, '0');
+    final period = dt.hour >= 12 ? 'PM' : 'AM';
+    return '$hour:$minute $period';
+  }
+
+  _ChatMessage _mapMessage(Map<String, dynamic> data) {
+    final senderId = data['senderId']?.toString() ?? '';
+    final text = data['text']?.toString() ?? '';
+    final ts = data['createdAt'];
+    String timeText = '';
+
+    if (ts is Timestamp) {
+      final dt = ts.toDate();
+      final hour = dt.hour > 12 ? dt.hour - 12 : (dt.hour == 0 ? 12 : dt.hour);
+      final minute = dt.minute.toString().padLeft(2, '0');
+      final period = dt.hour >= 12 ? 'PM' : 'AM';
+      timeText = '$hour:$minute $period';
+    }
+
+    return _ChatMessage(
+      type: senderId == _currentUserId
+          ? MessageType.sent
+          : MessageType.received,
+      text: text,
+      time: timeText,
+      isRead: senderId == _currentUserId,
+    );
   }
 
   @override
@@ -130,35 +254,103 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       backgroundColor: _AppColors.backgroundLight,
       child: Stack(
         children: [
-          // 메시지 리스트
           CustomScrollView(
+            controller: _scrollController,
             physics: const BouncingScrollPhysics(),
             slivers: [
-              // 헤더
-              SliverToBoxAdapter(
-                child: _Header(
-                  name: widget.partnerName,
-                  university: widget.partnerUniversity,
-                  onBack: widget.onBack,
-                  onMore: widget.onMore,
-                ),
-              ),
-              // 메시지 리스트
+              SliverToBoxAdapter(child: SizedBox(height: _headerHeight)),
               SliverPadding(
-                padding: EdgeInsets.fromLTRB(24, 8, 24, bottomPadding + 120),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                    final message = _messages[index];
-                    return _MessageItem(
-                      message: message,
-                      avatarUrl: widget.partnerAvatarUrl ?? _defaultAvatarUrl,
-                    );
-                  }, childCount: _messages.length),
-                ),
+                padding: EdgeInsets.fromLTRB(24, 12, 24, bottomPadding + 120),
+                sliver: !_isReady
+                    ? SliverToBoxAdapter(
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 40),
+                            child: _initError == null
+                                ? const CupertinoActivityIndicator()
+                                : Text(
+                                    '채팅방을 불러오지 못했어요\n$_initError',
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      fontFamily: 'Noto Sans KR',
+                                      fontSize: 14,
+                                      color: _AppColors.textSubtle,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                      )
+                    : StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                        stream: _chatService.messagesStream(_roomId),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const SliverToBoxAdapter(
+                              child: Center(
+                                child: Padding(
+                                  padding: EdgeInsets.only(top: 40),
+                                  child: CupertinoActivityIndicator(),
+                                ),
+                              ),
+                            );
+                          }
+
+                          if (!snapshot.hasData) {
+                            return const SliverToBoxAdapter(child: SizedBox());
+                          }
+
+                          final docs = snapshot.data!.docs;
+
+                          if (docs.isEmpty) {
+                            return const SliverToBoxAdapter(
+                              child: Padding(
+                                padding: EdgeInsets.only(top: 80),
+                                child: Center(
+                                  child: Text(
+                                    '채팅을 시작해 보세요!',
+                                    style: TextStyle(
+                                      fontFamily: 'Noto Sans KR',
+                                      fontSize: 15,
+                                      color: _AppColors.textSubtle,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+
+                          return SliverList(
+                            delegate: SliverChildBuilderDelegate((
+                              context,
+                              index,
+                            ) {
+                              final data = docs[index].data();
+                              final message = _mapMessage(data);
+
+                              return _MessageItem(
+                                message: message,
+                                avatarUrl:
+                                    widget.partnerAvatarUrl ??
+                                    _defaultAvatarUrl,
+                              );
+                            }, childCount: docs.length),
+                          );
+                        },
+                      ),
               ),
             ],
           ),
-          // 입력창
+          Positioned(
+            left: 0,
+            right: 0,
+            top: 0,
+            child: _Header(
+              name: widget.partnerName,
+              university: widget.partnerUniversity,
+              onBack: widget.onBack,
+              onMore: widget.onMore,
+            ),
+          ),
           Positioned(
             left: 0,
             right: 0,
@@ -204,7 +396,6 @@ class _Header extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // 뒤로가기
             CupertinoButton(
               padding: EdgeInsets.zero,
               onPressed: () {
@@ -229,7 +420,6 @@ class _Header extends StatelessWidget {
                 ),
               ),
             ),
-            // 프로필 정보
             Column(
               children: [
                 Row(
@@ -290,7 +480,6 @@ class _Header extends StatelessWidget {
                 ),
               ],
             ),
-            // 더보기
             CupertinoButton(
               padding: EdgeInsets.zero,
               onPressed: onMore,
@@ -327,65 +516,19 @@ class _MessageItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     switch (message.type) {
-      case MessageType.dateDivider:
-        return _DateDivider(text: message.text ?? '');
       case MessageType.received:
         return _ReceivedMessage(
-          text: message.text ?? '',
-          time: message.time ?? '',
+          text: message.text,
+          time: message.time,
           avatarUrl: avatarUrl,
         );
       case MessageType.sent:
         return _SentMessage(
-          text: message.text ?? '',
-          time: message.time ?? '',
+          text: message.text,
+          time: message.time,
           isRead: message.isRead,
         );
-      case MessageType.aiTip:
-        return _AiTipCard(text: message.text ?? '');
     }
-  }
-}
-
-// =============================================================================
-// 날짜 구분선
-// =============================================================================
-class _DateDivider extends StatelessWidget {
-  final String text;
-
-  const _DateDivider({required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          decoration: BoxDecoration(
-            color: CupertinoColors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: _AppColors.stone100),
-            boxShadow: [
-              BoxShadow(
-                color: CupertinoColors.black.withValues(alpha: 0.02),
-                blurRadius: 4,
-                offset: const Offset(0, 1),
-              ),
-            ],
-          ),
-          child: Text(
-            text,
-            style: const TextStyle(
-              fontFamily: 'Noto Sans KR',
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: _AppColors.textSubtle,
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }
 
@@ -413,7 +556,6 @@ class _ReceivedMessage extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              // 아바타
               Container(
                 width: 32,
                 height: 32,
@@ -439,7 +581,6 @@ class _ReceivedMessage extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              // 버블
               Flexible(
                 child: Container(
                   padding: const EdgeInsets.symmetric(
@@ -514,7 +655,6 @@ class _SentMessage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          // 버블
           Container(
             constraints: BoxConstraints(
               maxWidth: MediaQuery.of(context).size.width * 0.75,
@@ -548,7 +688,6 @@ class _SentMessage extends StatelessWidget {
               ),
             ),
           ),
-          // 시간 & 읽음
           Padding(
             padding: const EdgeInsets.only(top: 4, right: 4),
             child: Row(
@@ -573,112 +712,6 @@ class _SentMessage extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// =============================================================================
-// AI 팁 카드
-// =============================================================================
-class _AiTipCard extends StatelessWidget {
-  final String text;
-
-  const _AiTipCard({required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        child: Container(
-          constraints: BoxConstraints(
-            maxWidth: MediaQuery.of(context).size.width * 0.85,
-          ),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFFF8F5F2), Color(0xFFFFFCF9)],
-            ),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: _AppColors.stone100),
-            boxShadow: [
-              BoxShadow(
-                color: CupertinoColors.black.withValues(alpha: 0.02),
-                blurRadius: 4,
-              ),
-            ],
-          ),
-          child: Stack(
-            children: [
-              // 왼쪽 액센트 바
-              Positioned(
-                left: 0,
-                top: 0,
-                bottom: 0,
-                child: Container(
-                  width: 4,
-                  decoration: BoxDecoration(
-                    color: _AppColors.primary.withValues(alpha: 0.3),
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                      bottomLeft: Radius.circular(16),
-                    ),
-                  ),
-                ),
-              ),
-              // 콘텐츠
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 24,
-                      height: 24,
-                      decoration: BoxDecoration(
-                        color: _AppColors.primary.withValues(alpha: 0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        CupertinoIcons.sparkles,
-                        size: 14,
-                        color: _AppColors.primary,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'AI ASSISTANT',
-                            style: TextStyle(
-                              fontFamily: 'Noto Sans KR',
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 1,
-                              color: _AppColors.primary.withValues(alpha: 0.7),
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            text,
-                            style: const TextStyle(
-                              fontFamily: 'Noto Sans KR',
-                              fontSize: 12,
-                              height: 1.5,
-                              color: _AppColors.textMain,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -729,12 +762,11 @@ class _InputBar extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // 첨부 버튼
             CupertinoButton(
               padding: EdgeInsets.zero,
               onPressed: () {},
               child: Transform.rotate(
-                angle: 0.785, // 45도
+                angle: 0.785,
                 child: const Icon(
                   CupertinoIcons.paperclip,
                   size: 24,
@@ -742,7 +774,6 @@ class _InputBar extends StatelessWidget {
                 ),
               ),
             ),
-            // 입력 필드
             Expanded(
               child: CupertinoTextField(
                 controller: controller,
@@ -762,9 +793,9 @@ class _InputBar extends StatelessWidget {
                   vertical: 12,
                 ),
                 decoration: null,
+                onSubmitted: (_) => onSend?.call(),
               ),
             ),
-            // 전송 버튼
             CupertinoButton(
               padding: EdgeInsets.zero,
               onPressed: () {
