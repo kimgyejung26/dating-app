@@ -65,7 +65,6 @@ import '../features/chat/models/chat_room_data.dart';
 import '../features/community/screens/community_screen.dart';
 import '../features/community/screens/post_detail_screen.dart';
 import '../features/community/screens/post_write_screen.dart';
-import '../data/models/community/post_model.dart';
 
 // Profile
 import '../features/profile/screens/my_page_screen.dart';
@@ -214,11 +213,12 @@ class AppRouter {
         return _cupertino(const GroupMatchScreen());
 
       // Community
+
       case RouteNames.community:
         return _cupertino(const CommunityScreen());
       case RouteNames.postDetail:
-        final post = settings.arguments as PostModel?;
-        return _cupertino(PostDetailScreen(post: post));
+        final postId = settings.arguments as String?;
+        return _cupertino(PostDetailScreen(postId: postId ?? ''));
       case RouteNames.postWrite:
         return _cupertino(const PostWriteScreen());
 
