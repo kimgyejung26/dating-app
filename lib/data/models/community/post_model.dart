@@ -1,129 +1,164 @@
-/// 커뮤니티 게시글 모델
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class PostModel {
-  final String id;
-  final String authorId;
-  final String authorNickname;
-  final String? authorProfileUrl;
-  final String category;
-  final String title;
-  final String content;
-  final List<String> imageUrls;
-  final int likeCount;
-  final int commentCount;
-  final int viewCount;
-  final bool isLiked;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-
-  const PostModel({
-    required this.id,
-    required this.authorId,
-    required this.authorNickname,
-    this.authorProfileUrl,
-    required this.category,
-    required this.title,
-    required this.content,
-    this.imageUrls = const [],
-    this.likeCount = 0,
-    this.commentCount = 0,
-    this.viewCount = 0,
-    this.isLiked = false,
-    required this.createdAt,
-    required this.updatedAt,
-  });
-
-  factory PostModel.fromJson(Map<String, dynamic> json) {
-    return PostModel(
-      id: json['id'] as String,
-      authorId: json['authorId'] as String,
-      authorNickname: json['authorNickname'] as String,
-      authorProfileUrl: json['authorProfileUrl'] as String?,
-      category: json['category'] as String,
-      title: json['title'] as String,
-      content: json['content'] as String,
-      imageUrls:
-          (json['imageUrls'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          [],
-      likeCount: json['likeCount'] as int? ?? 0,
-      commentCount: json['commentCount'] as int? ?? 0,
-      viewCount: json['viewCount'] as int? ?? 0,
-      isLiked: json['isLiked'] as bool? ?? false,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'authorId': authorId,
-      'authorNickname': authorNickname,
-      'authorProfileUrl': authorProfileUrl,
-      'category': category,
-      'title': title,
-      'content': content,
-      'imageUrls': imageUrls,
-      'likeCount': likeCount,
-      'commentCount': commentCount,
-      'viewCount': viewCount,
-      'isLiked': isLiked,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
-    };
-  }
-}
-
-/// 댓글 모델
-class CommentModel {
-  final String id;
   final String postId;
   final String authorId;
-  final String authorNickname;
-  final String? authorProfileUrl;
-  final String content;
-  final int likeCount;
-  final bool isLiked;
-  final DateTime createdAt;
 
-  const CommentModel({
-    required this.id,
+  /// 대나무숲은 익명 기반이라 화면에서는 보통 authorId를 직접 노출하지 않음
+  final String content;
+
+  /// 상단 탭용 카테고리
+  /// 예: 전체, 인기, 설렘, 고민, 일상, 질문
+  final String category;
+
+  /// 예: 짝사랑, 첫만남, 썸, 재회 ...
+  final List<String> tags;
+
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+
+  final int likeCount;
+  final int commentCount;
+
+  /// 최근 7일 인기 점수
+  /// 인기 탭 정렬용
+  final int score7d;
+
+  final bool isDeleted;
+
+  const PostModel({
     required this.postId,
     required this.authorId,
-    required this.authorNickname,
-    this.authorProfileUrl,
     required this.content,
-    this.likeCount = 0,
-    this.isLiked = false,
+    required this.category,
+    required this.tags,
     required this.createdAt,
+    required this.updatedAt,
+    required this.likeCount,
+    required this.commentCount,
+    required this.score7d,
+    required this.isDeleted,
   });
 
-  factory CommentModel.fromJson(Map<String, dynamic> json) {
-    return CommentModel(
-      id: json['id'] as String,
-      postId: json['postId'] as String,
-      authorId: json['authorId'] as String,
-      authorNickname: json['authorNickname'] as String,
-      authorProfileUrl: json['authorProfileUrl'] as String?,
-      content: json['content'] as String,
-      likeCount: json['likeCount'] as int? ?? 0,
-      isLiked: json['isLiked'] as bool? ?? false,
-      createdAt: DateTime.parse(json['createdAt'] as String),
+  factory PostModel.empty() {
+    return const PostModel(
+      postId: '',
+      authorId: '',
+      content: '',
+      category: '전체',
+      tags: [],
+      createdAt: null,
+      updatedAt: null,
+      likeCount: 0,
+      commentCount: 0,
+      score7d: 0,
+      isDeleted: false,
     );
   }
 
-  Map<String, dynamic> toJson() {
+  PostModel copyWith({
+    String? postId,
+    String? authorId,
+    String? content,
+    String? category,
+    List<String>? tags,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    int? likeCount,
+    int? commentCount,
+    int? score7d,
+    bool? isDeleted,
+  }) {
+    return PostModel(
+      postId: postId ?? this.postId,
+      authorId: authorId ?? this.authorId,
+      content: content ?? this.content,
+      category: category ?? this.category,
+      tags: tags ?? this.tags,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      likeCount: likeCount ?? this.likeCount,
+      commentCount: commentCount ?? this.commentCount,
+      score7d: score7d ?? this.score7d,
+      isDeleted: isDeleted ?? this.isDeleted,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'postId': postId,
       'authorId': authorId,
-      'authorNickname': authorNickname,
-      'authorProfileUrl': authorProfileUrl,
       'content': content,
+      'category': category,
+      'tags': tags,
+      'createdAt': createdAt != null ? Timestamp.fromDate(createdAt!) : null,
+      'updatedAt': updatedAt != null ? Timestamp.fromDate(updatedAt!) : null,
       'likeCount': likeCount,
-      'isLiked': isLiked,
-      'createdAt': createdAt.toIso8601String(),
+      'commentCount': commentCount,
+      'score7d': score7d,
+      'isDeleted': isDeleted,
     };
+  }
+
+  factory PostModel.fromMap(Map<String, dynamic> map, {String? documentId}) {
+    return PostModel(
+      postId: (map['postId'] ?? documentId ?? '').toString(),
+      authorId: (map['authorId'] ?? '').toString(),
+      content: (map['content'] ?? '').toString(),
+      category: (map['category'] ?? '전체').toString(),
+      tags: _parseTags(map['tags']),
+      createdAt: _parseDateTime(map['createdAt']),
+      updatedAt: _parseDateTime(map['updatedAt']),
+      likeCount: _parseInt(map['likeCount']),
+      commentCount: _parseInt(map['commentCount']),
+      score7d: _parseInt(map['score7d']),
+      isDeleted: map['isDeleted'] == true,
+    );
+  }
+
+  factory PostModel.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
+    final data = doc.data() ?? <String, dynamic>{};
+    return PostModel.fromMap(data, documentId: doc.id);
+  }
+
+  static List<String> _parseTags(dynamic raw) {
+    if (raw is List) {
+      return raw.map((e) => e.toString()).where((e) => e.isNotEmpty).toList();
+    }
+    return [];
+  }
+
+  static int _parseInt(dynamic value) {
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    return 0;
+  }
+
+  static DateTime? _parseDateTime(dynamic value) {
+    if (value == null) return null;
+    if (value is Timestamp) return value.toDate();
+    if (value is DateTime) return value;
+    return null;
+  }
+
+  /// 기존 community UI에서 제목처럼 쓸 수 있게 짧은 미리보기 제공
+  String get previewText {
+    final normalized = content.replaceAll('\n', ' ').trim();
+    if (normalized.length <= 60) return normalized;
+    return '${normalized.substring(0, 60)}...';
+  }
+
+  /// 기존 리스트 화면에서 상대시간 표시할 때 쓰기 좋음
+  String get relativeTimeLabel {
+    if (createdAt == null) return '';
+
+    final now = DateTime.now();
+    final diff = now.difference(createdAt!);
+
+    if (diff.inSeconds < 60) return '방금 전';
+    if (diff.inMinutes < 60) return '${diff.inMinutes}분 전';
+    if (diff.inHours < 24) return '${diff.inHours}시간 전';
+    if (diff.inDays < 7) return '${diff.inDays}일 전';
+    return '${createdAt!.month}/${createdAt!.day}';
   }
 }
