@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../constants/app_colors.dart';
+import '../../widgets/common/app_button.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -6,115 +8,256 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
-        title: const Text('내 페이지'),
-      ),
-      body: ListView(
-        children: [
-          // Profile Header
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                CircleAvatar(
-                  radius: 50,
-                  child: Icon(Icons.person, size: 50),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  '사용자 이름',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '닉네임',
-                  style: TextStyle(
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
-            ),
+        backgroundColor: AppColors.backgroundWhite,
+        elevation: 0,
+        title: const Text(
+          '내 페이지',
+          style: TextStyle(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.bold,
           ),
-          
-          const Divider(),
-          
-          // Menu Items
-          _buildMenuItem(
-            icon: Icons.person_outline,
-            title: '프로필',
-            onTap: () {
-              // TODO: Navigate to profile edit
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings, color: AppColors.textPrimary),
+            onPressed: () {
+              // 설정 화면으로 이동
             },
-          ),
-          _buildMenuItem(
-            icon: Icons.settings,
-            title: '환경설정',
-            onTap: () {
-              // TODO: Navigate to settings
-            },
-          ),
-          _buildMenuItem(
-            icon: Icons.account_balance_wallet,
-            title: '머니 충전',
-            onTap: () {
-              // TODO: Navigate to money charge
-            },
-          ),
-          _buildMenuItem(
-            icon: Icons.bar_chart,
-            title: '나의 이상형 통계 보고서',
-            onTap: () {
-              // TODO: Navigate to statistics
-            },
-          ),
-          _buildMenuItem(
-            icon: Icons.block,
-            title: '아는 사람 피하기',
-            onTap: () {
-              // TODO: Navigate to block contacts
-            },
-          ),
-          _buildMenuItem(
-            icon: Icons.description,
-            title: '약관 및 정책',
-            onTap: () {
-              // TODO: Navigate to terms
-            },
-          ),
-          
-          const Divider(),
-          
-          // Logout
-          _buildMenuItem(
-            icon: Icons.logout,
-            title: '로그아웃',
-            onTap: () {
-              // TODO: Implement logout
-            },
-            textColor: Colors.red,
           ),
         ],
       ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // 프로필 정보 카드
+            Container(
+              margin: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: AppColors.backgroundWhite,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  // 프로필 이미지
+                  Stack(
+                    children: [
+                      Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Color(0xFF4CAF50),
+                              Color(0xFFFF9800),
+                              Color(0xFFFFB6C1),
+                            ],
+                          ),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: AppColors.primaryPink,
+                            width: 3,
+                          ),
+                        ),
+                        child: const Icon(
+                          Icons.person,
+                          size: 50,
+                          color: AppColors.textWhite,
+                        ),
+                      ),
+                      Positioned(
+                        right: 0,
+                        bottom: 0,
+                        child: Container(
+                          width: 32,
+                          height: 32,
+                          decoration: const BoxDecoration(
+                            color: AppColors.backgroundWhite,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.edit,
+                            size: 18,
+                            color: AppColors.primaryPink,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    '사용자 이름',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    '닉네임',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  // 통계
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildStatItem('128', '받은 하트'),
+                      Container(
+                        width: 1,
+                        height: 40,
+                        color: AppColors.borderLight,
+                      ),
+                      _buildStatItem('42', '친구'),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            // 기능 목록
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.backgroundWhite,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  _buildMenuItem(
+                    icon: Icons.person,
+                    iconColor: AppColors.primaryPink,
+                    title: '프로필 편집',
+                    onTap: () {},
+                  ),
+                  const Divider(height: 1),
+                  _buildMenuItem(
+                    icon: Icons.account_balance_wallet,
+                    iconColor: AppColors.secondaryPurple,
+                    title: '머니 충전',
+                    onTap: () {},
+                  ),
+                  const Divider(height: 1),
+                  _buildMenuItem(
+                    icon: Icons.group_add,
+                    iconColor: AppColors.accentGreen,
+                    title: '친구 초대',
+                    onTap: () {},
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            // 로그아웃
+            Center(
+              child: TextButton(
+                onPressed: () {
+                  // 로그아웃 처리
+                },
+                child: const Text(
+                  '로그아웃',
+                  style: TextStyle(
+                    color: AppColors.textTertiary,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatItem(String value, String label) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 14,
+            color: AppColors.textSecondary,
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildMenuItem({
     required IconData icon,
+    required Color iconColor,
     required String title,
     required VoidCallback onTap,
-    Color? textColor,
   }) {
-    return ListTile(
-      leading: Icon(icon, color: textColor),
-      title: Text(
-        title,
-        style: TextStyle(color: textColor),
-      ),
-      trailing: const Icon(Icons.chevron_right),
+    return InkWell(
       onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: iconColor.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                icon,
+                color: iconColor,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ),
+            const Icon(
+              Icons.chevron_right,
+              color: AppColors.textTertiary,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
+

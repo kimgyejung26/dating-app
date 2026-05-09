@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../design_system/design_system.dart';
 
 class TermsScreen extends StatefulWidget {
   const TermsScreen({super.key});
@@ -9,90 +10,156 @@ class TermsScreen extends StatefulWidget {
 }
 
 class _TermsScreenState extends State<TermsScreen> {
-  bool _requiredTermsAgreed = false;
-  bool _optionalTermsAgreed = false;
+  bool _allAgreed = false;
+  bool _serviceTerms = false;
+  bool _privacyPolicy = false;
+  bool _ageVerification = false;
+  bool _marketingOptIn = false;
+
+  bool get _requiredAgreed =>
+      _serviceTerms && _privacyPolicy && _ageVerification;
+
+  void _toggleAll(bool? value) {
+    setState(() {
+      _allAgreed = value ?? false;
+      _serviceTerms = _allAgreed;
+      _privacyPolicy = _allAgreed;
+      _ageVerification = _allAgreed;
+      _marketingOptIn = _allAgreed;
+    });
+  }
+
+  void _updateAllAgreed() {
+    setState(() {
+      _allAgreed =
+          _serviceTerms &&
+          _privacyPolicy &&
+          _ageVerification &&
+          _marketingOptIn;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('약관 동의'),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              '서비스 이용을 위해 약관에 동의해주세요',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+    return SeolScaffold(
+      appBar: const SeolAppBar(title: '약관 동의'),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('서비스 이용을 위해\n약관에 동의해주세요', style: SeolTypography.h2),
+              const SizedBox(height: 32),
+              // All Agree
+              _buildAllAgreeItem(),
+              const SizedBox(height: 16),
+              const Divider(color: SeolColors.divider),
+              const SizedBox(height: 16),
+              // Individual Terms
+              _buildTermItem(
+                title: '서비스 이용약관',
+                isRequired: true,
+                isChecked: _serviceTerms,
+                onChanged: (v) {
+                  setState(() => _serviceTerms = v ?? false);
+                  _updateAllAgreed();
+                },
               ),
-            ),
-            const SizedBox(height: 24),
-            
-            // Required Terms
-            _buildTermsItem(
-              title: '필수 약관 1',
-              isRequired: true,
-              isAgreed: _requiredTermsAgreed,
-              onChanged: (value) {
-                setState(() {
-                  _requiredTermsAgreed = value;
-                });
-              },
-            ),
-            const SizedBox(height: 16),
-            _buildTermsItem(
-              title: '필수 약관 2',
-              isRequired: true,
-              isAgreed: _requiredTermsAgreed,
-              onChanged: (value) {
-                setState(() {
-                  _requiredTermsAgreed = value;
-                });
-              },
-            ),
-            const SizedBox(height: 24),
-            
-            // Optional Terms
-            _buildTermsItem(
-              title: '선택 약관',
-              isRequired: false,
-              isAgreed: _optionalTermsAgreed,
-              onChanged: (value) {
-                setState(() {
-                  _optionalTermsAgreed = value;
-                });
-              },
-            ),
-            const SizedBox(height: 32),
-            
-            // Agreement Message
-            if (!_requiredTermsAgreed)
-              const Padding(
-                padding: EdgeInsets.only(bottom: 16.0),
-                child: Text(
-                  '앱에 가입하려면 먼저 필수 약관에 동의를 해야합니다',
-                  style: TextStyle(
-                    color: Colors.orange,
-                    fontSize: 12,
+              const SizedBox(height: 12),
+              _buildTermItem(
+                title: '개인정보 처리방침',
+                isRequired: true,
+                isChecked: _privacyPolicy,
+                onChanged: (v) {
+                  setState(() => _privacyPolicy = v ?? false);
+                  _updateAllAgreed();
+                },
+              ),
+              const SizedBox(height: 12),
+              _buildTermItem(
+                title: '만 18세 이상 확인',
+                isRequired: true,
+                isChecked: _ageVerification,
+                onChanged: (v) {
+                  setState(() => _ageVerification = v ?? false);
+                  _updateAllAgreed();
+                },
+              ),
+              const SizedBox(height: 12),
+              _buildTermItem(
+                title: '마케팅 정보 수신',
+                isRequired: false,
+                isChecked: _marketingOptIn,
+                onChanged: (v) {
+                  setState(() => _marketingOptIn = v ?? false);
+                  _updateAllAgreed();
+                },
+              ),
+              const Spacer(),
+              // Warning
+              if (!_requiredAgreed)
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: SeolColors.tagWorry,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.info_outline,
+                        color: SeolColors.warning,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        '필수 약관에 동의해 주세요',
+                        style: SeolTypography.bodySmall.copyWith(
+                          color: SeolColors.textPrimary,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+              SeolButton(
+                text: '다음',
+                onPressed: _requiredAgreed
+                    ? () => context.push('/auth-choice')
+                    : null,
               ),
-            
-            // Next Button
-            ElevatedButton(
-              onPressed: _requiredTermsAgreed
-                  ? () {
-                      context.push('/signup');
-                    }
-                  : null,
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 50),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAllAgreeItem() {
+    return InkWell(
+      onTap: () => _toggleAll(!_allAgreed),
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: _allAgreed
+              ? SeolColors.primarySoft
+              : SeolColors.backgroundGrey,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: _allAgreed ? SeolColors.primary : SeolColors.borderLight,
+          ),
+        ),
+        child: Row(
+          children: [
+            _buildCheckbox(_allAgreed, (v) => _toggleAll(v)),
+            const SizedBox(width: 12),
+            Text(
+              '전체 동의',
+              style: SeolTypography.labelLarge.copyWith(
+                color: _allAgreed ? SeolColors.primary : SeolColors.textPrimary,
               ),
-              child: const Text('다음'),
             ),
           ],
         ),
@@ -100,37 +167,62 @@ class _TermsScreenState extends State<TermsScreen> {
     );
   }
 
-  Widget _buildTermsItem({
+  Widget _buildTermItem({
     required String title,
     required bool isRequired,
-    required bool isAgreed,
-    required ValueChanged<bool> onChanged,
+    required bool isChecked,
+    required ValueChanged<bool?> onChanged,
   }) {
-    return Row(
-      children: [
-        Checkbox(
-          value: isAgreed,
-          onChanged: (value) => onChanged(value ?? false),
+    return InkWell(
+      onTap: () => onChanged(!isChecked),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          children: [
+            _buildCheckbox(isChecked, onChanged),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Row(
+                children: [
+                  Text(title, style: SeolTypography.bodyMedium),
+                  const SizedBox(width: 6),
+                  Text(
+                    isRequired ? '(필수)' : '(선택)',
+                    style: SeolTypography.bodySmall.copyWith(
+                      color: isRequired
+                          ? SeolColors.primary
+                          : SeolColors.textTertiary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                // TODO: Show terms detail
+              },
+              icon: const Icon(
+                Icons.chevron_right,
+                color: SeolColors.textTertiary,
+              ),
+            ),
+          ],
         ),
-        Expanded(
-          child: Row(
-            children: [
-              Text(title),
-              if (isRequired)
-                const Text(
-                  ' (필수)',
-                  style: TextStyle(color: Colors.red),
-                ),
-            ],
-          ),
-        ),
-        TextButton(
-          onPressed: () {
-            // Show terms detail
-          },
-          child: const Text('보기'),
-        ),
-      ],
+      ),
+    );
+  }
+
+  Widget _buildCheckbox(bool value, ValueChanged<bool?> onChanged) {
+    return SizedBox(
+      width: 24,
+      height: 24,
+      child: Checkbox(
+        value: value,
+        onChanged: onChanged,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+        activeColor: SeolColors.primary,
+        side: const BorderSide(color: SeolColors.borderMedium, width: 1.5),
+      ),
     );
   }
 }

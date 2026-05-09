@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../design_system/design_system.dart';
 
 class StudentVerificationScreen extends StatefulWidget {
   const StudentVerificationScreen({super.key});
@@ -10,118 +11,250 @@ class StudentVerificationScreen extends StatefulWidget {
 }
 
 class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _portalIdController = TextEditingController();
-  final _portalPasswordController = TextEditingController();
+  final _emailController = TextEditingController();
   bool _isVerifying = false;
+  bool _emailSent = false;
+  String? _selectedUniversity;
+
+  final List<String> _universities = [
+    '연세대학교',
+    '고려대학교',
+    '서울대학교',
+    '성균관대학교',
+    '한양대학교',
+    '이화여자대학교',
+    '중앙대학교',
+    '경희대학교',
+    '서강대학교',
+    '한국외국어대학교',
+  ];
 
   @override
   void dispose() {
-    _portalIdController.dispose();
-    _portalPasswordController.dispose();
+    _emailController.dispose();
     super.dispose();
+  }
+
+  void _sendVerificationEmail() {
+    setState(() => _isVerifying = true);
+    // TODO: API call to send verification email
+    Future.delayed(const Duration(seconds: 1), () {
+      if (mounted) {
+        setState(() {
+          _isVerifying = false;
+          _emailSent = true;
+        });
+      }
+    });
+  }
+
+  void _verifyAndProceed() {
+    setState(() => _isVerifying = true);
+    // TODO: API call to verify email
+    Future.delayed(const Duration(seconds: 1), () {
+      if (mounted) {
+        setState(() => _isVerifying = false);
+        context.push('/initial-setup');
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('재학생 인증'),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
+    return SeolScaffold(
+      appBar: const SeolAppBar(title: '재학생 인증'),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                '연세대학교 재학생 인증',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+              Text('대학 재학생 인증을\n진행해주세요', style: SeolTypography.h2),
+              const SizedBox(height: 8),
+              Text(
+                '대학교 이메일로 재학생 인증을 해주세요',
+                style: SeolTypography.bodyMedium.copyWith(
+                  color: SeolColors.textSecondary,
                 ),
               ),
-              const SizedBox(height: 24),
-              
-              // Portal ID Input
-              TextFormField(
-                controller: _portalIdController,
-                decoration: const InputDecoration(
-                  labelText: '연세포탈 ID',
-                  hintText: '학번 또는 포탈 ID',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return '연세포탈 ID를 입력해주세요';
-                  }
-                  return null;
-                },
-              ),
+              const SizedBox(height: 32),
+              // University Dropdown
+              _buildUniversityDropdown(),
               const SizedBox(height: 16),
-              
-              // Portal Password Input
-              TextFormField(
-                controller: _portalPasswordController,
-                decoration: const InputDecoration(
-                  labelText: '연세포탈 비밀번호',
-                  border: OutlineInputBorder(),
+              // Email Input
+              _buildEmailInput(),
+              if (_emailSent) ...[
+                const SizedBox(height: 24),
+                _buildSuccessMessage(),
+              ],
+              const Spacer(),
+              // Info
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: SeolColors.secondaryLight.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return '비밀번호를 입력해주세요';
-                  }
-                  return null;
-                },
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.school_outlined,
+                      color: SeolColors.secondary,
+                      size: 24,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        '대학 이메일로 인증된 사용자만\n설레연 서비스를 이용할 수 있어요',
+                        style: SeolTypography.bodySmall.copyWith(
+                          color: SeolColors.textSecondary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 24),
-              
-              // Error Message
-              const Text(
-                '연세포탈 로그인이 확인되지 않았습니다.',
-                style: TextStyle(
-                  color: Colors.orange,
-                  fontSize: 12,
-                ),
-              ),
-              const SizedBox(height: 24),
-              
-              // Verify Button
-              ElevatedButton(
-                onPressed: _isVerifying
-                    ? null
-                    : () async {
-                        if (_formKey.currentState!.validate()) {
-                          setState(() {
-                            _isVerifying = true;
-                          });
-                          
-                          // TODO: Verify student
-                          await Future.delayed(const Duration(seconds: 2));
-                          
-                          if (mounted) {
-                            setState(() {
-                              _isVerifying = false;
-                            });
-                            
-                            // Navigate to initial setup
-                            context.push('/initial-setup');
-                          }
-                        }
-                      },
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                ),
-                child: _isVerifying
-                    ? const CircularProgressIndicator()
-                    : const Text('인증하기'),
+              SeolButton(
+                text: _emailSent ? '인증 완료' : '인증 메일 보내기',
+                isLoading: _isVerifying,
+                onPressed:
+                    _selectedUniversity != null &&
+                        _emailController.text.isNotEmpty
+                    ? (_emailSent ? _verifyAndProceed : _sendVerificationEmail)
+                    : null,
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildUniversityDropdown() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        border: Border.all(color: SeolColors.borderLight),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: _selectedUniversity,
+          hint: Text(
+            '대학교 선택',
+            style: SeolTypography.bodyLarge.copyWith(
+              color: SeolColors.textHint,
+            ),
+          ),
+          isExpanded: true,
+          icon: const Icon(Icons.keyboard_arrow_down),
+          items: _universities.map((uni) {
+            return DropdownMenuItem(
+              value: uni,
+              child: Text(uni, style: SeolTypography.bodyLarge),
+            );
+          }).toList(),
+          onChanged: (value) => setState(() => _selectedUniversity = value),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmailInput() {
+    final emailSuffix = _selectedUniversity != null
+        ? '@${_getEmailDomain(_selectedUniversity!)}'
+        : '';
+
+    return TextField(
+      controller: _emailController,
+      keyboardType: TextInputType.emailAddress,
+      style: SeolTypography.bodyLarge,
+      decoration: InputDecoration(
+        hintText: '학교 이메일 ID',
+        hintStyle: SeolTypography.bodyLarge.copyWith(
+          color: SeolColors.textHint,
+        ),
+        suffixText: emailSuffix,
+        suffixStyle: SeolTypography.bodyMedium.copyWith(
+          color: SeolColors.textSecondary,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: SeolColors.borderLight),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: SeolColors.borderLight),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: SeolColors.primary, width: 2),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
+      ),
+      onChanged: (_) => setState(() {}),
+    );
+  }
+
+  Widget _buildSuccessMessage() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: SeolColors.tagFirstMeet,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.check_circle, color: SeolColors.success, size: 24),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '인증 메일을 발송했어요!',
+                  style: SeolTypography.labelMedium.copyWith(
+                    color: SeolColors.success,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text('이메일을 확인하고 인증을 완료해주세요', style: SeolTypography.bodySmall),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getEmailDomain(String university) {
+    switch (university) {
+      case '연세대학교':
+        return 'yonsei.ac.kr';
+      case '고려대학교':
+        return 'korea.ac.kr';
+      case '서울대학교':
+        return 'snu.ac.kr';
+      case '성균관대학교':
+        return 'skku.edu';
+      case '한양대학교':
+        return 'hanyang.ac.kr';
+      case '이화여자대학교':
+        return 'ewha.ac.kr';
+      case '중앙대학교':
+        return 'cau.ac.kr';
+      case '경희대학교':
+        return 'khu.ac.kr';
+      case '서강대학교':
+        return 'sogang.ac.kr';
+      case '한국외국어대학교':
+        return 'hufs.ac.kr';
+      default:
+        return 'university.ac.kr';
+    }
   }
 }
