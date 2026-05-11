@@ -1,8 +1,15 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_3d_controller/flutter_3d_controller.dart';
+
+const String stampModelAsset = 'assets/models/stamp_scene_animated.glb';
+
+String stampModelSource({bool isWeb = kIsWeb}) {
+  return isWeb ? 'assets/$stampModelAsset' : stampModelAsset;
+}
 
 String? selectStampAnimationName(List<String> animations) {
   if (animations.isEmpty) {
@@ -39,9 +46,8 @@ class Real3DStampPage extends StatefulWidget {
 
 class _Real3DStampPageState extends State<Real3DStampPage>
     with SingleTickerProviderStateMixin {
-  static const String modelAsset = 'assets/models/stamp_scene.glb';
   static const Duration stampDuration = Duration(milliseconds: 1100);
-  static const Duration impactTiming = Duration(milliseconds: 430);
+  static const Duration impactTiming = Duration(milliseconds: 500);
 
   final Flutter3DController _modelController = Flutter3DController();
 
@@ -77,7 +83,7 @@ class _Real3DStampPageState extends State<Real3DStampPage>
 
     try {
       final animations = await _modelController.getAvailableAnimations();
-      debugPrint('stamp_scene.glb animations: $animations');
+      debugPrint('stamp_scene_animated.glb animations: $animations');
 
       if (!mounted) {
         return;
@@ -87,7 +93,7 @@ class _Real3DStampPageState extends State<Real3DStampPage>
         _stampAnimationName = selectStampAnimationName(animations);
       });
 
-      _modelController.setCameraTarget(0, 0.2, 0);
+      _modelController.setCameraTarget(0, 0, 0);
       _modelController.setCameraOrbit(0, 0, 180);
     } catch (error, stackTrace) {
       debugPrint('Failed to prepare 3D stamp model: $error');
@@ -175,6 +181,8 @@ class _Real3DStampPageState extends State<Real3DStampPage>
       return;
     }
 
+    _modelController.pauseAnimation();
+
     setState(() {
       _isPlaying = false;
     });
@@ -224,7 +232,7 @@ class _Real3DStampPageState extends State<Real3DStampPage>
                             child:
                                 widget.modelViewerBuilder?.call(context) ??
                                 Flutter3DViewer(
-                                  src: modelAsset,
+                                  src: stampModelSource(),
                                   controller: _modelController,
                                   enableTouch: false,
                                   activeGestureInterceptor: true,
@@ -338,7 +346,7 @@ class _ModelStatusOverlay extends StatelessWidget {
               const SizedBox(height: 10),
               Text(
                 hasError
-                    ? 'assets/models/stamp_scene.glb 파일이 있는지, pubspec.yaml에 asset이 등록됐는지 확인해주세요.'
+                    ? 'assets/models/stamp_scene_animated.glb 파일이 있는지, pubspec.yaml에 asset이 등록됐는지 확인해주세요.'
                     : '${(progress * 100).clamp(0, 100).round()}%',
                 textAlign: TextAlign.center,
                 style: const TextStyle(
