@@ -70,7 +70,7 @@ void main() {
 
     final homeIcon = tester.widget<Icon>(find.byIcon(Icons.home_outlined));
 
-    expect(homeIcon.color, Colors.black);
+    expect(homeIcon.color, const Color(0xFFFF2456));
   });
 
   testWidgets('uses translucent white gradient glass background with blur', (

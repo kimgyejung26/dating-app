@@ -24,7 +24,7 @@ class GlassBottomNavigationBar extends StatefulWidget {
   static const double _activePillWidth = 196;
   static const double _activePillHeight = 104;
 
-  static const Color selectedIconColor = Colors.black;
+  static const Color selectedIconColor = Color(0xFFFF2456);
   static const Color unselectedIconColor = Color(0xFFFF6B8A);
   static const Color labelColor = Colors.black;
 
@@ -451,31 +451,31 @@ class _ActiveGlow extends StatelessWidget {
           children: const [
             _GlowBlob(
               alignment: Alignment(-.55, .03),
-              color: Color(0xFFE3B5D9),
-              widthFactor: .72,
-              heightFactor: .88,
-              opacity: .58,
+              color: Color(0xFFD56CBC),
+              widthFactor: .7776,
+              heightFactor: .9504,
+              opacity: 1.00,
             ),
             _GlowBlob(
               alignment: Alignment(-.18, .10),
-              color: Color(0xFFFFBC7E),
-              widthFactor: .76,
-              heightFactor: .92,
-              opacity: .74,
+              color: Color(0xFFF39A4A),
+              widthFactor: .8208,
+              heightFactor: .9936,
+              opacity: 0.40,
             ),
             _GlowBlob(
               alignment: Alignment(.26, -.04),
-              color: Color(0xFFFAFE66),
-              widthFactor: .78,
-              heightFactor: .92,
-              opacity: .78,
+              color: Color(0xFFE8D83E),
+              widthFactor: .8424,
+              heightFactor: .9936,
+              opacity: 0.38,
             ),
             _GlowBlob(
               alignment: Alignment(.62, -.02),
-              color: Color(0xFF9FFD7F),
-              widthFactor: .72,
-              heightFactor: .88,
-              opacity: .66,
+              color: Color(0xFF76D66F),
+              widthFactor: .7776,
+              heightFactor: .9504,
+              opacity: 0.12,
             ),
           ],
         ),
