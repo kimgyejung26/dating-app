@@ -1,0 +1,2 @@
+{"timestamp": "2026-05-07T17:22:31+00:00", "from_mode": "identity", "to_mode": "asset", "reason": "three_identity_ticks_no_approved_identity_progress", "approvedIdentityCountBefore": 0, "approvedIdentityCountAfter": 0, "approvedAssetCountBefore": 0, "approvedAssetCountAfter": 0}
+{"timestamp": "2026-05-07T17:22:31+00:00", "from_mode": "chunk", "to_mode": "identity", "reason": "two_consecutive_chunks_no_approved_identity_progress", "approvedIdentityCountBefore": 0, "approvedIdentityCountAfter": 0, "approvedAssetCountBefore": 0, "approvedAssetCountAfter": 0}

@@ -1,0 +1,61 @@
+[2026-05-08T10:15:08Z] chunk 1/30 start
+[2026-05-08T10:15:08Z] completion check
+{
+  "schemaVersion": "seolleyeon_ai_image_completion_check_v3",
+  "passed": false,
+  "failureReasons": [
+    "unresolved_pending_imagegen",
+    "missing_visual_verdict",
+    "distribution_mismatch"
+  ],
+  "manualReviewRequired": false,
+  "manualReviewFlag": "",
+  "unresolvedPendingImagegen": true,
+  "pendingReason": "female_002__face_card__v001",
+  "missingVisualVerdict": true,
+  "visualVerdictState": {
+    "assetQaRows": 0,
+    "identityQaRows": 0,
+    "generationRows": 849
+  },
+  "invalidCountedIdentities": [],
+  "missingVisualVerdictRows": [],
+  "approvedCompleteIdentities": 0,
+  "approvedImages": 0,
+  "femaleApprovedCompleteIdentities": 0,
+  "maleApprovedCompleteIdentities": 0,
+  "exactFinalCountMatch": false,
+  "exactDistributionMatch": false,
+  "countChecks": {
+    "approvedCompleteIdentities": {
+      "target": 240,
+      "current": 0,
+      "deficit": 240,
+      "surplus": 0,
+      "exactMatch": false
+    },
+    "approvedImages": {
+      "target": 720,
+      "current": 0,
+      "deficit": 720,
+      "surplus": 0,
+      "exactMatch": false
+    },
+    "femaleApprovedIdentities": {
+      "target": 120,
+      "current": 0,
+      "deficit": 120,
+      "surplus": 0,
+      "exactMatch": false
+    },
+    "maleApprovedIdentities": {
+      "target": 120,
+      "current": 0,
+      "deficit": 120,
+      "surplus": 0,
+      "exactMatch": false
+    }
+  },
+  "overLevelApprovedIdentities": []
+}
+[2026-05-08T10:15:09Z] unresolved pending-imagegen checkpoint blocks autopilot: unresolved_pending:female_002__face_card__v001
