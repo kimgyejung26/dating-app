@@ -1,0 +1,14 @@
+SUCCESS: The process with PID 36960 (child process of PID 34872) has been terminated.
+SUCCESS: The process with PID 11104 (child process of PID 34872) has been terminated.
+SUCCESS: The process with PID 34212 (child process of PID 34872) has been terminated.
+SUCCESS: The process with PID 4264 (child process of PID 34872) has been terminated.
+SUCCESS: The process with PID 13292 (child process of PID 34872) has been terminated.
+정확히 한 asset만 처리했습니다: `female_036__face_card__v001`.
+
+생성 결과를 다음 위치에 저장했고 pending도 resolved 상태로 닫았습니다.
+
+- Raw: [female_036__face_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_036__face_card__v001__attempt01.png)
+- Final: [face_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/036/face_card.png)
+- Receipt: [female_036__face_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T185001Z/transactions/female_036__face_card__v001_attempt1.json)
+
+검증 결과: receipt valid, file QA 통과, `941x1672` PNG. 생성 checkpoint 이후 Codex generated image는 1개만 생겼고, `lib/ai_recommend_model` 아래 recommender 파일 변경은 없었습니다. Visual QA나 distribution audit은 실행하지 않았습니다.
