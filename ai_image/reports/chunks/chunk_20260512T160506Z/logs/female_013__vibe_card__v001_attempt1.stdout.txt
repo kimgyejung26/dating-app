@@ -1,0 +1,10 @@
+Seolleyeon one-asset Image Gen transaction 1건 완료했습니다.
+
+처리 asset: `female_013__vibe_card__v001`  
+생성 호출: Codex built-in `$imagegen` 정확히 1회  
+복구 파일:
+- [raw PNG](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_013__vibe_card__v001__attempt01.png)
+- [final PNG](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/013/vibe_card.png)
+- [receipt JSON](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/transactions/female_013__vibe_card__v001_attempt1.json)
+
+검증 결과: `verify_one_asset_transaction` 통과, `fileQaOk=true`, 이미지 크기 `1024x1536`. 전역 QA/visual QA/distribution audit는 실행하지 않았습니다.

@@ -1,0 +1,16 @@
+정확히 1회 `$imagegen` transaction 완료했습니다.
+
+Asset: `female_012__vibe_card__v001`
+
+생성/복구 결과:
+- Raw: [female_012__vibe_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_012__vibe_card__v001__attempt01.png)
+- Final: [vibe_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/012/vibe_card.png)
+- Receipt: [female_012__vibe_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/transactions/female_012__vibe_card__v001_attempt1.json)
+
+검증:
+- receipt verification: `valid: true`
+- file QA in receipt: passed
+- `pending-imagegen.json`: resolved/recovered
+- manifest status: `file_needs_review`, 즉 visual policy 수동 검토 전이라 approved copy는 만들지 않았습니다.
+
+참고: `mingw32-make ai-image-recover`는 Windows/MSYS signal pipe 오류로 실패해서, 동일 recover entrypoint를 Python으로 직접 실행해 복구했습니다.

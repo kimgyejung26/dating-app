@@ -1,0 +1,10 @@
+정확히 한 개 자산 트랜잭션을 처리했습니다.
+
+자산: `female_020__silhouette_card__v001`  
+결과:
+- raw: [female_020__silhouette_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_020__silhouette_card__v001__attempt01.png)
+- final: [silhouette_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/020/silhouette_card.png)
+- receipt: [female_020__silhouette_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/transactions/female_020__silhouette_card__v001_attempt1.json)
+
+검증 결과: receipt valid, PNG `1024x1536`, file QA reasons 없음.  
+`pending-imagegen.json`은 `resolved/recovered` 상태입니다. `lib/ai_recommend_model` 및 `scripts/ai_image_pipeline_v3` 코드는 변경하지 않았습니다.

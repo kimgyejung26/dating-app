@@ -1,0 +1,16 @@
+정확히 한 번의 Seolleyeon one-asset Image Gen transaction을 실행했습니다.
+
+대상: `female_019__face_card__v001`  
+생성 원본 복구:
+`ai_image/raw/female_019__face_card__v001__attempt01.png`
+
+최종 후보:
+`ai_image/female/019/face_card.png`
+
+Receipt:
+`ai_image/reports/chunks/chunk_20260512T160506Z/transactions/female_019__face_card__v001_attempt1.json`
+
+검증 결과:
+`pending-imagegen.json`은 resolved 상태이고, transaction verifier 통과했습니다. 파일 QA도 `1024x1536`, `ok=true`로 통과했습니다. Recommender 및 image pipeline script 파일 변경은 없었습니다.
+
+주의: 이번 작업은 one-asset transaction 완료까지이며, visual approval이나 distribution approval은 수행하지 않았습니다.

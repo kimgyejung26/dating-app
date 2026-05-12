@@ -1,0 +1,8 @@
+완료했습니다. 정확히 한 번의 Codex Image Gen transaction만 실행했고 대상은 `female_020__face_card__v001`입니다.
+
+생성/복구된 파일:
+- Raw: [female_020__face_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_020__face_card__v001__attempt01.png)
+- Final: [face_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/020/face_card.png)
+- Receipt: [female_020__face_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/transactions/female_020__face_card__v001_attempt1.json)
+
+검증 결과: receipt 검증 `valid: true`, 파일 QA `passed`, PNG `1024x1536`, pending은 resolved 상태입니다. 전역 QA, visual QA, approval, distribution audit, completion check는 실행하지 않았습니다.

@@ -3,8 +3,8 @@
   "chunkId": "chunk_20260512T160506Z",
   "dryRun": false,
   "apply": true,
-  "existingFinalFiles": 26,
-  "plannedExistingFiles": 26,
+  "existingFinalFiles": 50,
+  "plannedExistingFiles": 50,
   "reconciledAssets": [
     {
       "assetId": "female_001__face_card__v001",
@@ -32,6 +32,11 @@
       "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/002/silhouette_card.png"
     },
     {
+      "assetId": "female_002__vibe_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/002/vibe_card.png"
+    },
+    {
       "assetId": "female_003__face_card__v001",
       "fileQaPassed": true,
       "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/003/face_card.png"
@@ -42,9 +47,24 @@
       "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/003/silhouette_card.png"
     },
     {
+      "assetId": "female_003__vibe_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/003/vibe_card.png"
+    },
+    {
       "assetId": "female_004__face_card__v001",
       "fileQaPassed": true,
       "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/004/face_card.png"
+    },
+    {
+      "assetId": "female_004__silhouette_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/004/silhouette_card.png"
+    },
+    {
+      "assetId": "female_004__vibe_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/004/vibe_card.png"
     },
     {
       "assetId": "female_005__face_card__v001",
@@ -57,9 +77,29 @@
       "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/006/face_card.png"
     },
     {
+      "assetId": "female_006__silhouette_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/006/silhouette_card.png"
+    },
+    {
+      "assetId": "female_006__vibe_card__v001",
+      "fileQaPassed": false,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/006/vibe_card.png"
+    },
+    {
       "assetId": "female_007__face_card__v001",
       "fileQaPassed": true,
       "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/007/face_card.png"
+    },
+    {
+      "assetId": "female_007__silhouette_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/007/silhouette_card.png"
+    },
+    {
+      "assetId": "female_007__vibe_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/007/vibe_card.png"
     },
     {
       "assetId": "female_008__face_card__v001",
@@ -83,8 +123,13 @@
     },
     {
       "assetId": "female_009__silhouette_card__v001",
-      "fileQaPassed": false,
+      "fileQaPassed": true,
       "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/009/silhouette_card.png"
+    },
+    {
+      "assetId": "female_009__vibe_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/009/vibe_card.png"
     },
     {
       "assetId": "female_010__face_card__v001",
@@ -98,7 +143,7 @@
     },
     {
       "assetId": "female_010__vibe_card__v001",
-      "fileQaPassed": false,
+      "fileQaPassed": true,
       "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/010/vibe_card.png"
     },
     {
@@ -118,8 +163,18 @@
     },
     {
       "assetId": "female_012__face_card__v001",
-      "fileQaPassed": false,
+      "fileQaPassed": true,
       "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/012/face_card.png"
+    },
+    {
+      "assetId": "female_012__silhouette_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/012/silhouette_card.png"
+    },
+    {
+      "assetId": "female_012__vibe_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/012/vibe_card.png"
     },
     {
       "assetId": "female_013__face_card__v001",
@@ -127,19 +182,84 @@
       "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/013/face_card.png"
     },
     {
+      "assetId": "female_013__silhouette_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/013/silhouette_card.png"
+    },
+    {
+      "assetId": "female_013__vibe_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/013/vibe_card.png"
+    },
+    {
       "assetId": "female_014__face_card__v001",
       "fileQaPassed": true,
       "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/014/face_card.png"
     },
     {
+      "assetId": "female_014__silhouette_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/014/silhouette_card.png"
+    },
+    {
+      "assetId": "female_014__vibe_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/014/vibe_card.png"
+    },
+    {
       "assetId": "female_015__face_card__v001",
       "fileQaPassed": true,
       "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/015/face_card.png"
+    },
+    {
+      "assetId": "female_015__silhouette_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/015/silhouette_card.png"
+    },
+    {
+      "assetId": "female_015__vibe_card__v001",
+      "fileQaPassed": false,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/015/vibe_card.png"
+    },
+    {
+      "assetId": "female_016__face_card__v001",
+      "fileQaPassed": false,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/016/face_card.png"
+    },
+    {
+      "assetId": "female_017__face_card__v001",
+      "fileQaPassed": false,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/017/face_card.png"
+    },
+    {
+      "assetId": "female_018__face_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/018/face_card.png"
+    },
+    {
+      "assetId": "female_018__silhouette_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/018/silhouette_card.png"
+    },
+    {
+      "assetId": "female_018__vibe_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/018/vibe_card.png"
+    },
+    {
+      "assetId": "female_019__face_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/019/face_card.png"
+    },
+    {
+      "assetId": "female_019__silhouette_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/019/silhouette_card.png"
     }
   ],
   "reconstructedReceipts": [],
-  "fileQaPassedAssets": 22,
-  "fileQaFailedAssets": 4,
+  "fileQaPassedAssets": 45,
+  "fileQaFailedAssets": 5,
   "quarantinedFiles": [],
   "unknownFiles": [],
   "pendingStatus": "resolved",

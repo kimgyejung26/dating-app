@@ -1,0 +1,12 @@
+완료했습니다. 정확히 한 번만 Image Gen을 호출했고, 대상 asset은 `female_009__vibe_card__v001`입니다.
+
+결과:
+- Raw: [female_009__vibe_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_009__vibe_card__v001__attempt01.png)
+- Final: [vibe_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/009/vibe_card.png)
+- Receipt: [female_009__vibe_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/transactions/female_009__vibe_card__v001_attempt1.json)
+
+검증:
+- `pending-imagegen.json` resolved 처리됨
+- one-asset transaction receipt 검증 통과
+- single-asset file QA 통과
+- 다른 asset은 처리하지 않았습니다.

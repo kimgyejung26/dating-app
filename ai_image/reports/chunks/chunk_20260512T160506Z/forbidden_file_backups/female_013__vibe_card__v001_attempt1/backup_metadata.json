@@ -1,0 +1,158 @@
+{
+  "schemaVersion": "seolleyeon_forbidden_file_backup_v3",
+  "chunkId": "chunk_20260512T160506Z",
+  "assetId": "female_013__vibe_card__v001",
+  "attempt": 1,
+  "createdAt": "2026-05-12T19:45:45+00:00",
+  "backupRoot": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/forbidden_file_backups/female_013__vibe_card__v001_attempt1",
+  "quarantineRoot": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/forbidden_file_backups/female_013__vibe_card__v001_attempt1/quarantine",
+  "entries": {
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/current_chunk_plan.json": {
+      "path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/current_chunk_plan.json",
+      "beforeExists": true,
+      "beforeSha256": "349299738cfbb6e79f990cf15ad645e0a6c25d27c3527d2eac2da7023a784ca7",
+      "beforeSize": 245451,
+      "backupPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/forbidden_file_backups/female_013__vibe_card__v001_attempt1/before/C__Users__samsung__StudioProjects__semisemifinal__ai_image__manifests__current_chunk_plan.json"
+    },
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/current_chunk_state.json": {
+      "path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/current_chunk_state.json",
+      "beforeExists": true,
+      "beforeSha256": "29254e2dfcc24719136ab8e86be2c7c015f3e0454b38e8bac76cff3cb506c997",
+      "beforeSize": 5230,
+      "backupPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/forbidden_file_backups/female_013__vibe_card__v001_attempt1/before/C__Users__samsung__StudioProjects__semisemifinal__ai_image__manifests__current_chunk_state.json"
+    },
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/asset_qa_manifest.jsonl": {
+      "path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/asset_qa_manifest.jsonl",
+      "beforeExists": true,
+      "beforeSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "beforeSize": 0,
+      "backupPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/forbidden_file_backups/female_013__vibe_card__v001_attempt1/before/C__Users__samsung__StudioProjects__semisemifinal__ai_image__manifests__asset_qa_manifest.jsonl"
+    },
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/identity_qa_manifest.jsonl": {
+      "path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/identity_qa_manifest.jsonl",
+      "beforeExists": true,
+      "beforeSha256": "94cfd56d955cfada3aa05f8f1304b69861d15c71d2a940124928461c801daf9e",
+      "beforeSize": 8790,
+      "backupPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/forbidden_file_backups/female_013__vibe_card__v001_attempt1/before/C__Users__samsung__StudioProjects__semisemifinal__ai_image__manifests__identity_qa_manifest.jsonl"
+    },
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/approved_identity_manifest.jsonl": {
+      "path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/approved_identity_manifest.jsonl",
+      "beforeExists": true,
+      "beforeSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "beforeSize": 0,
+      "backupPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/forbidden_file_backups/female_013__vibe_card__v001_attempt1/before/C__Users__samsung__StudioProjects__semisemifinal__ai_image__manifests__approved_identity_manifest.jsonl"
+    },
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/rejected_identity_manifest.jsonl": {
+      "path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/rejected_identity_manifest.jsonl",
+      "beforeExists": true,
+      "beforeSha256": "0e8da50d86512a5dcc5665cc1da7be85196ef2133a879a38be557c7b2fb1c24d",
+      "beforeSize": 3814,
+      "backupPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/forbidden_file_backups/female_013__vibe_card__v001_attempt1/before/C__Users__samsung__StudioProjects__semisemifinal__ai_image__manifests__rejected_identity_manifest.jsonl"
+    },
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/needs_review_identity_manifest.jsonl": {
+      "path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/needs_review_identity_manifest.jsonl",
+      "beforeExists": true,
+      "beforeSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "beforeSize": 0,
+      "backupPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/forbidden_file_backups/female_013__vibe_card__v001_attempt1/before/C__Users__samsung__StudioProjects__semisemifinal__ai_image__manifests__needs_review_identity_manifest.jsonl"
+    },
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/manual_review_required.flag": {
+      "path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/manual_review_required.flag",
+      "beforeExists": false,
+      "beforeSha256": null,
+      "beforeSize": null,
+      "backupPath": null
+    },
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/latest_distribution_audit.json": {
+      "path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/latest_distribution_audit.json",
+      "beforeExists": true,
+      "beforeSha256": "0e364c517dc5568c1983aa12f6d0074da8007daee86e82d9d7a9df1f36223c1e",
+      "beforeSize": 48717,
+      "backupPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/forbidden_file_backups/female_013__vibe_card__v001_attempt1/before/C__Users__samsung__StudioProjects__semisemifinal__ai_image__reports__latest_distribution_audit.json"
+    },
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/distribution_audit.json": {
+      "path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/distribution_audit.json",
+      "beforeExists": true,
+      "beforeSha256": "0e364c517dc5568c1983aa12f6d0074da8007daee86e82d9d7a9df1f36223c1e",
+      "beforeSize": 48717,
+      "backupPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/forbidden_file_backups/female_013__vibe_card__v001_attempt1/before/C__Users__samsung__StudioProjects__semisemifinal__ai_image__reports__distribution_audit.json"
+    },
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/distribution_report.csv": {
+      "path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/distribution_report.csv",
+      "beforeExists": true,
+      "beforeSha256": "5418f7ee627410577724826f3952712d5b95c24a8bddd114b522f959a11b2c47",
+      "beforeSize": 2807,
+      "backupPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/forbidden_file_backups/female_013__vibe_card__v001_attempt1/before/C__Users__samsung__StudioProjects__semisemifinal__ai_image__reports__distribution_report.csv"
+    },
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/visual_verdict/asset_qa_latest.json": {
+      "path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/visual_verdict/asset_qa_latest.json",
+      "beforeExists": true,
+      "beforeSha256": "8ae56c14805a19f245b60fd183531c1a560ed00a234b733573362d2918fc06ac",
+      "beforeSize": 10434,
+      "backupPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/forbidden_file_backups/female_013__vibe_card__v001_attempt1/before/C__Users__samsung__StudioProjects__semisemifinal__ai_image__reports__visual_verdict__asset_qa_latest.json"
+    },
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/visual_verdict/identity_qa_latest.json": {
+      "path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/visual_verdict/identity_qa_latest.json",
+      "beforeExists": true,
+      "beforeSha256": "157c6ec159c71e75c772d67a0f14101d8bd1ce42dce71600af6b6ad32f2e78f5",
+      "beforeSize": 5000,
+      "backupPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/forbidden_file_backups/female_013__vibe_card__v001_attempt1/before/C__Users__samsung__StudioProjects__semisemifinal__ai_image__reports__visual_verdict__identity_qa_latest.json"
+    },
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/visual_verdict/distribution_audit_latest.json": {
+      "path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/visual_verdict/distribution_audit_latest.json",
+      "beforeExists": true,
+      "beforeSha256": "4b3f47d7eb3a811e9b4e174a7eae8dcb6308bf945f0419a1ea5ac4793b9fd06c",
+      "beforeSize": 8705,
+      "backupPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/forbidden_file_backups/female_013__vibe_card__v001_attempt1/before/C__Users__samsung__StudioProjects__semisemifinal__ai_image__reports__visual_verdict__distribution_audit_latest.json"
+    },
+    "C:/Users/samsung/StudioProjects/semisemifinal/lib/ai_recommend_model/seolleyeon_run_all.py": {
+      "path": "C:/Users/samsung/StudioProjects/semisemifinal/lib/ai_recommend_model/seolleyeon_run_all.py",
+      "beforeExists": true,
+      "beforeSha256": "c5118a401c7bc9a1de3569b2537b0f6fdd9b5e26d00adbb258378ad03b85c0d9",
+      "beforeSize": 3373,
+      "backupPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/forbidden_file_backups/female_013__vibe_card__v001_attempt1/before/C__Users__samsung__StudioProjects__semisemifinal__lib__ai_recommend_model__seolleyeon_run_all.py"
+    },
+    "C:/Users/samsung/StudioProjects/semisemifinal/lib/ai_recommend_model/seolleyeon_svd_train_export.py": {
+      "path": "C:/Users/samsung/StudioProjects/semisemifinal/lib/ai_recommend_model/seolleyeon_svd_train_export.py",
+      "beforeExists": true,
+      "beforeSha256": "d08780139ed08ff0b18c70af853415a0f5c748bbcebd2b822da56dfe87989cc6",
+      "beforeSize": 40205,
+      "backupPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/forbidden_file_backups/female_013__vibe_card__v001_attempt1/before/C__Users__samsung__StudioProjects__semisemifinal__lib__ai_recommend_model__seolleyeon_svd_train_export.py"
+    },
+    "C:/Users/samsung/StudioProjects/semisemifinal/lib/ai_recommend_model/seolleyeon_knn_train_export.py": {
+      "path": "C:/Users/samsung/StudioProjects/semisemifinal/lib/ai_recommend_model/seolleyeon_knn_train_export.py",
+      "beforeExists": true,
+      "beforeSha256": "469a73aeeafacfb487ca3f5639ec9c5f44216d3221d9a4077ae29df276f5ab2b",
+      "beforeSize": 40186,
+      "backupPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/forbidden_file_backups/female_013__vibe_card__v001_attempt1/before/C__Users__samsung__StudioProjects__semisemifinal__lib__ai_recommend_model__seolleyeon_knn_train_export.py"
+    },
+    "C:/Users/samsung/StudioProjects/semisemifinal/lib/ai_recommend_model/seolleyeon_clip_train_export.py": {
+      "path": "C:/Users/samsung/StudioProjects/semisemifinal/lib/ai_recommend_model/seolleyeon_clip_train_export.py",
+      "beforeExists": true,
+      "beforeSha256": "fe277dd68e8a09fa5f31304882a650979a054ce0ac7069b635317c0d53f75ec1",
+      "beforeSize": 13942,
+      "backupPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/forbidden_file_backups/female_013__vibe_card__v001_attempt1/before/C__Users__samsung__StudioProjects__semisemifinal__lib__ai_recommend_model__seolleyeon_clip_train_export.py"
+    },
+    "C:/Users/samsung/StudioProjects/semisemifinal/lib/ai_recommend_model/seolleyeon_clip_embedder.py": {
+      "path": "C:/Users/samsung/StudioProjects/semisemifinal/lib/ai_recommend_model/seolleyeon_clip_embedder.py",
+      "beforeExists": true,
+      "beforeSha256": "3913e2374f85d49126b7f52aba29b4441b4bb396c7a122264fa37e3dea11ab64",
+      "beforeSize": 15008,
+      "backupPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/forbidden_file_backups/female_013__vibe_card__v001_attempt1/before/C__Users__samsung__StudioProjects__semisemifinal__lib__ai_recommend_model__seolleyeon_clip_embedder.py"
+    },
+    "C:/Users/samsung/StudioProjects/semisemifinal/lib/ai_recommend_model/seolleyeon_rrf_export.py": {
+      "path": "C:/Users/samsung/StudioProjects/semisemifinal/lib/ai_recommend_model/seolleyeon_rrf_export.py",
+      "beforeExists": true,
+      "beforeSha256": "3d699237d2a3503d329b738e4c4b77a22fa8febf2b72819e14973478e4519b5b",
+      "beforeSize": 12361,
+      "backupPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/forbidden_file_backups/female_013__vibe_card__v001_attempt1/before/C__Users__samsung__StudioProjects__semisemifinal__lib__ai_recommend_model__seolleyeon_rrf_export.py"
+    },
+    "C:/Users/samsung/StudioProjects/semisemifinal/lib/ai_recommend_model/seolleyeon_rec_common_v3.py": {
+      "path": "C:/Users/samsung/StudioProjects/semisemifinal/lib/ai_recommend_model/seolleyeon_rec_common_v3.py",
+      "beforeExists": true,
+      "beforeSha256": "b9495079e0d708849109dbbc94a742d067f293ef3c8eaf252e2a99226e3b6cc7",
+      "beforeSize": 24848,
+      "backupPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/forbidden_file_backups/female_013__vibe_card__v001_attempt1/before/C__Users__samsung__StudioProjects__semisemifinal__lib__ai_recommend_model__seolleyeon_rec_common_v3.py"
+    }
+  }
+}

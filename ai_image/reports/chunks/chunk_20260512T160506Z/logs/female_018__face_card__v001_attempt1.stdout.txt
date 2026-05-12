@@ -1,0 +1,16 @@
+Ran exactly one Seolleyeon one-asset Image Gen transaction.
+
+Asset: `female_018__face_card__v001`  
+Generated once with `$imagegen`, then recovered to:
+
+- `ai_image/raw/female_018__face_card__v001__attempt01.png`
+- `ai_image/female/018/face_card.png`
+
+Validation evidence:
+
+- `pending-imagegen.json` is now resolved.
+- `generation_status.csv` shows `file_needs_review`.
+- Transaction receipt written and verified: `ai_image/reports/chunks/chunk_20260512T160506Z/transactions/female_018__face_card__v001_attempt1.json`
+- Single-asset file QA passed; visual policy QA/manual review is still required.
+
+No recommender files or unrelated app code were modified.

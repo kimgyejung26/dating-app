@@ -5,9 +5,9 @@
   "chunk_unattended_verification": "PENDING",
   "chunk_qa_complete": false,
   "chunk_distribution_updated": false,
-  "chunk_new_generated_assets": 9,
-  "chunk_new_recovered_assets": 50,
-  "chunk_new_file_qa_passed_assets": 28,
+  "chunk_new_generated_assets": 29,
+  "chunk_new_recovered_assets": 184,
+  "chunk_new_file_qa_passed_assets": 48,
   "chunk_new_visual_approved_assets": 0,
   "chunk_new_approved_identities": 0,
   "chunk_new_needs_review_identities": 0,
@@ -45,5 +45,5 @@
     }
   },
   "surplusBuckets": [],
-  "updatedAt": "2026-05-12T18:22:09+00:00"
+  "updatedAt": "2026-05-12T21:13:36+00:00"
 }

@@ -1,0 +1,13 @@
+단일 Seolleyeon one-asset Image Gen transaction을 정확히 1회 실행했습니다.
+
+대상 asset: `female_015__vibe_card__v001`
+
+결과:
+- 생성 원본 복구: [raw png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_015__vibe_card__v001__attempt01.png)
+- final candidate 저장: [vibe_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/015/vibe_card.png)
+- rejected copy 저장: [rejected attempt](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/rejected/female_015__vibe_card__v001__attempt01.png)
+- receipt 작성: [transaction receipt](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/transactions/female_015__vibe_card__v001_attempt1.json)
+
+검증 결과 파일 QA에서 `bad_aspect_ratio`로 reject 처리했습니다. 실제 크기는 `1448x1086`이라 파이프라인의 세로 프로필 비율 조건을 통과하지 못했습니다. 추가 imagegen/retry는 하지 않았습니다.
+
+`generation_manifest.jsonl`, `generation_status.csv`, `pending-imagegen.json`은 해당 asset 상태에 맞게 갱신됐고, recommender 파일이나 파이프라인 스크립트는 수정하지 않았습니다.

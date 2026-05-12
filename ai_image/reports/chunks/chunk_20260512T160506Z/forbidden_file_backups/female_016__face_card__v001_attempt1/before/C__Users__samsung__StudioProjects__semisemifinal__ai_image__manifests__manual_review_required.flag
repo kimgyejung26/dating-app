@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "seolleyeon_active_visual_manual_review_v3",
+  "reason": "one_asset_receipt_missing_or_invalid_requires_reconcile",
+  "details": {
+    "assetId": "female_015__vibe_card__v001",
+    "error": "receipt_status_not_succeeded",
+    "receiptPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/transactions/female_015__vibe_card__v001_attempt1.json"
+  },
+  "updatedAt": "2026-05-12T20:19:23+00:00"
+}

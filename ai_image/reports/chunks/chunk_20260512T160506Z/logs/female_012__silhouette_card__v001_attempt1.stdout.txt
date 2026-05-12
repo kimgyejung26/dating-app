@@ -1,0 +1,9 @@
+단일 Seolleyeon one-asset Image Gen transaction 완료했습니다.
+
+처리 asset: `female_012__silhouette_card__v001`  
+결과 파일:
+- Raw: [female_012__silhouette_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_012__silhouette_card__v001__attempt01.png)
+- Final candidate: [silhouette_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/012/silhouette_card.png)
+- Receipt: [female_012__silhouette_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/transactions/female_012__silhouette_card__v001_attempt1.json)
+
+검증 결과 `seolleyeon_one_asset_transaction_v3` receipt가 `valid: true`로 통과했습니다. 파일 QA도 통과했고, `pending-imagegen.json`은 resolved 상태입니다. 전역 QA, visual approval, 다음 asset 처리는 실행하지 않았습니다.

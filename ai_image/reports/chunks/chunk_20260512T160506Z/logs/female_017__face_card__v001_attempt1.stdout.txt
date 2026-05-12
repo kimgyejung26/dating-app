@@ -1,0 +1,11 @@
+Ran exactly one Seolleyeon one-asset Image Gen transaction for `female_017__face_card__v001`.
+
+Result: generated and recovered, but **file QA failed** due to `bad_aspect_ratio` (`887x1772`, ratio `0.5006`; required min is `0.55`). I did not retry or run another imagegen call.
+
+Written outputs:
+- Raw: [female_017__face_card__v001__attempt01.png](</c/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_017__face_card__v001__attempt01.png>)
+- Final candidate: [face_card.png](</c/Users/samsung/StudioProjects/semisemifinal/ai_image/female/017/face_card.png>)
+- Rejected copy: [female_017__face_card__v001__attempt01.png](</c/Users/samsung/StudioProjects/semisemifinal/ai_image/rejected/female_017__face_card__v001__attempt01.png>)
+- Receipt: [female_017__face_card__v001_attempt1.json](</c/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/transactions/female_017__face_card__v001_attempt1.json>)
+
+Validation: pending checkpoint is resolved, receipt exists with `status: failed`, `generation_status.csv` marks only this asset as `file_rejected`.

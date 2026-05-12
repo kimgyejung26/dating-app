@@ -1,0 +1,1 @@
+Checkpoint 완료, reference 파일도 존재합니다. 이제 `female_019__vibe_card__v001`에 대해 `$imagegen`을 정확히 한 번 실행하고 중단합니다.

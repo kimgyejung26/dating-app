@@ -1,0 +1,12 @@
+Ran exactly one Seolleyeon one-asset Image Gen transaction for `female_016__face_card__v001`.
+
+Result: generated and recovered, then rejected by single-asset file QA because the image is `860x1829` with aspect ratio `0.470`, below the allowed `0.55-0.85`.
+
+Artifacts:
+- Raw: `ai_image/raw/female_016__face_card__v001__attempt01.png`
+- Final candidate: `ai_image/female/016/face_card.png`
+- Rejected copy: `ai_image/rejected/female_016__face_card__v001__attempt01.png`
+- Receipt: `ai_image/reports/chunks/chunk_20260512T160506Z/transactions/female_016__face_card__v001_attempt1.json`
+- Checkpoint: `ai_image/manifests/checkpoints/pending-imagegen__before_one_asset_transaction__20260513T052107+0900.json`
+
+I did not retry or generate a second image. Recommender files were not changed.

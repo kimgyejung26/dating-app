@@ -1,0 +1,14 @@
+완료했습니다. 정확히 1회 Image Gen transaction만 실행했습니다.
+
+대상 asset:
+`female_007__vibe_card__v001`
+
+생성/복구 위치:
+- Raw: [ai_image/raw/female_007__vibe_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_007__vibe_card__v001__attempt01.png)
+- Final: [ai_image/female/007/vibe_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/007/vibe_card.png)
+- Receipt: [female_007__vibe_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/transactions/female_007__vibe_card__v001_attempt1.json)
+
+검증 결과:
+`verify_one_asset_transaction` 통과했습니다. 파일 QA도 통과했고 이미지 크기는 `1086x1448`, PNG, `fileQaPassed=true`입니다.
+
+주의: 전역 visual QA나 approval 처리는 하지 않았습니다. 이번 요청 범위대로 one-asset transaction에서 멈췄습니다.

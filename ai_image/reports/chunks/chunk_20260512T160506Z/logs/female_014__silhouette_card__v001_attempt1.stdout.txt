@@ -1,0 +1,15 @@
+완료했습니다. 정확히 한 번 `$imagegen`을 호출했고, pending 기준 asset만 처리했습니다.
+
+처리 대상: `female_014__silhouette_card__v001` attempt 1  
+결과 파일: [silhouette_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/014/silhouette_card.png)  
+Raw: [attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_014__silhouette_card__v001__attempt01.png)  
+Receipt: [transaction receipt](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/transactions/female_014__silhouette_card__v001_attempt1.json)
+
+검증 결과:
+- `pending-imagegen.json` resolved 처리됨
+- `generation_manifest.jsonl`, `generation_status.csv`, `completed_pending_imagegen.jsonl` 반영됨
+- 단일 asset file QA 통과: `941x1672`, valid PNG
+- transaction verifier 통과
+- recommender/lib 파일은 수정하지 않았습니다
+
+상태는 승인 확정이 아니라 `recovered_pending_qa`입니다. Visual/global QA나 approved copy 생성은 실행하지 않았습니다.

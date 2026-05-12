@@ -1,0 +1,17 @@
+정확히 1건의 Seolleyeon Image Gen transaction을 실행했습니다.
+
+Asset: `female_012__face_card__v001` attempt `2`
+
+생성/복구 결과:
+- Raw: [female_012__face_card__v001__attempt02.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_012__face_card__v001__attempt02.png)
+- Final candidate: [face_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/012/face_card.png)
+- Receipt: [female_012__face_card__v001_attempt2.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/transactions/female_012__face_card__v001_attempt2.json)
+- Pending checkpoint: `ai_image/manifests/pending-imagegen.json` is now `status: resolved`
+
+검증:
+- `$imagegen` 호출: 1회
+- 단일 파일 QA: 통과
+- PNG: `940x1672`, `2,081,424 bytes`
+- recommender files under `lib/ai_recommend_model` 변경 없음
+
+참고: 작업 전부터 `ai_image` 쪽 dirty worktree 변경이 여러 개 있었고, 그것들은 정리하거나 되돌리지 않았습니다.

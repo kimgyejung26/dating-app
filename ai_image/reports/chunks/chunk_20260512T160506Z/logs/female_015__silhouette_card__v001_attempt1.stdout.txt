@@ -1,0 +1,17 @@
+완료했습니다. Codex 내장 `$imagegen` 호출은 정확히 1회만 실행했습니다.
+
+처리 asset:
+`female_015__silhouette_card__v001`
+
+생성/회수 파일:
+`ai_image/raw/female_015__silhouette_card__v001__attempt01.png`
+`ai_image/female/015/silhouette_card.png`
+
+체크포인트:
+`ai_image/manifests/checkpoints/pending-imagegen__before_one_asset_transaction__20260513T051001.json`
+
+영수증:
+`ai_image/reports/chunks/chunk_20260512T160506Z/transactions/female_015__silhouette_card__v001_attempt1.json`
+
+검증 결과:
+one-asset transaction verify 통과, PNG `1024x1536`, file QA passed. 전역 QA나 다음 asset 처리는 실행하지 않았습니다.

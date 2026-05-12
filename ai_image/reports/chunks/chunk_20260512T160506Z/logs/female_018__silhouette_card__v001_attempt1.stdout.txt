@@ -1,0 +1,10 @@
+Completed exactly one Seolleyeon one-asset Image Gen transaction.
+
+Asset: `female_018__silhouette_card__v001`  
+Generated once via Codex imagegen, then recovered to:
+
+- `ai_image/raw/female_018__silhouette_card__v001__attempt01.png`
+- `ai_image/female/018/silhouette_card.png`
+- Receipt: `ai_image/reports/chunks/chunk_20260512T160506Z/transactions/female_018__silhouette_card__v001_attempt1.json`
+
+Validation evidence: receipt verification passed, single-asset file QA passed, PNG is `941x1671`, `2384334` bytes. I did not run global QA, visual QA, distribution audit, completion check, or touch recommender/pipeline code.
