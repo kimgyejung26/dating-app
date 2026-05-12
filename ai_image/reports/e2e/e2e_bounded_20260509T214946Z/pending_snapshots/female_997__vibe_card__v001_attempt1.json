@@ -1,0 +1,32 @@
+{
+  "assetId": "female_997__vibe_card__v001",
+  "profileId": "female_997",
+  "gender": "female",
+  "numericId": "997",
+  "shotType": "vibe_card",
+  "attempt": 1,
+  "prompt": "Using the attached face_card image as the same person reference, generate exactly one vibe_card image.\n\nAsset metadata:\nassetId: female_997__vibe_card__v001\nprofileId: female_997\nshotType: vibe_card\n\nGoal:\nSame person as the reference face_card.\nGenerate a realistic campus/cafe/library/exhibition lifestyle profile photo.\nThe mood should be calm, sincere, and trustworthy.\nNot nightlife.\nNot influencer content.\nNo readable logo, school name, text, or watermark.\n\nUse this prompt:\nA realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, a soft oval face, medium-large calm eyes, a delicate jawline, a gentle quiet expression, same long, natural dark brown, soft wavy hair with light natural bangs, same natural grooming.\n\nMood and lifestyle:\nstanding near a campus garden with a relaxed sincere expression, soft mature romantic everyday fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\nquiet campus cafe or study lounge, warm neutral interior, no brand logos, no readable text.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.\n",
+  "promptHash": "a00805b20c965e2db2ab7dd4",
+  "queuePath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/imagegen_queue.jsonl",
+  "manifestPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/generation_manifest.jsonl",
+  "pendingPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/pending-imagegen.json",
+  "expectedRawPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_997__vibe_card__v001__attempt01.png",
+  "expectedFinalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/997/vibe_card.png",
+  "expectedApprovedPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/approved/female_997__vibe_card__v001.png",
+  "expectedRejectedPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/rejected/female_997__vibe_card__v001__attempt01.png",
+  "referenceAssetId": "female_997__face_card__v001",
+  "referenceImagePath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/997/face_card.png",
+  "codexGeneratedImagesDir": "C:\\Users\\samsung\\.codex\\generated_images",
+  "status": "pending_imagegen",
+  "createdAt": "2026-05-09T21:54:15+00:00",
+  "recoveryInstructions": [
+    "After the $imagegen result, do not continue to the next queued asset.",
+    "First run mingw32-make ai-image-recover or scripts/recover_pending_imagegen_v3.py.",
+    "Map identity from this pending-imagegen.json only; do not infer identity visually.",
+    "Copy raw output to expectedRawPath and final candidate to expectedFinalPath.",
+    "Run QA before preparing another $imagegen prompt."
+  ],
+  "chunkId": "e2e_bounded_20260509T214946Z",
+  "e2eSmoke": true,
+  "logicalIdentityId": "e2e_identity_001"
+}

@@ -1,0 +1,33 @@
+{
+  "qaType": "seolleyeon_visual_verdict_asset_v3",
+  "sheetId": "one_asset_codex_internal_imagegen_20260510T1228Z",
+  "assets": [
+    {
+      "assetId": "female_003__silhouette_card__v001",
+      "profileId": "female_003",
+      "gender": "female",
+      "shotType": "silhouette_card",
+      "targetFaceType": "fox_like",
+      "observedFaceType": "fox_like",
+      "faceTypeConfidence": 0.72,
+      "targetLooksLevelBand": "3.9-4.3",
+      "observedLooksLevelBand": "3.9-4.3",
+      "looksLevelConfidence": 0.72,
+      "adultVisual": true,
+      "photoRealism": 4,
+      "campusRealism": 5,
+      "brandFit": 4,
+      "shotTypeReadable": true,
+      "influencerRisk": 1,
+      "childlikeRisk": 0,
+      "schoolUniformRisk": 0,
+      "sexualizationRisk": 0,
+      "artifactRisk": 0,
+      "metadataMismatch": false,
+      "mismatchFields": [],
+      "decision": "approved",
+      "rejectReasons": [],
+      "notes": "Manual Codex visual policy review: realistic adult Korean university campus silhouette_card; modest cardigan/pants/tote styling; no readable text/logo/watermark; no school uniform/nightlife/sexualization; body proportions readable."
+    }
+  ]
+}

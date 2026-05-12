@@ -1,0 +1,33 @@
+{
+  "qaType": "seolleyeon_visual_verdict_asset_v3",
+  "sheetId": "manual-single-asset-20260510-female-013-face-card",
+  "assets": [
+    {
+      "assetId": "female_013__face_card__v001",
+      "profileId": "female_013",
+      "gender": "female",
+      "shotType": "face_card",
+      "targetFaceType": "bear_like",
+      "observedFaceType": "bear_like",
+      "faceTypeConfidence": 0.72,
+      "targetLooksLevelBand": "2.5-3.2",
+      "observedLooksLevelBand": "2.5-3.2",
+      "looksLevelConfidence": 0.73,
+      "adultVisual": true,
+      "photoRealism": 4.5,
+      "campusRealism": 4.2,
+      "brandFit": 4.3,
+      "shotTypeReadable": true,
+      "influencerRisk": 1.0,
+      "childlikeRisk": 0.5,
+      "schoolUniformRisk": 0.0,
+      "sexualizationRisk": 0.5,
+      "artifactRisk": 0.5,
+      "metadataMismatch": false,
+      "mismatchFields": [],
+      "decision": "approved",
+      "rejectReasons": [],
+      "notes": "Manual visual check in Codex: adult, modest campus-neutral face_card; no readable logo/text/watermark; no school uniform/nightlife/sexualized styling; realistic smartphone portrait."
+    }
+  ]
+}

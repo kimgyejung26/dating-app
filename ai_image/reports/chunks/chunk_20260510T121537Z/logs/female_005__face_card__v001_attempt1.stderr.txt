@@ -1,0 +1,2383 @@
+Reading additional input from stdin...
+2026-05-10T12:44:27.122668Z  WARN codex_core_plugins::manager: failed to warm featured plugin ids cache error=remote plugin sync request to https://chatgpt.com/backend-api/plugins/featured failed with status 403 Forbidden: <html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style global>body{font-family:Arial,Helvetica,sans-serif}.container{align-items:center;display:flex;flex-direction:column;gap:2rem;height:100%;justify-content:center;width:100%}@keyframes enlarge-appear{0%{opacity:0;transform:scale(75%) rotate(-90deg)}to{opacity:1;transform:scale(100%) rotate(0deg)}}.logo{color:#8e8ea0}.scale-appear{animation:enlarge-appear .4s ease-out}@media (min-width:768px){.scale-appear{height:48px;width:48px}}.data:empty{display:none}.data{border-radius:5px;color:#8e8ea0;text-align:center}@media (prefers-color-scheme:dark){body{background-color:#343541}.logo{color:#acacbe}}</style>
+  <meta http-equiv="refresh" content="360"></head>
+  <body>
+    <div class="container">
+      <div class="logo">
+        <svg
+          width="41"
+          height="41"
+          viewBox="0 0 41 41"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          strokeWidth="2"
+          class="scale-appear"
+        >
+          <path
+            d="M37.5324 16.8707C37.9808 15.5241 38.1363 14.0974 37.9886 12.6859C37.8409 11.2744 37.3934 9.91076 36.676 8.68622C35.6126 6.83404 33.9882 5.3676 32.0373 4.4985C30.0864 3.62941 27.9098 3.40259 25.8215 3.85078C24.8796 2.7893 23.7219 1.94125 22.4257 1.36341C21.1295 0.785575 19.7249 0.491269 18.3058 0.500197C16.1708 0.495044 14.0893 1.16803 12.3614 2.42214C10.6335 3.67624 9.34853 5.44666 8.6917 7.47815C7.30085 7.76286 5.98686 8.3414 4.8377 9.17505C3.68854 10.0087 2.73073 11.0782 2.02839 12.312C0.956464 14.1591 0.498905 16.2988 0.721698 18.4228C0.944492 20.5467 1.83612 22.5449 3.268 24.1293C2.81966 25.4759 2.66413 26.9026 2.81182 28.3141C2.95951 29.7256 3.40701 31.0892 4.12437 32.3138C5.18791 34.1659 6.8123 35.6322 8.76321 36.5013C10.7141 37.3704 12.8907 37.5973 14.9789 37.1492C15.9208 38.2107 17.0786 39.0587 18.3747 39.6366C19.6709 40.2144 21.0755 40.5087 22.4946 40.4998C24.6307 40.5054 26.7133 39.8321 28.4418 38.5772C30.1704 37.3223 31.4556 35.5506 32.1119 33.5179C33.5027 33.2332 34.8167 32.6547 35.9659 31.821C37.115 30.9874 38.0728 29.9178 38.7752 28.684C39.8458 26.8371 40.3023 24.6979 40.0789 22.5748C39.8556 20.4517 38.9639 18.4544 37.5324 16.8707ZM22.4978 37.8849C20.7443 37.8874 19.0459 37.2733 17.6994 36.1501C17.7601 36.117 17.8666 36.0586 17.936 36.0161L25.9004 31.4156C26.1003 31.3019 26.2663 31.137 26.3813 30.9378C26.4964 30.7386 26.5563 30.5124 26.5549 30.2825V19.0542L29.9213 20.998C29.9389 21.0068 29.9541 21.0198 29.9656 21.0359C29.977 21.052 29.9842 21.0707 29.9867 21.0902V30.3889C29.9842 32.375 29.1946 34.2791 27.7909 35.6841C26.3872 37.0892 24.4838 37.8806 22.4978 37.8849ZM6.39227 31.0064C5.51397 29.4888 5.19742 27.7107 5.49804 25.9832C5.55718 26.0187 5.66048 26.0818 5.73461 26.1244L13.699 30.7248C13.8975 30.8408 14.1233 30.902 14.3532 30.902C14.583 30.902 14.8088 30.8408 15.0073 30.7248L24.731 25.1103V28.9979C24.7321 29.0177 24.7283 29.0376 24.7199 29.0556C24.7115 29.0736 24.6988 29.0893 24.6829 29.1012L16.6317 33.7497C14.9096 34.7416 12.8643 35.0097 10.9447 34.4954C9.02506 33.9811 7.38785 32.7263 6.39227 31.0064ZM4.29707 13.6194C5.17156 12.0998 6.55279 10.9364 8.19885 10.3327C8.19885 10.4013 8.19491 10.5228 8.19491 10.6071V19.808C8.19351 20.0378 8.25334 20.2638 8.36823 20.4629C8.48312 20.6619 8.64893 20.8267 8.84863 20.9404L18.5723 26.5542L15.206 28.4979C15.1894 28.5089 15.1703 28.5155 15.1505 28.5173C15.1307 28.5191 15.1107 28.516 15.0924 28.5082L7.04046 23.8557C5.32135 22.8601 4.06716 21.2235 3.55289 19.3046C3.03862 17.3858 3.30624 15.3413 4.29707 13.6194ZM31.955 20.0556L22.2312 14.4411L25.5976 12.4981C25.6142 12.4872 25.6333 12.4805 25.6531 12.4787C25.6729 12.4769 25.6928 12.4801 25.7111 12.4879L33.7631 17.1364C34.9967 17.849 36.0017 18.8982 36.6606 20.1613C37.3194 21.4244 37.6047 22.849 37.4832 24.2684C37.3617 25.6878 36.8382 27.0432 35.9743 28.1759C35.1103 29.3086 33.9415 30.1717 32.6047 30.6641C32.6047 30.5947 32.6047 30.4733 32.6047 30.3889V21.188C32.6066 20.9586 32.5474 20.7328 32.4332 20.5338C32.319 20.3348 32.154 20.1698 31.955 20.0556ZM35.3055 15.0128C35.2464 14.9765 35.1431 14.9142 35.069 14.8717L27.1045 10.2712C26.906 10.1554 26.6803 10.0943 26.4504 10.0943C26.2206 10.0943 25.9948 10.1554 25.7963 10.2712L16.0726 15.8858V11.9982C16.0715 11.9783 16.0753 11.9585 16.0837 11.9405C16.0921 11.9225 16.1048 11.9068 16.1207 11.8949L24.1719 7.25025C25.4053 6.53903 26.8158 6.19376 28.2383 6.25482C29.6608 6.31589 31.0364 6.78077 32.2044 7.59508C33.3723 8.40939 34.2842 9.53945 34.8334 10.8531C35.3826 12.1667 35.5464 13.6095 35.3055 15.0128ZM14.2424 21.9419L10.8752 19.9981C10.8576 19.9893 10.8423 19.9763 10.8309 19.9602C10.8195 19.9441 10.8122 19.9254 10.8098 19.9058V10.6071C10.8107 9.18295 11.2173 7.78848 11.9819 6.58696C12.7466 5.38544 13.8377 4.42659 15.1275 3.82264C16.4173 3.21869 17.8524 2.99464 19.2649 3.1767C20.6775 3.35876 22.0089 3.93941 23.1034 4.85067C23.0427 4.88379 22.937 4.94215 22.8668 4.98473L14.9024 9.58517C14.7025 9.69878 14.5366 9.86356 14.4215 10.0626C14.3065 10.2616 14.2466 10.4877 14.2479 10.7175L14.2424 21.9419ZM16.071 17.9991L20.4018 15.4978L24.7325 17.9975V22.9985L20.4018 25.4983L16.071 22.9985V17.9991Z"
+            fill="currentColor"
+          />
+        </svg>
+      </div>
+      <div class="data"><div class="main-wrapper" role="main"><div class="main-content"><noscript><div class="h2"><span id="challenge-error-text">Enable JavaScript and cookies to continue</span></div></noscript></div></div><script>(function(){window._cf_chl_opt = {cFPWv: 'g',cH: 'HN0npy3uEh_WbLc6cAgqXGAogBCSj2PTqwk3eGtwAVA-1778417067-1.2.1.1-E_x2wTnXTwoq1rWsuR3iKlyWso2uJJfUV6i7lhgDXvi8h76rrB2nBTKj1ulOQInD',cITimeS: '1778417067',cRay: '9f99090d7e5aea9d',cTplB: '0',cTplC:1,cTplO:0,cTplV:5,cType: 'managed',cUPMDTk:"/backend-api/plugins/featured?platform=codex&__cf_chl_tk=7zc6ijzNUUWP41CIU6I5F8.gObq208.zSDBNlG9sUK8-1778417067-1.0.1.1-3nZNTWYTcf.O4lSNk7UsfjOwFclE8e84tHCujcmzdHM",cvId: '3',cZone: 'chatgpt.com',fa:"/backend-api/plugins/featured?platform=codex&__cf_chl_f_tk=7zc6ijzNUUWP41CIU6I5F8.gObq208.zSDBNlG9sUK8-1778417067-1.0.1.1-3nZNTWYTcf.O4lSNk7UsfjOwFclE8e84tHCujcmzdHM",md: '8.tcF18q5hkfv23Yrveh1OcTZ0P7fwAsaaA6O1M4z5Y-1778417067-1.2.1.1-9tPFAh3uFZBj_HyAM8hyph_5uTLeieNnIg9KH69CcNFzrUY.rZKsPwRApZ6aKR.T_AxU4mp3xkVTHQv3oUbWpS1Upk0jQgZ5zFlkcALSWyWspVdIeqz07yj1JwJujpHa1pukHbMV4ShUqFegZx5LnKGLOKeDcx9t8w1BowBQLsTniblSL.MzjotW5Uct_iJ0UF7miz2SvByJIRPKTCpcAlKLKVo1Ueegtnx_gtmiTALsIOrqjSygwaz_X_cqAGiTmjuFM.cULvIxrmJ9ACm9RU2JN6BX4dJ4AYeUq63EQu4k9D5.pDrQZlspd2hI9LiRqYClGYR34I_ylWmIQ9d2uFWF04pYPvhoCRWzd4bJ3yoPsTPtLzWVcCEmv5diESo5CnAkSMoFpx2G9vtHOGdMFjtsBNGCvkt8Anq9QmijrWdAdAMAZyISVLTi4LHG.m8FjZPrwli4NlwWiQmMC3SD4dVcLdgcgpKnghCOVrN7_2s6KDLPFiGK0HWmElPZ8mTCPl_NC3Jj7Vf6maH6uUDTG_4Ix3ad45d3YK.TP3c8vWKa6UpPOl4Qq5WyD3w5mHJArfbPYOf4M2qVN_WT9tkHM5jn4YWC73jMWJEe5j96uwSfREOCL90lQC09YCtDysFQafJdZ_HrZW64pLWeqQ0q_uAh9jiV7hbQtY.2ufcQJdBQGDCWCqpKO6kScPBvZGvlLTi1XK9pYh3UUchylkfB5HYBSh2QkGyUoRtTGa9MapmXNCoKIR3aLqCKjlOBoaXQgysYdxY83C08W_tDIIRoQmaUkDNJzrgp62dAkaFNME39Ydi6vTOqiuAK4kvz2Pz2Wn3eS8Nz2Qi7zzmaxNC8MhjYz.4Jq5JF0MjNZxC.5EbBlWJb8hkp5fZBTsaFsH4TwRROdtyW_eEaBG63HpO02O2UtKvJ9M0kygd3vXAii90DULM_kqPMRkwgvI5MOHR_Hvr8VfVGuF0OB430zW2yI_u73I1iUTsvT4Q4X9kzRwgg4D8B7cJwCncvJ4PFNX1rkQaFw7QR9a5N7y1mD9lvJU4cYK8rPQE1C93BIuhhLuw',mdrd: 'OLIlt7nL8UJG9LoimRQ82ynJKdbQAcKUhPF6GnptNZE-1778417067-1.2.1.1-okPMNI97jpfD634VTJv5eoIGjhj1kSNzF_g8TcHGCGYPZGAtET.6zEUw514VI4RMA3qEeB4wpHT5KnWHn4XnCEPoWH0RtDK6t8SVrpiGaCt5qBgou.6UCOxtXYQAxBjSSXar0YsETlCKUhzcrSlbMN2BYzySeptgO6uzD2GyUlpXo3fq6xZleoBi1ONuX3qzOtK21GZcx33IEbBif22xE6whN6PcKXHF5JbZ0rnjh.b4N7BsQJB6Rx9nnVmAPtyInGNjcDk9dHT4xrJd.eDHJDyfmCZxiXplsv2vq1EVz4v4.HL6ruNM2_J8JbQ3HreYM6lKkHb7VXeXwXuHlVvN7.Tnh0HVmuOv5F2F0Xr_kSheE_cenW3AA6Gw8XA.XPKnQKPx3hgsj9LEeNiajr54OkZ0sYShnYKHhbX7pR.BHcngBPr.adO4HqRNGH8cSBnUH8Ac4CbUcS6wwizLc0ryIkGJbCTv2D.X8WRTgPCXrzmEfj93LyPe8ABGn2WEX17PIltI.B40pzrqlfyx9tZ_hWs2uer11e3Zff8r519yFudy9oenE1BZcXvzaCSWBiqE7h6pjPiHFVooTZ1PKLwX0ar3wgfAjKzLkMCcsjECJmsoK2XpglQUxztjSyrQDpWcCdI4CgABRWGcfcD2dN8b8KuVKcvap5db3NFPj9C9sGHgABU4F3S9j1S.iT1l8zG8OSlwYGtp419lV1ODj2smv589uvPrujPJ8YEjBs8MnPUE5LkRLuKpYHtSW9AmKk.4Arkawb6jRRPJOMYrgyL1BcLxSFKfxeIuZWfbbI0LaDsPAqgNfw7tLCGupbatpIIZ3IZB2rRQiWi4C_srW.yXsQ4lEGKMeNIkrW1Du3kDvAGim2WPmNFEe2GQwrV9IqskgtOmMyUNIInGtou3CMZ8HL3JHeIyVsqcJ_e3j9CClRsmIbYp4TqcxzmOfsaNQyW2cqPQFTdhThypkY2hUsfiZiiJiZkUsAHY_bYhL_EcK5bqRw1kSGy.8XO6WxWMxDYg7naUOTDcyezY5lgDajMHVz2h9sTjQNfnbUG8.l41TZOWp.DU0l9XGaIVKM9t5Wlp6RJhkxtRLVWBJs1IAtLzKeR0gwfTyNWTd4VIguSgRvyJZLVD7eH8tvFHCkXzUS_8Dtk54.ex1NXuQ.k.fZxlSX9RAuEvMVFqpoOoWgiIRpt96LoiLCQOD3oZEwXfA_HatRMJ..n92k4Y3oA.y2TbU4edZ7AgpRRYLkd2vkbwS4Dxq5g_sdkihFb9KIi70o1TPPkZCGQ8uJpzaLPdL1j9MYER34vlY9doLq_E43sVMGfVGo52Z2z66XyTBDBeBx9mnFw9mWGzLzK8AS2YbqBg8QMVhLcc_O9WTMCtxwWayZKUA4NS4gBl2xDrVx9WthbEwkQb_C9qPpHIt_q8XZ2C4tRXdwAofxi1kdPPU.yBmwX91Bcj1MBSD5QYYLEGp2GJy6DlG8hCehv67pL_G.I2mOAqgNCy2QQkvQsWK.AhS2PT6Ft64VMz5.RjxuJwTX084J_bTuyO7GJ1RX6SKHMVv3d0JLLr_FoYVyFOml4u3VagkoQcuC7a1jBLYdnE0w8ucoo3GE_OEyioEk7am6bXKL__5KtrEBIBrf38Ad4psqjp3HoeL8fD7WH.oldxTFgc7gGqxS99PizftAqVXMBkUXqSvwQS1MyLjYdNOpXwUOEWfdzGYoHvra44NNi1x2AdXbBWCTLs54gd.5OkojiWOocEpSP8Espa6tAcMvRQfXwW4hxfMO4ECUV3RxKA6x46SsM_ycoqpPIus8Pju5OxQh5SLuhPYgAdVlDhZlcCnpC3MfQP8nhUKuiMeSyGm0xBjRHUw6lKQuDIMI.YrsgahKBIU3veoS2yQog2vWG_.ZzPHtqzzW7P4yR6A3ZbeDMbwoMLdKyzrl95IwO5KZR4t_QXZxldEf4WLqgrYxBfABpY8Ucj9E3WDcpuE26.8LSVMD5yIn.9BC4PA9D3Q9IipYvpzf7eu.qOdrhMfTXHPbd4FeyM6RMBNgpC_EEICcze1tlUQRGGhkO3KOqcn4qx8_GbaldFglS.Rk8wYp50OClUnEF02j4BwQNjOjMfehiBzfpLXbNu1ZfzGExDoeSB0564R3TfuOc3MPBskdEl5vxMde0rdE1h5HnbWfDgSyHX.fJZ9Lhe_C0_wmpKVl2d4pzwax2Dr.2nlWrzn1ZriiFM70xyN.HSfA1IP35i8mHH1pl.a6lkOsTYFBRk4GY2hF3xTIeQ063vdIs04W7ib6s',};var a = document.createElement('script');a.src = '/cdn-cgi/challenge-platform/h/g/orchestrate/chl_page/v1?ray=9f99090d7e5aea9d';window._cf_chl_opt.cOgUHash = location.hash === '' && location.href.indexOf('#') !== -1 ? '#' : location.hash;window._cf_chl_opt.cOgUQuery = location.search === '' && location.href.slice(0, location.href.length - window._cf_chl_opt.cOgUHash.length).indexOf('?') !== -1 ? '?' : location.search;if (window.history && window.history.replaceState) {var ogU = location.pathname + window._cf_chl_opt.cOgUQuery + window._cf_chl_opt.cOgUHash;history.replaceState(null, null,"/backend-api/plugins/featured?platform=codex&__cf_chl_rt_tk=7zc6ijzNUUWP41CIU6I5F8.gObq208.zSDBNlG9sUK8-1778417067-1.0.1.1-3nZNTWYTcf.O4lSNk7UsfjOwFclE8e84tHCujcmzdHM"+ window._cf_chl_opt.cOgUHash);a.onload = function() {history.replaceState(null, null, ogU);}}document.getElementsByTagName('head')[0].appendChild(a);}());</script></div>
+    </div>
+  </body>
+</html>
+
+2026-05-10T12:44:27.123521Z  WARN codex_core_plugins::startup_remote_sync: startup remote plugin sync failed; will retry on next app-server start error=remote plugin sync request to https://chatgpt.com/backend-api/plugins/list failed with status 403 Forbidden: <html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style global>body{font-family:Arial,Helvetica,sans-serif}.container{align-items:center;display:flex;flex-direction:column;gap:2rem;height:100%;justify-content:center;width:100%}@keyframes enlarge-appear{0%{opacity:0;transform:scale(75%) rotate(-90deg)}to{opacity:1;transform:scale(100%) rotate(0deg)}}.logo{color:#8e8ea0}.scale-appear{animation:enlarge-appear .4s ease-out}@media (min-width:768px){.scale-appear{height:48px;width:48px}}.data:empty{display:none}.data{border-radius:5px;color:#8e8ea0;text-align:center}@media (prefers-color-scheme:dark){body{background-color:#343541}.logo{color:#acacbe}}</style>
+  <meta http-equiv="refresh" content="360"></head>
+  <body>
+    <div class="container">
+      <div class="logo">
+        <svg
+          width="41"
+          height="41"
+          viewBox="0 0 41 41"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          strokeWidth="2"
+          class="scale-appear"
+        >
+          <path
+            d="M37.5324 16.8707C37.9808 15.5241 38.1363 14.0974 37.9886 12.6859C37.8409 11.2744 37.3934 9.91076 36.676 8.68622C35.6126 6.83404 33.9882 5.3676 32.0373 4.4985C30.0864 3.62941 27.9098 3.40259 25.8215 3.85078C24.8796 2.7893 23.7219 1.94125 22.4257 1.36341C21.1295 0.785575 19.7249 0.491269 18.3058 0.500197C16.1708 0.495044 14.0893 1.16803 12.3614 2.42214C10.6335 3.67624 9.34853 5.44666 8.6917 7.47815C7.30085 7.76286 5.98686 8.3414 4.8377 9.17505C3.68854 10.0087 2.73073 11.0782 2.02839 12.312C0.956464 14.1591 0.498905 16.2988 0.721698 18.4228C0.944492 20.5467 1.83612 22.5449 3.268 24.1293C2.81966 25.4759 2.66413 26.9026 2.81182 28.3141C2.95951 29.7256 3.40701 31.0892 4.12437 32.3138C5.18791 34.1659 6.8123 35.6322 8.76321 36.5013C10.7141 37.3704 12.8907 37.5973 14.9789 37.1492C15.9208 38.2107 17.0786 39.0587 18.3747 39.6366C19.6709 40.2144 21.0755 40.5087 22.4946 40.4998C24.6307 40.5054 26.7133 39.8321 28.4418 38.5772C30.1704 37.3223 31.4556 35.5506 32.1119 33.5179C33.5027 33.2332 34.8167 32.6547 35.9659 31.821C37.115 30.9874 38.0728 29.9178 38.7752 28.684C39.8458 26.8371 40.3023 24.6979 40.0789 22.5748C39.8556 20.4517 38.9639 18.4544 37.5324 16.8707ZM22.4978 37.8849C20.7443 37.8874 19.0459 37.2733 17.6994 36.1501C17.7601 36.117 17.8666 36.0586 17.936 36.0161L25.9004 31.4156C26.1003 31.3019 26.2663 31.137 26.3813 30.9378C26.4964 30.7386 26.5563 30.5124 26.5549 30.2825V19.0542L29.9213 20.998C29.9389 21.0068 29.9541 21.0198 29.9656 21.0359C29.977 21.052 29.9842 21.0707 29.9867 21.0902V30.3889C29.9842 32.375 29.1946 34.2791 27.7909 35.6841C26.3872 37.0892 24.4838 37.8806 22.4978 37.8849ZM6.39227 31.0064C5.51397 29.4888 5.19742 27.7107 5.49804 25.9832C5.55718 26.0187 5.66048 26.0818 5.73461 26.1244L13.699 30.7248C13.8975 30.8408 14.1233 30.902 14.3532 30.902C14.583 30.902 14.8088 30.8408 15.0073 30.7248L24.731 25.1103V28.9979C24.7321 29.0177 24.7283 29.0376 24.7199 29.0556C24.7115 29.0736 24.6988 29.0893 24.6829 29.1012L16.6317 33.7497C14.9096 34.7416 12.8643 35.0097 10.9447 34.4954C9.02506 33.9811 7.38785 32.7263 6.39227 31.0064ZM4.29707 13.6194C5.17156 12.0998 6.55279 10.9364 8.19885 10.3327C8.19885 10.4013 8.19491 10.5228 8.19491 10.6071V19.808C8.19351 20.0378 8.25334 20.2638 8.36823 20.4629C8.48312 20.6619 8.64893 20.8267 8.84863 20.9404L18.5723 26.5542L15.206 28.4979C15.1894 28.5089 15.1703 28.5155 15.1505 28.5173C15.1307 28.5191 15.1107 28.516 15.0924 28.5082L7.04046 23.8557C5.32135 22.8601 4.06716 21.2235 3.55289 19.3046C3.03862 17.3858 3.30624 15.3413 4.29707 13.6194ZM31.955 20.0556L22.2312 14.4411L25.5976 12.4981C25.6142 12.4872 25.6333 12.4805 25.6531 12.4787C25.6729 12.4769 25.6928 12.4801 25.7111 12.4879L33.7631 17.1364C34.9967 17.849 36.0017 18.8982 36.6606 20.1613C37.3194 21.4244 37.6047 22.849 37.4832 24.2684C37.3617 25.6878 36.8382 27.0432 35.9743 28.1759C35.1103 29.3086 33.9415 30.1717 32.6047 30.6641C32.6047 30.5947 32.6047 30.4733 32.6047 30.3889V21.188C32.6066 20.9586 32.5474 20.7328 32.4332 20.5338C32.319 20.3348 32.154 20.1698 31.955 20.0556ZM35.3055 15.0128C35.2464 14.9765 35.1431 14.9142 35.069 14.8717L27.1045 10.2712C26.906 10.1554 26.6803 10.0943 26.4504 10.0943C26.2206 10.0943 25.9948 10.1554 25.7963 10.2712L16.0726 15.8858V11.9982C16.0715 11.9783 16.0753 11.9585 16.0837 11.9405C16.0921 11.9225 16.1048 11.9068 16.1207 11.8949L24.1719 7.25025C25.4053 6.53903 26.8158 6.19376 28.2383 6.25482C29.6608 6.31589 31.0364 6.78077 32.2044 7.59508C33.3723 8.40939 34.2842 9.53945 34.8334 10.8531C35.3826 12.1667 35.5464 13.6095 35.3055 15.0128ZM14.2424 21.9419L10.8752 19.9981C10.8576 19.9893 10.8423 19.9763 10.8309 19.9602C10.8195 19.9441 10.8122 19.9254 10.8098 19.9058V10.6071C10.8107 9.18295 11.2173 7.78848 11.9819 6.58696C12.7466 5.38544 13.8377 4.42659 15.1275 3.82264C16.4173 3.21869 17.8524 2.99464 19.2649 3.1767C20.6775 3.35876 22.0089 3.93941 23.1034 4.85067C23.0427 4.88379 22.937 4.94215 22.8668 4.98473L14.9024 9.58517C14.7025 9.69878 14.5366 9.86356 14.4215 10.0626C14.3065 10.2616 14.2466 10.4877 14.2479 10.7175L14.2424 21.9419ZM16.071 17.9991L20.4018 15.4978L24.7325 17.9975V22.9985L20.4018 25.4983L16.071 22.9985V17.9991Z"
+            fill="currentColor"
+          />
+        </svg>
+      </div>
+      <div class="data"><div class="main-wrapper" role="main"><div class="main-content"><noscript><div class="h2"><span id="challenge-error-text">Enable JavaScript and cookies to continue</span></div></noscript></div></div><script>(function(){window._cf_chl_opt = {cFPWv: 'g',cH: 'xzqj8DWDB8g520LvRrijs2z3weY1rm5oPMc1eJO8Zkk-1778417067-1.2.1.1-8y8Ps9FvH3DQyjcRKZSGfMaJ6SDaWaSHDRpLzyJ0FTi5eVyyB3xuF4yMYb04Hnlt',cITimeS: '1778417067',cRay: '9f99090d7e5df1b6',cTplB: '0',cTplC:1,cTplO:0,cTplV:5,cType: 'managed',cUPMDTk:"/backend-api/plugins/list?__cf_chl_tk=EV0LukWMlZqi8erwMSAqDz9Nm2ueb34Eh7MKI2cCv84-1778417067-1.0.1.1-sQgRg42zxnAh5XvgDp_2v.UwlWE2_cZ_Ueh8FCMaLzs",cvId: '3',cZone: 'chatgpt.com',fa:"/backend-api/plugins/list?__cf_chl_f_tk=EV0LukWMlZqi8erwMSAqDz9Nm2ueb34Eh7MKI2cCv84-1778417067-1.0.1.1-sQgRg42zxnAh5XvgDp_2v.UwlWE2_cZ_Ueh8FCMaLzs",md: '5jgWsMJ72txlGUKivZV6Z9KWLDD4h7LA7Y1LLkwCWfU-1778417067-1.2.1.1-XWnqrWdw7QdAkIwgluFpYCuHkLXzpMQMXIB6w1ve78CZOSJUkU1.cVuhBeGW6MoeWCTmnlALgVfEiamnfZ6V3Qhr2JLITLDQAoay1jHuC9x0NJ5a0DQ6ix3Hftc3lScV1dBBX_J8zhszKAhhAgv6gktfLoAWhc3ko9mVOQhWu497uLgfTeJ7K.ma6eTIzcxmPpgOo_ZuWw7IylRhQFrkvvOMYFKy3rv878DL7MfYmHYK_xGUelvbYNZHnnQ5WhWpNEqy3eOmLHBO0sy.TT0Uws74Rp5gk_rtE7IFZp_688veeWqUy.M_7rKJoqze_qPDP2iqABNW8_C0_m0kOVD_sGbKx2zMx3u54qW.DfGMx84ykLqWxTsr3E_pLWIH2Y1HWIuEREXoXrvTipuM7mgwbq_yEn0eyScLooHfQft9M2Dux_BLw1aZ.sdRR8At4uWKfyOktlMrUUrF6fiqmiZkPzOJknZDjHZ40X41BvekqBCZZqTU9u75okU2effPzx8QAeQo9LLG2yYzbSnNy8DTRtuNVAuMkhLq3EjdOVBjeqgeEWxaPKhRIetdUAYYq8Qps1TOGk9iaZMzxBqFkjiHhEyVohlW2wEjgA81uJCvXjqtJnw1uCAweM4ORHTt6ghho_0It5bir5BcCA2qUM9y6DFGbtMSP94YOyuOJj2WA9Dcqj904KTRz46XXND3STyfZIV8TCa.Az4kY1OwcgxW47k4HhIDZaTo6jtHcvv_l9EQXRPT4D.SdF76goaBVXyREwIpxgooNtAO1eaGdrzjfl6j5lm1Fr5z8FHnHb3wah3P0SL3mB7mDuLJVo0TguCxlfuEgF9kK9r4JRb0JKTSSCVdr9d09picFBKfm3SKcc1Xqcw7JNUTvofiMmqgelkJEWFJqxPA1qJBsdA9bhh8Ty5LWsv8oJNAEuOf_8MaJnPOBOCpwI3cCpVZSTLXizthhJRPuVySzc17ByNh6ZSZqA8hykHbz41s.vWKlatOAOwG1VdfamBASiAwwRcgvlNnB.sXSehqENPweCvHKHLsiQ',mdrd: 'VVoK.7VKTL2l3uTPB3br66ZGWn5Wjh2G900RgWlEyQc-1778417067-1.2.1.1-XeAPbq2yWUHAi2PlJYni9dzuBO_RjnBkQM4ODOPhbN0lAb3iAZQBJPzDPwVIVYT.c2Qc2Wz243Q.iwozy1vXBAS7AeCj81B50mIUywitXxDzkpR5dUgRQDzec.mG7dwkDfh677fps3F49c66x2wJZmbVgUnHdCzRZvqQP6qliT1sJTbBaJhQBq1YzQUOGpR0NdRnh46qxGce4wH.1pmynCGzUK_PE2Atg8kmDjKqyubbdGs_ZWo31k0GKUkb3706ZhqXs3qMPiBtwpVNxkcQbib6A0Q2innhZ1gNTXqSJWbwfFfZkVlme5iGZLhMSeAiI0zLWjsetfiYI7bcTx2mVWHz8cl6hutVWvsURMZ1iUq8.DvfcTeBiN1EusRP7HB8tOXALPbJdb3.5ruQJC5MXHMBmHdw2FEzS118hvnx2kVXWfEpmthBBi4RON_vObL2d8jMRX67KxeADSjYq5sKJM4kEtmd1yEAEw_Qd7rnhbD1RjajNMPlRXQSOG4lNgg9etpZhinrXlyZzK5s9HSnM0F6lZDNo7wSAhMJd_k8zQpZA26Xq7dyFOLtZBkJP.Z5qRdCrQKCl9XhtMiljRogwmgPFht.LmZEurizdmzrZTliDT72k6hKoRqWUf1Zw7pKLWy3C9ct9r097Qtto8CeVnX7Pb_1ww6N0LckFD4xbeL5wBM29hwhaB_iDEpbUAFsG9Es32p2eJvw8G2g0bweoBYwtZZ292VQLmf_Bm_YOM1YrnRMHnPqpC9y4MTnxmuXEk228KFAoqoibEHbDb53SbR1g_nEYa99uguVf1LVRONX2bGK_3ER7R2BJvIvczTA0MmykR6IBM2NW0uPN.4x8sjTnK5_Q23gE7Q.BDmy0TskmiiiFoeVrquOnmVouJr_ZCq6uhyde1ePoSXPB07BRx4XnmvSqY0OsTHS4HfKy4KwqbGXuK8vTMP1CuDYBFvri48OvXhuykpJhmm6Ydivay2bDc80ePX8prmXUWE1dXHH7uvQm84nF0DbLucPqUUeR1CxZCP_tCBGJgJ6kx0daOF5mtZHCi0m3z4x2aG1u6JydWFbp6.DVwQH.fpvv1ez2GEKd9ByyVe6Pwf4ekaAk8ITsfCYhXWFeuMZc4qctqFLMiRBV3Z_1m8ZGyIN.KR3AbuJx6.FRovX4wFoa26hBxYXcr3vTfDqE76aWIg5ZynlqRZWA5BXj9nAJ36vdj4YLtt4LJeyqJOzkF0mhGrf0FiOqqh4xI7WCtezdYgHQVSRvqAaNcgltx2VHaU3FGNKUa4G7GYfPUCWV4xCFwSzvovpCo.BfaFTG22LbjBKGVjatUl.VwsRi5oQWy0GZGONOq8HQ73jHWWmi5rA8lLluAIvxo_Jj_LgEhrSg2JyC.1Shi.K_gQq9FZcEbeTY8QOEm9Qw4.rCl1C1C6OCqRDzVqU1vxohYlv1k140Cd2ccnGThtEz2xKLyCSzpEQOAJZKzW_rkRI5ggqhg8CDVy3gCObEcBsDl0szD71OhL_YxiRH5ilCyVo96p5JGYd13q3fvIUQLPXf0NCHCDfm0sMxq3mgrUhkJMRY9dndoIRrNQ6D7M8TdTMih9TehGshe6vIoLnXQdJeEFc0bp1LvKcU_2IMrHbSISW7BbS8MUSfIdB_LqKOHSW2UvK82FUeWUn0OXQUuSCV15WLjK9wLjf.4YDLZDihXopJAtBOmG6lhtgnkPgcqDMvJ5446oGc5TjAwRsBLawl47S7yHtgF0C8SfgVJWKYIKBA.pMLXR2mWjiaQTBG4IaYgclM5sLE7ExpG4HHEHXfMem70Hux33cF4enNkx.mnSGB8UEIEH9QISPaQ_92iUaJN2LrXSDlY6hWbSPjkP4roKO6uTy.XJTyVov29AFdmNVc23wutVDEaAZzpJz.Cinfyv1I1OzhxyYaXvhxj4SVamgEfmNKV5j8o.oJeYax_4tXTaTkaUZvgpI0.nDlk1Q3UTRdGcf4SR2uM7Fwo6E9fyVRd3ab9UHQxDPNo7Weuo.tEIZpLHwUlPP3CotlIS_uXGQRYzmQEbtjAIPaniKawo38S_uRZtS.0wE_BwQ_3mgmpXRG.72xi2soDgLOfTzTp3y4EjGsWy67.5.8O5U3u47Zwh.iOXP6qFFQHS_tfGuMIaJ4ET3ptCTXozz3itgr8CaGGQfekWBFaCLakT1vp0or1xMC8n0WhC6tfbZG2OClHfCxFQZuYetzn5ufCavc8E5LnrWMHHWzUZQMH8GiF25fwyITiLrIuOCC4HDGxCIdp3MYwKAKaQ',};var a = document.createElement('script');a.src = '/cdn-cgi/challenge-platform/h/g/orchestrate/chl_page/v1?ray=9f99090d7e5df1b6';window._cf_chl_opt.cOgUHash = location.hash === '' && location.href.indexOf('#') !== -1 ? '#' : location.hash;window._cf_chl_opt.cOgUQuery = location.search === '' && location.href.slice(0, location.href.length - window._cf_chl_opt.cOgUHash.length).indexOf('?') !== -1 ? '?' : location.search;if (window.history && window.history.replaceState) {var ogU = location.pathname + window._cf_chl_opt.cOgUQuery + window._cf_chl_opt.cOgUHash;history.replaceState(null, null,"/backend-api/plugins/list?__cf_chl_rt_tk=EV0LukWMlZqi8erwMSAqDz9Nm2ueb34Eh7MKI2cCv84-1778417067-1.0.1.1-sQgRg42zxnAh5XvgDp_2v.UwlWE2_cZ_Ueh8FCMaLzs"+ window._cf_chl_opt.cOgUHash);a.onload = function() {history.replaceState(null, null, ogU);}}document.getElementsByTagName('head')[0].appendChild(a);}());</script></div>
+    </div>
+  </body>
+</html>
+
+2026-05-10T12:44:27.934699Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=C:\Users\samsung\.codex\.tmp\plugins\plugins\build-ios-apps\.codex-plugin/plugin.json
+2026-05-10T12:44:27.938062Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\plugin-eval\.codex-plugin/plugin.json
+2026-05-10T12:44:27.970080Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\twilio-developer-kit\.codex-plugin/plugin.json
+2026-05-10T12:44:27.970574Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:44:29.407124Z  WARN codex_core::shell_snapshot: Failed to create shell snapshot for powershell: Shell snapshot not supported yet for PowerShell
+OpenAI Codex v0.130.0
+--------
+workdir: C:\Users\samsung\StudioProjects\semisemifinal
+model: gpt-5.5
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, C:\Users\samsung\.codex\memories] (network access enabled)
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 019e11ea-ed2f-7442-a53f-6c759836063f
+--------
+user
+Use Codex internal Image Gen only for exactly one Seolleyeon AI profile asset.
+deprecated: `[features].codex_hooks` is deprecated. Use `[features].hooks` instead.
+Enable it with `--enable hooks` or `[features].hooks` in config.toml. See https://developers.openai.com/codex/config-basic#feature-flags for details.
+2026-05-10T12:44:33.604703Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=C:\Users\samsung\.codex\.tmp\plugins\plugins\build-ios-apps\.codex-plugin/plugin.json
+2026-05-10T12:44:33.608348Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\plugin-eval\.codex-plugin/plugin.json
+2026-05-10T12:44:33.644490Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\twilio-developer-kit\.codex-plugin/plugin.json
+2026-05-10T12:44:33.644891Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:44:33.720292Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:44:33.720354Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:44:33.725209Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:44:33.725254Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:44:33.731754Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:44:33.731797Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:44:33.736709Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:44:33.736755Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:44:33.741219Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:44:33.741266Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:44:33.745513Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:44:33.745558Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:44:33.951320Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:44:33.989022Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:44:33.989744Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+hook: SessionStart
+hook: SessionStart Completed
+hook: UserPromptSubmit
+hook: UserPromptSubmit Completed
+2026-05-10T12:44:41.705712Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=C:\Users\samsung\.codex\.tmp\plugins\plugins\build-ios-apps\.codex-plugin/plugin.json
+2026-05-10T12:44:41.709820Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\plugin-eval\.codex-plugin/plugin.json
+2026-05-10T12:44:41.745950Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\twilio-developer-kit\.codex-plugin/plugin.json
+2026-05-10T12:44:41.746469Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:44:41.824869Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:44:41.824917Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:44:41.829288Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:44:41.829337Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:44:41.836417Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:44:41.836459Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:44:41.840622Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:44:41.840662Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:44:41.844990Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:44:41.845033Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:44:41.851606Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:44:41.851658Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:44:42.070358Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:44:42.112853Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:44:42.113737Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+codex
+Using `seolleyeon-ai-profile-imagegen` + `imagegen` skills: target is exactly one synthetic Seolleyeon asset, Codex internal Image Gen only, checkpoint before generation, no API/Batch usage.
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path C:\\Users\\samsung\\.codex\\skills\\.system\\imagegen\\SKILL.md -TotalCount 220; Write-Output '---SEOLLEYEON---'; Get-Content -Path C:\\Users\\samsung\\StudioProjects\\semisemifinal\\.agents\\skills\\seolleyeon-ai-profile-imagegen\\SKILL.md -TotalCount 260" in C:\Users\samsung\StudioProjects\semisemifinal
+ succeeded in 1157ms:
+---
+name: "imagegen"
+description: "Generate or edit raster images when the task benefits from AI-created bitmap visuals such as photos, illustrations, textures, sprites, mockups, or transparent-background cutouts. Use when Codex should create a brand-new image, transform an existing image, or derive visual variants from references, and the output should be a bitmap asset rather than repo-native code or vector. Do not use when the task is better handled by editing existing SVG/vector/code-native assets, extending an established icon or logo system, or building the visual directly in HTML/CSS/canvas."
+---
+
+# Image Generation Skill
+
+Generates or edits images for the current project (for example website assets, game assets, UI mockups, product mockups, wireframes, logo design, photorealistic images, or infographics).
+
+## Top-level modes and rules
+
+This skill has exactly two top-level modes:
+
+- **Default built-in tool mode (preferred):** built-in `image_gen` tool for normal image generation, editing, and simple transparent-image requests. Does not require `OPENAI_API_KEY`.
+- **Fallback CLI mode:** `scripts/image_gen.py` CLI. Use when the user explicitly asks for the CLI/API/model path, or after the user explicitly confirms a true model-native transparency fallback with `gpt-image-1.5`. Requires `OPENAI_API_KEY`.
+
+Within CLI fallback, the CLI exposes three subcommands:
+
+- `generate`
+- `edit`
+- `generate-batch`
+
+Rules:
+- Use the built-in `image_gen` tool by default for normal image generation and editing requests.
+- Do not switch to CLI fallback for ordinary quality, size, or file-path control.
+- If the user explicitly asks for a transparent image/background, stay on built-in `image_gen` first: prompt for a flat removable chroma-key background, then remove it locally with the installed helper at `$CODEX_HOME/skills/.system/imagegen/scripts/remove_chroma_key.py`.
+- Never silently switch from built-in `image_gen` or CLI `gpt-image-2` to CLI `gpt-image-1.5`. Treat this as a model/path downgrade and ask the user before doing it, unless the user has already explicitly requested `gpt-image-1.5`, `scripts/image_gen.py`, or CLI fallback.
+- If a transparent request appears too complex for clean chroma-key removal, asks for true/native transparency, or local removal fails validation, explain that true transparency requires CLI `gpt-image-1.5 --background transparent --output-format png` because `gpt-image-2` does not support `background=transparent`, then ask whether to proceed. Run the CLI fallback only after the user confirms.
+- The word `batch` by itself does not mean CLI fallback. If the user asks for many assets or says to batch-generate assets without explicitly asking for CLI/API/model controls, stay on the built-in path and issue one built-in call per requested asset or variant.
+- If the built-in tool fails or is unavailable, tell the user the CLI fallback exists and that it requires `OPENAI_API_KEY`. Proceed only if the user explicitly asks for that fallback.
+- If the user explicitly asks for CLI mode, use the bundled `scripts/image_gen.py` workflow. Do not create one-off SDK runners.
+- Never modify `scripts/image_gen.py`. If something is missing, ask the user before doing anything else.
+
+Built-in save-path policy:
+- In built-in tool mode, Codex saves generated images under `$CODEX_HOME/*` by default.
+- Do not describe or rely on OS temp as the default built-in destination.
+- Do not describe or rely on a destination-path argument (if any) on the built-in `image_gen` tool. If a specific location is needed, generate first and then move or copy the selected output from `$CODEX_HOME/generated_images/...`.
+- Save-path precedence in built-in mode:
+  1. If the user names a destination, move or copy the selected output there.
+  2. If the image is meant for the current project, move or copy the final selected image into the workspace before finishing.
+  3. If the image is only for preview or brainstorming, render it inline; the underlying file can remain at the default `$CODEX_HOME/*` path.
+- Never leave a project-referenced asset only at the default `$CODEX_HOME/*` path.
+- Do not overwrite an existing asset unless the user explicitly asked for replacement; otherwise create a sibling versioned filename such as `hero-v2.png` or `item-icon-edited.png`.
+
+Shared prompt guidance for both modes lives in `references/prompting.md` and `references/sample-prompts.md`.
+
+Fallback-only docs/resources for CLI mode:
+- `references/cli.md`
+- `references/image-api.md`
+- `references/codex-network.md`
+- `scripts/image_gen.py`
+
+Local post-processing helper:
+- `$CODEX_HOME/skills/.system/imagegen/scripts/remove_chroma_key.py`: removes a flat chroma-key background from a generated image and writes a PNG/WebP with alpha. Prefer auto-key sampling, soft matte, and despill for antialiased edges.
+
+## When to use
+- Generate a new image (concept art, product shot, cover, website hero)
+- Generate a new image using one or more reference images for style, composition, or mood
+- Edit an existing image (inpainting, lighting or weather transformations, background replacement, object removal, compositing, transparent background)
+- Produce many assets or variants for one task
+
+## When not to use
+- Extending or matching an existing SVG/vector icon set, logo system, or illustration library inside the repo
+- Creating simple shapes, diagrams, wireframes, or icons that are better produced directly in SVG, HTML/CSS, or canvas
+- Making a small project-local asset edit when the source file already exists in an editable native format
+- Any task where the user clearly wants deterministic code-native output instead of a generated bitmap
+
+## Decision tree
+
+Think about two separate questions:
+
+1. **Intent:** is this a new image or an edit of an existing image?
+2. **Execution strategy:** is this one asset or many assets/variants?
+
+Intent:
+- If the user wants to modify an existing image while preserving parts of it, treat the request as **edit**.
+- If the user provides images only as references for style, composition, mood, or subject guidance, treat the request as **generate**.
+- If the user provides no images, treat the request as **generate**.
+
+Built-in edit semantics:
+- Built-in edit mode is for images already visible in the conversation context, such as attached images or images generated earlier in the thread.
+- If the user wants to edit a local image file with the built-in tool, first load it with built-in `view_image` tool so the image is visible in the conversation context, then proceed with the built-in edit flow.
+- Do not promise arbitrary filesystem-path editing through the built-in tool.
+- If a local file still needs direct file-path control, masks, or other explicit CLI-only parameters, use the explicit CLI fallback only when the user asks for it.
+- For edits, preserve invariants aggressively and save non-destructively by default.
+
+Execution strategy:
+- In the built-in default path, produce many assets or variants by issuing one `image_gen` call per requested asset or variant.
+- In the CLI fallback path, use the CLI `generate-batch` subcommand only when the user explicitly chose CLI mode and needs many prompts/assets.
+- For many distinct assets, do not use `n` as a substitute for separate prompts. `n` is for variants of one prompt; distinct assets need distinct built-in calls or distinct CLI `generate-batch` jobs.
+
+Assume the user wants a new image unless they clearly ask to change an existing one.
+
+## Workflow
+1. Decide the top-level mode: built-in by default, including simple transparent-output requests; fallback CLI only if explicitly requested or after the user explicitly confirms a transparent-output fallback.
+2. Decide the intent: `generate` or `edit`.
+3. Decide whether the output is preview-only or meant to be consumed by the current project.
+4. Decide the execution strategy: single asset vs repeated built-in calls vs CLI `generate-batch`.
+5. Collect inputs up front: prompt(s), exact text (verbatim), constraints/avoid list, and any input images.
+6. For every input image, label its role explicitly:
+   - reference image
+   - edit target
+   - supporting insert/style/compositing input
+7. If the edit target is only on the local filesystem and you are staying on the built-in path, inspect it with `view_image` first so the image is available in conversation context.
+8. If the user asked for a photo, illustration, sprite, product image, banner, or other explicitly raster-style asset, use `image_gen` rather than substituting SVG/HTML/CSS placeholders. If the request is for an icon, logo, or UI graphic that should match existing repo-native SVG/vector/code assets, prefer editing those directly instead.
+9. Augment the prompt based on specificity:
+   - If the user's prompt is already specific and detailed, normalize it into a clear spec without adding creative requirements.
+   - If the user's prompt is generic, add tasteful augmentation only when it materially improves output quality.
+10. Use the built-in `image_gen` tool by default.
+11. For transparent-output requests, follow the transparent image guidance below: generate with built-in `image_gen` on a flat chroma-key background, copy the selected output into the workspace or `tmp/imagegen/`, run the installed `$CODEX_HOME/skills/.system/imagegen/scripts/remove_chroma_key.py` helper, and validate the alpha result before using it. If this path looks unsuitable or fails, ask before switching to CLI `gpt-image-1.5`.
+12. Inspect outputs and validate: subject, style, composition, text accuracy, and invariants/avoid items.
+13. Iterate with a single targeted change, then re-check.
+14. For preview-only work, render the image inline; the underlying file may remain at the default `$CODEX_HOME/generated_images/...` path.
+15. For project-bound work, move or copy the selected artifact into the workspace and update any consuming code or references. Never leave a project-referenced asset only at the default `$CODEX_HOME/generated_images/...` path.
+16. For batches or multi-asset requests, persist every requested deliverable final in the workspace unless the user explicitly asked to keep outputs preview-only. Discarded variants do not need to be kept unless requested.
+17. If the user explicitly chooses or confirms the CLI fallback, then use the fallback-only docs for model, quality, size, `input_fidelity`, masks, output format, output paths, and network setup.
+18. Always report the final saved path(s) for any workspace-bound asset(s), plus the final prompt or prompt set and whether the built-in tool or fallback CLI mode was used.
+
+## Transparent image requests
+
+Transparent-image requests still use built-in `image_gen` first. Because the built-in tool does not expose a true transparent-background control, create a removable chroma-key source image and then convert the key color to alpha locally.
+
+Default sequence:
+1. Use built-in `image_gen` to generate the requested subject on a perfectly flat solid chroma-key background.
+2. Choose a key color that is unlikely to appear in the subject: default `#00ff00`, use `#ff00ff` for green subjects, and avoid `#0000ff` for blue subjects.
+3. After generation, move or copy the selected source image from `$CODEX_HOME/generated_images/...` into the workspace or `tmp/imagegen/`.
+4. Run the installed helper path, not a project-relative script path:
+   ```bash
+   python "${CODEX_HOME:-$HOME/.codex}/skills/.system/imagegen/scripts/remove_chroma_key.py" \
+     --input <source> \
+     --out <final.png> \
+     --auto-key border \
+     --soft-matte \
+     --transparent-threshold 12 \
+     --opaque-threshold 220 \
+     --despill
+   ```
+5. Validate that the output has an alpha channel, transparent corners, plausible subject coverage, and no obvious key-color fringe. If a thin fringe remains, retry once with `--edge-contract 1`; use `--edge-feather 0.25` only when the edge is visibly stair-stepped and the subject is not shiny or reflective.
+6. Save the final alpha PNG/WebP in the project if the asset is project-bound. Never leave a project-referenced transparent asset only under `$CODEX_HOME/*`.
+
+Prompt transparent requests like this:
+
+```text
+Create the requested subject on a perfectly flat solid #00ff00 chroma-key background for background removal.
+The background must be one uniform color with no shadows, gradients, texture, reflections, floor plane, or lighting variation.
+Keep the subject fully separated from the background with crisp edges and generous padding.
+Do not use #00ff00 anywhere in the subject.
+No cast shadow, no contact shadow, no reflection, no watermark, and no text unless explicitly requested.
+```
+
+Do not automatically use CLI `gpt-image-1.5 --background transparent --output-format png` instead of chroma keying. Ask the user first when the user asks for true/native transparency, when local removal fails validation, or when the requested image is complex: hair, fur, feathers, smoke, glass, liquids, translucent materials, reflective objects, soft shadows, realistic product grounding, or subject colors that conflict with all practical key colors.
+
+Use a concise confirmation like:
+
+```text
+This likely needs true native transparency. The default built-in path uses a chroma-key background plus local removal, but true transparency requires the CLI fallback with gpt-image-1.5 because gpt-image-2 does not support background=transparent. It also requires OPENAI_API_KEY. Should I proceed with that CLI fallback?
+```
+
+## Prompt augmentation
+
+Reformat user prompts into a structured, production-oriented spec. Make the user's goal clearer and more actionable, but do not blindly add detail.
+
+Treat this as prompt-shaping guidance, not a closed schema. Use only the lines that help, and add a short extra labeled line when it materially improves clarity.
+
+### Specificity policy
+
+Use the user's prompt specificity to decide how much augmentation is appropriate:
+
+- If the prompt is already specific and detailed, preserve that specificity and only normalize/structure it.
+- If the prompt is generic, you may add tasteful augmentation when it will materially improve the result.
+
+Allowed augmentations:
+- composition or framing hints
+- polish level or intended-use hints
+- practical layout guidance
+- reasonable scene concreteness that supports the stated request
+
+Not allowed augmentations:
+- extra characters or objects that are not implied by the request
+- brand names, slogans, palettes, or narrative beats that are not implied
+- arbitrary side-specific placement unless the surrounding layout supports it
+
+## Use-case taxonomy (exact slugs)
+
+Classify each request into one of these buckets and keep the slug consistent across prompts and references.
+
+Generate:
+- photorealistic-natural ??candid/editorial lifestyle scenes with real texture and natural lighting.
+- product-mockup ??product/packaging shots, catalog imagery, merch concepts.
+- ui-mockup ??app/web interface mockups and wireframes; specify the desired fidelity.
+- infographic-diagram ??diagrams/infographics with structured layout and text.
+- scientific-educational ??classroom explainers, scientific diagrams, and learning visuals with required labels and accuracy constraints.
+- ads-marketing ??campaign concepts and ad creatives with audience, brand position, scene, and exact tagline/copy.
+- productivity-visual ??slide, chart, workflow, and data-heavy business visuals.
+- logo-brand ??logo/mark exploration, vector-friendly.
+- illustration-story ??comics, children?셲 book art, narrative scenes.
+- stylized-concept ??style-driven concept art, 3D/stylized renders.
+- historical-scene ??period-accurate/world-knowledge scenes.
+
+Edit:
+- text-localization ??translate/replace in-image text, preserve layout.
+- identity-preserve ??try-on, person-in-scene; lock face/body/pose.
+- precise-object-edit ??remove/replace a specific element (including interior swaps).
+- lighting-weather ??time-of-day/season/atmosphere changes only.
+- background-extraction ??transparent background / clean cutout. Use built-in `image_gen` with chroma-key removal first for simple opaque subjects; ask before using CLI true transparency for complex subjects.
+- style-transfer ??apply reference style while changing subject/scene.
+- compositing ??multi-image insert/merge with matched lighting/perspective.
+- sketch-to-render ??drawing/line art to photoreal render.
+
+## Shared prompt schema
+
+Use the following labeled spec as shared prompt scaffolding for both top-level modes:
+
+```text
+Use case: <taxonomy slug>
+Asset type: <where the asset will be used>
+Primary request: <user's main prompt>
+Input images: <Image 1: role; Image 2: role> (optional)
+Scene/backdrop: <environment>
+Subject: <main subject>
+---SEOLLEYEON---
+---
+name: seolleyeon-ai-profile-imagegen
+description: Build, run, QA, retry, summarize, and upload Seolleyeon AI profile image generation workflows for metadata-first synthetic campus profile assets. Use when working on ai_image outputs, seolleyeon_ai_profile_prompt_v3.py, the v3 image pipeline scripts, dry-run/smoke/pilot/full image batches, Firebase upload, or QA rules for realistic adult Korean university student profile photos.
+---
+
+# Seolleyeon AI Profile Imagegen
+
+## Overview
+
+Use this skill to maintain and run the Seolleyeon AI profile image pipeline. The pipeline creates synthetic profile assets for cold-start preference learning on a university-only trust-based relationship platform.
+
+## Non-Negotiables
+
+- Treat images as trust-building campus relationship assets, not lightweight dating-app cards.
+- Use `lib/ai_recommend_model/seolleyeon_ai_profile_prompt_v3_package/seolleyeon_ai_profile_prompt_v3.py` as the source of metadata-first prompts.
+- Do not rewrite the prompt builder.
+- Do not modify recommender scripts, SVD/KNN/CLIP/RRF files, or unrelated app code.
+- Do not hardcode API keys.
+- Do not call the OpenAI Image API, Batch API, `/v1/images/generations`, or `/v1/images/edits`.
+- Do not require `OPENAI_API_KEY` for image generation.
+- Keep pipeline code modular; do not place the workflow into one large script.
+- Keep all scripts resumable.
+- Never overwrite completed or approved images unless `--force` is passed.
+
+## Image Policy
+
+Approved images must look like realistic adult Korean university student profile photos. They should feel calm, sincere, safe, campus-based, and naturally photographed.
+
+Reject or retry any image with childlike appearance, teenager look, school uniform, idol trainee styling, influencer photoshoot tone, celebrity lookalike styling, sexualized styling, nightclub/party/neon scene, readable school name, logo, watermark, brand text, heavy retouching, plastic skin, distorted hands, distorted face, distorted body, extra fingers, or unrealistic proportions.
+
+## Pipeline Shape
+
+Use this sequence:
+
+1. Prepare metadata and prompts.
+2. Generate `face_card` first.
+3. Generate `silhouette_card` and `vibe_card` as same-person reference variations using the completed `face_card` when possible.
+4. Before every `$imagegen` call, write `ai_image/manifests/pending-imagegen.json`.
+5. Recover generated outputs from Codex generated images into `ai_image/raw/{assetId}__attemptXX.png`.
+6. Copy the final candidate to `ai_image/{gender}/{numeric_id}/{shotType}.png`.
+7. Run QA, then copy approved review assets to `ai_image/approved/{assetId}.png` or rejected attempts to `ai_image/rejected/{assetId}__attemptXX.png`.
+8. Retry failed, missing, reference-waiting, or rejected assets.
+9. Summarize status and upload final assets when requested.
+
+## Required Files
+
+Maintain these entrypoint scripts:
+
+- `scripts/prepare_ai_image_assets_v3.py`
+- `scripts/next_codex_imagegen_prompt_v3.py`
+- `scripts/import_codex_generated_image_v3.py`
+- `scripts/recover_pending_imagegen_v3.py`
+- `scripts/retry_ai_images_v3.py`
+- `scripts/qa_ai_images_v3.py`
+- `scripts/summarize_ai_images_v3.py`
+- `scripts/make_ai_image_contact_sheets_v3.py`
+
+Maintain these outputs:
+
+- `ai_image/manifests/ai_profile_assets_v3.jsonl`
+- `ai_image/manifests/generation_manifest.jsonl`
+- `ai_image/reports/generation_status.csv`
+- `ai_image/reports/qa_report.csv`
+- `ai_image/reports/summary.json`
+
+## Batch Sizes
+
+- Dry-run: 3 assets, no API calls and no `$imagegen` calls.
+- Smoke: 9 images = 3 identities x 3 shots.
+- Pilot: 72 images = 24 identities x 3 shots.
+- Full: 720 images = 240 identities x 3 shots.
+- Default full split: 120 female identities and 120 male identities.
+
+## Commands
+
+Use `mingw32-make ai-image-dry-run` to verify folders, manifests, and CSV output without calling `$imagegen`.
+
+Use `mingw32-make ai-image-prepare-smoke`, `mingw32-make ai-image-prepare-pilot`, and `mingw32-make ai-image-prepare-720` to prepare increasing Codex `$imagegen` queues. Real generation is an interruptible `mingw32-make ai-image-next` / `$imagegen` / `mingw32-make ai-image-recover` loop and does not require `OPENAI_API_KEY`.
+
+Use `mingw32-make ai-image-qa`, `mingw32-make ai-image-retry`, and `mingw32-make ai-image-summary` for operational follow-up.
+
+## Completion Checks
+
+Before claiming completion, run dry-run, check that manifests and `generation_status.csv` exist, and confirm no recommender files changed.
+
+hook: PostToolUse
+hook: PostToolUse Completed
+2026-05-10T12:45:15.802636Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.5 personality=pragmatic
+2026-05-10T12:45:17.252012Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=C:\Users\samsung\.codex\.tmp\plugins\plugins\build-ios-apps\.codex-plugin/plugin.json
+2026-05-10T12:45:17.255941Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\plugin-eval\.codex-plugin/plugin.json
+2026-05-10T12:45:17.287116Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\twilio-developer-kit\.codex-plugin/plugin.json
+2026-05-10T12:45:17.287571Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:45:17.358974Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:45:17.359024Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:45:17.363543Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:45:17.363598Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:45:17.371677Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:45:17.371729Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:45:17.376667Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:45:17.376721Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:45:17.389119Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:45:17.389171Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:45:17.394460Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:45:17.394510Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:45:17.673433Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:45:17.727559Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:45:17.728306Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-ChildItem -Force; Write-Output '---scripts---'; Get-ChildItem -Path scripts -Force -ErrorAction SilentlyContinue; Write-Output '---pipeline---'; Get-ChildItem -Path scripts\\ai_image_pipeline_v3 -Recurse -Force -ErrorAction SilentlyContinue | Select-Object FullName,Length,LastWriteTime | Format-Table -AutoSize; Write-Output '---ai_image---'; Get-ChildItem -Path ai_image -Force -ErrorAction SilentlyContinue" in C:\Users\samsung\StudioProjects\semisemifinal
+ succeeded in 6098ms:
+
+
+    Directory: C:\Users\samsung\StudioProjects\semisemifinal
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----        2026-05-06   오전 7:17                .agents                                                              
+d-----        2026-04-02   오후 7:36                .cursor                                                              
+d-----        2026-04-03   오전 1:23                .dart_tool                                                           
+d-----        2026-04-16   오전 3:54                .firebase                                                            
+d--h--        2026-05-10   오후 9:01                .git                                                                 
+d-----        2026-04-18  오후 11:21                .idea                                                                
+d-----        2026-05-07   오전 2:55                .omx                                                                 
+d-----        2026-03-30   오전 1:16                .venv                                                                
+d-----        2026-03-24  오전 10:48                .vscode                                                              
+d-----        2026-05-10   오전 5:42                ai_image                                                             
+d-----        2026-03-09   오후 6:51                android                                                              
+d-----        2026-03-24  오전 10:48                assets                                                               
+d-----        2026-05-07   오전 1:42                build                                                                
+d-----        2026-03-09   오후 6:29                dating-app                                                           
+d-----        2026-04-08   오후 7:16                functions                                                            
+d-----        2026-04-16   오전 3:54                infra                                                                
+d-----        2026-04-16   오전 3:55                ios                                                                  
+d-----        2026-04-16   오전 3:55                lib                                                                  
+d-----        2026-03-09   오후 6:29                linux                                                                
+d-----        2026-03-09   오후 6:29                macos                                                                
+d-----        2026-04-16   오전 3:54                public                                                               
+d-----        2026-04-16   오전 3:54                recsys                                                               
+d-----        2026-05-10   오전 5:40                scripts                                                              
+d-----        2026-03-09   오후 6:29                test                                                                 
+d-----        2026-05-10   오전 5:41                tests                                                                
+d-----        2026-04-16   오전 3:54                web                                                                  
+d-----        2026-03-09   오후 6:29                windows                                                              
+d-----        2026-03-09   오후 6:29                설레연 프론트 ui 디자인                                                       
+-a----        2026-03-24  오전 10:48            261 .dockerignore                                                        
+-a----        2026-03-17  오전 12:47             52 .firebaserc                                                          
+-a----        2026-05-06   오후 6:43          26964 .flutter-plugins-dependencies                                        
+-a----        2026-04-16   오전 3:54            247 .gcloudignore                                                        
+-a----        2026-04-17   오전 2:46            818 .gitignore                                                           
+-a----        2026-04-16   오전 3:54            964 .metadata                                                            
+-a----        2026-03-09   오후 6:29              0 A                                                                    
+-a----        2026-05-07   오전 6:56           3042 AGENTS.md                                                            
+-a----        2026-05-07   오후 9:37           2981 AI_IMAGE_CODEX_IMAGEGEN_README.md                                    
+-a----        2026-05-10   오후 8:54          11900 AI_IMAGE_DISTRIBUTION_CONTROL_README.md                              
+-a----        2026-05-07   오후 9:37           3726 AI_IMAGE_PIPELINE_README.md                                          
+-a----        2026-05-07   오후 9:37           9318 AI_IMAGE_QUALITY_CONTRACT.md                                         
+-a----        2026-03-09   오후 6:29           1618 analysis_options.yaml                                                
+-a----        2026-03-14   오후 1:41           8852 analyze_output.txt                                                   
+-a----        2026-03-24  오전 10:48            784 cloudbuild.yaml                                                      
+-a----        2026-03-24  오전 10:48            139 cors.json                                                            
+-a----        2026-03-09   오후 6:29              0 Could                                                                
+-a----        2026-05-05   오전 1:48           4634 firebase-debug.log                                                   
+-a----        2026-04-16   오전 3:54           2529 firebase.json                                                        
+-a----        2026-04-16   오전 3:54           2369 firestore.indexes.json                                               
+-a----        2026-04-16   오후 9:35          20438 firestore.rules                                                      
+-a----        2026-03-09   오후 6:29              0 Get                                                                  
+-a----        2026-03-24  오전 10:48           1425 KAKAO_ANDROID_KEYHASH.md                                             
+-a----        2026-04-16   오전 3:54           2076 KAKAO_WEB_SETUP.md                                                   
+-a----        2026-05-10   오후 8:52           3696 Makefile                                                             
+-a----        2026-05-06   오후 6:48          40160 pubspec.lock                                                         
+-a----        2026-05-06   오후 6:48           4730 pubspec.yaml                                                         
+-a----        2026-03-09   오후 6:29            553 README.md                                                            
+-a----        2026-05-06   오전 7:18            106 requirements_ai_image.txt                                            
+-a----        2026-03-09   오후 6:29              0 Run                                                                  
+-a----        2026-04-18  오후 11:21           6391 seolleyeon.iml                                                       
+-a----        2026-03-24  오전 10:48           2053 storage.rules                                                        
+-a----        2026-05-07   오후 6:14              0 VISUAL_VERDICT_ASSET_QA_PROMPT.md                                    
+---scripts---
+
+
+    Directory: C:\Users\samsung\StudioProjects\semisemifinal\scripts
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----        2026-05-10   오전 5:39                ai_image_pipeline_v3                                                 
+d-----        2026-05-10   오후 9:02                __pycache__                                                          
+-a----        2026-05-07   오후 7:14            146 apply_visual_verdict_asset_qa_v3.py                                  
+-a----        2026-05-07   오후 7:14            160 apply_visual_verdict_distribution_audit_v3.py                        
+-a----        2026-05-07   오후 7:14            152 apply_visual_verdict_identity_qa_v3.py                               
+-a----        2026-05-07   오후 7:14            138 audit_ai_profile_distribution_v3.py                                  
+-a----        2026-05-06   오후 4:50            135 audit_duplicate_ai_images_v3.py                                      
+-a----        2026-05-07   오후 7:14            130 check_ai_image_completion_v3.py                                      
+-a----        2026-05-10   오전 4:00           7109 codex_imagegen_chunk_autopilot_v3.sh                                 
+-a----        2026-05-08   오전 1:14            130 codex_imagegen_supervisor_v3.py                                      
+-a----        2026-05-10   오후 8:52          26860 codex_imagegen_supervisor_v3.sh                                      
+-a----        2026-05-06   오전 6:58            128 generate_ai_images_v3.py                                             
+-a----        2026-05-06   오후 4:50            133 generate_contact_sheet_ai_images_v3.py                               
+-a----        2026-05-06   오후 4:50            140 identity_qa_ai_images_v3.py                                          
+-a----        2026-05-07   오전 4:47            150 import_codex_generated_image_v3.py                                   
+-a----        2026-05-07   오전 4:47            133 make_ai_image_contact_sheets_v3.py                                   
+-a----        2026-05-07   오전 4:46            144 next_codex_imagegen_prompt_v3.py                                     
+-a----        2026-05-07   오후 7:13            138 next_distribution_aware_imagegen_chunk_v3.py                         
+-a----        2026-05-06   오전 6:58            127 prepare_ai_image_assets_v3.py                                        
+-a----        2026-05-07   오후 7:13            122 qa_ai_images_file_v3.py                                              
+-a----        2026-05-06   오전 6:58            122 qa_ai_images_v3.py                                                   
+-a----        2026-05-07   오전 4:47            150 recover_pending_imagegen_v3.py                                       
+-a----        2026-05-07   오전 4:48            125 retry_ai_images_v3.py                                                
+-a----        2026-05-10   오전 3:59            181 run_active_visual_asset_qa_v3.py                                     
+-a----        2026-05-10   오전 3:59            195 run_active_visual_distribution_qa_v3.py                              
+-a----        2026-05-10   오전 3:59            187 run_active_visual_identity_qa_v3.py                                  
+-a----        2026-05-08   오전 1:13            123 run_ai_image_pipeline_v3.py                                          
+-a----        2026-05-10   오전 4:50            142 run_bounded_imagegen_chunk_v3.py                                     
+-a----        2026-05-10   오전 5:40            149 run_e2e_bounded_imagegen_smoke_v3.py                                 
+-a----        2026-05-07   오후 7:14            142 select_next_distribution_buckets_v3.py                               
+-a----        2026-05-07   오후 9:01           3636 SEOLLEYEON_CODEX_IMAGEGEN_AUTOMATION_PROMPTS.md                      
+-a----        2026-05-07   오전 1:26            136 shot_type_qa_ai_images_v3.py                                         
+-a----        2026-05-06   오전 6:58            127 summarize_ai_images_v3.py                                            
+-a----        2026-05-06   오전 6:58            135 upload_ai_images_firebase_v3.py                                      
+-a----        2026-05-06   오후 4:49            129 vision_qa_ai_images_v3.py                                            
+-a----        2026-05-06   오전 6:58             39 __init__.py                                                          
+---pipeline---
+
+
+
+FullName                                                                                                               
+--------                                                                                                               
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__                                 
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\active_visual_verdict_runner.py             
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\bounded_batch_executor.py                   
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\cli.py                                      
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\codex_imagegen.py                           
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\completion.py                               
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\config.py                                   
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\contact_sheet.py                            
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\distribution_audit.py                       
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\distribution_chunk.py                       
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\distribution_prepare.py                     
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\distribution_selection.py                   
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\distribution_targets.py                     
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\duplicate_audit.py                          
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\e2e_bounded_imagegen_smoke_v3.py            
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\firebase_upload.py                          
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\generate.py                                 
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\identity.py                                 
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\identity_consistency.py                     
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\manifest.py                                 
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\openai_image.py                             
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\pending_admin.py                            
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\pending_state.py                            
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\prepare.py                                  
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\prompt_source.py                            
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\qa.py                                       
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\retry.py                                    
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\retry_plan.py                               
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\runner.py                                   
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\run_gates.py                                
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\shot_type_qa.py                             
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\summary.py                                  
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\supervisor.py                               
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\targeting.py                                
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\vision_qa.py                                
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\visual_verdict.py                           
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__init__.py                                 
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\active_visual_verdict_runner....
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\bounded_batch_executor.cpytho...
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\cli.cpython-313.pyc             
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\codex_imagegen.cpython-313.pyc  
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\completion.cpython-313.pyc      
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\config.cpython-313.pyc          
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\contact_sheet.cpython-313.pyc   
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\distribution_audit.cpython-31...
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\distribution_chunk.cpython-31...
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\distribution_prepare.cpython-...
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\distribution_selection.cpytho...
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\distribution_targets.cpython-...
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\duplicate_audit.cpython-313.pyc 
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\e2e_bounded_imagegen_smoke_v3...
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\generate.cpython-313.pyc        
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\identity.cpython-313.pyc        
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\identity_consistency.cpython-...
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\manifest.cpython-313.pyc        
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\pending_admin.cpython-313.pyc   
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\pending_state.cpython-313.pyc   
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\prepare.cpython-313.pyc         
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\prompt_source.cpython-313.pyc   
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\qa.cpython-313.pyc              
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\retry_plan.cpython-313.pyc      
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\runner.cpython-313.pyc          
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\run_gates.cpython-313.pyc       
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\shot_type_qa.cpython-313.pyc    
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\summary.cpython-313.pyc         
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\supervisor.cpython-313.pyc      
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\targeting.cpython-313.pyc       
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\vision_qa.cpython-313.pyc       
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\visual_verdict.cpython-313.pyc  
+C:\Users\samsung\StudioProjects\semisemifinal\scripts\ai_image_pipeline_v3\__pycache__\__init__.cpython-313.pyc        
+
+
+---ai_image---
+
+
+    Directory: C:\Users\samsung\StudioProjects\semisemifinal\ai_image
+
+
+Mode          LastWriteTime Length Name             
+----          ------------- ------ ----             
+d----- 2026-05-10   오후 9:42        approved         
+d----- 2026-05-07   오후 6:42        config           
+d----- 2026-05-07   오전 6:59        dry_run_workspace
+d----- 2026-05-10   오전 7:44        e2e_runs         
+d----- 2026-05-10   오전 5:41        female           
+d----- 2026-05-06   오전 7:20        logs             
+d----- 2026-05-07   오전 6:08        male             
+d----- 2026-05-10   오후 9:44        manifests        
+d----- 2026-05-07   오전 2:30        placeholder      
+d----- 2026-05-07   오후 7:55        prompts          
+d----- 2026-05-10   오후 9:40        raw              
+d----- 2026-05-07   오전 6:59        rejected         
+d----- 2026-05-10   오후 9:44        reports          
+
+
+
+hook: PostToolUse
+hook: PostToolUse Completed
+2026-05-10T12:45:40.973900Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.5 personality=pragmatic
+2026-05-10T12:45:42.621471Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=C:\Users\samsung\.codex\.tmp\plugins\plugins\build-ios-apps\.codex-plugin/plugin.json
+2026-05-10T12:45:42.626938Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\plugin-eval\.codex-plugin/plugin.json
+2026-05-10T12:45:42.666062Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\twilio-developer-kit\.codex-plugin/plugin.json
+2026-05-10T12:45:42.666639Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:45:42.802233Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:45:42.802287Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:45:42.812268Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:45:42.812317Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:45:42.821956Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:45:42.822002Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:45:42.840679Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:45:42.840738Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:45:42.850270Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:45:42.850321Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:45:42.859499Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:45:42.859546Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:45:43.266370Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:45:43.354873Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:45:43.356123Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path Makefile -TotalCount 240; Write-Output '---next script---'; Get-Content -Path scripts\\next_codex_imagegen_prompt_v3.py -TotalCount 80; Write-Output '---cli help maybe---'; python scripts\\next_codex_imagegen_prompt_v3.py --help" in C:\Users\samsung\StudioProjects\semisemifinal
+ succeeded in 1287ms:
+export CODEX_GENERATED_IMAGES_DIR ?= $(HOME)/.codex/generated_images
+
+.PHONY: ai-image-prepare-720 ai-image-next-distribution-chunk ai-image-recover ai-image-file-qa ai-image-contact-sheets ai-image-visual-asset-qa-instructions ai-image-visual-identity-qa-instructions ai-image-visual-distribution-audit-instructions ai-image-apply-visual-asset-qa ai-image-apply-visual-identity-qa ai-image-apply-visual-distribution-audit ai-image-distribution-audit ai-image-completion-check ai-image-bounded-chunk-plan ai-image-bounded-chunk-run ai-image-bounded-chunk-resume ai-image-bounded-chunk-status ai-image-bounded-chunk-qa ai-image-bounded-chunk-finalize ai-image-autopilot-chunks-720 ai-image-supervisor-720 ai-image-supervisor-chunk-only ai-image-supervisor-identity-only ai-image-supervisor-asset-only
+
+ai-image-prepare-720:
+	python scripts/run_ai_image_pipeline_v3.py prepare-720 --root .
+
+ai-image-next-distribution-chunk:
+	python scripts/next_distribution_aware_imagegen_chunk_v3.py \
+	  --root . \
+	  --chunk_identities 24
+
+ai-image-recover:
+	python scripts/recover_pending_imagegen_v3.py \
+	  --pending ai_image/manifests/pending-imagegen.json \
+	  --generated_root "$$CODEX_GENERATED_IMAGES_DIR" \
+	  --out_dir ai_image
+
+ai-image-file-qa:
+	python scripts/run_ai_image_pipeline_v3.py file-qa --root .
+
+ai-image-contact-sheets:
+	python scripts/run_ai_image_pipeline_v3.py contact-sheets --root .
+
+ai-image-visual-asset-qa-instructions:
+	python scripts/run_ai_image_pipeline_v3.py visual-asset-qa-instructions --root .
+
+ai-image-visual-identity-qa-instructions:
+	python scripts/run_ai_image_pipeline_v3.py visual-identity-qa-instructions --root .
+
+ai-image-visual-distribution-audit-instructions:
+	python scripts/run_ai_image_pipeline_v3.py visual-distribution-audit-instructions --root .
+
+ai-image-apply-visual-asset-qa:
+	python scripts/run_ai_image_pipeline_v3.py apply-visual-asset-qa --root . --visual_json ai_image/reports/visual_verdict/asset_qa_latest.json
+
+ai-image-apply-visual-identity-qa:
+	python scripts/run_ai_image_pipeline_v3.py apply-visual-identity-qa --root . --visual_json ai_image/reports/visual_verdict/identity_qa_latest.json
+
+ai-image-apply-visual-distribution-audit:
+	python scripts/run_ai_image_pipeline_v3.py apply-visual-distribution-audit --root . --visual_json ai_image/reports/visual_verdict/distribution_audit_latest.json
+
+ai-image-distribution-audit:
+	python scripts/run_ai_image_pipeline_v3.py distribution-audit --root .
+
+ai-image-completion-check:
+	python scripts/run_ai_image_pipeline_v3.py completion-check --root .
+
+ai-image-bounded-chunk-plan:
+	python scripts/run_ai_image_pipeline_v3.py bounded-chunk-plan --root . --production
+
+ai-image-bounded-chunk-run:
+	python scripts/run_ai_image_pipeline_v3.py bounded-chunk-run --root .
+
+ai-image-bounded-chunk-resume:
+	python scripts/run_ai_image_pipeline_v3.py bounded-chunk-resume --root .
+
+ai-image-bounded-chunk-status:
+	python scripts/run_ai_image_pipeline_v3.py bounded-chunk-status --root .
+
+ai-image-bounded-chunk-qa:
+	python scripts/run_ai_image_pipeline_v3.py bounded-chunk-qa --root .
+
+ai-image-bounded-chunk-finalize:
+	python scripts/run_ai_image_pipeline_v3.py bounded-chunk-finalize --root .
+
+ai-image-autopilot-chunks-720:
+	bash scripts/codex_imagegen_chunk_autopilot_v3.sh
+
+ai-image-supervisor-720:
+	python scripts/run_ai_image_pipeline_v3.py supervisor-720 --root .
+
+ai-image-supervisor-chunk-only:
+	python scripts/run_ai_image_pipeline_v3.py supervisor-chunk-only --root .
+
+ai-image-supervisor-identity-only:
+	python scripts/run_ai_image_pipeline_v3.py supervisor-identity-only --root .
+
+ai-image-supervisor-asset-only:
+	python scripts/run_ai_image_pipeline_v3.py supervisor-asset-only --root .
+---next script---
+#!/usr/bin/env python3
+from ai_image_pipeline_v3.codex_imagegen import next_main
+
+
+if __name__ == "__main__":
+    raise SystemExit(next_main())
+---cli help maybe---
+usage: next_codex_imagegen_prompt_v3.py [-h] [--root ROOT] [--queue QUEUE]
+                                        [--manifest MANIFEST]
+                                        [--out_pending OUT_PENDING]
+                                        [--max_attempts MAX_ATTEMPTS]
+                                        [--target_approved_identities TARGET_APPROVED_IDENTITIES]
+                                        [--target_approved_assets TARGET_APPROVED_ASSETS]
+                                        [--stop_when_target_reached] [--force]
+
+Write the next Codex $imagegen pending checkpoint and print the exact prompt.
+
+options:
+  -h, --help            show this help message and exit
+  --root ROOT
+  --queue QUEUE
+  --manifest MANIFEST
+  --out_pending OUT_PENDING
+  --max_attempts MAX_ATTEMPTS
+  --target_approved_identities TARGET_APPROVED_IDENTITIES
+  --target_approved_assets TARGET_APPROVED_ASSETS
+  --stop_when_target_reached
+  --force
+
+hook: PostToolUse
+hook: PostToolUse Completed
+2026-05-10T12:45:50.600208Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.5 personality=pragmatic
+2026-05-10T12:45:52.245199Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=C:\Users\samsung\.codex\.tmp\plugins\plugins\build-ios-apps\.codex-plugin/plugin.json
+2026-05-10T12:45:52.249141Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\plugin-eval\.codex-plugin/plugin.json
+2026-05-10T12:45:52.278073Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\twilio-developer-kit\.codex-plugin/plugin.json
+2026-05-10T12:45:52.278613Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:45:52.407123Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:45:52.407175Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:45:52.412594Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:45:52.412640Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:45:52.422011Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:45:52.422064Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:45:52.429502Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:45:52.429547Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:45:52.439637Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:45:52.439685Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:45:52.444976Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:45:52.445028Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:45:52.829102Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:45:52.915462Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:45:52.916407Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path scripts\\ai_image_pipeline_v3\\codex_imagegen.py -TotalCount 260" in C:\Users\samsung\StudioProjects\semisemifinal
+ succeeded in 1413ms:
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import shutil
+from dataclasses import dataclass
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any, Iterable, Mapping
+
+from .config import (
+    CODEX_GENERATED_IMAGES_DIR_ENV,
+    DEFAULT_CODEX_GENERATED_IMAGES_DIR,
+    MAX_ATTEMPTS,
+    SHOT_ORDER,
+    approved_asset_path,
+    ensure_base_dirs,
+    now_utc,
+    pipeline_paths,
+    profile_number,
+    prompt_hash,
+    raw_attempt_path,
+    read_jsonl,
+    rejected_attempt_path,
+    shot_sort_key,
+    to_portable_path,
+    write_jsonl,
+)
+from .manifest import load_generation_manifest, public_final_path, write_generation_outputs
+from .pending_state import pending_is_resolved, pending_is_unresolved, pending_requires_recovery as pending_requires_recovery_state, resolved_pending_payload
+from .retry_plan import APPROVED_STATUSES, attempt_count
+from .targeting import apply_reserve_policy, approved_identity_report
+
+
+PENDING_FILENAME = "pending-imagegen.json"
+IMAGEGEN_QUEUE_FILENAME = "imagegen_queue.jsonl"
+IDENTITY_MANIFEST_FILENAME = "identity_manifest.jsonl"
+COMPLETED_PENDING_FILENAME = "completed_pending_imagegen.jsonl"
+RESERVE_ACTIVATION_FILENAME = "reserve_activation_manifest.jsonl"
+RETRY_MANIFEST_FILENAME = "retry_manifest.jsonl"
+
+ELIGIBLE_STATUSES = {
+    "prepared",
+    "queued",
+    "retry_queued",
+    "missing",
+    "qa_rejected",
+    "vision_rejected",
+    "failed",
+}
+PENDING_STATUSES = {"pending_imagegen"}
+RECOVERED_PENDING_STATUSES = {"recovered_pending_qa", "needs_manual_review"}
+
+
+@dataclass(frozen=True)
+class NextPromptResult:
+    asset_id: str
+    profile_id: str
+    shot_type: str
+    attempt: int
+    pending_path: Path
+    imagegen_command: str
+
+
+@dataclass(frozen=True)
+class RecoverResult:
+    asset_id: str
+    source_path: Path
+    raw_path: Path
+    final_path: Path
+    pending_path: Path
+
+
+def identity_manifest_path(root: Path | str | None = None) -> Path:
+    return pipeline_paths(root).manifests / IDENTITY_MANIFEST_FILENAME
+
+
+def queue_path(root: Path | str | None = None) -> Path:
+    return pipeline_paths(root).manifests / IMAGEGEN_QUEUE_FILENAME
+
+
+def pending_path(root: Path | str | None = None) -> Path:
+    return pipeline_paths(root).manifests / PENDING_FILENAME
+
+
+def completed_pending_path(root: Path | str | None = None) -> Path:
+    return pipeline_paths(root).manifests / COMPLETED_PENDING_FILENAME
+
+
+def retry_manifest_path(root: Path | str | None = None) -> Path:
+    return pipeline_paths(root).manifests / RETRY_MANIFEST_FILENAME
+
+
+def reserve_activation_path(root: Path | str | None = None) -> Path:
+    return pipeline_paths(root).manifests / RESERVE_ACTIVATION_FILENAME
+
+
+def write_identity_manifest(root: Path | str | None, specs: Iterable[Mapping[str, Any]]) -> Path:
+    rows: list[dict[str, Any]] = []
+    for spec in specs:
+        profile_id = str(spec["profileId"])
+        is_reserve = bool(spec.get("isReserve")) or str(spec.get("identityScope") or "") == "reserve"
+        rows.append(
+            {
+                "profileId": profile_id,
+                "gender": str(spec["gender"]),
+                "numericId": profile_number(profile_id),
+                "identityScope": "reserve" if is_reserve else "primary",
+                "isReserve": is_reserve,
+                "reserveStatus": "standby" if is_reserve else "",
+                "activeForTarget": not is_reserve,
+                "identityDecision": "",
+                "shotTypes": list(SHOT_ORDER),
+                "updatedAt": now_utc(),
+            }
+        )
+    path = identity_manifest_path(root)
+    write_jsonl(path, rows)
+    return path
+
+
+def write_imagegen_queue(root: Path | str | None, rows: Iterable[Mapping[str, Any]]) -> Path:
+    queue_rows: list[dict[str, Any]] = []
+    for row in rows:
+        item = dict(row)
+        is_reserve = bool(item.get("isReserve"))
+        active = bool(item.get("activeForTarget") if "activeForTarget" in item else not is_reserve)
+        item["queueStatus"] = "standby" if is_reserve and not active else "queued"
+        item["queueReason"] = "reserve_standby" if item["queueStatus"] == "standby" else "ready"
+        item["updatedAt"] = now_utc()
+        queue_rows.append(item)
+    path = queue_path(root)
+    write_jsonl(path, sorted(queue_rows, key=shot_sort_key))
+    return path
+
+
+def read_pending(path: Path) -> dict[str, Any] | None:
+    if not path.exists():
+        return None
+    text = path.read_text(encoding="utf-8").strip()
+    if not text:
+        return None
+    return json.loads(text)
+
+
+def write_pending(path: Path, payload: Mapping[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(dict(payload), ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def _pending_requires_recovery(pending: Mapping[str, Any] | None) -> bool:
+    return pending_requires_recovery_state(pending)
+
+
+def _json_command(prompt: str) -> str:
+    return "$imagegen " + json.dumps(prompt, ensure_ascii=False)
+
+
+def face_card_imagegen_prompt(row: Mapping[str, Any], prompt: str) -> str:
+    return f"""Generate exactly one vertical realistic smartphone profile photo.
+
+Asset metadata:
+assetId: {row["assetId"]}
+profileId: {row["profileId"]}
+shotType: {row["shotType"]}
+
+Use this prompt:
+{prompt}
+
+Rules:
+- one image only
+- no text in image
+- no watermark
+- no logo
+- adult Korean university student
+- realistic, calm, trustworthy
+- not influencer-like
+- not school uniform
+- not childlike
+"""
+
+
+def silhouette_card_imagegen_prompt(row: Mapping[str, Any], prompt: str) -> str:
+    return f"""Using the attached face_card image as the same person reference, generate exactly one silhouette_card image.
+
+Asset metadata:
+assetId: {row["assetId"]}
+profileId: {row["profileId"]}
+shotType: {row["shotType"]}
+
+Goal:
+Same person as the reference face_card.
+Generate a realistic 3/4 body or full-body smartphone profile photo.
+The body frame and proportions should be readable.
+Campus-appropriate modest clothing.
+No oversized padding.
+No revealing outfit.
+No school uniform.
+No text, no logo, no watermark.
+
+Use this prompt:
+{prompt}
+"""
+
+
+def vibe_card_imagegen_prompt(row: Mapping[str, Any], prompt: str) -> str:
+    return f"""Using the attached face_card image as the same person reference, generate exactly one vibe_card image.
+
+Asset metadata:
+assetId: {row["assetId"]}
+profileId: {row["profileId"]}
+shotType: {row["shotType"]}
+
+Goal:
+Same person as the reference face_card.
+Generate a realistic campus/cafe/library/exhibition lifestyle profile photo.
+The mood should be calm, sincere, and trustworthy.
+Not nightlife.
+Not influencer content.
+No readable logo, school name, text, or watermark.
+
+Use this prompt:
+{prompt}
+"""
+
+
+def _image_exists(path_value: Any) -> bool:
+    if not path_value:
+        return False
+    path = Path(str(path_value))
+    return path.exists() and path.stat().st_size > 0
+
+
+def _is_approved(row: Mapping[str, Any]) -> bool:
+    return str(row.get("status") or "") in APPROVED_STATUSES and _image_exists(row.get("finalPath"))
+
+
+def _face_approved(rows_by_asset: Mapping[str, Mapping[str, Any]], row: Mapping[str, Any]) -> bool:
+    face_asset_id = f"{row['profileId']}__face_card__v001"
+    face = rows_by_asset.get(face_asset_id)
+    return bool(face and _is_approved(face))
+
+
+def _dependent_reference_path(rows_by_asset: Mapping[str, Mapping[str, Any]], row: Mapping[str, Any]) -> str:
+    face_asset_id = f"{row['profileId']}__face_card__v001"
+    face = rows_by_asset.get(face_asset_id, {})
+    return str(face.get("finalPath") or face.get("localPath") or "")
+
+
+def _eligible_attempt(row: Mapping[str, Any], *, max_attempts: int, force: bool) -> int | None:
+    if not bool(row.get("activeForTarget", True)):
+        return None
+    status = str(row.get("status") or "")
+    if _is_approved(row) and not force:
+        return None
+    if status in PENDING_STATUSES:
+        return None
+    if status in RECOVERED_PENDING_STATUSES and not force:
+        return None
+
+hook: PostToolUse
+hook: PostToolUse Completed
+2026-05-10T12:46:00.758990Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.5 personality=pragmatic
+2026-05-10T12:46:02.917732Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=C:\Users\samsung\.codex\.tmp\plugins\plugins\build-ios-apps\.codex-plugin/plugin.json
+2026-05-10T12:46:02.921353Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\plugin-eval\.codex-plugin/plugin.json
+2026-05-10T12:46:02.950702Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\twilio-developer-kit\.codex-plugin/plugin.json
+2026-05-10T12:46:02.951161Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:46:03.039528Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:46:03.039574Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:46:03.045117Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:46:03.045156Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:46:03.054441Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:46:03.054485Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:46:03.062815Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:46:03.062854Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:46:03.067854Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:46:03.067901Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:46:03.076288Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:46:03.076333Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:46:03.394874Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:46:03.463628Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:46:03.464270Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path scripts\\ai_image_pipeline_v3\\codex_imagegen.py -TotalCount 520 | Select-Object -Skip 260" in C:\Users\samsung\StudioProjects\semisemifinal
+ succeeded in 1181ms:
+    if status not in ELIGIBLE_STATUSES and not force:
+        return None
+    next_attempt = attempt_count(row) + 1
+    if next_attempt > max_attempts and not force:
+        return None
+    return next_attempt
+
+
+def _candidate_sort_key(row: Mapping[str, Any]) -> tuple[int, str, int]:
+    shot_type = str(row.get("shotType") or "")
+    try:
+        shot_index = SHOT_ORDER.index(shot_type)
+    except ValueError:
+        shot_index = len(SHOT_ORDER)
+    reserve_rank = 1 if bool(row.get("isReserve")) and str(row.get("reserveStatus") or "") != "activated" else 0
+    return shot_index, str(row.get("profileId") or ""), reserve_rank
+
+
+def select_next_asset(
+    rows: list[Mapping[str, Any]],
+    *,
+    max_attempts: int = MAX_ATTEMPTS,
+    force: bool = False,
+    stop_when_target_reached: bool = False,
+    target_approved_identities: int = 240,
+    target_approved_assets: int = 720,
+) -> tuple[dict[str, Any] | None, int | None, str]:
+    if stop_when_target_reached:
+        report = approved_identity_report(rows)
+        if (
+            int(report.get("approvedIdentities") or 0) >= target_approved_identities
+            and int(report.get("approvedAssets") or 0) >= target_approved_assets
+        ):
+            return None, None, "target_reached"
+
+    rows_by_asset = {str(row.get("assetId")): row for row in rows}
+    candidates: list[tuple[dict[str, Any], int]] = []
+    waiting_reference = 0
+    for source in sorted(rows, key=_candidate_sort_key):
+        row = dict(source)
+        attempt = _eligible_attempt(row, max_attempts=max_attempts, force=force)
+        if attempt is None:
+            continue
+        if str(row.get("shotType")) != "face_card" and not _face_approved(rows_by_asset, row):
+            waiting_reference += 1
+            continue
+        candidates.append((row, attempt))
+    if candidates:
+        return candidates[0][0], candidates[0][1], "selected"
+    if waiting_reference:
+        return None, None, "waiting_reference"
+    return None, None, "no_eligible_asset"
+
+
+def build_pending_payload(
+    *,
+    paths_root: Path | str | None,
+    row: Mapping[str, Any],
+    attempt: int,
+    queue_file: Path,
+    manifest_file: Path,
+    out_pending: Path,
+    generated_root: Path | str | None = None,
+) -> dict[str, Any]:
+    paths = pipeline_paths(paths_root)
+    rows_by_asset = {str(item.get("assetId")): item for item in load_generation_manifest(paths)}
+    asset_id = str(row["assetId"])
+    raw_path = raw_attempt_path(paths, asset_id, attempt)
+    final_path = public_final_path(paths, row)
+    approved_path = approved_asset_path(paths, row)
+    rejected_path = rejected_attempt_path(paths, asset_id, attempt)
+    generated_dir = str(generated_root or os.environ.get(CODEX_GENERATED_IMAGES_DIR_ENV) or DEFAULT_CODEX_GENERATED_IMAGES_DIR)
+    reference_asset_id = str(row.get("referenceAssetId") or "")
+    reference_path = ""
+    if str(row.get("shotType")) != "face_card":
+        reference_asset_id = reference_asset_id or f"{row['profileId']}__face_card__v001"
+        reference_path = _dependent_reference_path(rows_by_asset, row)
+    source_prompt = str(row.get("prompt") or "")
+    prompt = source_prompt
+    if str(row.get("shotType")) == "face_card":
+        prompt = face_card_imagegen_prompt(row, source_prompt)
+    elif str(row.get("shotType")) == "silhouette_card" and reference_path:
+        prompt = silhouette_card_imagegen_prompt(row, source_prompt)
+    elif str(row.get("shotType")) == "vibe_card" and reference_path:
+        prompt = vibe_card_imagegen_prompt(row, source_prompt)
+    elif reference_path:
+        prompt = (
+            f"{prompt}\n\nReference image for same-person identity consistency: {reference_path}\n"
+            "Use this approved face_card as the identity anchor. If the current Codex $imagegen surface "
+            "cannot use this reference image, stop and report reference_blocked; do not generate an "
+            "independent text-only dependent shot."
+        )
+    return {
+        "assetId": asset_id,
+        "profileId": str(row["profileId"]),
+        "gender": str(row["gender"]),
+        "numericId": profile_number(str(row["profileId"])),
+        "shotType": str(row["shotType"]),
+        "attempt": int(attempt),
+        "prompt": prompt,
+        "promptHash": prompt_hash(prompt),
+        "queuePath": to_portable_path(queue_file),
+        "manifestPath": to_portable_path(manifest_file),
+        "pendingPath": to_portable_path(out_pending),
+        "expectedRawPath": to_portable_path(raw_path),
+        "expectedFinalPath": to_portable_path(final_path),
+        "expectedApprovedPath": to_portable_path(approved_path),
+        "expectedRejectedPath": to_portable_path(rejected_path),
+        "referenceAssetId": reference_asset_id,
+        "referenceImagePath": reference_path,
+        "codexGeneratedImagesDir": generated_dir,
+        "status": "pending_imagegen",
+        "createdAt": now_utc(),
+        "recoveryInstructions": [
+            "After the $imagegen result, do not continue to the next queued asset.",
+            "First run mingw32-make ai-image-recover or scripts/recover_pending_imagegen_v3.py.",
+            "Map identity from this pending-imagegen.json only; do not infer identity visually.",
+            "Copy raw output to expectedRawPath and final candidate to expectedFinalPath.",
+            "Run QA before preparing another $imagegen prompt.",
+        ],
+    }
+
+
+def next_prompt(
+    *,
+    root: Path | str | None = None,
+    queue: Path | str | None = None,
+    manifest: Path | str | None = None,
+    out_pending: Path | str | None = None,
+    max_attempts: int = MAX_ATTEMPTS,
+    force: bool = False,
+    stop_when_target_reached: bool = False,
+    target_approved_identities: int = 240,
+    target_approved_assets: int = 720,
+) -> NextPromptResult | None:
+    paths = pipeline_paths(root)
+    ensure_base_dirs(paths)
+    queue_file = Path(queue).resolve() if queue else queue_path(root)
+    manifest_file = Path(manifest).resolve() if manifest else paths.manifests / "generation_manifest.jsonl"
+    out_pending_file = Path(out_pending).resolve() if out_pending else pending_path(root)
+
+    pending = read_pending(out_pending_file)
+    if _pending_requires_recovery(pending):
+        raise RuntimeError(
+            f"pending imagegen checkpoint requires recovery first: {out_pending_file}. "
+            "Run mingw32-make ai-image-recover before creating a new prompt."
+        )
+    if pending_is_unresolved(pending):
+        raise RuntimeError(
+            f"unresolved pending-imagegen checkpoint blocks new prompt: {out_pending_file}. "
+            "Resolve, clear, or manually review this checkpoint before creating another prompt."
+        )
+
+    apply_reserve_policy(root=root, max_attempts=max_attempts)
+    rows = load_generation_manifest(paths)
+    row, attempt, reason = select_next_asset(
+        rows,
+        max_attempts=max_attempts,
+        force=force,
+        stop_when_target_reached=stop_when_target_reached,
+        target_approved_identities=target_approved_identities,
+        target_approved_assets=target_approved_assets,
+    )
+    if row is None or attempt is None:
+        print(f"No eligible Codex imagegen asset: {reason}")
+        return None
+
+    payload = build_pending_payload(
+        paths_root=root,
+        row=row,
+        attempt=attempt,
+        queue_file=queue_file,
+        manifest_file=manifest_file,
+        out_pending=out_pending_file,
+    )
+    write_pending(out_pending_file, payload)
+
+    by_asset = {str(item["assetId"]): dict(item) for item in rows}
+    selected = by_asset[payload["assetId"]]
+    selected.update(
+        {
+            "status": "pending_imagegen",
+            "attempt": int(attempt),
+            "attemptCount": int(attempt),
+            "pendingPath": to_portable_path(out_pending_file),
+            "expectedRawPath": payload["expectedRawPath"],
+            "expectedFinalPath": payload["expectedFinalPath"],
+            "expectedApprovedPath": payload["expectedApprovedPath"],
+            "expectedRejectedPath": payload["expectedRejectedPath"],
+            "finalPath": payload["expectedFinalPath"],
+            "approvedPath": payload["expectedApprovedPath"],
+            "rejectedPath": payload["expectedRejectedPath"],
+            "resolvedReferencePath": payload["referenceImagePath"],
+            "updatedAt": now_utc(),
+            "error": "",
+        }
+    )
+    by_asset[payload["assetId"]] = selected
+    write_generation_outputs(paths, list(by_asset.values()))
+
+    command = _json_command(payload["prompt"])
+    return NextPromptResult(
+        asset_id=payload["assetId"],
+        profile_id=payload["profileId"],
+        shot_type=payload["shotType"],
+        attempt=int(attempt),
+        pending_path=out_pending_file,
+        imagegen_command=command,
+    )
+
+
+def _parse_timestamp(value: str | None) -> datetime | None:
+    if not value:
+        return None
+    try:
+        text = value.replace("Z", "+00:00")
+        return datetime.fromisoformat(text)
+    except ValueError:
+        return None
+
+
+def _candidate_generated_files(generated_root: Path) -> list[Path]:
+    if not generated_root.exists():
+        return []
+    exts = {".png", ".jpg", ".jpeg", ".webp"}
+    return sorted(
+        [path for path in generated_root.rglob("*") if path.is_file() and path.suffix.lower() in exts],
+        key=lambda path: path.stat().st_mtime,
+        reverse=True,
+    )
+
+
+def latest_generated_image(generated_root: Path, *, created_at: str | None = None) -> Path:
+    files = _candidate_generated_files(generated_root)
+    if not files:
+        raise FileNotFoundError(f"No generated images found under {generated_root}")
+    created = _parse_timestamp(created_at)
+    if created is not None:
+        created_ts = created.timestamp()
+        after_created = [path for path in files if path.stat().st_mtime >= created_ts - 5]
+        if len(after_created) > 1:
+            candidates = ", ".join(str(path) for path in after_created[:5])
+            raise RuntimeError(
+                "Ambiguous Codex generated image recovery candidates after pending timestamp. "
+                f"Pass --source explicitly. candidates={candidates}"
+            )
+        if after_created:
+            return after_created[0]
+    return files[0]
+
+
+def _copy_as_png(source: Path, target: Path) -> None:
+    target.parent.mkdir(parents=True, exist_ok=True)
+    if source.suffix.lower() == ".png":
+        shutil.copy2(source, target)
+        return
+    try:
+        from PIL import Image
+    except ImportError as exc:
+        raise RuntimeError("Pillow is required to import non-PNG Codex generated images as PNG.") from exc
+
+hook: PostToolUse
+hook: PostToolUse Completed
+2026-05-10T12:46:11.093030Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.5 personality=pragmatic
+2026-05-10T12:46:13.072112Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=C:\Users\samsung\.codex\.tmp\plugins\plugins\build-ios-apps\.codex-plugin/plugin.json
+2026-05-10T12:46:13.076241Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\plugin-eval\.codex-plugin/plugin.json
+2026-05-10T12:46:13.123970Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\twilio-developer-kit\.codex-plugin/plugin.json
+2026-05-10T12:46:13.124422Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:46:13.212930Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:46:13.212972Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:46:13.220569Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:46:13.220620Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:46:13.224801Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:46:13.224845Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:46:13.228945Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:46:13.228984Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:46:13.237343Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:46:13.237395Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:46:13.241885Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:46:13.241923Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:46:13.561402Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:46:13.636603Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:46:13.637719Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path scripts\\ai_image_pipeline_v3\\codex_imagegen.py -TotalCount 780 | Select-Object -Skip 520" in C:\Users\samsung\StudioProjects\semisemifinal
+ succeeded in 1440ms:
+    with Image.open(source) as image:
+        image.convert("RGB").save(target, format="PNG")
+
+
+def _append_jsonl(path: Path, row: Mapping[str, Any]) -> None:
+    rows = read_jsonl(path)
+    rows.append(dict(row))
+    write_jsonl(path, rows)
+
+
+def recover_pending_imagegen(
+    *,
+    root: Path | str | None = None,
+    pending: Path | str | None = None,
+    generated_root: Path | str | None = None,
+    out_dir: Path | str | None = None,
+    source: Path | str | None = None,
+    force: bool = False,
+    run_qa: bool = True,
+) -> RecoverResult:
+    root_path: Path | str | None = root
+    if out_dir:
+        out_path = Path(out_dir).resolve()
+        root_path = out_path.parent if out_path.name == "ai_image" else out_path
+    paths = pipeline_paths(root_path)
+    ensure_base_dirs(paths)
+    pending_file = Path(pending).resolve() if pending else pending_path(root_path)
+    payload = read_pending(pending_file)
+    if not payload:
+        raise FileNotFoundError(f"No pending imagegen checkpoint found: {pending_file}")
+    if pending_is_resolved(payload) and not force:
+        raise RuntimeError(f"Pending checkpoint is already resolved: {pending_file}")
+
+    generated_dir = Path(
+        generated_root
+        or payload.get("codexGeneratedImagesDir")
+        or os.environ.get(CODEX_GENERATED_IMAGES_DIR_ENV)
+        or DEFAULT_CODEX_GENERATED_IMAGES_DIR
+    ).resolve()
+    source_path = Path(source).resolve() if source else latest_generated_image(generated_dir, created_at=payload.get("createdAt"))
+    if not source_path.exists():
+        raise FileNotFoundError(f"Generated image source does not exist: {source_path}")
+
+    raw_path = Path(str(payload["expectedRawPath"])).resolve()
+    final_path = Path(str(payload["expectedFinalPath"])).resolve()
+    approved_path_value = str(payload.get("expectedApprovedPath") or "")
+    rejected_path_value = str(payload.get("expectedRejectedPath") or "")
+    approved_path = Path(approved_path_value).resolve() if approved_path_value else None
+    rejected_path = Path(rejected_path_value).resolve() if rejected_path_value else None
+    rows = load_generation_manifest(paths)
+    row = next((item for item in rows if str(item.get("assetId")) == str(payload["assetId"])), None)
+    if row and str(row.get("status") or "") in APPROVED_STATUSES and final_path.exists() and not force:
+        raise RuntimeError(f"Refusing to overwrite approved asset without --force: {final_path}")
+
+    _copy_as_png(source_path, raw_path)
+    if final_path.exists() and row and str(row.get("status") or "") in APPROVED_STATUSES and not force:
+        raise RuntimeError(f"Refusing to overwrite approved final image without --force: {final_path}")
+    _copy_as_png(raw_path, final_path)
+
+    updated_rows: list[dict[str, Any]] = []
+    found = False
+    for item in rows:
+        out = dict(item)
+        if str(out.get("assetId")) == str(payload["assetId"]):
+            found = True
+            out.update(
+                {
+                    "status": "recovered_pending_qa",
+                    "attempt": int(payload.get("attempt") or out.get("attempt") or 1),
+                    "attemptCount": int(payload.get("attempt") or out.get("attemptCount") or 1),
+                    "localPath": to_portable_path(raw_path),
+                    "rawPath": to_portable_path(raw_path),
+                    "finalPath": to_portable_path(final_path),
+                    "approvedPath": to_portable_path(approved_path) if approved_path else str(out.get("approvedPath") or ""),
+                    "rejectedPath": to_portable_path(rejected_path) if rejected_path else str(out.get("rejectedPath") or ""),
+                    "expectedRawPath": to_portable_path(raw_path),
+                    "expectedFinalPath": to_portable_path(final_path),
+                    "expectedApprovedPath": to_portable_path(approved_path) if approved_path else str(out.get("expectedApprovedPath") or ""),
+                    "expectedRejectedPath": to_portable_path(rejected_path) if rejected_path else str(out.get("expectedRejectedPath") or ""),
+                    "codexGeneratedSourcePath": to_portable_path(source_path),
+                    "recoveredAt": now_utc(),
+                    "updatedAt": now_utc(),
+                    "error": "",
+                }
+            )
+        updated_rows.append(out)
+    if not found:
+        raise RuntimeError(f"Pending assetId was not found in generation manifest: {payload['assetId']}")
+    write_generation_outputs(paths, updated_rows)
+
+    completed = resolved_pending_payload(
+        payload,
+        recoveryStatus="recovered",
+        sourcePath=to_portable_path(source_path),
+        rawPath=to_portable_path(raw_path),
+        finalPath=to_portable_path(final_path),
+        recoveredAt=now_utc(),
+    )
+    _append_jsonl(completed_pending_path(root_path), completed)
+    write_pending(pending_file, completed)
+
+    if run_qa:
+        from .qa import qa_images
+
+        qa_images(root=root_path, shot_type=str(payload["shotType"]), force=force)
+
+    return RecoverResult(
+        asset_id=str(payload["assetId"]),
+        source_path=source_path,
+        raw_path=raw_path,
+        final_path=final_path,
+        pending_path=pending_file,
+    )
+
+
+def build_next_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="Write the next Codex $imagegen pending checkpoint and print the exact prompt.")
+    parser.add_argument("--root", default=None)
+    parser.add_argument("--queue", default=None)
+    parser.add_argument("--manifest", default=None)
+    parser.add_argument("--out_pending", default=None)
+    parser.add_argument("--max_attempts", type=int, default=MAX_ATTEMPTS)
+    parser.add_argument("--target_approved_identities", type=int, default=240)
+    parser.add_argument("--target_approved_assets", type=int, default=720)
+    parser.add_argument("--stop_when_target_reached", action="store_true")
+    parser.add_argument("--force", action="store_true")
+    return parser
+
+
+def next_main(argv: list[str] | None = None) -> int:
+    args = build_next_parser().parse_args(argv)
+    result = next_prompt(
+        root=args.root,
+        queue=args.queue,
+        manifest=args.manifest,
+        out_pending=args.out_pending,
+        max_attempts=args.max_attempts,
+        target_approved_identities=args.target_approved_identities,
+        target_approved_assets=args.target_approved_assets,
+        stop_when_target_reached=args.stop_when_target_reached,
+        force=args.force,
+    )
+    if result is None:
+        return 0
+    print(f"pending={result.pending_path}")
+    print(f"assetId={result.asset_id} profileId={result.profile_id} shotType={result.shot_type} attempt={result.attempt}")
+    print(result.imagegen_command)
+    return 0
+
+
+def build_recover_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="Recover/import the latest Codex built-in $imagegen output from pending-imagegen.json.")
+    parser.add_argument("--root", default=None)
+    parser.add_argument("--pending", default=None)
+    parser.add_argument("--generated_root", default=None)
+    parser.add_argument("--out_dir", default=None)
+    parser.add_argument("--source", default=None, help="Explicit generated image file to import; otherwise newest file is used.")
+    parser.add_argument("--force", action="store_true")
+    parser.add_argument("--no_qa", action="store_true", help="Recover without running file QA. Normal workflow keeps QA enabled.")
+    return parser
+
+
+def recover_main(argv: list[str] | None = None) -> int:
+    args = build_recover_parser().parse_args(argv)
+    result = recover_pending_imagegen(
+        root=args.root,
+        pending=args.pending,
+        generated_root=args.generated_root,
+        out_dir=args.out_dir,
+        source=args.source,
+        force=args.force,
+        run_qa=not args.no_qa,
+    )
+    print(
+        json.dumps(
+            {
+                "assetId": result.asset_id,
+                "sourcePath": str(result.source_path),
+                "rawPath": str(result.raw_path),
+                "finalPath": str(result.final_path),
+                "pendingPath": str(result.pending_path),
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
+    return 0
+
+hook: PostToolUse
+hook: PostToolUse Completed
+2026-05-10T12:46:20.719842Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.5 personality=pragmatic
+2026-05-10T12:46:22.552271Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=C:\Users\samsung\.codex\.tmp\plugins\plugins\build-ios-apps\.codex-plugin/plugin.json
+2026-05-10T12:46:22.555683Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\plugin-eval\.codex-plugin/plugin.json
+2026-05-10T12:46:22.585415Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\twilio-developer-kit\.codex-plugin/plugin.json
+2026-05-10T12:46:22.585893Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:46:22.700822Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:46:22.700869Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:46:22.707519Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:46:22.707562Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:46:22.718063Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:46:22.718159Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:46:22.727455Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:46:22.727499Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:46:22.740944Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:46:22.740987Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:46:22.753572Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:46:22.753624Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:46:23.144043Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:46:23.218848Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:46:23.219516Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Write-Output '---pending---'; if (Test-Path ai_image\\manifests\\pending-imagegen.json) { Get-Content ai_image\\manifests\\pending-imagegen.json -Raw } else { Write-Output 'no pending' }; Write-Output '---status head---'; if (Test-Path ai_image\\reports\\generation_status.csv) { Get-Content ai_image\\reports\\generation_status.csv -TotalCount 8 }; Write-Output '---manifest stats---'; @'
+import json, collections, pathlib
+p=pathlib.Path('ai_image/manifests/generation_manifest.jsonl')
+if p.exists():
+ rows=[json.loads(l) for l in p.read_text(encoding='utf-8').splitlines() if l.strip()]
+ print('rows',len(rows))
+ print(collections.Counter(r.get('status','') for r in rows).most_common())
+ print(collections.Counter(r.get('shotType','') for r in rows).most_common())
+ for r in rows[:5]: print(r.get('assetId'), r.get('status'), r.get('finalPath'))
+else: print('no manifest')
+'@ | python -" in C:\Users\samsung\StudioProjects\semisemifinal
+ succeeded in 1697ms:
+---pending---
+{
+  "assetId": "female_005__face_card__v001",
+  "profileId": "female_005",
+  "gender": "female",
+  "numericId": "005",
+  "shotType": "face_card",
+  "attempt": 1,
+  "prompt": "Generate exactly one vertical realistic smartphone profile photo.\n\nAsset metadata:\nassetId: female_005__face_card__v001\nprofileId: female_005\nshotType: face_card\n\nUse this prompt:\nA realistic adult Korean university student, approximately 23 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\na slightly longer face proportion, a higher nose bridge, defined cheekbones, an elegant mature expression, soft rectangular face shape, small-to-medium eyes, neutral eye tilt, rounded jawline, subtle cheek fullness, soft low-to-medium nose bridge, soft fuller lips, natural brows, healthy natural skin texture, noticeably attractive but still realistic, refined natural grooming, not celebrity-like, not a photoshoot model, clear trustworthy mood.\n\nHair and styling:\nlong, dark brown, slightly wavy hair with soft side bangs, natural makeup, intellectual neat campus fashion, regular fit, campus-appropriate and modest. Outfit: soft beige cardigan with a plain white top.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.\n\nRules:\n- one image only\n- no text in image\n- no watermark\n- no logo\n- adult Korean university student\n- realistic, calm, trustworthy\n- not influencer-like\n- not school uniform\n- not childlike\n",
+  "promptHash": "29e68893f140f1a5c3639d8c",
+  "queuePath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/imagegen_queue.jsonl",
+  "manifestPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/generation_manifest.jsonl",
+  "pendingPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/pending-imagegen.json",
+  "expectedRawPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_005__face_card__v001__attempt01.png",
+  "expectedFinalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/005/face_card.png",
+  "expectedApprovedPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/approved/female_005__face_card__v001.png",
+  "expectedRejectedPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/rejected/female_005__face_card__v001__attempt01.png",
+  "referenceAssetId": "",
+  "referenceImagePath": "",
+  "codexGeneratedImagesDir": "C:\\Users\\samsung\\.codex\\generated_images",
+  "status": "pending_imagegen",
+  "createdAt": "2026-05-10T12:44:21+00:00",
+  "recoveryInstructions": [
+    "After the $imagegen result, do not continue to the next queued asset.",
+    "First run mingw32-make ai-image-recover or scripts/recover_pending_imagegen_v3.py.",
+    "Map identity from this pending-imagegen.json only; do not infer identity visually.",
+    "Copy raw output to expectedRawPath and final candidate to expectedFinalPath.",
+    "Run QA before preparing another $imagegen prompt."
+  ],
+  "chunkId": "chunk_20260510T121537Z",
+  "boundedExecutor": true
+}
+---status head---
+assetId,profileId,gender,numericId,identityScope,isReserve,reserveStatus,activeForTarget,identityDecision,shotType,targetFaceType,targetLooksLevel,targetLooksLevelBand,status,localPath,finalPath,approvedPath,rejectedPath,expectedRawPath,expectedFinalPath,expectedApprovedPath,expectedRejectedPath,storagePath,legacyStoragePath,model,size,quality,outputFormat,promptHash,referenceAssetId,referenceLocalPath,resolvedReferencePath,attempt,attemptCount,dryRun,updatedAt,error
+female_001__face_card__v001,female_001,female,,production,False,,True,rejected,face_card,,,,file_needs_review,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_001__face_card__v001__attempt01.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/001/face_card.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/approved/female_001__face_card__v001.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/rejected/female_001__face_card__v001__attempt03.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_001__face_card__v001__attempt03.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/001/face_card.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/approved/female_001__face_card__v001.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/rejected/female_001__face_card__v001__attempt03.png,ai_profiles/female/001/face_card.png,ai_profiles/female/001.png,codex-built-in-imagegen,1024x1536,high,png,abcc029d6a8a396abbc8dfe1,,,,3,3,False,2026-05-10T12:40:16+00:00,Integrity passed; visual policy QA still requires manual review.
+female_001__silhouette_card__v001,female_001,female,,production,False,,True,,silhouette_card,,,,missing,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_001__silhouette_card__v001__attempt01.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/001/silhouette_card.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/approved/female_001__silhouette_card__v001.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/rejected/female_001__silhouette_card__v001__attempt01.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_001__silhouette_card__v001__attempt01.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/001/silhouette_card.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/approved/female_001__silhouette_card__v001.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/rejected/female_001__silhouette_card__v001__attempt01.png,ai_profiles/female/001/silhouette_card.png,ai_profiles/female/001.png,codex-built-in-imagegen,1024x1536,high,png,2e5e11e1be89d8358772b822,female_001__face_card__v001,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/001/face_card.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/001/face_card.png,,0,False,2026-05-10T12:28:47+00:00,missing_image
+female_001__vibe_card__v001,female_001,female,,production,False,,True,,vibe_card,,,,prepared,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_001__vibe_card__v001__attempt01.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/001/vibe_card.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/approved/female_001__vibe_card__v001.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/rejected/female_001__vibe_card__v001__attempt01.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_001__vibe_card__v001__attempt01.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/001/vibe_card.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/approved/female_001__vibe_card__v001.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/rejected/female_001__vibe_card__v001__attempt01.png,ai_profiles/female/001/vibe_card.png,ai_profiles/female/001.png,codex-built-in-imagegen,1024x1536,high,png,edd49077769ba47d9497e5aa,female_001__face_card__v001,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/001/face_card.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/001/face_card.png,,0,False,2026-05-06T23:01:10+00:00,
+female_002__face_card__v001,female_002,female,,production,False,,True,,face_card,,,,file_needs_review,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_002__face_card__v001__attempt01.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/002/face_card.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/approved/female_002__face_card__v001.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/rejected/female_002__face_card__v001__attempt03.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_002__face_card__v001__attempt03.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/002/face_card.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/approved/female_002__face_card__v001.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/rejected/female_002__face_card__v001__attempt03.png,ai_profiles/female/002/face_card.png,ai_profiles/female/002.png,codex-built-in-imagegen,1024x1536,high,png,0b7f9ba28e40debbc07512e4,,,,3,3,False,2026-05-10T12:40:16+00:00,Integrity passed; visual policy QA still requires manual review.
+female_002__silhouette_card__v001,female_002,female,,production,False,,True,,silhouette_card,,,,missing,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_002__silhouette_card__v001__attempt01.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/002/silhouette_card.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/approved/female_002__silhouette_card__v001.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/rejected/female_002__silhouette_card__v001__attempt01.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_002__silhouette_card__v001__attempt01.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/002/silhouette_card.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/approved/female_002__silhouette_card__v001.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/rejected/female_002__silhouette_card__v001__attempt01.png,ai_profiles/female/002/silhouette_card.png,ai_profiles/female/002.png,codex-built-in-imagegen,1024x1536,high,png,48a376496b92d81df01a4f88,female_002__face_card__v001,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/002/face_card.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/002/face_card.png,,0,False,2026-05-10T12:28:47+00:00,missing_image
+female_002__vibe_card__v001,female_002,female,,production,False,,True,,vibe_card,,,,prepared,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_002__vibe_card__v001__attempt01.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/002/vibe_card.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/approved/female_002__vibe_card__v001.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/rejected/female_002__vibe_card__v001__attempt01.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_002__vibe_card__v001__attempt01.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/002/vibe_card.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/approved/female_002__vibe_card__v001.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/rejected/female_002__vibe_card__v001__attempt01.png,ai_profiles/female/002/vibe_card.png,ai_profiles/female/002.png,codex-built-in-imagegen,1024x1536,high,png,7e460ab9c93aba9bd8c2f926,female_002__face_card__v001,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/002/face_card.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/002/face_card.png,,0,False,2026-05-06T23:01:10+00:00,
+female_003__face_card__v001,female_003,female,,production,False,,True,,face_card,,,,file_needs_review,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_003__face_card__v001__attempt02.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/003/face_card.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/approved/female_003__face_card__v001.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/rejected/female_003__face_card__v001__attempt02.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_003__face_card__v001__attempt02.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/003/face_card.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/approved/female_003__face_card__v001.png,C:/Users/samsung/StudioProjects/semisemifinal/ai_image/rejected/female_003__face_card__v001__attempt02.png,ai_profiles/female/003/face_card.png,ai_profiles/female/003.png,codex-built-in-imagegen,1024x1536,high,png,7fa020a9e3504ed5b5c5c3ba,,,,2,2,False,2026-05-10T12:40:16+00:00,Integrity passed; visual policy QA still requires manual review.
+---manifest stats---
+rows 849
+[('missing', 554), ('prepared', 280), ('file_needs_review', 9), ('vision_approved', 3), ('vision_rejected', 2), ('pending_imagegen', 1)]
+[('face_card', 283), ('silhouette_card', 283), ('vibe_card', 283)]
+female_001__face_card__v001 file_needs_review C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/001/face_card.png
+female_001__silhouette_card__v001 missing C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/001/silhouette_card.png
+female_001__vibe_card__v001 prepared C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/001/vibe_card.png
+female_002__face_card__v001 file_needs_review C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/002/face_card.png
+female_002__silhouette_card__v001 missing C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/002/silhouette_card.png
+
+hook: PostToolUse
+hook: PostToolUse Completed
+2026-05-10T12:46:41.597104Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.5 personality=pragmatic
+2026-05-10T12:46:43.853633Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=C:\Users\samsung\.codex\.tmp\plugins\plugins\build-ios-apps\.codex-plugin/plugin.json
+2026-05-10T12:46:43.858654Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\plugin-eval\.codex-plugin/plugin.json
+2026-05-10T12:46:43.892031Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\twilio-developer-kit\.codex-plugin/plugin.json
+2026-05-10T12:46:43.892463Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:46:44.016084Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:46:44.016127Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:46:44.025023Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:46:44.025069Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:46:44.040163Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:46:44.040205Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:46:44.047577Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:46:44.047619Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:46:44.072963Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:46:44.073044Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:46:44.079896Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:46:44.079939Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:46:44.564012Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:46:44.655691Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:46:44.656483Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:47:12.058932Z  WARN codex_core::session::turn: stream disconnected - retrying sampling request (1/5 in 197ms)...
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "python scripts\\recover_pending_imagegen_v3.py --pending ai_image\\manifests\\pending-imagegen.json --generated_root C:\\Users\\samsung\\.codex\\generated_images --out_dir ai_image" in C:\Users\samsung\StudioProjects\semisemifinal
+ succeeded in 8214ms:
+{
+  "assetId": "female_005__face_card__v001",
+  "sourcePath": "C:\\Users\\samsung\\.codex\\generated_images\\019e11ea-ed2f-7442-a53f-6c759836063f\\ig_0d919a86e85af422016a007e52c6548191803de2c79de715e6.png",
+  "rawPath": "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\ai_image\\raw\\female_005__face_card__v001__attempt01.png",
+  "finalPath": "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\ai_image\\female\\005\\face_card.png",
+  "pendingPath": "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\ai_image\\manifests\\pending-imagegen.json"
+}
+
+hook: PostToolUse
+hook: PostToolUse Completed
+2026-05-10T12:49:18.381877Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.5 personality=pragmatic
+2026-05-10T12:49:20.212841Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=C:\Users\samsung\.codex\.tmp\plugins\plugins\build-ios-apps\.codex-plugin/plugin.json
+2026-05-10T12:49:20.216666Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\plugin-eval\.codex-plugin/plugin.json
+2026-05-10T12:49:20.246102Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\twilio-developer-kit\.codex-plugin/plugin.json
+2026-05-10T12:49:20.246564Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:49:20.361221Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:49:20.361290Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:49:20.366925Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:49:20.366967Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:49:20.374495Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:49:20.374545Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:49:20.379395Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:49:20.379439Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:49:20.383625Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:49:20.383668Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:49:20.392574Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:49:20.392624Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:49:20.709306Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:49:20.761705Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:49:20.762607Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "@'
+import json, pathlib, csv, os, subprocess
+root=pathlib.Path('.')
+pending=json.loads(pathlib.Path('ai_image/manifests/pending-imagegen.json').read_text(encoding='utf-8'))
+print('pending_status', pending.get('status'), 'recoveryStatus', pending.get('recoveryStatus'), 'assetId', pending.get('assetId'))
+for p in [pending.get('rawPath'), pending.get('finalPath')]:
+    path=pathlib.Path(p)
+    print('exists', path.as_posix(), path.exists(), path.stat().st_size if path.exists() else 0)
+rows=[]
+with pathlib.Path('ai_image/reports/generation_status.csv').open(encoding='utf-8-sig', newline='') as f:
+    for r in csv.DictReader(f):
+        if r.get('assetId')=='female_005__face_card__v001':
+            print('csv_status', r.get('status'), 'attempt', r.get('attempt'), 'error', r.get('error'))
+            break
+'@ | python -
+Write-Output '---git affected---'
+git status --short -- ai_image scripts lib/ai_recommend_model recsys" in C:\Users\samsung\StudioProjects\semisemifinal
+ succeeded in 1695ms:
+pending_status resolved recoveryStatus recovered assetId female_005__face_card__v001
+exists C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_005__face_card__v001__attempt01.png True 2005027
+exists C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/005/face_card.png True 2005027
+csv_status file_rejected attempt 1 error bad_aspect_ratio
+---git affected---
+?? ai_image/
+?? lib/ai_recommend_model/seolleyeon_ai_profile_prompt_v3_package/
+?? scripts/
+
+hook: PostToolUse
+hook: PostToolUse Completed
+2026-05-10T12:49:37.390284Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.5 personality=pragmatic
+2026-05-10T12:49:39.495817Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=C:\Users\samsung\.codex\.tmp\plugins\plugins\build-ios-apps\.codex-plugin/plugin.json
+2026-05-10T12:49:39.499158Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\plugin-eval\.codex-plugin/plugin.json
+2026-05-10T12:49:39.527116Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\twilio-developer-kit\.codex-plugin/plugin.json
+2026-05-10T12:49:39.528267Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:49:39.658167Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:49:39.658217Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:49:39.663959Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:49:39.664010Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:49:39.669189Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:49:39.669284Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:49:39.679821Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:49:39.679871Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:49:39.684225Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:49:39.684280Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:49:39.695870Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:49:39.695916Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:49:40.106811Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:49:40.165010Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:49:40.165694Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "@'
+from PIL import Image
+from pathlib import Path
+for s in ['C:/Users/samsung/.codex/generated_images/019e11ea-ed2f-7442-a53f-6c759836063f/ig_0d919a86e85af422016a007e52c6548191803de2c79de715e6.png','ai_image/raw/female_005__face_card__v001__attempt01.png','ai_image/female/005/face_card.png']:
+ p=Path(s)
+ if p.exists():
+  with Image.open(p) as im: print(s, im.size, im.mode)
+'@ | python -" in C:\Users\samsung\StudioProjects\semisemifinal
+ succeeded in 3003ms:
+C:/Users/samsung/.codex/generated_images/019e11ea-ed2f-7442-a53f-6c759836063f/ig_0d919a86e85af422016a007e52c6548191803de2c79de715e6.png (863, 1822) RGB
+ai_image/raw/female_005__face_card__v001__attempt01.png (863, 1822) RGB
+ai_image/female/005/face_card.png (863, 1822) RGB
+
+hook: PostToolUse
+hook: PostToolUse Completed
+2026-05-10T12:50:00.334965Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.5 personality=pragmatic
+2026-05-10T12:50:02.431937Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=C:\Users\samsung\.codex\.tmp\plugins\plugins\build-ios-apps\.codex-plugin/plugin.json
+2026-05-10T12:50:02.435573Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\plugin-eval\.codex-plugin/plugin.json
+2026-05-10T12:50:02.497330Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\twilio-developer-kit\.codex-plugin/plugin.json
+2026-05-10T12:50:02.497928Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:50:02.627992Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:50:02.628042Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:50:02.635101Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:50:02.635145Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:50:02.650210Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:50:02.650259Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:50:02.661756Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:50:02.661807Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:50:02.666211Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:50:02.666253Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:50:02.669926Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:50:02.669973Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:50:03.102936Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:50:03.218700Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:50:03.219533Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path scripts\\ai_image_pipeline_v3\\qa.py -TotalCount 260" in C:\Users\samsung\StudioProjects\semisemifinal
+ succeeded in 2174ms:
+from __future__ import annotations
+
+import argparse
+import json
+import shutil
+from pathlib import Path
+from typing import Any
+
+from .config import (
+    SHOT_ORDER,
+    ensure_base_dirs,
+    local_image_path,
+    now_utc,
+    pipeline_paths,
+    rejected_attempt_path,
+    to_portable_path,
+    write_csv,
+    write_jsonl,
+)
+from .manifest import load_generation_manifest, public_final_path, write_generation_outputs
+
+
+QA_FIELDS = (
+    "assetId",
+    "profileId",
+    "gender",
+    "shotType",
+    "qaStatus",
+    "localPath",
+    "approvedPath",
+    "rejectedPath",
+    "finalPath",
+    "width",
+    "height",
+    "fileBytes",
+    "semanticReviewRequired",
+    "error",
+    "reasonCodes",
+    "updatedAt",
+)
+
+SUPPORTED_FORMATS = {"PNG", "JPEG", "JPG", "WEBP"}
+MIN_WIDTH = 512
+MIN_HEIGHT = 512
+MIN_FILE_BYTES = 1024
+MIN_ASPECT_RATIO = 0.55
+MAX_ASPECT_RATIO = 0.85
+
+
+def inspect_image(path: Path) -> tuple[bool, int, int, str]:
+    detail = inspect_image_detail(path)
+    return bool(detail["ok"]), int(detail["width"]), int(detail["height"]), "; ".join(detail["reasons"])
+
+
+def inspect_image_detail(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        return {"ok": False, "width": 0, "height": 0, "fileBytes": 0, "format": "", "reasons": ["missing_image"]}
+    file_bytes = path.stat().st_size
+    if file_bytes < MIN_FILE_BYTES:
+        return {"ok": False, "width": 0, "height": 0, "fileBytes": file_bytes, "format": "", "reasons": ["file_too_small"]}
+    try:
+        from PIL import Image
+    except ImportError:
+        return {"ok": True, "width": 0, "height": 0, "fileBytes": file_bytes, "format": "unknown", "reasons": []}
+    try:
+        with Image.open(path) as image:
+            image_format = str(image.format or "").upper()
+            width, height = image.size
+            image.verify()
+        reasons: list[str] = []
+        if image_format not in SUPPORTED_FORMATS:
+            reasons.append("unsupported_format")
+        if width < MIN_WIDTH or height < MIN_HEIGHT:
+            reasons.append("dimensions_below_minimum")
+        if height <= 0:
+            reasons.append("invalid_height")
+        else:
+            ratio = width / height
+            if ratio < MIN_ASPECT_RATIO or ratio > MAX_ASPECT_RATIO:
+                reasons.append("bad_aspect_ratio")
+        return {
+            "ok": not reasons,
+            "width": width,
+            "height": height,
+            "fileBytes": file_bytes,
+            "format": image_format,
+            "reasons": reasons,
+        }
+    except Exception as exc:  # noqa: BLE001 - report corrupt asset and continue.
+        return {"ok": False, "width": 0, "height": 0, "fileBytes": file_bytes, "format": "", "reasons": ["decode_failed", str(exc)]}
+
+
+def _profile_number_from_row(row: dict[str, Any]) -> str:
+    numeric = str(row.get("numericId") or "")
+    if numeric:
+        return numeric
+    profile_id = str(row.get("profileId") or "")
+    if "_" in profile_id:
+        return profile_id.split("_", 1)[1]
+    return ""
+
+
+def _path_sanity_issues(paths: Any, row: dict[str, Any]) -> list[str]:
+    issues: list[str] = []
+    expected = public_final_path(paths, row)
+    final_value = str(row.get("finalPath") or row.get("expectedFinalPath") or expected)
+    final_path = Path(final_value)
+    try:
+        if final_path.resolve() != expected.resolve():
+            issues.append("final_path_mismatch")
+    except OSError:
+        issues.append("final_path_invalid")
+    parts = [part.lower() for part in final_path.parts]
+    gender = str(row.get("gender") or "").lower()
+    numeric = _profile_number_from_row(row).lower()
+    shot = str(row.get("shotType") or "").lower()
+    if gender and gender not in parts:
+        issues.append("path_gender_mismatch")
+    if numeric and numeric not in parts:
+        issues.append("path_numeric_id_mismatch")
+    if shot and final_path.name.lower() != f"{shot}.png":
+        issues.append("path_shot_type_mismatch")
+    return issues
+
+
+def _manifest_integrity_issues(paths: Any, rows: list[dict[str, Any]]) -> dict[str, list[str]]:
+    issues_by_asset: dict[str, list[str]] = {str(row.get("assetId") or ""): [] for row in rows}
+    asset_seen: dict[str, int] = {}
+    final_seen: dict[str, set[str]] = {}
+    by_profile: dict[str, set[str]] = {}
+    for row in rows:
+        asset_id = str(row.get("assetId") or "")
+        asset_seen[asset_id] = asset_seen.get(asset_id, 0) + 1
+        final_path = str(row.get("finalPath") or row.get("expectedFinalPath") or public_final_path(paths, row))
+        final_seen.setdefault(final_path, set()).add(asset_id)
+        by_profile.setdefault(str(row.get("profileId") or ""), set()).add(str(row.get("shotType") or ""))
+        issues_by_asset.setdefault(asset_id, []).extend(_path_sanity_issues(paths, row))
+
+    duplicate_asset_ids = {asset_id for asset_id, count in asset_seen.items() if asset_id and count > 1}
+    duplicate_final_paths = {path for path, asset_ids in final_seen.items() if path and len(asset_ids) > 1}
+    for row in rows:
+        asset_id = str(row.get("assetId") or "")
+        if asset_id in duplicate_asset_ids:
+            issues_by_asset.setdefault(asset_id, []).append("duplicate_assetId")
+        final_path = str(row.get("finalPath") or row.get("expectedFinalPath") or public_final_path(paths, row))
+        if final_path in duplicate_final_paths:
+            issues_by_asset.setdefault(asset_id, []).append("duplicate_final_path")
+    for profile_id, shots in by_profile.items():
+        missing = [shot for shot in SHOT_ORDER if shot not in shots]
+        if not missing:
+            continue
+        for row in rows:
+            if str(row.get("profileId") or "") == profile_id:
+                issues_by_asset.setdefault(str(row.get("assetId") or ""), []).extend(f"missing_required_shot:{shot}" for shot in missing)
+    pending = paths.manifests / "pending-imagegen.json"
+    if pending.exists():
+        try:
+            payload = json.loads(pending.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            payload = {}
+        resolved = isinstance(payload, dict) and (payload.get("resolved") is True or str(payload.get("status") or "") in {"resolved", "cleared"})
+        if not resolved:
+            for row in rows:
+                issues_by_asset.setdefault(str(row.get("assetId") or ""), []).append("unresolved_pending_imagegen")
+    return {asset_id: sorted(set(issues)) for asset_id, issues in issues_by_asset.items()}
+
+
+def qa_images(
+    *,
+    root: Path | str | None = None,
+    limit: int | None = None,
+    shot_type: str | None = None,
+    force: bool = False,
+    approve_integrity_only: bool = False,
+    copy_approved: bool = True,
+) -> dict[str, int]:
+    paths = pipeline_paths(root)
+    ensure_base_dirs(paths)
+    rows = load_generation_manifest(paths)
+    integrity_issues = _manifest_integrity_issues(paths, rows)
+    default_statuses = {"recovered_pending_qa", "needs_manual_review"}
+    candidates = [
+        row
+        for row in rows
+        if (not shot_type or str(row.get("shotType")) == str(shot_type))
+        and (limit is not None or shot_type is not None or str(row.get("status") or "") in default_statuses)
+    ]
+    selected = candidates[:limit] if limit else candidates
+    selected_ids = {str(row["assetId"]) for row in selected}
+    report: list[dict[str, Any]] = []
+    qa_manifest: list[dict[str, Any]] = []
+    vision_rows: list[dict[str, Any]] = []
+    counts = {"checked": 0, "approved": 0, "needs_manual_review": 0, "rejected": 0, "missing": 0}
+
+    for row in rows:
+        if str(row["assetId"]) not in selected_ids:
+            continue
+        counts["checked"] += 1
+        local_path = next(
+            (
+                path
+                for path in (
+                    Path(str(row.get("localPath") or "")),
+                    Path(str(row.get("rawPath") or "")),
+                    Path(str(row.get("finalPath") or "")),
+                )
+                if str(path) not in {"", "."}
+            ),
+            Path(str(row.get("localPath") or "")),
+        )
+        image_detail = inspect_image_detail(local_path)
+        ok = bool(image_detail["ok"])
+        width = int(image_detail["width"])
+        height = int(image_detail["height"])
+        reason_codes = [*list(image_detail.get("reasons", [])), *integrity_issues.get(str(row["assetId"]), [])]
+        error = "; ".join(str(reason) for reason in reason_codes)
+        approved_path = local_image_path(paths, row, root_key="approved")
+        rejected_path_value = str(row.get("rejectedPath") or "")
+        rejected_path = (
+            Path(rejected_path_value)
+            if rejected_path_value
+            else rejected_attempt_path(paths, str(row["assetId"]), int(row.get("attemptCount") or 1))
+        )
+        final_path = public_final_path(paths, row)
+        qa_status = "file_needs_review"
+
+        if not ok or reason_codes:
+            qa_status = "missing" if "missing_image" in reason_codes else "file_rejected"
+            row["status"] = qa_status
+            row["error"] = error
+            if qa_status == "file_rejected" and local_path.exists():
+                rejected_path.parent.mkdir(parents=True, exist_ok=True)
+                if force or not rejected_path.exists():
+                    shutil.copy2(local_path, rejected_path)
+            counts["missing" if qa_status == "missing" else "rejected"] += 1
+        elif approve_integrity_only:
+            qa_status = "file_passed"
+            if copy_approved:
+                for target in (approved_path, final_path):
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    if force or not target.exists():
+                        shutil.copy2(local_path, target)
+            row["status"] = "file_passed"
+            row["error"] = ""
+            counts["approved"] += 1
+        else:
+            row["status"] = "file_needs_review"
+            row["error"] = "Integrity passed; visual policy QA still requires manual review."
+            counts["needs_manual_review"] += 1
+
+        row["updatedAt"] = now_utc()
+        row["approvedPath"] = to_portable_path(approved_path)
+        row["rejectedPath"] = to_portable_path(rejected_path)
+        row["finalPath"] = to_portable_path(final_path)
+        report.append(
+            {
+                "assetId": row["assetId"],
+                "profileId": row["profileId"],
+                "gender": row["gender"],
+                "shotType": row["shotType"],
+
+hook: PostToolUse
+2026-05-10T12:50:15.059860Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.5 personality=pragmatic
+hook: PostToolUse Completed
+2026-05-10T12:50:17.184218Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=C:\Users\samsung\.codex\.tmp\plugins\plugins\build-ios-apps\.codex-plugin/plugin.json
+2026-05-10T12:50:17.187981Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\plugin-eval\.codex-plugin/plugin.json
+2026-05-10T12:50:17.244245Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\twilio-developer-kit\.codex-plugin/plugin.json
+2026-05-10T12:50:17.244890Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:50:17.364587Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:50:17.364649Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:50:17.369151Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:50:17.369201Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:50:17.381043Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:50:17.381100Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:50:17.385137Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:50:17.385181Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:50:17.397885Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:50:17.397939Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:50:17.402556Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:50:17.402606Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:50:17.782869Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:50:17.863934Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:50:17.864739Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path scripts\\ai_image_pipeline_v3\\qa.py -TotalCount 520 | Select-Object -Skip 260" in C:\Users\samsung\StudioProjects\semisemifinal
+ succeeded in 2157ms:
+                "qaStatus": qa_status,
+                "localPath": to_portable_path(local_path),
+                "approvedPath": to_portable_path(approved_path),
+                "rejectedPath": to_portable_path(rejected_path),
+                "finalPath": to_portable_path(final_path),
+                "width": width,
+                "height": height,
+                "fileBytes": image_detail.get("fileBytes", local_path.stat().st_size if local_path.exists() else 0),
+                "semanticReviewRequired": not approve_integrity_only,
+                "error": error,
+                "reasonCodes": json.dumps(reason_codes, ensure_ascii=False),
+                "updatedAt": now_utc(),
+            }
+        )
+        qa_manifest.append(
+            {
+                "assetId": row["assetId"],
+                "profileId": row["profileId"],
+                "gender": row["gender"],
+                "shotType": row["shotType"],
+                "qaStage": "file_qa",
+                "decision": qa_status,
+                "status": qa_status,
+                "reasons": reason_codes or [row.get("error") or "file_integrity_passed_visual_verdict_required"],
+                "updatedAt": now_utc(),
+            }
+        )
+        if ok:
+            vision_rows.append(
+                {
+                    "assetId": row["assetId"],
+                    "profileId": row["profileId"],
+                    "shotType": row["shotType"],
+                    "adultVisual": True,
+                    "photoRealism": 0,
+                    "campusRealism": 0,
+                    "brandFit": 0,
+                    "influencerRisk": 0,
+                    "childlikeRisk": 0,
+                    "schoolUniformRisk": 0,
+                    "sexualizationRisk": 0,
+                    "artifactRisk": 0,
+                    "shotTypeReadable": False,
+                    "decision": "needs_review",
+                    "reasons": ["file_integrity_passed_manual_visual_policy_review_required"],
+                }
+            )
+
+    write_csv(paths.reports / "qa_report.csv", report, QA_FIELDS)
+    write_csv(paths.reports / "asset_qa_report.csv", report, QA_FIELDS)
+    write_jsonl(paths.manifests / "qa_manifest.jsonl", qa_manifest)
+    write_jsonl(paths.manifests / "asset_qa_manifest.jsonl", qa_manifest)
+    write_jsonl(paths.reports / "vision_qa_report.jsonl", vision_rows)
+    (paths.reports / "qa_summary.json").write_text(json.dumps(counts, ensure_ascii=False, indent=2), encoding="utf-8")
+    write_generation_outputs(paths, rows)
+    return counts
+
+
+def promote_approved_assets(
+    *,
+    root: Path | str | None = None,
+    shot_type: str | None = None,
+    force: bool = False,
+    statuses: tuple[str, ...] = ("vision_approved",),
+) -> dict[str, int]:
+    paths = pipeline_paths(root)
+    ensure_base_dirs(paths)
+    rows = load_generation_manifest(paths)
+    counts = {"checked": 0, "promoted": 0, "skipped": 0, "missing": 0}
+    for row in rows:
+        if shot_type and str(row.get("shotType")) != str(shot_type):
+            continue
+        if str(row.get("status") or "") not in statuses:
+            continue
+        counts["checked"] += 1
+        local_path = Path(str(row.get("localPath") or ""))
+        if not local_path.exists():
+            counts["missing"] += 1
+            continue
+        for target in (local_image_path(paths, row, root_key="approved"), public_final_path(paths, row)):
+            target.parent.mkdir(parents=True, exist_ok=True)
+            if target.exists() and not force:
+                counts["skipped"] += 1
+                continue
+            shutil.copy2(local_path, target)
+            counts["promoted"] += 1
+    return counts
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="Run integrity QA for Seolleyeon AI profile images.")
+    parser.add_argument("--root", default=None, help="Workspace root. Defaults to the repository root.")
+    parser.add_argument("--manifest", default=None, help="Compatibility option; generation_manifest.jsonl remains the source of truth.")
+    parser.add_argument("--out_dir", default=None, help="Compatibility option for Makefile targets.")
+    parser.add_argument("--limit", type=int, default=None)
+    parser.add_argument("--shot_type", choices=["face_card", "silhouette_card", "vibe_card"], default=None)
+    parser.add_argument("--force", action="store_true")
+    parser.add_argument("--approve_integrity_only", action="store_true")
+    parser.add_argument("--no_copy_approved", action="store_true")
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
+    counts = qa_images(
+        root=args.root,
+        limit=args.limit,
+        shot_type=args.shot_type,
+        force=args.force,
+        approve_integrity_only=args.approve_integrity_only,
+        copy_approved=not args.no_copy_approved,
+    )
+    print(counts)
+    return 0
+
+hook: PostToolUse
+hook: PostToolUse Completed
+2026-05-10T12:50:28.823606Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.5 personality=pragmatic
+2026-05-10T12:50:30.919856Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=C:\Users\samsung\.codex\.tmp\plugins\plugins\build-ios-apps\.codex-plugin/plugin.json
+2026-05-10T12:50:30.923306Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\plugin-eval\.codex-plugin/plugin.json
+2026-05-10T12:50:30.956427Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\twilio-developer-kit\.codex-plugin/plugin.json
+2026-05-10T12:50:30.957202Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:50:31.116573Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:50:31.116622Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:50:31.125427Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:50:31.125524Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:50:31.132654Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:50:31.132701Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:50:31.140352Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:50:31.140402Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:50:31.146867Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:50:31.146923Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:50:31.151299Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:50:31.151350Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:50:31.584338Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:50:31.684168Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:50:31.685093Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "@'
+from PIL import Image
+from pathlib import Path
+for p in sorted(Path('ai_image/raw').glob('*face_card*attempt*.png'))[:10]:
+    try:
+        with Image.open(p) as im: print(p.name, im.size, round(im.size[0]/im.size[1],3))
+    except Exception as e: print(p,e)
+'@ | python -" in C:\Users\samsung\StudioProjects\semisemifinal
+ succeeded in 3384ms:
+female_001__face_card__v001__attempt01.png (1023, 1537) 0.666
+female_002__face_card__v001__attempt01.png (972, 1619) 0.6
+female_003__face_card__v001__attempt02.png (1024, 1536) 0.667
+female_004__face_card__v001__attempt01.png (941, 1672) 0.563
+female_005__face_card__v001__attempt01.png (863, 1822) 0.474
+female_901__face_card__v001__attempt01.png (972, 1619) 0.6
+female_902__face_card__v001__attempt01.png (1024, 1536) 0.667
+male_901__face_card__v001__attempt01.png (1023, 1537) 0.666
+
+hook: PostToolUse
+hook: PostToolUse Completed
+2026-05-10T12:50:48.754228Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.5 personality=pragmatic
+2026-05-10T12:50:50.684957Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=C:\Users\samsung\.codex\.tmp\plugins\plugins\build-ios-apps\.codex-plugin/plugin.json
+2026-05-10T12:50:50.687915Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\plugin-eval\.codex-plugin/plugin.json
+2026-05-10T12:50:50.719659Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\twilio-developer-kit\.codex-plugin/plugin.json
+2026-05-10T12:50:50.720178Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:50:50.835679Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:50:50.835721Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:50:50.846670Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:50:50.846715Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:50:50.851536Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:50:50.851585Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:50:50.862771Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:50:50.862823Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:50:50.867433Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:50:50.867479Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:50:50.880161Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:50:50.880225Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:50:51.245396Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:50:51.369589Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:50:51.370315Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "@'
+from pathlib import Path
+p=Path('ai_image/rejected/female_005__face_card__v001__attempt01.png')
+print('rejected_exists', p.exists(), p.stat().st_size if p.exists() else 0)
+'@ | python -" in C:\Users\samsung\StudioProjects\semisemifinal
+ succeeded in 1651ms:
+rejected_exists True 2005027
+
+hook: PostToolUse
+hook: PostToolUse Completed
+2026-05-10T12:51:10.597014Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.5 personality=pragmatic
+2026-05-10T12:51:12.618822Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=C:\Users\samsung\.codex\.tmp\plugins\plugins\build-ios-apps\.codex-plugin/plugin.json
+2026-05-10T12:51:12.623120Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\plugin-eval\.codex-plugin/plugin.json
+2026-05-10T12:51:12.659493Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\twilio-developer-kit\.codex-plugin/plugin.json
+2026-05-10T12:51:12.659932Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:51:12.745986Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:51:12.746057Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:51:12.751221Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:51:12.751272Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:51:12.759367Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:51:12.759417Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:51:12.766481Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:51:12.766533Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:51:12.771354Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:51:12.771391Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:51:12.781226Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:51:12.781280Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:51:13.051913Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:51:13.113095Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:51:13.114004Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Write-Output 'manifest_exists'; Test-Path ai_image\\manifests\\generation_manifest.jsonl; Write-Output 'status_exists'; Test-Path ai_image\\reports\\generation_status.csv; Write-Output 'tracked_diff_recommender'; git diff -- lib\\ai_recommend_model recsys" in C:\Users\samsung\StudioProjects\semisemifinal
+ succeeded in 1860ms:
+manifest_exists
+True
+status_exists
+True
+tracked_diff_recommender
+
+hook: PostToolUse
+hook: PostToolUse Completed
+2026-05-10T12:51:26.801009Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.5 personality=pragmatic
+2026-05-10T12:51:28.544566Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=C:\Users\samsung\.codex\.tmp\plugins\plugins\build-ios-apps\.codex-plugin/plugin.json
+2026-05-10T12:51:28.549675Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\plugin-eval\.codex-plugin/plugin.json
+2026-05-10T12:51:28.580315Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\twilio-developer-kit\.codex-plugin/plugin.json
+2026-05-10T12:51:28.580771Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:51:28.687308Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:51:28.687362Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:51:28.704853Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:51:28.704898Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:51:28.715908Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:51:28.715963Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:51:28.720791Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:51:28.720838Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:51:28.731142Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:51:28.731212Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:51:28.737955Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-10T12:51:28.738002Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-10T12:51:29.067412Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:51:29.146379Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-10T12:51:29.147349Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+codex
+
+2026-05-10T12:51:36.565984Z  WARN codex_protocol::openai_models: Model personality requested but model_messages is missing, falling back to base instructions. model=gpt-5.5 personality=pragmatic
+hook: Stop
+hook: Stop Completed
+tokens used
+56,290

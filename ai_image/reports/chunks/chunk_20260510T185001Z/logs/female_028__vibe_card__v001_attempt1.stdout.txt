@@ -1,0 +1,14 @@
+SUCCESS: The process with PID 2268 (child process of PID 27664) has been terminated.
+SUCCESS: The process with PID 20624 (child process of PID 27664) has been terminated.
+SUCCESS: The process with PID 10164 (child process of PID 27664) has been terminated.
+SUCCESS: The process with PID 32764 (child process of PID 27664) has been terminated.
+SUCCESS: The process with PID 26600 (child process of PID 27664) has been terminated.
+정확히 1개 Image Gen transaction만 실행했습니다.
+
+대상: `female_028__vibe_card__v001` attempt `1`  
+저장:
+- Final: [vibe_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/028/vibe_card.png)
+- Raw: [female_028__vibe_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_028__vibe_card__v001__attempt01.png)
+- Receipt: [female_028__vibe_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T185001Z/transactions/female_028__vibe_card__v001_attempt1.json)
+
+검증 결과: `pending-imagegen.json`은 `resolved=true`, receipt는 `status=succeeded`, file QA는 `1024x1536 PNG`로 통과했습니다. 전역 file QA/visual QA는 one-asset transaction 제한에 맞춰 실행하지 않았습니다.

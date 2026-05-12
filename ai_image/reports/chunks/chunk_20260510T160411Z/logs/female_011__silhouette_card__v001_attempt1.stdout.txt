@@ -1,0 +1,18 @@
+SUCCESS: The process with PID 15836 (child process of PID 14240) has been terminated.
+SUCCESS: The process with PID 28660 (child process of PID 14240) has been terminated.
+SUCCESS: The process with PID 13236 (child process of PID 14240) has been terminated.
+SUCCESS: The process with PID 31172 (child process of PID 14240) has been terminated.
+SUCCESS: The process with PID 12924 (child process of PID 14240) has been terminated.
+Ran exactly one Seolleyeon one-asset Image Gen transaction for `female_011__silhouette_card__v001`.
+
+Result:
+- Raw: [female_011__silhouette_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_011__silhouette_card__v001__attempt01.png)
+- Final: [silhouette_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/011/silhouette_card.png)
+- Receipt: [female_011__silhouette_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T160411Z/transactions/female_011__silhouette_card__v001_attempt1.json)
+
+Validation passed:
+- Pending checkpoint resolved.
+- File QA passed: PNG, `1024x1536`, 2,662,155 bytes.
+- Transaction receipt verifier returned `valid: true`.
+- `generation_status.csv` now marks the asset `file_needs_review`, not approved.
+- No visual QA, distribution audit, completion check, next-asset selection, or recommender changes were run.

@@ -1,0 +1,21 @@
+SUCCESS: The process with PID 5324 (child process of PID 16160) has been terminated.
+SUCCESS: The process with PID 24616 (child process of PID 16160) has been terminated.
+SUCCESS: The process with PID 14552 (child process of PID 16160) has been terminated.
+SUCCESS: The process with PID 25424 (child process of PID 16160) has been terminated.
+SUCCESS: The process with PID 33464 (child process of PID 16160) has been terminated.
+완료했습니다. **Codex 내부 Image Gen만 1회 사용**했고, 정확히 1개 Seolleyeon 자산만 생성/복구/승인 처리했습니다.
+
+- Asset: `female_004__face_card__v001`
+- Shot: `face_card`
+- Status: `vision_approved`
+- Raw: `ai_image/raw/female_004__face_card__v001__attempt01.png`
+- Final: `ai_image/female/004/face_card.png`
+- Approved copy: `ai_image/approved/female_004__face_card__v001.png`
+
+검증:
+- `pending-imagegen.json` resolved
+- `generation_manifest.jsonl` / `generation_status.csv` 갱신됨
+- OpenAI Image API, Batch API, API key 사용 없음
+- recommender 쪽 변경 없음
+- 1개 생성 후 중단함.
+[omx] postLaunch: reaped 5 orphaned OMX MCP process(es).

@@ -1,0 +1,219 @@
+{
+  "mode": "pilot",
+  "dryRun": false,
+  "passed": false,
+  "reasons": [
+    "generation_failed",
+    "generation_waiting_reference",
+    "generation_incomplete",
+    "qa_missing",
+    "qa_rejected",
+    "qa_needs_manual_review",
+    "summary_missing_assets"
+  ],
+  "updatedAt": "2026-05-06T17:04:38+00:00",
+  "result": {
+    "mode": "pilot",
+    "dryRun": false,
+    "preparedAssets": 72,
+    "preparedSpecs": 24,
+    "reserveFemaleCount": 0,
+    "reserveMaleCount": 0,
+    "generation": {
+      "completed": 0,
+      "dry_run": 0,
+      "failed": 24,
+      "selected": 72,
+      "skipped": 0,
+      "waiting_reference": 48
+    },
+    "qa": {
+      "faceFileQA": {
+        "checked": 24,
+        "approved": 0,
+        "needs_manual_review": 0,
+        "rejected": 0,
+        "missing": 24
+      },
+      "faceVisionQA": {
+        "checked": 24,
+        "approved": 0,
+        "needs_review": 0,
+        "rejected": 24,
+        "missing": 24,
+        "dry_run": 0
+      },
+      "facePromotion": {
+        "checked": 0,
+        "promoted": 0,
+        "skipped": 0,
+        "missing": 0
+      },
+      "fileQA": {
+        "checked": 72,
+        "approved": 0,
+        "needs_manual_review": 0,
+        "rejected": 0,
+        "missing": 72
+      },
+      "visionQA": {
+        "checked": 48,
+        "approved": 0,
+        "needs_review": 0,
+        "rejected": 48,
+        "missing": 48,
+        "dry_run": 0
+      },
+      "promotion": {
+        "checked": 0,
+        "promoted": 0,
+        "skipped": 0,
+        "missing": 0
+      },
+      "shotTypeQA": {
+        "checked": 72,
+        "approved": 0,
+        "needs_review": 72,
+        "rejected": 0
+      },
+      "identityQA": {
+        "checkedIdentities": 24,
+        "approvedIdentities": 0,
+        "needsRetry": 24,
+        "rejectedIdentities": 0,
+        "referenceAvailable": 0,
+        "waitingReference": 24,
+        "incomplete": 24
+      }
+    },
+    "duplicateAudit": {
+      "checked": 0,
+      "duplicateGroups": 0,
+      "duplicateAssets": 0,
+      "similarPairs": 0
+    },
+    "contactSheets": [
+      "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\ai_image\\reports\\contact_sheets\\pilot_contact_sheet_female_face_card.png",
+      "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\ai_image\\reports\\contact_sheets\\pilot_contact_sheet_female_silhouette_card.png",
+      "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\ai_image\\reports\\contact_sheets\\pilot_contact_sheet_female_vibe_card.png",
+      "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\ai_image\\reports\\contact_sheets\\pilot_contact_sheet_male_face_card.png",
+      "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\ai_image\\reports\\contact_sheets\\pilot_contact_sheet_male_silhouette_card.png",
+      "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\ai_image\\reports\\contact_sheets\\pilot_contact_sheet_male_vibe_card.png"
+    ],
+    "targetState": {
+      "approvedIdentities": 0,
+      "approvedAssets": 0,
+      "approvedFemaleIdentities": 0,
+      "approvedMaleIdentities": 0,
+      "approvedProfileIds": [],
+      "activeAssets": 72,
+      "standbyReserveIdentities": 0
+    },
+    "summary": {
+      "manifestCount": 72,
+      "statusCount": 72,
+      "statusCounts": {
+        "missing": 24,
+        "vision_rejected": 48
+      },
+      "genderCounts": {
+        "female": 36,
+        "male": 36
+      },
+      "shotCounts": {
+        "face_card": 24,
+        "silhouette_card": 24,
+        "vibe_card": 24
+      },
+      "identityScopeCounts": {
+        "production": 72
+      },
+      "reserveStatusCounts": {
+        "": 72
+      },
+      "activeForTargetCounts": {
+        "active": 72
+      },
+      "approvedIdentities": 0,
+      "approvedAssets": 0,
+      "approvedFemaleIdentities": 0,
+      "approvedMaleIdentities": 0,
+      "approvedProfileIds": [],
+      "missingCount": 72,
+      "missingAssetIds": [
+        "female_001__face_card__v001",
+        "female_001__silhouette_card__v001",
+        "female_001__vibe_card__v001",
+        "female_002__face_card__v001",
+        "female_002__silhouette_card__v001",
+        "female_002__vibe_card__v001",
+        "female_003__face_card__v001",
+        "female_003__silhouette_card__v001",
+        "female_003__vibe_card__v001",
+        "female_004__face_card__v001",
+        "female_004__silhouette_card__v001",
+        "female_004__vibe_card__v001",
+        "female_005__face_card__v001",
+        "female_005__silhouette_card__v001",
+        "female_005__vibe_card__v001",
+        "female_006__face_card__v001",
+        "female_006__silhouette_card__v001",
+        "female_006__vibe_card__v001",
+        "female_007__face_card__v001",
+        "female_007__silhouette_card__v001",
+        "female_007__vibe_card__v001",
+        "female_008__face_card__v001",
+        "female_008__silhouette_card__v001",
+        "female_008__vibe_card__v001",
+        "female_009__face_card__v001",
+        "female_009__silhouette_card__v001",
+        "female_009__vibe_card__v001",
+        "female_010__face_card__v001",
+        "female_010__silhouette_card__v001",
+        "female_010__vibe_card__v001",
+        "female_011__face_card__v001",
+        "female_011__silhouette_card__v001",
+        "female_011__vibe_card__v001",
+        "female_012__face_card__v001",
+        "female_012__silhouette_card__v001",
+        "female_012__vibe_card__v001",
+        "male_001__face_card__v001",
+        "male_001__silhouette_card__v001",
+        "male_001__vibe_card__v001",
+        "male_002__face_card__v001",
+        "male_002__silhouette_card__v001",
+        "male_002__vibe_card__v001",
+        "male_003__face_card__v001",
+        "male_003__silhouette_card__v001",
+        "male_003__vibe_card__v001",
+        "male_004__face_card__v001",
+        "male_004__silhouette_card__v001",
+        "male_004__vibe_card__v001",
+        "male_005__face_card__v001",
+        "male_005__silhouette_card__v001",
+        "male_005__vibe_card__v001",
+        "male_006__face_card__v001",
+        "male_006__silhouette_card__v001",
+        "male_006__vibe_card__v001",
+        "male_007__face_card__v001",
+        "male_007__silhouette_card__v001",
+        "male_007__vibe_card__v001",
+        "male_008__face_card__v001",
+        "male_008__silhouette_card__v001",
+        "male_008__vibe_card__v001",
+        "male_009__face_card__v001",
+        "male_009__silhouette_card__v001",
+        "male_009__vibe_card__v001",
+        "male_010__face_card__v001",
+        "male_010__silhouette_card__v001",
+        "male_010__vibe_card__v001",
+        "male_011__face_card__v001",
+        "male_011__silhouette_card__v001",
+        "male_011__vibe_card__v001",
+        "male_012__face_card__v001",
+        "male_012__silhouette_card__v001",
+        "male_012__vibe_card__v001"
+      ]
+    }
+  }
+}

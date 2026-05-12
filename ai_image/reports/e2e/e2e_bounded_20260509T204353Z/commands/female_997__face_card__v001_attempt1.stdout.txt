@@ -1,0 +1,12 @@
+SUCCESS: The process with PID 23308 (child process of PID 24336) has been terminated.
+SUCCESS: The process with PID 31824 (child process of PID 24336) has been terminated.
+SUCCESS: The process with PID 24592 (child process of PID 24336) has been terminated.
+SUCCESS: The process with PID 4904 (child process of PID 24336) has been terminated.
+SUCCESS: The process with PID 25680 (child process of PID 24336) has been terminated.
+Generated exactly one image using Codex built-in `image_gen` only.
+
+Saved:
+- Raw: `C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_997__face_card__v001__attempt01.png`
+- Final: `C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/997/face_card.png`
+
+Recovery completed with `--no_qa`; QA was not run. No OpenAI Image API, Batch API, or `OPENAI_API_KEY` was used. No recommender files were modified.

@@ -1,0 +1,35 @@
+{
+  "qaType": "seolleyeon_visual_verdict_asset_v3",
+  "schemaVersion": "seolleyeon_visual_verdict_asset_v3",
+  "sheetId": "manual_single_asset_review_20260510T1420Z",
+  "reviewedAt": "2026-05-10T14:23:00+00:00",
+  "assets": [
+    {
+      "assetId": "female_014__face_card__v001",
+      "profileId": "female_014",
+      "gender": "female",
+      "shotType": "face_card",
+      "targetFaceType": "dog_like",
+      "observedFaceType": "dog_like",
+      "faceTypeConfidence": 0.72,
+      "targetLooksLevelBand": "3.3-3.8",
+      "observedLooksLevelBand": "3.3-3.8",
+      "looksLevelConfidence": 0.71,
+      "adultVisual": true,
+      "photoRealism": 4.5,
+      "campusRealism": 4.2,
+      "brandFit": 4.3,
+      "shotTypeReadable": true,
+      "influencerRisk": 1.2,
+      "childlikeRisk": 0.3,
+      "schoolUniformRisk": 0.0,
+      "sexualizationRisk": 0.0,
+      "artifactRisk": 0.4,
+      "metadataMismatch": false,
+      "mismatchFields": [],
+      "decision": "approved",
+      "rejectReasons": [],
+      "notes": "Manual visual check: adult campus-neutral smartphone face_card; no readable text/logo/watermark; modest styling; no visible distortion."
+    }
+  ]
+}

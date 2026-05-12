@@ -1,0 +1,31 @@
+﻿{
+    "timestampUtc":  "2026-05-10T20:57:07.1079977Z",
+    "pendingCheckpoint":  "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\ai_image\\manifests\\checkpoints\\pending-imagegen__before_exactly_one_asset__20260510T205706Z.json",
+    "generatedImagesCheckpoint":  "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\ai_image\\manifests\\checkpoints\\generated_images_before_exactly_one_asset__20260510T205706Z.json",
+    "protectedHashes":  [
+                            {
+                                "Path":  "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\lib\\ai_recommend_model\\seolleyeon_svd_train_export.py",
+                                "Hash":  "D08780139ED08FF0B18C70AF853415A0F5C748BBCEBD2B822DA56DFE87989CC6"
+                            },
+                            {
+                                "Path":  "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\lib\\ai_recommend_model\\seolleyeon_knn_train_export.py",
+                                "Hash":  "469A73AEEAFACFB487CA3F5639EC9C5F44216D3221D9A4077AE29DF276F5AB2B"
+                            },
+                            {
+                                "Path":  "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\lib\\ai_recommend_model\\seolleyeon_clip_train_export.py",
+                                "Hash":  "FE277DD68E8A09FA5F31304882A650979A054CE0AC7069B635317C0D53F75EC1"
+                            },
+                            {
+                                "Path":  "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\lib\\ai_recommend_model\\seolleyeon_clip_embedder.py",
+                                "Hash":  "3913E2374F85D49126B7F52ABA29B4441B4BB396C7A122264FA37E3DEA11AB64"
+                            },
+                            {
+                                "Path":  "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\lib\\ai_recommend_model\\seolleyeon_rrf_export.py",
+                                "Hash":  "3D699237D2A3503D329B738E4C4B77A22FA8FEBF2B72819E14973478E4519B5B"
+                            },
+                            {
+                                "Path":  "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\lib\\ai_recommend_model\\seolleyeon_rec_common_v3.py",
+                                "Hash":  "B9495079E0D708849109DBBC94A742D067F293EF3C8EAF252E2A99226E3B6CC7"
+                            }
+                        ]
+}

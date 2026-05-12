@@ -1,0 +1,1932 @@
+OpenAI Codex v0.130.0
+--------
+workdir: C:\Users\samsung\StudioProjects\semisemifinal
+model: gpt-5.5
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, C:\Users\samsung\.codex\memories] (network access enabled)
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 019e14a9-00ad-7d71-8e34-61e4478e066a
+--------
+user
+Run exactly one Seolleyeon one-asset Image Gen transaction.
+deprecated: `[features].codex_hooks` is deprecated. Use `[features].hooks` instead.
+Enable it with `--enable hooks` or `[features].hooks` in config.toml. See https://developers.openai.com/codex/config-basic#feature-flags for details.
+hook: SessionStart
+hook: SessionStart Completed
+hook: UserPromptSubmit
+hook: UserPromptSubmit Completed
+codex
+`seolleyeon-ai-profile-imagegen` 스킬을 사용해 정확히 한 개 asset만 처리하겠습니다. 먼저 현재 파이프라인의 체크포인트/대기 파일 규칙을 확인하고, 생성 전 상태가 재개 가능하게 남는지 검증하겠습니다.
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path C:\\Users\\samsung\\.codex\\skills\\seolleyeon-ai-profile-imagegen\\SKILL.md" in C:\Users\samsung\StudioProjects\semisemifinal
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Content -Path AGENTS.md' in C:\Users\samsung\StudioProjects\semisemifinal
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-ChildItem -Path scripts\\ai_image_pipeline_v3 -Force | Select-Object Name,Mode,Length,LastWriteTime" in C:\Users\samsung\StudioProjects\semisemifinal
+2026-05-11T01:31:47.450224Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 1.4 seconds
+Output:
+Get-Content : Cannot find path 'C:\Users\samsung\.codex\skills\seolleyeon-ai-profile-imagegen\SKILL.md' because it does not exist.
+At line:2 char:1
++ Get-Content -Path C:\Users\samsung\.codex\skills\seolleyeon-ai-profil ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (C:\Users\samsun...agegen\SKILL.md:String) [Get-Content], ItemNotFoundException
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.GetContentCommand
+ 
+
+ exited 1 in 1426ms:
+Get-Content : Cannot find path 'C:\Users\samsung\.codex\skills\seolleyeon-ai-profile-imagegen\SKILL.md' because it does not exist.
+At line:2 char:1
++ Get-Content -Path C:\Users\samsung\.codex\skills\seolleyeon-ai-profil ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (C:\Users\samsun...agegen\SKILL.md:String) [Get-Content], ItemNotFoundException
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.GetContentCommand
+ 
+
+ succeeded in 1871ms:
+# Seolleyeon AI Image Generation Rules
+
+## Product Identity
+
+Seolleyeon is a university-only, trust-based relationship platform. Treat AI profile images as synthetic cold-start preference-learning assets, not dating-game cards, decorative avatars, influencer content, or face-rating material.
+
+## Required Workflow
+
+- Use `lib/ai_recommend_model/seolleyeon_ai_profile_prompt_v3_package/seolleyeon_ai_profile_prompt_v3.py` as the prompt and metadata source.
+- Do not rewrite the prompt builder.
+- Do not modify recommender scripts unless explicitly requested.
+- Keep image pipeline code modular under `scripts/ai_image_pipeline_v3/`.
+- Generate `face_card` before `silhouette_card` and `vibe_card`.
+- Use the completed `face_card` as the same-person reference for the other shots when possible.
+- Save raw generated images under `ai_image/raw/`.
+- Save final approved images under `ai_image/{gender}/{numeric_id}/{shotType}.png`.
+- Save approved review copies under `ai_image/approved/{assetId}.png`.
+- Save rejected attempts under `ai_image/rejected/{assetId}__attemptXX.png`.
+- Write `ai_image/manifests/generation_manifest.jsonl`.
+- Write `ai_image/reports/generation_status.csv`.
+- Keep every script resumable.
+- Never overwrite completed or approved images unless `--force` is passed.
+- Do not hardcode API keys.
+
+## Image generation mode
+
+Current mode: Codex built-in imagegen only.
+
+Rules:
+- Do not call OpenAI Image API.
+- Do not create Batch API JSONL.
+- Do not require OPENAI_API_KEY for image generation.
+- Use `$imagegen` for image creation.
+- Treat `$imagegen` as interruptible.
+- Always checkpoint before image generation.
+- Always recover generated images from Codex generated image output before continuing.
+- All images must end up under `ai_image/`.
+- Asset identity is determined by `pending-imagegen.json`, not by visual guesswork.
+
+## Default Run Sizes
+
+- Dry-run: 3 assets, no API calls and no `$imagegen` calls.
+- Smoke: 9 images = 3 identities x 3 shots.
+- Pilot: 72 images = 24 identities x 3 shots.
+- Full: 720 images = 240 identities x 3 shots.
+- Default full split: 120 female identities and 120 male identities.
+
+## Image Quality Rules
+
+Every approved image must feel like a realistic adult Korean university student profile photo with Seolleyeon's calm, sincere, campus-based trust tone.
+
+Reject or retry images with:
+
+- Childlike appearance or teenager look.
+- School uniform.
+- Idol trainee styling.
+- Influencer photoshoot or celebrity lookalike styling.
+- Sexualized styling, revealing outfit, swimsuit, lingerie, or nightlife pose.
+- Nightclub, party, neon scene, luxury hotel background.
+- Readable school name, logo, watermark, brand text, or personal text.
+- Heavy retouching, plastic skin, exaggerated beauty filters.
+- Distorted hands, face, body, extra fingers, or unrealistic proportions.
+
+## Review Guardrails
+
+If a future request requires broad unrelated changes, ask before proceeding. Keep recommender files, SVD/KNN/CLIP/RRF logic, and existing app features outside the image pipeline untouched.
+
+hook: PostToolUse
+hook: PostToolUse Completed
+ succeeded in 3336ms:
+
+Name                             Mode   Length LastWriteTime         
+----                             ----   ------ -------------         
+__pycache__                      d-----        2026-05-11 오전 9:57:01 
+active_visual_verdict_runner.py  -a---- 44583  2026-05-11 오전 12:54:27
+bounded_batch_executor.py        -a---- 120412 2026-05-11 오전 9:56:31 
+cli.py                           -a---- 13376  2026-05-11 오전 3:41:05 
+codex_imagegen.py                -a---- 26896  2026-05-08 오전 2:49:39 
+completion.py                    -a---- 9762   2026-05-08 오전 2:55:02 
+config.py                        -a---- 7085   2026-05-11 오전 4:19:54 
+contact_sheet.py                 -a---- 10877  2026-05-07 오후 7:09:21 
+distribution_audit.py            -a---- 39626  2026-05-11 오전 12:59:45
+distribution_chunk.py            -a---- 8314   2026-05-08 오전 2:50:02 
+distribution_prepare.py          -a---- 7903   2026-05-07 오후 7:07:41 
+distribution_selection.py        -a---- 7009   2026-05-11 오전 3:39:18 
+distribution_targets.py          -a---- 5714   2026-05-07 오후 7:06:40 
+duplicate_audit.py               -a---- 7896   2026-05-07 오전 1:13:49 
+e2e_bounded_imagegen_smoke_v3.py -a---- 43534  2026-05-10 오후 8:58:37 
+firebase_upload.py               -a---- 3891   2026-05-06 오전 6:58:47 
+generate.py                      -a---- 9710   2026-05-07 오전 6:57:22 
+identity.py                      -a---- 4669   2026-05-07 오전 6:52:07 
+identity_consistency.py          -a---- 6522   2026-05-07 오전 1:13:02 
+manifest.py                      -a---- 5713   2026-05-07 오후 7:07:59 
+one_asset_transaction.py         -a---- 20099  2026-05-11 오전 7:34:54 
+openai_image.py                  -a---- 987    2026-05-07 오전 4:49:46 
+pending_admin.py                 -a---- 6881   2026-05-08 오전 3:23:51 
+pending_state.py                 -a---- 1321   2026-05-08 오전 2:48:59 
+prepare.py                       -a---- 11942  2026-05-08 오전 1:11:02 
+prompt_source.py                 -a---- 2027   2026-05-06 오후 4:46:57 
+qa.py                            -a---- 15639  2026-05-11 오전 4:20:20 
+retry.py                         -a---- 3102   2026-05-07 오전 4:48:22 
+retry_plan.py                    -a---- 1266   2026-05-07 오전 2:09:59 
+runner.py                        -a---- 14874  2026-05-07 오전 6:57:40 
+run_gates.py                     -a---- 3845   2026-05-07 오전 1:17:20 
+shot_type_qa.py                  -a---- 2774   2026-05-07 오전 1:26:30 
+summary.py                       -a---- 4207   2026-05-07 오전 6:56:46 
+supervisor.py                    -a---- 9178   2026-05-10 오전 4:52:03 
+targeting.py                     -a---- 5998   2026-05-07 오전 1:15:11 
+vision_qa.py                     -a---- 10406  2026-05-07 오전 4:58:10 
+visual_verdict.py                -a---- 37533  2026-05-09 오전 1:35:12 
+__init__.py                      -a---- 177    2026-05-06 오전 6:58:47 
+
+
+
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+스킬 경로가 사용자 홈이 아니라 이 저장소의 `.agents/skills` 아래에 있습니다. 이제 `one_asset_transaction.py` 중심으로 한 asset 선택, 체크포인트, 복구 명령 흐름을 확인합니다.
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path .agents\\skills\\seolleyeon-ai-profile-imagegen\\SKILL.md" in C:\Users\samsung\StudioProjects\semisemifinal
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-ChildItem -Path ai_image -Force | Select-Object Name,Mode,Length,LastWriteTime' in C:\Users\samsung\StudioProjects\semisemifinal
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "rg -n \"pending-imagegen|one-asset|one_asset|recover|finalize|approve|imagegen|asset\" scripts\\ai_image_pipeline_v3\\one_asset_transaction.py scripts\\ai_image_pipeline_v3\\codex_imagegen.py scripts\\ai_image_pipeline_v3\\pending_admin.py scripts\\ai_image_pipeline_v3\\pending_state.py scripts\\ai_image_pipeline_v3\\cli.py" in C:\Users\samsung\StudioProjects\semisemifinal
+ succeeded in 1231ms:
+scripts\ai_image_pipeline_v3\pending_state.py:7:ACTIVE_PENDING_STATUSES = {"pending_imagegen", "imagegen_started"}
+scripts\ai_image_pipeline_v3\pending_state.py:24:def pending_requires_recovery(payload: Mapping[str, Any] | None) -> bool:
+scripts\ai_image_pipeline_v3\pending_state.py:35:    return str(payload.get("assetId") or pending_status(payload) or "pending-imagegen.json")
+scripts\ai_image_pipeline_v3\cli.py:10:    "visual-asset-qa-instructions": "VISUAL_VERDICT_ASSET_QA_PROMPT.md",
+scripts\ai_image_pipeline_v3\cli.py:15:    "apply-visual-asset-qa": "ai_image/reports/visual_verdict/asset_qa_latest.json",
+scripts\ai_image_pipeline_v3\cli.py:44:        "recover",
+scripts\ai_image_pipeline_v3\cli.py:47:        "visual-asset-qa-instructions",
+scripts\ai_image_pipeline_v3\cli.py:50:        "apply-visual-asset-qa",
+scripts\ai_image_pipeline_v3\cli.py:59:        "active-visual-asset-qa",
+scripts\ai_image_pipeline_v3\cli.py:70:        "bounded-chunk-finalize",
+scripts\ai_image_pipeline_v3\cli.py:75:        "supervisor-asset-only",
+scripts\ai_image_pipeline_v3\cli.py:82:    parser.add_argument("--max_assets", type=int, default=72)
+scripts\ai_image_pipeline_v3\cli.py:104:        from .prepare import prepare_assets
+scripts\ai_image_pipeline_v3\cli.py:106:        result = prepare_assets(root=args.root, female_count=120, male_count=120, reserve_female_count=20, reserve_male_count=20, force=args.force)
+scripts\ai_image_pipeline_v3\cli.py:110:                "assets": result.asset_count,
+scripts\ai_image_pipeline_v3\cli.py:112:                "imagegenQueue": str(result.imagegen_queue_jsonl),
+scripts\ai_image_pipeline_v3\cli.py:117:    if command == "recover":
+scripts\ai_image_pipeline_v3\cli.py:118:        from .codex_imagegen import recover_pending_imagegen
+scripts\ai_image_pipeline_v3\cli.py:120:        result = recover_pending_imagegen(root=args.root, force=args.force)
+scripts\ai_image_pipeline_v3\cli.py:141:    if command == "apply-visual-asset-qa":
+scripts\ai_image_pipeline_v3\cli.py:142:        from .visual_verdict import apply_asset_qa
+scripts\ai_image_pipeline_v3\cli.py:144:        _print_json(apply_asset_qa(root=args.root, input_path=_default_visual_json(args.root, command, args.visual_json), force=args.force))
+scripts\ai_image_pipeline_v3\cli.py:168:                "approvedCompleteIdentityCount": audit["approvedCompleteIdentityCount"],
+scripts\ai_image_pipeline_v3\cli.py:206:    if command == "active-visual-asset-qa":
+scripts\ai_image_pipeline_v3\cli.py:207:        from .active_visual_verdict_runner import run_active_visual_asset_qa
+scripts\ai_image_pipeline_v3\cli.py:209:        _print_json(run_active_visual_asset_qa(root=args.root, chunk_id=args.chunk_id))
+scripts\ai_image_pipeline_v3\cli.py:231:        from .e2e_bounded_imagegen_smoke_v3 import E2EConfig, run_e2e_smoke
+scripts\ai_image_pipeline_v3\cli.py:244:            from .e2e_bounded_imagegen_smoke_v3 import default_e2e_chunk_id
+scripts\ai_image_pipeline_v3\cli.py:257:            finalize_bounded_chunk,
+scripts\ai_image_pipeline_v3\cli.py:271:                        max_assets=args.max_assets,
+scripts\ai_image_pipeline_v3\cli.py:307:        if command == "bounded-chunk-finalize":
+scripts\ai_image_pipeline_v3\cli.py:308:            _print_json(finalize_bounded_chunk(root=args.root))
+scripts\ai_image_pipeline_v3\cli.py:318:            "supervisor-asset-only": "asset",
+scripts\ai_image_pipeline_v3\codex_imagegen.py:17:    approved_asset_path,
+scripts\ai_image_pipeline_v3\codex_imagegen.py:31:from .pending_state import pending_is_resolved, pending_is_unresolved, pending_requires_recovery as pending_requires_recovery_state, resolved_pending_payload
+scripts\ai_image_pipeline_v3\codex_imagegen.py:33:from .targeting import apply_reserve_policy, approved_identity_report
+scripts\ai_image_pipeline_v3\codex_imagegen.py:36:PENDING_FILENAME = "pending-imagegen.json"
+scripts\ai_image_pipeline_v3\codex_imagegen.py:37:IMAGEGEN_QUEUE_FILENAME = "imagegen_queue.jsonl"
+scripts\ai_image_pipeline_v3\codex_imagegen.py:39:COMPLETED_PENDING_FILENAME = "completed_pending_imagegen.jsonl"
+scripts\ai_image_pipeline_v3\codex_imagegen.py:52:PENDING_STATUSES = {"pending_imagegen"}
+scripts\ai_image_pipeline_v3\codex_imagegen.py:53:RECOVERED_PENDING_STATUSES = {"recovered_pending_qa", "needs_manual_review"}
+scripts\ai_image_pipeline_v3\codex_imagegen.py:58:    asset_id: str
+scripts\ai_image_pipeline_v3\codex_imagegen.py:63:    imagegen_command: str
+scripts\ai_image_pipeline_v3\codex_imagegen.py:68:    asset_id: str
+scripts\ai_image_pipeline_v3\codex_imagegen.py:123:def write_imagegen_queue(root: Path | str | None, rows: Iterable[Mapping[str, Any]]) -> Path:
+scripts\ai_image_pipeline_v3\codex_imagegen.py:152:def _pending_requires_recovery(pending: Mapping[str, Any] | None) -> bool:
+scripts\ai_image_pipeline_v3\codex_imagegen.py:153:    return pending_requires_recovery_state(pending)
+scripts\ai_image_pipeline_v3\codex_imagegen.py:157:    return "$imagegen " + json.dumps(prompt, ensure_ascii=False)
+scripts\ai_image_pipeline_v3\codex_imagegen.py:160:def face_card_imagegen_prompt(row: Mapping[str, Any], prompt: str) -> str:
+scripts\ai_image_pipeline_v3\codex_imagegen.py:164:assetId: {row["assetId"]}
+scripts\ai_image_pipeline_v3\codex_imagegen.py:184:def silhouette_card_imagegen_prompt(row: Mapping[str, Any], prompt: str) -> str:
+scripts\ai_image_pipeline_v3\codex_imagegen.py:188:assetId: {row["assetId"]}
+scripts\ai_image_pipeline_v3\codex_imagegen.py:207:def vibe_card_imagegen_prompt(row: Mapping[str, Any], prompt: str) -> str:
+scripts\ai_image_pipeline_v3\codex_imagegen.py:211:assetId: {row["assetId"]}
+scripts\ai_image_pipeline_v3\codex_imagegen.py:235:def _is_approved(row: Mapping[str, Any]) -> bool:
+scripts\ai_image_pipeline_v3\codex_imagegen.py:239:def _face_approved(rows_by_asset: Mapping[str, Mapping[str, Any]], row: Mapping[str, Any]) -> bool:
+scripts\ai_image_pipeline_v3\codex_imagegen.py:240:    face_asset_id = f"{row['profileId']}__face_card__v001"
+scripts\ai_image_pipeline_v3\codex_imagegen.py:241:    face = rows_by_asset.get(face_asset_id)
+scripts\ai_image_pipeline_v3\codex_imagegen.py:242:    return bool(face and _is_approved(face))
+scripts\ai_image_pipeline_v3\codex_imagegen.py:245:def _dependent_reference_path(rows_by_asset: Mapping[str, Mapping[str, Any]], row: Mapping[str, Any]) -> str:
+scripts\ai_image_pipeline_v3\codex_imagegen.py:246:    face_asset_id = f"{row['profileId']}__face_card__v001"
+scripts\ai_image_pipeline_v3\codex_imagegen.py:247:    face = rows_by_asset.get(face_asset_id, {})
+scripts\ai_image_pipeline_v3\codex_imagegen.py:255:    if _is_approved(row) and not force:
+scripts\ai_image_pipeline_v3\codex_imagegen.py:279:def select_next_asset(
+scripts\ai_image_pipeline_v3\codex_imagegen.py:285:    target_approved_identities: int = 240,
+scripts\ai_image_pipeline_v3\codex_imagegen.py:286:    target_approved_assets: int = 720,
+scripts\ai_image_pipeline_v3\codex_imagegen.py:289:        report = approved_identity_report(rows)
+scripts\ai_image_pipeline_v3\codex_imagegen.py:291:            int(report.get("approvedIdentities") or 0) >= target_approved_identities
+scripts\ai_image_pipeline_v3\codex_imagegen.py:292:            and int(report.get("approvedAssets") or 0) >= target_approved_assets
+scripts\ai_image_pipeline_v3\codex_imagegen.py:296:    rows_by_asset = {str(row.get("assetId")): row for row in rows}
+scripts\ai_image_pipeline_v3\codex_imagegen.py:304:        if str(row.get("shotType")) != "face_card" and not _face_approved(rows_by_asset, row):
+scripts\ai_image_pipeline_v3\codex_imagegen.py:312:    return None, None, "no_eligible_asset"
+scripts\ai_image_pipeline_v3\codex_imagegen.py:326:    rows_by_asset = {str(item.get("assetId")): item for item in load_generation_manifest(paths)}
+scripts\ai_image_pipeline_v3\codex_imagegen.py:327:    asset_id = str(row["assetId"])
+scripts\ai_image_pipeline_v3\codex_imagegen.py:328:    raw_path = raw_attempt_path(paths, asset_id, attempt)
+scripts\ai_image_pipeline_v3\codex_imagegen.py:330:    approved_path = approved_asset_path(paths, row)
+scripts\ai_image_pipeline_v3\codex_imagegen.py:331:    rejected_path = rejected_attempt_path(paths, asset_id, attempt)
+scripts\ai_image_pipeline_v3\codex_imagegen.py:333:    reference_asset_id = str(row.get("referenceAssetId") or "")
+scripts\ai_image_pipeline_v3\codex_imagegen.py:336:        reference_asset_id = reference_asset_id or f"{row['profileId']}__face_card__v001"
+scripts\ai_image_pipeline_v3\codex_imagegen.py:337:        reference_path = _dependent_reference_path(rows_by_asset, row)
+scripts\ai_image_pipeline_v3\codex_imagegen.py:341:        prompt = face_card_imagegen_prompt(row, source_prompt)
+scripts\ai_image_pipeline_v3\codex_imagegen.py:343:        prompt = silhouette_card_imagegen_prompt(row, source_prompt)
+scripts\ai_image_pipeline_v3\codex_imagegen.py:345:        prompt = vibe_card_imagegen_prompt(row, source_prompt)
+scripts\ai_image_pipeline_v3\codex_imagegen.py:349:            "Use this approved face_card as the identity anchor. If the current Codex $imagegen surface "
+scripts\ai_image_pipeline_v3\codex_imagegen.py:354:        "assetId": asset_id,
+scripts\ai_image_pipeline_v3\codex_imagegen.py:367:        "expectedApprovedPath": to_portable_path(approved_path),
+scripts\ai_image_pipeline_v3\codex_imagegen.py:369:        "referenceAssetId": reference_asset_id,
+scripts\ai_image_pipeline_v3\codex_imagegen.py:372:        "status": "pending_imagegen",
+scripts\ai_image_pipeline_v3\codex_imagegen.py:374:        "recoveryInstructions": [
+scripts\ai_image_pipeline_v3\codex_imagegen.py:375:            "After the $imagegen result, do not continue to the next queued asset.",
+scripts\ai_image_pipeline_v3\codex_imagegen.py:376:            "First run mingw32-make ai-image-recover or scripts/recover_pending_imagegen_v3.py.",
+scripts\ai_image_pipeline_v3\codex_imagegen.py:377:            "Map identity from this pending-imagegen.json only; do not infer identity visually.",
+scripts\ai_image_pipeline_v3\codex_imagegen.py:379:            "Run QA before preparing another $imagegen prompt.",
+scripts\ai_image_pipeline_v3\codex_imagegen.py:393:    target_approved_identities: int = 240,
+scripts\ai_image_pipeline_v3\codex_imagegen.py:394:    target_approved_assets: int = 720,
+scripts\ai_image_pipeline_v3\codex_imagegen.py:403:    if _pending_requires_recovery(pending):
+scripts\ai_image_pipeline_v3\codex_imagegen.py:405:            f"pending imagegen checkpoint requires recovery first: {out_pending_file}. "
+scripts\ai_image_pipeline_v3\codex_imagegen.py:406:            "Run mingw32-make ai-image-recover before creating a new prompt."
+scripts\ai_image_pipeline_v3\codex_imagegen.py:410:            f"unresolved pending-imagegen checkpoint blocks new prompt: {out_pending_file}. "
+scripts\ai_image_pipeline_v3\codex_imagegen.py:416:    row, attempt, reason = select_next_asset(
+scripts\ai_image_pipeline_v3\codex_imagegen.py:421:        target_approved_identities=target_approved_identities,
+scripts\ai_image_pipeline_v3\codex_imagegen.py:422:        target_approved_assets=target_approved_assets,
+scripts\ai_image_pipeline_v3\codex_imagegen.py:425:        print(f"No eligible Codex imagegen asset: {reason}")
+scripts\ai_image_pipeline_v3\codex_imagegen.py:438:    by_asset = {str(item["assetId"]): dict(item) for item in rows}
+scripts\ai_image_pipeline_v3\codex_imagegen.py:439:    selected = by_asset[payload["assetId"]]
+scripts\ai_image_pipeline_v3\codex_imagegen.py:442:            "status": "pending_imagegen",
+scripts\ai_image_pipeline_v3\codex_imagegen.py:451:            "approvedPath": payload["expectedApprovedPath"],
+scripts\ai_image_pipeline_v3\codex_imagegen.py:458:    by_asset[payload["assetId"]] = selected
+scripts\ai_image_pipeline_v3\codex_imagegen.py:459:    write_generation_outputs(paths, list(by_asset.values()))
+scripts\ai_image_pipeline_v3\codex_imagegen.py:463:        asset_id=payload["assetId"],
+scripts\ai_image_pipeline_v3\codex_imagegen.py:468:        imagegen_command=command,
+scripts\ai_image_pipeline_v3\codex_imagegen.py:504:                "Ambiguous Codex generated image recovery candidates after pending timestamp. "
+scripts\ai_image_pipeline_v3\codex_imagegen.py:531:def recover_pending_imagegen(
+scripts\ai_image_pipeline_v3\codex_imagegen.py:550:        raise FileNotFoundError(f"No pending imagegen checkpoint found: {pending_file}")
+scripts\ai_image_pipeline_v3\codex_imagegen.py:566:    approved_path_value = str(payload.get("expectedApprovedPath") or "")
+scripts\ai_image_pipeline_v3\codex_imagegen.py:568:    approved_path = Path(approved_path_value).resolve() if approved_path_value else None
+scripts\ai_image_pipeline_v3\codex_imagegen.py:571:    row = next((item for item in rows if str(item.get("assetId")) == str(payload["assetId"])), None)
+scripts\ai_image_pipeline_v3\codex_imagegen.py:573:        raise RuntimeError(f"Refusing to overwrite approved asset without --force: {final_path}")
+scripts\ai_image_pipeline_v3\codex_imagegen.py:577:        raise RuntimeError(f"Refusing to overwrite approved final image without --force: {final_path}")
+scripts\ai_image_pipeline_v3\codex_imagegen.py:584:        if str(out.get("assetId")) == str(payload["assetId"]):
+scripts\ai_image_pipeline_v3\codex_imagegen.py:588:                    "status": "recovered_pending_qa",
+scripts\ai_image_pipeline_v3\codex_imagegen.py:594:                    "approvedPath": to_portable_path(approved_path) if approved_path else str(out.get("approvedPath") or ""),
+scripts\ai_image_pipeline_v3\codex_imagegen.py:598:                    "expectedApprovedPath": to_portable_path(approved_path) if approved_path else str(out.get("expectedApprovedPath") or ""),
+scripts\ai_image_pipeline_v3\codex_imagegen.py:601:                    "recoveredAt": now_utc(),
+scripts\ai_image_pipeline_v3\codex_imagegen.py:608:        raise RuntimeError(f"Pending assetId was not found in generation manifest: {payload['assetId']}")
+scripts\ai_image_pipeline_v3\codex_imagegen.py:613:        recoveryStatus="recovered",
+scripts\ai_image_pipeline_v3\codex_imagegen.py:617:        recoveredAt=now_utc(),
+scripts\ai_image_pipeline_v3\codex_imagegen.py:628:        asset_id=str(payload["assetId"]),
+scripts\ai_image_pipeline_v3\codex_imagegen.py:637:    parser = argparse.ArgumentParser(description="Write the next Codex $imagegen pending checkpoint and print the exact prompt.")
+scripts\ai_image_pipeline_v3\codex_imagegen.py:643:    parser.add_argument("--target_approved_identities", type=int, default=240)
+scripts\ai_image_pipeline_v3\codex_imagegen.py:644:    parser.add_argument("--target_approved_assets", type=int, default=720)
+scripts\ai_image_pipeline_v3\codex_imagegen.py:658:        target_approved_identities=args.target_approved_identities,
+scripts\ai_image_pipeline_v3\codex_imagegen.py:659:        target_approved_assets=args.target_approved_assets,
+scripts\ai_image_pipeline_v3\codex_imagegen.py:666:    print(f"assetId={result.asset_id} profileId={result.profile_id} shotType={result.shot_type} attempt={result.attempt}")
+scripts\ai_image_pipeline_v3\codex_imagegen.py:667:    print(result.imagegen_command)
+scripts\ai_image_pipeline_v3\codex_imagegen.py:671:def build_recover_parser() -> argparse.ArgumentParser:
+scripts\ai_image_pipeline_v3\codex_imagegen.py:672:    parser = argparse.ArgumentParser(description="Recover/import the latest Codex built-in $imagegen output from pending-imagegen.json.")
+scripts\ai_image_pipeline_v3\codex_imagegen.py:683:def recover_main(argv: list[str] | None = None) -> int:
+scripts\ai_image_pipeline_v3\codex_imagegen.py:684:    args = build_recover_parser().parse_args(argv)
+scripts\ai_image_pipeline_v3\codex_imagegen.py:685:    result = recover_pending_imagegen(
+scripts\ai_image_pipeline_v3\codex_imagegen.py:697:                "assetId": result.asset_id,
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:15:RECEIPT_SCHEMA_VERSION = "seolleyeon_one_asset_transaction_v3"
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:20:    "ai_image/manifests/asset_qa_manifest.jsonl",
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:22:    "ai_image/manifests/approved_identity_manifest.jsonl",
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:29:    "ai_image/reports/visual_verdict/asset_qa_latest.json",
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:91:def transaction_receipt_path(root: Path | str | None, chunk_id: str, asset_id: str, attempt: int) -> Path:
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:92:    return pipeline_paths(root).reports / "chunks" / chunk_id / "transactions" / f"{asset_id}_attempt{attempt}.json"
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:95:def build_one_asset_worker_prompt(
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:101:    receipt_path = str(expected.get("expectedReceiptPath") or transaction_receipt_path(None, str(expected.get("chunkId") or ""), str(expected.get("assetId") or ""), int(expected.get("attempt") or 0)))
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:112:        "Run exactly one Seolleyeon one-asset Image Gen transaction.\n\n"
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:113:        "You are the one-asset worker, not the controller.\n"
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:114:        "Process only this asset:\n"
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:116:        f"- assetId: {expected.get('assetId')}\n"
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:127:        "1. Generate exactly one image for this asset using Codex internal Image Gen.\n"
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:129:        "3. Resolve the matching pending-imagegen.json for this asset only.\n"
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:130:        "4. Run single-asset file QA only as local receipt evidence; do not run the global file-qa command.\n"
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:134:        "- The expected raw image path for this asset only.\n"
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:135:        "- The expected final image path for this asset only.\n"
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:136:        "- The expected receipt path for this asset only.\n"
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:137:        "- The matching pending-imagegen.json for this asset only.\n"
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:138:        "- Optional per-asset temp/file-QA report paths under the current chunk report directory.\n\n"
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:140:        "- Do not process any other asset.\n"
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:143:        "- Do not run scripts/run_ai_image_pipeline_v3.py apply-visual-asset-qa.\n"
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:150:        "- Do not update approved_identity_manifest.jsonl.\n"
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:151:        "- Do not update asset_qa_manifest.jsonl.\n"
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:190:    asset_id: str,
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:193:    backup_root = pipeline_paths(root).reports / "chunks" / chunk_id / "forbidden_file_backups" / f"{asset_id}_attempt{attempt}"
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:201:        "assetId": asset_id,
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:307:def verify_one_asset_transaction(
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:320:    for field in ("chunkId", "assetId", "profileId", "gender", "numericId", "shotType"):
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:335:        for field in ("chunkId", "assetId", "profileId", "shotType"):
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:366:        "assetId": str(receipt.get("assetId") or ""),
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:388:        "transactionId": f"{expected.get('chunkId')}_{expected.get('assetId')}_attempt{expected.get('attempt')}",
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:390:        "assetId": str(expected.get("assetId") or ""),
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:399:        "recovered": final_path.exists(),
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:435:    parser = argparse.ArgumentParser(description="Validate Seolleyeon one-asset transaction receipts.")
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:439:    parser.add_argument("--expected", required=True, help="JSON object with expected asset fields.")
+scripts\ai_image_pipeline_v3\one_asset_transaction.py:444:    result = verify_one_asset_transaction(root=args.root, receipt_path=args.receipt, expected=expected, pending_payload=pending)
+scripts\ai_image_pipeline_v3\pending_admin.py:8:from .codex_imagegen import pending_path, read_pending, write_pending
+scripts\ai_image_pipeline_v3\pending_admin.py:13:    pending_requires_recovery,
+scripts\ai_image_pipeline_v3\pending_admin.py:58:            "assetId": "",
+scripts\ai_image_pipeline_v3\pending_admin.py:68:        "requiresRecovery": pending_requires_recovery(payload),
+scripts\ai_image_pipeline_v3\pending_admin.py:70:        "assetId": str(payload.get("assetId") or ""),
+scripts\ai_image_pipeline_v3\pending_admin.py:97:        raise FileNotFoundError(f"No pending-imagegen checkpoint found: {pending_file}")
+scripts\ai_image_pipeline_v3\pending_admin.py:102:    if pending_requires_recovery(payload):
+scripts\ai_image_pipeline_v3\pending_admin.py:104:            "Active pending imagegen checkpoints must be recovered, not manually cleared. "
+scripts\ai_image_pipeline_v3\pending_admin.py:105:            f"Run recover first for assetId={payload.get('assetId') or ''}."
+scripts\ai_image_pipeline_v3\pending_admin.py:127:            "assetId": str(payload.get("assetId") or ""),
+scripts\ai_image_pipeline_v3\pending_admin.py:163:    parser = argparse.ArgumentParser(description="Inspect or manually resolve safe pending-imagegen checkpoint states.")
+
+hook: PostToolUse
+ succeeded in 1346ms:
+---
+name: seolleyeon-ai-profile-imagegen
+description: Build, run, QA, retry, summarize, and upload Seolleyeon AI profile image generation workflows for metadata-first synthetic campus profile assets. Use when working on ai_image outputs, seolleyeon_ai_profile_prompt_v3.py, the v3 image pipeline scripts, dry-run/smoke/pilot/full image batches, Firebase upload, or QA rules for realistic adult Korean university student profile photos.
+---
+
+# Seolleyeon AI Profile Imagegen
+
+## Overview
+
+Use this skill to maintain and run the Seolleyeon AI profile image pipeline. The pipeline creates synthetic profile assets for cold-start preference learning on a university-only trust-based relationship platform.
+
+## Non-Negotiables
+
+- Treat images as trust-building campus relationship assets, not lightweight dating-app cards.
+- Use `lib/ai_recommend_model/seolleyeon_ai_profile_prompt_v3_package/seolleyeon_ai_profile_prompt_v3.py` as the source of metadata-first prompts.
+- Do not rewrite the prompt builder.
+- Do not modify recommender scripts, SVD/KNN/CLIP/RRF files, or unrelated app code.
+- Do not hardcode API keys.
+- Do not call the OpenAI Image API, Batch API, `/v1/images/generations`, or `/v1/images/edits`.
+- Do not require `OPENAI_API_KEY` for image generation.
+- Keep pipeline code modular; do not place the workflow into one large script.
+- Keep all scripts resumable.
+- Never overwrite completed or approved images unless `--force` is passed.
+
+## Image Policy
+
+Approved images must look like realistic adult Korean university student profile photos. They should feel calm, sincere, safe, campus-based, and naturally photographed.
+
+Reject or retry any image with childlike appearance, teenager look, school uniform, idol trainee styling, influencer photoshoot tone, celebrity lookalike styling, sexualized styling, nightclub/party/neon scene, readable school name, logo, watermark, brand text, heavy retouching, plastic skin, distorted hands, distorted face, distorted body, extra fingers, or unrealistic proportions.
+
+## Pipeline Shape
+
+Use this sequence:
+
+1. Prepare metadata and prompts.
+2. Generate `face_card` first.
+3. Generate `silhouette_card` and `vibe_card` as same-person reference variations using the completed `face_card` when possible.
+4. Before every `$imagegen` call, write `ai_image/manifests/pending-imagegen.json`.
+5. Recover generated outputs from Codex generated images into `ai_image/raw/{assetId}__attemptXX.png`.
+6. Copy the final candidate to `ai_image/{gender}/{numeric_id}/{shotType}.png`.
+7. Run QA, then copy approved review assets to `ai_image/approved/{assetId}.png` or rejected attempts to `ai_image/rejected/{assetId}__attemptXX.png`.
+8. Retry failed, missing, reference-waiting, or rejected assets.
+9. Summarize status and upload final assets when requested.
+
+## Required Files
+
+Maintain these entrypoint scripts:
+
+- `scripts/prepare_ai_image_assets_v3.py`
+- `scripts/next_codex_imagegen_prompt_v3.py`
+- `scripts/import_codex_generated_image_v3.py`
+- `scripts/recover_pending_imagegen_v3.py`
+- `scripts/retry_ai_images_v3.py`
+- `scripts/qa_ai_images_v3.py`
+- `scripts/summarize_ai_images_v3.py`
+- `scripts/make_ai_image_contact_sheets_v3.py`
+
+Maintain these outputs:
+
+- `ai_image/manifests/ai_profile_assets_v3.jsonl`
+- `ai_image/manifests/generation_manifest.jsonl`
+- `ai_image/reports/generation_status.csv`
+- `ai_image/reports/qa_report.csv`
+- `ai_image/reports/summary.json`
+
+## Batch Sizes
+
+- Dry-run: 3 assets, no API calls and no `$imagegen` calls.
+- Smoke: 9 images = 3 identities x 3 shots.
+- Pilot: 72 images = 24 identities x 3 shots.
+- Full: 720 images = 240 identities x 3 shots.
+- Default full split: 120 female identities and 120 male identities.
+
+## Commands
+
+Use `mingw32-make ai-image-dry-run` to verify folders, manifests, and CSV output without calling `$imagegen`.
+
+Use `mingw32-make ai-image-prepare-smoke`, `mingw32-make ai-image-prepare-pilot`, and `mingw32-make ai-image-prepare-720` to prepare increasing Codex `$imagegen` queues. Real generation is an interruptible `mingw32-make ai-image-next` / `$imagegen` / `mingw32-make ai-image-recover` loop and does not require `OPENAI_API_KEY`.
+
+Use `mingw32-make ai-image-qa`, `mingw32-make ai-image-retry`, and `mingw32-make ai-image-summary` for operational follow-up.
+
+## Completion Checks
+
+Before claiming completion, run dry-run, check that manifests and `generation_status.csv` exist, and confirm no recommender files changed.
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+ succeeded in 2779ms:
+
+Name              Mode   Length LastWriteTime         
+----              ----   ------ -------------         
+approved          d-----        2026-05-10 오후 11:23:03
+config            d-----        2026-05-07 오후 6:42:14 
+dry_run_workspace d-----        2026-05-07 오전 6:59:14 
+e2e_runs          d-----        2026-05-11 오전 4:25:18 
+female            d-----        2026-05-10 오전 5:41:55 
+logs              d-----        2026-05-06 오전 7:20:12 
+male              d-----        2026-05-07 오전 6:08:11 
+manifests         d-----        2026-05-11 오전 10:31:17
+placeholder       d-----        2026-05-07 오전 2:30:16 
+prompts           d-----        2026-05-07 오후 7:55:27 
+raw               d-----        2026-05-11 오전 10:29:25
+rejected          d-----        2026-05-11 오전 2:57:16 
+reports           d-----        2026-05-11 오전 10:31:17
+
+
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path ai_image\\manifests\\pending-imagegen.json" in C:\Users\samsung\StudioProjects\semisemifinal
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path scripts\\import_codex_generated_image_v3.py" in C:\Users\samsung\StudioProjects\semisemifinal
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path scripts\\recover_pending_imagegen_v3.py" in C:\Users\samsung\StudioProjects\semisemifinal
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path scripts\\next_codex_imagegen_prompt_v3.py" in C:\Users\samsung\StudioProjects\semisemifinal
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path scripts\\ai_image_pipeline_v3\\one_asset_transaction.py -TotalCount 460" in C:\Users\samsung\StudioProjects\semisemifinal
+ succeeded in 1143ms:
+#!/usr/bin/env python3
+from ai_image_pipeline_v3.codex_imagegen import recover_main
+
+
+if __name__ == "__main__":
+    raise SystemExit(recover_main())
+
+hook: PostToolUse
+ succeeded in 1369ms:
+#!/usr/bin/env python3
+from ai_image_pipeline_v3.codex_imagegen import recover_main
+
+
+if __name__ == "__main__":
+    raise SystemExit(recover_main())
+
+hook: PostToolUse
+ succeeded in 1336ms:
+#!/usr/bin/env python3
+from ai_image_pipeline_v3.codex_imagegen import next_main
+
+
+if __name__ == "__main__":
+    raise SystemExit(next_main())
+
+hook: PostToolUse
+ succeeded in 1907ms:
+{
+  "assetId": "female_029__silhouette_card__v001",
+  "profileId": "female_029",
+  "gender": "female",
+  "numericId": "029",
+  "shotType": "silhouette_card",
+  "attempt": 1,
+  "prompt": "Using the attached face_card image as the same person reference, generate exactly one silhouette_card image.\n\nAsset metadata:\nassetId: female_029__silhouette_card__v001\nprofileId: female_029\nshotType: silhouette_card\n\nGoal:\nSame person as the reference face_card.\nGenerate a realistic 3/4 body or full-body smartphone profile photo.\nThe body frame and proportions should be readable.\nCampus-appropriate modest clothing.\nNo oversized padding.\nNo revealing outfit.\nNo school uniform.\nNo text, no logo, no watermark.\n\nUse this prompt:\nA realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 165cm, small frame, soft slim build, natural muscularity, narrow shoulders, naturally defined waist, medium hip line, slightly long leg proportion, slightly short but balanced torso length, realistic adult head-to-body ratio, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nneat blouse, regular-fit slacks, light cardigan, campus tote bag. minimal clean everyday fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.\n",
+  "promptHash": "1bdc5d802b22b03826998579",
+  "queuePath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/imagegen_queue.jsonl",
+  "manifestPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/generation_manifest.jsonl",
+  "pendingPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/pending-imagegen.json",
+  "expectedRawPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_029__silhouette_card__v001__attempt01.png",
+  "expectedFinalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/029/silhouette_card.png",
+  "expectedApprovedPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/approved/female_029__silhouette_card__v001.png",
+  "expectedRejectedPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/rejected/female_029__silhouette_card__v001__attempt01.png",
+  "referenceAssetId": "female_029__face_card__v001",
+  "referenceImagePath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/029/face_card.png",
+  "codexGeneratedImagesDir": "C:\\Users\\samsung\\.codex\\generated_images",
+  "status": "pending_imagegen",
+  "createdAt": "2026-05-11T01:31:16+00:00",
+  "recoveryInstructions": [
+    "After the $imagegen result, do not continue to the next queued asset.",
+    "First run mingw32-make ai-image-recover or scripts/recover_pending_imagegen_v3.py.",
+    "Map identity from this pending-imagegen.json only; do not infer identity visually.",
+    "Copy raw output to expectedRawPath and final candidate to expectedFinalPath.",
+    "Run QA before preparing another $imagegen prompt."
+  ],
+  "schemaVersion": "seolleyeon_pending_imagegen_v3",
+  "chunkId": "chunk_20260510T185001Z",
+  "boundedExecutor": true,
+  "expectedReceiptPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T185001Z/transactions/female_029__silhouette_card__v001_attempt1.json",
+  "resolvedAt": null,
+  "resolvedBy": null
+}
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+ succeeded in 2748ms:
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import shutil
+from pathlib import Path
+from typing import Any, Mapping, Sequence
+
+from .config import now_utc, pipeline_paths, to_portable_path
+from .pending_state import pending_is_resolved
+from .qa import inspect_image_detail
+
+
+RECEIPT_SCHEMA_VERSION = "seolleyeon_one_asset_transaction_v3"
+
+FORBIDDEN_CHILD_RELATIVE_PATHS = (
+    "ai_image/manifests/current_chunk_plan.json",
+    "ai_image/manifests/current_chunk_state.json",
+    "ai_image/manifests/asset_qa_manifest.jsonl",
+    "ai_image/manifests/identity_qa_manifest.jsonl",
+    "ai_image/manifests/approved_identity_manifest.jsonl",
+    "ai_image/manifests/rejected_identity_manifest.jsonl",
+    "ai_image/manifests/needs_review_identity_manifest.jsonl",
+    "ai_image/manifests/manual_review_required.flag",
+    "ai_image/reports/latest_distribution_audit.json",
+    "ai_image/reports/distribution_audit.json",
+    "ai_image/reports/distribution_report.csv",
+    "ai_image/reports/visual_verdict/asset_qa_latest.json",
+    "ai_image/reports/visual_verdict/identity_qa_latest.json",
+    "ai_image/reports/visual_verdict/distribution_audit_latest.json",
+    "lib/ai_recommend_model/seolleyeon_run_all.py",
+    "lib/ai_recommend_model/seolleyeon_svd_train_export.py",
+    "lib/ai_recommend_model/seolleyeon_knn_train_export.py",
+    "lib/ai_recommend_model/seolleyeon_clip_train_export.py",
+    "lib/ai_recommend_model/seolleyeon_clip_embedder.py",
+    "lib/ai_recommend_model/seolleyeon_rrf_export.py",
+    "lib/ai_recommend_model/seolleyeon_rec_common_v3.py",
+)
+
+FORBIDDEN_RECEIPT_CLAIMS = {
+    "visualQaApproved",
+    "visualQAApproved",
+    "identityApproved",
+    "distributionApproved",
+    "countsTowardDistribution",
+    "finalDatasetApproved",
+    "completionPassed",
+}
+
+
+class OneAssetTransactionError(RuntimeError):
+    pass
+
+
+def _root(root: Path | str | None = None) -> Path:
+    return pipeline_paths(root).root
+
+
+def _as_path(root: Path | str | None, value: Any) -> Path:
+    text = str(value or "")
+    if not text:
+        return Path("")
+    path = Path(text)
+    if path.is_absolute():
+        return path
+    return _root(root) / path
+
+
+def _same_path(root: Path | str | None, actual: Any, expected: Any) -> bool:
+    try:
+        return _as_path(root, actual).resolve() == _as_path(root, expected).resolve()
+    except OSError:
+        return False
+
+
+def _sha256(path: Path) -> str | None:
+    if not path.exists():
+        return None
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _safe_snapshot_name(path_text: str) -> str:
+    return path_text.replace(":", "").replace("\\", "__").replace("/", "__")
+
+
+def transaction_receipt_path(root: Path | str | None, chunk_id: str, asset_id: str, attempt: int) -> Path:
+    return pipeline_paths(root).reports / "chunks" / chunk_id / "transactions" / f"{asset_id}_attempt{attempt}.json"
+
+
+def build_one_asset_worker_prompt(
+    expected: Mapping[str, Any],
+    *,
+    generation_prompt: str = "",
+    reference_path: str | None = None,
+) -> str:
+    receipt_path = str(expected.get("expectedReceiptPath") or transaction_receipt_path(None, str(expected.get("chunkId") or ""), str(expected.get("assetId") or ""), int(expected.get("attempt") or 0)))
+    reference_block = ""
+    if reference_path:
+        reference_block = (
+            "\nReference requirement:\n"
+            f"- referencePath: {reference_path}\n"
+            "- Use the reference face_card as the same-person identity anchor.\n"
+            "- If the reference is unavailable, write a failed receipt with error=reference_missing and stop.\n"
+            "- The receipt must include referenceAttached=true and referencePathSha256 for this attached image.\n"
+        )
+    return (
+        "Run exactly one Seolleyeon one-asset Image Gen transaction.\n\n"
+        "You are the one-asset worker, not the controller.\n"
+        "Process only this asset:\n"
+        f"- chunkId: {expected.get('chunkId')}\n"
+        f"- assetId: {expected.get('assetId')}\n"
+        f"- profileId: {expected.get('profileId')}\n"
+        f"- gender: {expected.get('gender')}\n"
+        f"- numericId: {expected.get('numericId')}\n"
+        f"- shotType: {expected.get('shotType')}\n"
+        f"- attempt: {expected.get('attempt')}\n"
+        f"- expectedRawPath: {expected.get('expectedRawPath')}\n"
+        f"- expectedFinalPath: {expected.get('expectedFinalPath')}\n"
+        f"- expectedReceiptPath: {receipt_path}\n"
+        f"{reference_block}\n"
+        "Allowed actions:\n"
+        "1. Generate exactly one image for this asset using Codex internal Image Gen.\n"
+        "2. Recover that generated image to the expected raw and final paths.\n"
+        "3. Resolve the matching pending-imagegen.json for this asset only.\n"
+        "4. Run single-asset file QA only as local receipt evidence; do not run the global file-qa command.\n"
+        "5. Write the transaction receipt JSON at the expected receipt path.\n"
+        "6. Stop.\n\n"
+        "Allowed write paths:\n"
+        "- The expected raw image path for this asset only.\n"
+        "- The expected final image path for this asset only.\n"
+        "- The expected receipt path for this asset only.\n"
+        "- The matching pending-imagegen.json for this asset only.\n"
+        "- Optional per-asset temp/file-QA report paths under the current chunk report directory.\n\n"
+        "Forbidden actions:\n"
+        "- Do not process any other asset.\n"
+        "- Do not process any other identity.\n"
+        "- Do not run scripts/run_ai_image_pipeline_v3.py file-qa.\n"
+        "- Do not run scripts/run_ai_image_pipeline_v3.py apply-visual-asset-qa.\n"
+        "- Do not run scripts/run_ai_image_pipeline_v3.py apply-visual-identity-qa.\n"
+        "- Do not run scripts/run_ai_image_pipeline_v3.py apply-visual-distribution-audit.\n"
+        "- Do not run distribution audit.\n"
+        "- Do not run completion check.\n"
+        "- Do not run visual QA.\n"
+        "- Do not apply visual-verdict JSON.\n"
+        "- Do not update approved_identity_manifest.jsonl.\n"
+        "- Do not update asset_qa_manifest.jsonl.\n"
+        "- Do not update identity_qa_manifest.jsonl.\n"
+        "- Do not update latest_distribution_audit.json.\n"
+        "- Do not run supervisor.\n"
+        "- Do not run bounded-chunk-run recursively.\n"
+        "- Do not clear manual_review_required.flag.\n"
+        "- Do not modify recommender files.\n"
+        "- Do not continue after the receipt is written.\n\n"
+        "Receipt rules:\n"
+        f"- schemaVersion must be {RECEIPT_SCHEMA_VERSION}.\n"
+        "- The receipt must not claim visual approval, identity approval, distribution approval, or completion.\n"
+        "- Return no prose except a short confirmation that the receipt was written.\n\n"
+        "Generation prompt:\n"
+        f"{generation_prompt}\n"
+    )
+
+
+def snapshot_forbidden_files(root: Path | str | None = None, *, extra_paths: Sequence[Path | str] | None = None) -> dict[str, dict[str, Any]]:
+    base = _root(root)
+    paths = [base / relative for relative in FORBIDDEN_CHILD_RELATIVE_PATHS]
+    for extra in extra_paths or ():
+        path = Path(extra)
+        paths.append(path if path.is_absolute() else base / path)
+    snapshot: dict[str, dict[str, Any]] = {}
+    for path in paths:
+        key = to_portable_path(path)
+        snapshot[key] = {
+            "exists": path.exists(),
+            "sha256": _sha256(path),
+            "size": path.stat().st_size if path.exists() else None,
+        }
+    return snapshot
+
+
+def backup_forbidden_files(
+    root: Path | str | None,
+    snapshot: Mapping[str, Mapping[str, Any]],
+    *,
+    chunk_id: str,
+    asset_id: str,
+    attempt: int,
+) -> dict[str, Any]:
+    backup_root = pipeline_paths(root).reports / "chunks" / chunk_id / "forbidden_file_backups" / f"{asset_id}_attempt{attempt}"
+    backups = backup_root / "before"
+    quarantine = backup_root / "quarantine"
+    backups.mkdir(parents=True, exist_ok=True)
+    quarantine.mkdir(parents=True, exist_ok=True)
+    payload: dict[str, Any] = {
+        "schemaVersion": "seolleyeon_forbidden_file_backup_v3",
+        "chunkId": chunk_id,
+        "assetId": asset_id,
+        "attempt": attempt,
+        "createdAt": now_utc(),
+        "backupRoot": to_portable_path(backup_root),
+        "quarantineRoot": to_portable_path(quarantine),
+        "entries": {},
+    }
+    entries = payload["entries"]
+    for path_text, before in snapshot.items():
+        path = Path(path_text)
+        entry = {
+            "path": path_text,
+            "beforeExists": bool(before.get("exists")),
+            "beforeSha256": before.get("sha256"),
+            "beforeSize": before.get("size"),
+            "backupPath": None,
+        }
+        if path.exists() and path.is_file():
+            backup_path = backups / _safe_snapshot_name(path_text)
+            shutil.copy2(path, backup_path)
+            entry["backupPath"] = to_portable_path(backup_path)
+        entries[path_text] = entry
+    metadata_path = backup_root / "backup_metadata.json"
+    metadata_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    payload["metadataPath"] = to_portable_path(metadata_path)
+    return payload
+
+
+def restore_forbidden_files(
+    root: Path | str | None,
+    backup: Mapping[str, Any],
+    violations: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    del root
+    quarantine_root = Path(str(backup.get("quarantineRoot") or ""))
+    quarantine_root.mkdir(parents=True, exist_ok=True)
+    entries = backup.get("entries") if isinstance(backup.get("entries"), Mapping) else {}
+    report: dict[str, Any] = {
+        "schemaVersion": "seolleyeon_forbidden_file_restore_v3",
+        "restoredAt": now_utc(),
+        "backupRoot": backup.get("backupRoot"),
+        "quarantineRoot": to_portable_path(quarantine_root),
+        "items": [],
+    }
+    for violation in violations:
+        path_text = str(violation.get("path") or "")
+        if not path_text:
+            continue
+        path = Path(path_text)
+        entry = entries.get(path_text) if isinstance(entries, Mapping) else None
+        item = {"path": path_text, "quarantinePath": None, "action": "no_backup_available"}
+        if path.exists() and path.is_file():
+            quarantine_path = quarantine_root / _safe_snapshot_name(path_text)
+            shutil.copy2(path, quarantine_path)
+            item["quarantinePath"] = to_portable_path(quarantine_path)
+        if isinstance(entry, Mapping) and entry.get("beforeExists") and entry.get("backupPath"):
+            backup_path = Path(str(entry["backupPath"]))
+            if backup_path.exists():
+                path.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(backup_path, path)
+                item["action"] = "restored_from_backup"
+        elif isinstance(entry, Mapping) and not entry.get("beforeExists") and path.exists():
+            path.unlink()
+            item["action"] = "removed_child_created_file"
+        report["items"].append(item)
+    restore_report_path = quarantine_root.parent / "restore_report.json"
+    restore_report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+    report["reportPath"] = to_portable_path(restore_report_path)
+    return report
+
+
+def detect_forbidden_mutations(root: Path | str | None, snapshot: Mapping[str, Mapping[str, Any]]) -> list[dict[str, Any]]:
+    del root
+    violations: list[dict[str, Any]] = []
+    for path_text, before in snapshot.items():
+        path = Path(path_text)
+        exists = path.exists()
+        digest = _sha256(path)
+        if bool(before.get("exists")) != exists or before.get("sha256") != digest:
+            violations.append(
+                {
+                    "path": path_text,
+                    "beforeExists": bool(before.get("exists")),
+                    "afterExists": exists,
+                    "beforeSha256": before.get("sha256"),
+                    "afterSha256": digest,
+                }
+            )
+    return violations
+
+
+def _load_receipt(path: Path) -> dict[str, Any]:
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:  # noqa: BLE001
+        raise OneAssetTransactionError(f"invalid_receipt_json:{exc}") from exc
+    if not isinstance(payload, dict):
+        raise OneAssetTransactionError("receipt_not_object")
+    return payload
+
+
+def _verify_match(receipt: Mapping[str, Any], expected: Mapping[str, Any], field: str) -> None:
+    if str(receipt.get(field) or "") != str(expected.get(field) or ""):
+        raise OneAssetTransactionError(f"receipt_{field}_mismatch")
+
+
+def verify_one_asset_transaction(
+    *,
+    root: Path | str | None = None,
+    receipt_path: Path | str,
+    expected: Mapping[str, Any],
+    pending_payload: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    path = Path(receipt_path)
+    if not path.exists():
+        raise OneAssetTransactionError("receipt_missing")
+    receipt = _load_receipt(path)
+    if receipt.get("schemaVersion") != RECEIPT_SCHEMA_VERSION:
+        raise OneAssetTransactionError("receipt_schema_mismatch")
+    for field in ("chunkId", "assetId", "profileId", "gender", "numericId", "shotType"):
+        _verify_match(receipt, expected, field)
+    if int(receipt.get("attempt") or 0) != int(expected.get("attempt") or 0):
+        raise OneAssetTransactionError("receipt_attempt_mismatch")
+    if str(receipt.get("status") or "") != "succeeded":
+        raise OneAssetTransactionError("receipt_status_not_succeeded")
+    for key in FORBIDDEN_RECEIPT_CLAIMS:
+        if key in receipt:
+            raise OneAssetTransactionError(f"receipt_forbidden_claim:{key}")
+    if not _same_path(root, receipt.get("rawPath"), expected.get("expectedRawPath")):
+        raise OneAssetTransactionError("receipt_raw_path_mismatch")
+    if not _same_path(root, receipt.get("finalPath"), expected.get("expectedFinalPath")):
+        raise OneAssetTransactionError("receipt_final_path_mismatch")
+
+    if pending_payload is not None:
+        for field in ("chunkId", "assetId", "profileId", "shotType"):
+            if str(pending_payload.get(field) or "") != str(expected.get(field) or ""):
+                raise OneAssetTransactionError(f"pending_{field}_mismatch")
+        if int(pending_payload.get("attempt") or 0) != int(expected.get("attempt") or 0):
+            raise OneAssetTransactionError("pending_attempt_mismatch")
+        if not (pending_is_resolved(pending_payload) or bool(receipt.get("pendingResolved"))):
+            raise OneAssetTransactionError("pending_not_resolved")
+
+    expected_reference = str(expected.get("referencePath") or "")
+    if expected_reference:
+        if not bool(receipt.get("referenceAttached")):
+            raise OneAssetTransactionError("receipt_reference_not_attached")
+        if not _same_path(root, receipt.get("referencePath"), expected_reference):
+            raise OneAssetTransactionError("receipt_reference_path_mismatch")
+        reference_path = _as_path(root, expected_reference)
+        reference_digest = _sha256(reference_path)
+        expected_digest = str(expected.get("referencePathSha256") or reference_digest or "")
+        if not reference_digest or str(receipt.get("referencePathSha256") or "") != expected_digest:
+            raise OneAssetTransactionError("receipt_reference_hash_mismatch")
+
+    raw_path = _as_path(root, receipt.get("rawPath"))
+    final_path = _as_path(root, receipt.get("finalPath"))
+    raw_detail = inspect_image_detail(raw_path)
+    final_detail = inspect_image_detail(final_path)
+    if not raw_detail.get("ok"):
+        raise OneAssetTransactionError("raw_file_invalid:" + ",".join(str(item) for item in raw_detail.get("reasons", [])))
+    if not final_detail.get("ok"):
+        raise OneAssetTransactionError("final_file_invalid:" + ",".join(str(item) for item in final_detail.get("reasons", [])))
+    return {
+        "valid": True,
+        "receipt": dict(receipt),
+        "assetId": str(receipt.get("assetId") or ""),
+        "rawPath": to_portable_path(raw_path),
+        "finalPath": to_portable_path(final_path),
+        "fileQa": final_detail,
+    }
+
+
+def build_receipt_from_existing_file(
+    *,
+    root: Path | str | None,
+    expected: Mapping[str, Any],
+    source: str = "parent_reconcile_existing_file",
+    status: str = "succeeded",
+) -> dict[str, Any]:
+    raw_path = _as_path(root, expected.get("expectedRawPath"))
+    final_path = _as_path(root, expected.get("expectedFinalPath"))
+    reference_path = _as_path(root, expected.get("referencePath")) if expected.get("referencePath") else None
+    final_detail = inspect_image_detail(final_path)
+    raw_detail = inspect_image_detail(raw_path) if raw_path.exists() else final_detail
+    ok = bool(final_detail.get("ok"))
+    return {
+        "schemaVersion": RECEIPT_SCHEMA_VERSION,
+        "transactionId": f"{expected.get('chunkId')}_{expected.get('assetId')}_attempt{expected.get('attempt')}",
+        "chunkId": str(expected.get("chunkId") or ""),
+        "assetId": str(expected.get("assetId") or ""),
+        "profileId": str(expected.get("profileId") or ""),
+        "gender": str(expected.get("gender") or ""),
+        "numericId": str(expected.get("numericId") or ""),
+        "shotType": str(expected.get("shotType") or ""),
+        "attempt": int(expected.get("attempt") or 0),
+        "startedAt": now_utc(),
+        "finishedAt": now_utc(),
+        "generated": "unknown",
+        "recovered": final_path.exists(),
+        "pendingResolved": True,
+        "fileQaRan": True,
+        "fileQaPassed": ok,
+        "rawPath": to_portable_path(raw_path if raw_path.exists() else final_path),
+        "finalPath": to_portable_path(final_path),
+        "sourceGeneratedImagePath": "",
+        "referencePath": to_portable_path(reference_path) if reference_path else None,
+        "referenceAttached": bool(reference_path),
+        "referencePathSha256": _sha256(reference_path) if reference_path else None,
+        "fileQa": {
+            "decision": "file_passed" if ok else "file_rejected",
+            "width": int(final_detail.get("width") or 0),
+            "height": int(final_detail.get("height") or 0),
+            "format": final_detail.get("format") or "",
+            "aspectRatio": (float(final_detail.get("width") or 0) / float(final_detail.get("height") or 1)),
+            "sizeBytes": int(final_detail.get("fileBytes") or 0),
+            "reasons": list(final_detail.get("reasons", [])),
+        },
+        "workerActions": [source, "file_qa_ran"],
+        "stdoutLog": "",
+        "stderrLog": "",
+        "error": None if ok else ";".join(str(item) for item in final_detail.get("reasons", [])),
+        "status": status if ok else "failed",
+        "source": source,
+    }
+
+
+def write_receipt(path: Path | str, payload: Mapping[str, Any]) -> Path:
+    target = Path(path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(json.dumps(dict(payload), ensure_ascii=False, indent=2), encoding="utf-8")
+    return target
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Validate Seolleyeon one-asset transaction receipts.")
+    parser.add_argument("command", choices=["verify"])
+    parser.add_argument("--root", default=None)
+    parser.add_argument("--receipt", required=True)
+    parser.add_argument("--expected", required=True, help="JSON object with expected asset fields.")
+    parser.add_argument("--pending", default="")
+    args = parser.parse_args(argv)
+    expected = json.loads(args.expected)
+    pending = json.loads(Path(args.pending).read_text(encoding="utf-8")) if args.pending else None
+    result = verify_one_asset_transaction(root=args.root, receipt_path=args.receipt, expected=expected, pending_payload=pending)
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+codex
+현재 활성 체크포인트는 `female_029__silhouette_card__v001` attempt 1입니다. 작업 범위는 이 asset의 raw/final 이미지, 해당 `pending-imagegen.json`, receipt JSON만으로 제한됩니다.
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Test-Path ai_image\\female\\029\\face_card.png; Test-Path ai_image\\female\\029\\silhouette_card.png; Test-Path ai_image\\raw\\female_029__silhouette_card__v001__attempt01.png; Test-Path ai_image\\reports\\chunks\\chunk_20260510T185001Z\\transactions\\female_029__silhouette_card__v001_attempt1.json" in C:\Users\samsung\StudioProjects\semisemifinal
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path scripts\\ai_image_pipeline_v3\\codex_imagegen.py -TotalCount 720 | Select-Object -Skip 460" in C:\Users\samsung\StudioProjects\semisemifinal
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-ChildItem -Path C:\\Users\\samsung\\.codex\\generated_images -File -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 5 FullName,Length,LastWriteTime" in C:\Users\samsung\StudioProjects\semisemifinal
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'git status --short' in C:\Users\samsung\StudioProjects\semisemifinal
+ succeeded in 1477ms:
+True
+False
+False
+False
+
+hook: PostToolUse
+ succeeded in 1535ms:
+hook: PostToolUse
+ succeeded in 1567ms:
+?? .agents/
+?? AGENTS.md
+?? AI_IMAGE_CODEX_IMAGEGEN_README.md
+?? AI_IMAGE_DISTRIBUTION_CONTROL_README.md
+?? AI_IMAGE_PIPELINE_README.md
+?? AI_IMAGE_QUALITY_CONTRACT.md
+?? Makefile
+?? VISUAL_VERDICT_ASSET_QA_PROMPT.md
+?? ai_image/
+?? lib/ai_recommend_model/seolleyeon_ai_profile_prompt_v3_package/
+?? lib/shared/widgets/glass_bottom_nav/
+?? requirements_ai_image.txt
+?? scripts/
+?? tests/
+
+hook: PostToolUse
+ succeeded in 1953ms:
+    command = _json_command(payload["prompt"])
+    return NextPromptResult(
+        asset_id=payload["assetId"],
+        profile_id=payload["profileId"],
+        shot_type=payload["shotType"],
+        attempt=int(attempt),
+        pending_path=out_pending_file,
+        imagegen_command=command,
+    )
+
+
+def _parse_timestamp(value: str | None) -> datetime | None:
+    if not value:
+        return None
+    try:
+        text = value.replace("Z", "+00:00")
+        return datetime.fromisoformat(text)
+    except ValueError:
+        return None
+
+
+def _candidate_generated_files(generated_root: Path) -> list[Path]:
+    if not generated_root.exists():
+        return []
+    exts = {".png", ".jpg", ".jpeg", ".webp"}
+    return sorted(
+        [path for path in generated_root.rglob("*") if path.is_file() and path.suffix.lower() in exts],
+        key=lambda path: path.stat().st_mtime,
+        reverse=True,
+    )
+
+
+def latest_generated_image(generated_root: Path, *, created_at: str | None = None) -> Path:
+    files = _candidate_generated_files(generated_root)
+    if not files:
+        raise FileNotFoundError(f"No generated images found under {generated_root}")
+    created = _parse_timestamp(created_at)
+    if created is not None:
+        created_ts = created.timestamp()
+        after_created = [path for path in files if path.stat().st_mtime >= created_ts - 5]
+        if len(after_created) > 1:
+            candidates = ", ".join(str(path) for path in after_created[:5])
+            raise RuntimeError(
+                "Ambiguous Codex generated image recovery candidates after pending timestamp. "
+                f"Pass --source explicitly. candidates={candidates}"
+            )
+        if after_created:
+            return after_created[0]
+    return files[0]
+
+
+def _copy_as_png(source: Path, target: Path) -> None:
+    target.parent.mkdir(parents=True, exist_ok=True)
+    if source.suffix.lower() == ".png":
+        shutil.copy2(source, target)
+        return
+    try:
+        from PIL import Image
+    except ImportError as exc:
+        raise RuntimeError("Pillow is required to import non-PNG Codex generated images as PNG.") from exc
+    with Image.open(source) as image:
+        image.convert("RGB").save(target, format="PNG")
+
+
+def _append_jsonl(path: Path, row: Mapping[str, Any]) -> None:
+    rows = read_jsonl(path)
+    rows.append(dict(row))
+    write_jsonl(path, rows)
+
+
+def recover_pending_imagegen(
+    *,
+    root: Path | str | None = None,
+    pending: Path | str | None = None,
+    generated_root: Path | str | None = None,
+    out_dir: Path | str | None = None,
+    source: Path | str | None = None,
+    force: bool = False,
+    run_qa: bool = True,
+) -> RecoverResult:
+    root_path: Path | str | None = root
+    if out_dir:
+        out_path = Path(out_dir).resolve()
+        root_path = out_path.parent if out_path.name == "ai_image" else out_path
+    paths = pipeline_paths(root_path)
+    ensure_base_dirs(paths)
+    pending_file = Path(pending).resolve() if pending else pending_path(root_path)
+    payload = read_pending(pending_file)
+    if not payload:
+        raise FileNotFoundError(f"No pending imagegen checkpoint found: {pending_file}")
+    if pending_is_resolved(payload) and not force:
+        raise RuntimeError(f"Pending checkpoint is already resolved: {pending_file}")
+
+    generated_dir = Path(
+        generated_root
+        or payload.get("codexGeneratedImagesDir")
+        or os.environ.get(CODEX_GENERATED_IMAGES_DIR_ENV)
+        or DEFAULT_CODEX_GENERATED_IMAGES_DIR
+    ).resolve()
+    source_path = Path(source).resolve() if source else latest_generated_image(generated_dir, created_at=payload.get("createdAt"))
+    if not source_path.exists():
+        raise FileNotFoundError(f"Generated image source does not exist: {source_path}")
+
+    raw_path = Path(str(payload["expectedRawPath"])).resolve()
+    final_path = Path(str(payload["expectedFinalPath"])).resolve()
+    approved_path_value = str(payload.get("expectedApprovedPath") or "")
+    rejected_path_value = str(payload.get("expectedRejectedPath") or "")
+    approved_path = Path(approved_path_value).resolve() if approved_path_value else None
+    rejected_path = Path(rejected_path_value).resolve() if rejected_path_value else None
+    rows = load_generation_manifest(paths)
+    row = next((item for item in rows if str(item.get("assetId")) == str(payload["assetId"])), None)
+    if row and str(row.get("status") or "") in APPROVED_STATUSES and final_path.exists() and not force:
+        raise RuntimeError(f"Refusing to overwrite approved asset without --force: {final_path}")
+
+    _copy_as_png(source_path, raw_path)
+    if final_path.exists() and row and str(row.get("status") or "") in APPROVED_STATUSES and not force:
+        raise RuntimeError(f"Refusing to overwrite approved final image without --force: {final_path}")
+    _copy_as_png(raw_path, final_path)
+
+    updated_rows: list[dict[str, Any]] = []
+    found = False
+    for item in rows:
+        out = dict(item)
+        if str(out.get("assetId")) == str(payload["assetId"]):
+            found = True
+            out.update(
+                {
+                    "status": "recovered_pending_qa",
+                    "attempt": int(payload.get("attempt") or out.get("attempt") or 1),
+                    "attemptCount": int(payload.get("attempt") or out.get("attemptCount") or 1),
+                    "localPath": to_portable_path(raw_path),
+                    "rawPath": to_portable_path(raw_path),
+                    "finalPath": to_portable_path(final_path),
+                    "approvedPath": to_portable_path(approved_path) if approved_path else str(out.get("approvedPath") or ""),
+                    "rejectedPath": to_portable_path(rejected_path) if rejected_path else str(out.get("rejectedPath") or ""),
+                    "expectedRawPath": to_portable_path(raw_path),
+                    "expectedFinalPath": to_portable_path(final_path),
+                    "expectedApprovedPath": to_portable_path(approved_path) if approved_path else str(out.get("expectedApprovedPath") or ""),
+                    "expectedRejectedPath": to_portable_path(rejected_path) if rejected_path else str(out.get("expectedRejectedPath") or ""),
+                    "codexGeneratedSourcePath": to_portable_path(source_path),
+                    "recoveredAt": now_utc(),
+                    "updatedAt": now_utc(),
+                    "error": "",
+                }
+            )
+        updated_rows.append(out)
+    if not found:
+        raise RuntimeError(f"Pending assetId was not found in generation manifest: {payload['assetId']}")
+    write_generation_outputs(paths, updated_rows)
+
+    completed = resolved_pending_payload(
+        payload,
+        recoveryStatus="recovered",
+        sourcePath=to_portable_path(source_path),
+        rawPath=to_portable_path(raw_path),
+        finalPath=to_portable_path(final_path),
+        recoveredAt=now_utc(),
+    )
+    _append_jsonl(completed_pending_path(root_path), completed)
+    write_pending(pending_file, completed)
+
+    if run_qa:
+        from .qa import qa_images
+
+        qa_images(root=root_path, shot_type=str(payload["shotType"]), force=force)
+
+    return RecoverResult(
+        asset_id=str(payload["assetId"]),
+        source_path=source_path,
+        raw_path=raw_path,
+        final_path=final_path,
+        pending_path=pending_file,
+    )
+
+
+def build_next_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="Write the next Codex $imagegen pending checkpoint and print the exact prompt.")
+    parser.add_argument("--root", default=None)
+    parser.add_argument("--queue", default=None)
+    parser.add_argument("--manifest", default=None)
+    parser.add_argument("--out_pending", default=None)
+    parser.add_argument("--max_attempts", type=int, default=MAX_ATTEMPTS)
+    parser.add_argument("--target_approved_identities", type=int, default=240)
+    parser.add_argument("--target_approved_assets", type=int, default=720)
+    parser.add_argument("--stop_when_target_reached", action="store_true")
+    parser.add_argument("--force", action="store_true")
+    return parser
+
+
+def next_main(argv: list[str] | None = None) -> int:
+    args = build_next_parser().parse_args(argv)
+    result = next_prompt(
+        root=args.root,
+        queue=args.queue,
+        manifest=args.manifest,
+        out_pending=args.out_pending,
+        max_attempts=args.max_attempts,
+        target_approved_identities=args.target_approved_identities,
+        target_approved_assets=args.target_approved_assets,
+        stop_when_target_reached=args.stop_when_target_reached,
+        force=args.force,
+    )
+    if result is None:
+        return 0
+    print(f"pending={result.pending_path}")
+    print(f"assetId={result.asset_id} profileId={result.profile_id} shotType={result.shot_type} attempt={result.attempt}")
+    print(result.imagegen_command)
+    return 0
+
+
+def build_recover_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="Recover/import the latest Codex built-in $imagegen output from pending-imagegen.json.")
+    parser.add_argument("--root", default=None)
+    parser.add_argument("--pending", default=None)
+    parser.add_argument("--generated_root", default=None)
+    parser.add_argument("--out_dir", default=None)
+    parser.add_argument("--source", default=None, help="Explicit generated image file to import; otherwise newest file is used.")
+    parser.add_argument("--force", action="store_true")
+    parser.add_argument("--no_qa", action="store_true", help="Recover without running file QA. Normal workflow keeps QA enabled.")
+    return parser
+
+
+def recover_main(argv: list[str] | None = None) -> int:
+    args = build_recover_parser().parse_args(argv)
+    result = recover_pending_imagegen(
+        root=args.root,
+        pending=args.pending,
+        generated_root=args.generated_root,
+        out_dir=args.out_dir,
+        source=args.source,
+        force=args.force,
+        run_qa=not args.no_qa,
+    )
+    print(
+        json.dumps(
+            {
+                "assetId": result.asset_id,
+                "sourcePath": str(result.source_path),
+                "rawPath": str(result.raw_path),
+                "finalPath": str(result.final_path),
+                "pendingPath": str(result.pending_path),
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
+    return 0
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+codex
+생성 전 조건은 충족되어 있습니다: `pending-imagegen.json`이 있고, reference `face_card.png`는 존재하며, target raw/final/receipt는 아직 없습니다. 이제 Codex 내장 Image Gen을 정확히 한 번 호출하고, 곧바로 해당 pending asset으로만 복구하겠습니다.
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path ai_image\\manifests\\pending-imagegen.json | Select-String -Pattern 'assetId|createdAt|expectedRawPath|expectedFinalPath|status|expectedReceiptPath'" in C:\Users\samsung\StudioProjects\semisemifinal
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-ChildItem -Path C:\\Users\\samsung\\.codex\\generated_images -File -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 10 FullName,Name,Length,LastWriteTime" in C:\Users\samsung\StudioProjects\semisemifinal
+ succeeded in 1654ms:
+hook: PostToolUse
+hook: PostToolUse Completed
+ succeeded in 3381ms:
+
+  "assetId": "female_029__silhouette_card__v001",
+  "prompt": "Using the attached face_card image as the same person reference, generate exactly one silhouette_card image.\n\nAsset metadata:\nassetId: female_029__silhouette_card__v
+001\nprofileId: female_029\nshotType: silhouette_card\n\nGoal:\nSame person as the reference face_card.\nGenerate a realistic 3/4 body or full-body smartphone profile photo.\nThe bo
+dy frame and proportions should be readable.\nCampus-appropriate modest clothing.\nNo oversized padding.\nNo revealing outfit.\nNo school uniform.\nNo text, no logo, no watermark.\n
+\nUse this prompt:\nA realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, auth
+entic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 165cm, small frame, soft slim build, natural muscul
+arity, narrow shoulders, naturally defined waist, medium hip line, slightly long leg proportion, slightly short but balanced torso length, realistic adult head-to-body ratio, realis
+tic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nneat blouse, regular-fit slacks, light cardigan, camp
+us tote bag. minimal clean everyday fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no o
+versized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildi
+ngs in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully com
+posed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic sk
+in, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visib
+le real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.\n",
+  "expectedRawPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_029__silhouette_card__v001__attempt01.png",
+  "expectedFinalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/029/silhouette_card.png",
+  "referenceAssetId": "female_029__face_card__v001",
+  "status": "pending_imagegen",
+  "createdAt": "2026-05-11T01:31:16+00:00",
+    "Copy raw output to expectedRawPath and final candidate to expectedFinalPath.",
+  "expectedReceiptPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T185001Z/transactions/female_029__silhouette_card__v001_attempt1.json",
+
+
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-Date -Format o' in C:\Users\samsung\StudioProjects\semisemifinal
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-ChildItem -Path C:\\Users\\samsung\\.codex\\generated_images -Recurse -File -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 10 FullName,Name,Length,LastWriteTime" in C:\Users\samsung\StudioProjects\semisemifinal
+ succeeded in 1029ms:
+2026-05-11T10:34:55.5227679+09:00
+
+hook: PostToolUse
+hook: PostToolUse Completed
+ succeeded in 2598ms:
+
+FullName                                                                                                                                Name                                         
+--------                                                                                                                                ----                                         
+C:\Users\samsung\.codex\generated_images\019e14a9-00ad-7d71-8e34-61e4478e066a\ig_06be7f6fdf5ca5c7016a0131d44e84819195f48d9645efb8c5.png ig_06be7f6fdf5ca5c7016a0131d44e84819195f48...
+C:\Users\samsung\.codex\generated_images\019e14a3-a656-7cb3-8568-2e45457a7570\ig_0071b028b736951a016a013087b4b48191bf04580c551e7c18.png ig_0071b028b736951a016a013087b4b48191bf045...
+C:\Users\samsung\.codex\generated_images\019e149a-04a5-70e1-9c4d-da5dd6ab4183\ig_035a94c812f7a993016a012e64d8888191ad910b59de6692f7.png ig_035a94c812f7a993016a012e64d8888191ad910...
+C:\Users\samsung\.codex\generated_images\019e1493-85b1-7231-a896-db0315dc1acb\ig_061ba80cab3d549f016a012c8797e0819197f446cba1613ba8.png ig_061ba80cab3d549f016a012c8797e0819197f44...
+C:\Users\samsung\.codex\generated_images\019e13aa-1031-7b73-9ae0-c25cefa744a0\ig_023e024169c5caef016a00f12d481081919b33f5ce876e3a8c.png ig_023e024169c5caef016a00f12d481081919b33f...
+C:\Users\samsung\.codex\generated_images\019e13a4-b1dd-78a0-a41c-3fc8a1896314\ig_00190255ea842302016a00ef23b66081919fc1de5b98663074.png ig_00190255ea842302016a00ef23b66081919fc1d...
+C:\Users\samsung\.codex\generated_images\019e139f-8cef-76a0-841e-f8a514d328c1\ig_024375b73e4ff252016a00edcf00088191b4898c7377faacf7.png ig_024375b73e4ff252016a00edcf00088191b4898...
+C:\Users\samsung\.codex\generated_images\019e1398-5a88-7e43-871a-c460a53900a4\ig_0a85c9e78a9fed78016a00ec51923081918d5df0e03053f7de.png ig_0a85c9e78a9fed78016a00ec51923081918d5df...
+C:\Users\samsung\.codex\generated_images\019e138f-f34c-71d0-8428-e3beffc35f48\ig_08bde47931263f7e016a00ea408800819186a82d5a8f40ffd3.png ig_08bde47931263f7e016a00ea408800819186a82...
+C:\Users\samsung\.codex\generated_images\019e1386-a665-7421-8894-43f781555df2\ig_0925138b80560b99016a00e7f267308191b194e9d4ad1e6811.png ig_0925138b80560b99016a00e7f267308191b194e...
+
+
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-ChildItem -Path C:\\Users\\samsung\\.codex\\generated_images -Recurse -File -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 3 | Format-List FullName,Length,LastWriteTime" in C:\Users\samsung\StudioProjects\semisemifinal
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Item ai_image\\female\\029\\face_card.png | Format-List FullName,Length,LastWriteTime" in C:\Users\samsung\StudioProjects\semisemifinal
+ succeeded in 1298ms:
+
+
+FullName      : C:\Users\samsung\.codex\generated_images\019e14a9-00ad-7d71-8e34-61e4478e066a\ig_06be7f6fdf5ca5c7016a0131d44e84819195f48d9645efb8c5.png
+Length        : 2544506
+LastWriteTime : 2026-05-11 오전 10:34:27
+
+FullName      : C:\Users\samsung\.codex\generated_images\019e14a3-a656-7cb3-8568-2e45457a7570\ig_0071b028b736951a016a013087b4b48191bf04580c551e7c18.png
+Length        : 2262410
+LastWriteTime : 2026-05-11 오전 10:28:53
+
+FullName      : C:\Users\samsung\.codex\generated_images\019e149a-04a5-70e1-9c4d-da5dd6ab4183\ig_035a94c812f7a993016a012e64d8888191ad910b59de6692f7.png
+Length        : 2264998
+LastWriteTime : 2026-05-11 오전 10:21:01
+
+
+
+
+hook: PostToolUse
+ succeeded in 1180ms:
+
+
+FullName      : C:\Users\samsung\StudioProjects\semisemifinal\ai_image\female\029\face_card.png
+Length        : 2262410
+LastWriteTime : 2026-05-11 오전 10:28:53
+
+
+
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "python scripts\\recover_pending_imagegen_v3.py --source \"C:\\Users\\samsung\\.codex\\generated_images\\019e14a9-00ad-7d71-8e34-61e4478e066a\\ig_06be7f6fdf5ca5c7016a0131d44e84819195f48d9645efb8c5.png\" --no_qa" in C:\Users\samsung\StudioProjects\semisemifinal
+ succeeded in 1597ms:
+{
+  "assetId": "female_029__silhouette_card__v001",
+  "sourcePath": "C:\\Users\\samsung\\.codex\\generated_images\\019e14a9-00ad-7d71-8e34-61e4478e066a\\ig_06be7f6fdf5ca5c7016a0131d44e84819195f48d9645efb8c5.png",
+  "rawPath": "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\ai_image\\raw\\female_029__silhouette_card__v001__attempt01.png",
+  "finalPath": "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\ai_image\\female\\029\\silhouette_card.png",
+  "pendingPath": "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\ai_image\\manifests\\pending-imagegen.json"
+}
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path ai_image\\manifests\\pending-imagegen.json | Select-String -Pattern 'assetId|status|recoveryStatus|resolvedAt|rawPath|finalPath|sourcePath|expectedReceiptPath'" in C:\Users\samsung\StudioProjects\semisemifinal
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "python - <<'PY'
+from pathlib import Path
+from ai_image_pipeline_v3.qa import inspect_image_detail
+for p in [Path('ai_image/raw/female_029__silhouette_card__v001__attempt01.png'), Path('ai_image/female/029/silhouette_card.png')]:
+    print(p)
+    print(inspect_image_detail(p))
+PY" in C:\Users\samsung\StudioProjects\semisemifinal
+2026-05-11T01:35:41.708749Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 1.3 seconds
+Output:
+At line:2 char:11
++ python - <<'PY'
++           ~
+Missing file specification after redirection operator.
+At line:2 char:10
++ python - <<'PY'
++          ~
+The '<' operator is reserved for future use.
+At line:2 char:11
++ python - <<'PY'
++           ~
+The '<' operator is reserved for future use.
+At line:3 char:1
++ from pathlib import Path
++ ~~~~
+The 'from' keyword is not supported in this version of the language.
+At line:4 char:1
++ from ai_image_pipeline_v3.qa import inspect_image_detail
++ ~~~~
+The 'from' keyword is not supported in this version of the language.
+At line:5 char:4
++ for p in [Path('ai_image/raw/female_029__silhouette_card__v001__attem ...
++    ~
+Missing opening '(' after keyword 'for'.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingFileSpecification
+ 
+
+ exited 1 in 1303ms:
+At line:2 char:11
++ python - <<'PY'
++           ~
+Missing file specification after redirection operator.
+At line:2 char:10
++ python - <<'PY'
++          ~
+The '<' operator is reserved for future use.
+At line:2 char:11
++ python - <<'PY'
++           ~
+The '<' operator is reserved for future use.
+At line:3 char:1
++ from pathlib import Path
++ ~~~~
+The 'from' keyword is not supported in this version of the language.
+At line:4 char:1
++ from ai_image_pipeline_v3.qa import inspect_image_detail
++ ~~~~
+The 'from' keyword is not supported in this version of the language.
+At line:5 char:4
++ for p in [Path('ai_image/raw/female_029__silhouette_card__v001__attem ...
++    ~
+Missing opening '(' after keyword 'for'.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingFileSpecification
+ 
+
+ succeeded in 3085ms:
+
+  "assetId": "female_029__silhouette_card__v001",
+  "prompt": "Using the attached face_card image as the same person reference, generate exactly one silhouette_card image.\n\nAsset metadata:\nassetId: female_029__silhouette_card__v
+001\nprofileId: female_029\nshotType: silhouette_card\n\nGoal:\nSame person as the reference face_card.\nGenerate a realistic 3/4 body or full-body smartphone profile photo.\nThe bo
+dy frame and proportions should be readable.\nCampus-appropriate modest clothing.\nNo oversized padding.\nNo revealing outfit.\nNo school uniform.\nNo text, no logo, no watermark.\n
+\nUse this prompt:\nA realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, auth
+entic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 165cm, small frame, soft slim build, natural muscul
+arity, narrow shoulders, naturally defined waist, medium hip line, slightly long leg proportion, slightly short but balanced torso length, realistic adult head-to-body ratio, realis
+tic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nneat blouse, regular-fit slacks, light cardigan, camp
+us tote bag. minimal clean everyday fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no o
+versized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildi
+ngs in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully com
+posed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic sk
+in, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visib
+le real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.\n",
+  "expectedRawPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_029__silhouette_card__v001__attempt01.png",
+  "expectedFinalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/029/silhouette_card.png",
+  "referenceAssetId": "female_029__face_card__v001",
+  "status": "resolved",
+    "Copy raw output to expectedRawPath and final candidate to expectedFinalPath.",
+  "expectedReceiptPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T185001Z/transactions/female_029__silhouette_card__v001_attempt1.json",
+  "resolvedAt": null,
+  "recoveryStatus": "recovered",
+  "sourcePath": "C:/Users/samsung/.codex/generated_images/019e14a9-00ad-7d71-8e34-61e4478e066a/ig_06be7f6fdf5ca5c7016a0131d44e84819195f48d9645efb8c5.png",
+  "rawPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_029__silhouette_card__v001__attempt01.png",
+  "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/029/silhouette_card.png",
+
+
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$env:PYTHONPATH='"'scripts'; @'
+from pathlib import Path
+from ai_image_pipeline_v3.qa import inspect_image_detail
+for p in [Path('ai_image/raw/female_029__silhouette_card__v001__attempt01.png'), Path('ai_image/female/029/silhouette_card.png')]:
+    print(str(p))
+    print(inspect_image_detail(p))
+'@ | python -" in C:\Users\samsung\StudioProjects\semisemifinal
+ succeeded in 1639ms:
+ai_image\raw\female_029__silhouette_card__v001__attempt01.png
+{'ok': True, 'width': 1024, 'height': 1536, 'fileBytes': 2544506, 'format': 'PNG', 'reasons': []}
+ai_image\female\029\silhouette_card.png
+{'ok': True, 'width': 1024, 'height': 1536, 'fileBytes': 2544506, 'format': 'PNG', 'reasons': []}
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$env:PYTHONPATH='"'scripts'; @'
+from __future__ import annotations
+
+import hashlib
+import json
+from pathlib import Path
+
+from ai_image_pipeline_v3.config import now_utc, to_portable_path
+from ai_image_pipeline_v3.one_asset_transaction import RECEIPT_SCHEMA_VERSION, verify_one_asset_transaction, write_receipt
+from ai_image_pipeline_v3.qa import inspect_image_detail
+
+root = Path.cwd()
+pending_path = root / 'ai_image' / 'manifests' / 'pending-imagegen.json'
+pending = json.loads(pending_path.read_text(encoding='utf-8'))
+
+def sha256(path: Path) -> str:
+    h = hashlib.sha256()
+    with path.open('rb') as f:
+        for chunk in iter(lambda: f.read(1024 * 1024), b''):
+            h.update(chunk)
+    return h.hexdigest()
+
+raw_path = Path(pending['expectedRawPath'])
+final_path = Path(pending['expectedFinalPath'])
+source_path = Path(pending['sourcePath'])
+receipt_path = Path(pending['expectedReceiptPath'])
+reference_path = Path(pending['referenceImagePath']) if pending.get('referenceImagePath') else None
+raw_detail = inspect_image_detail(raw_path)
+final_detail = inspect_image_detail(final_path)
+ok = bool(raw_detail.get('ok')) and bool(final_detail.get('ok'))
+finished_at = now_utc()
+expected = {
+    'chunkId': pending.get('chunkId'),
+    'assetId': pending.get('assetId'),
+    'profileId': pending.get('profileId'),
+    'gender': pending.get('gender'),
+    'numericId': pending.get('numericId'),
+    'shotType': pending.get('shotType'),
+    'attempt': pending.get('attempt'),
+    'expectedRawPath': pending.get('expectedRawPath'),
+    'expectedFinalPath': pending.get('expectedFinalPath'),
+    'expectedReceiptPath': pending.get('expectedReceiptPath'),
+}
+if reference_path:
+    expected['referencePath'] = str(reference_path)
+    expected['referencePathSha256'] = sha256(reference_path)
+receipt = {
+    'schemaVersion': RECEIPT_SCHEMA_VERSION,
+    'transactionId': f\"{pending.get('chunkId')}_{pending.get('assetId')}_attempt{pending.get('attempt')}\",
+    'chunkId': str(pending.get('chunkId') or ''),
+    'assetId': str(pending.get('assetId') or ''),
+    'profileId': str(pending.get('profileId') or ''),
+    'gender': str(pending.get('gender') or ''),
+    'numericId': str(pending.get('numericId') or ''),
+    'shotType': str(pending.get('shotType') or ''),
+    'attempt': int(pending.get('attempt') or 0),
+    'startedAt': str(pending.get('createdAt') or ''),
+    'finishedAt': finished_at,
+    'generated': True,
+    'recovered': raw_path.exists() and final_path.exists(),
+    'pendingResolved': str(pending.get('status') or '') == 'resolved',
+    'fileQaRan': True,
+    'fileQaPassed': ok,
+    'rawPath': to_portable_path(raw_path),
+    'finalPath': to_portable_path(final_path),
+    'sourceGeneratedImagePath': to_portable_path(source_path),
+    'sourceGeneratedImageSha256': sha256(source_path),
+    'referencePath': to_portable_path(reference_path) if reference_path else None,
+    'referenceAttached': bool(reference_path),
+    'referencePathSha256': sha256(reference_path) if reference_path else None,
+    'fileQa': {
+        'decision': 'file_passed' if ok else 'file_rejected',
+        'width': int(final_detail.get('width') or 0),
+        'height': int(final_detail.get('height') or 0),
+        'format': final_detail.get('format') or '',
+        'aspectRatio': float(final_detail.get('width') or 0) / float(final_detail.get('height') or 1),
+        'sizeBytes': int(final_detail.get('fileBytes') or 0),
+        'rawOk': bool(raw_detail.get('ok')),
+        'finalOk': bool(final_detail.get('ok')),
+        'reasons': list(raw_detail.get('reasons', [])) + list(final_detail.get('reasons', [])),
+    },
+    'workerActions': [
+        'codex_internal_imagegen_called_once',
+        'recovered_pending_imagegen_with_explicit_source_no_global_qa',
+        'single_asset_file_qa_ran',
+        'receipt_written',
+    ],
+    'stdoutLog': '',
+    'stderrLog': '',
+    'error': None if ok else ';'.join(str(x) for x in (list(raw_detail.get('reasons', [])) + list(final_detail.get('reasons', [])))),
+    'status': 'succeeded' if ok else 'failed',
+}
+write_receipt(receipt_path, receipt)
+result = verify_one_asset_transaction(root=root, receipt_path=receipt_path, expected=expected, pending_payload=pending)
+print(json.dumps({'receiptPath': str(receipt_path), 'verified': result['valid'], 'assetId': result['assetId'], 'fileQa': result['fileQa']}, ensure_ascii=False, indent=2))
+'@ | python -" in C:\Users\samsung\StudioProjects\semisemifinal
+ succeeded in 1775ms:
+{
+  "receiptPath": "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\ai_image\\reports\\chunks\\chunk_20260510T185001Z\\transactions\\female_029__silhouette_card__v001_attempt1.json",
+  "verified": true,
+  "assetId": "female_029__silhouette_card__v001",
+  "fileQa": {
+    "ok": true,
+    "width": 1024,
+    "height": 1536,
+    "fileBytes": 2544506,
+    "format": "PNG",
+    "reasons": []
+  }
+}
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Get-Content -Path C:\\Users\\samsung\\.codex\\plugins\\cache\\openai-curated\\superpowers\\63976030\\skills\\verification-before-completion\\SKILL.md" in C:\Users\samsung\StudioProjects\semisemifinal
+ succeeded in 1029ms:
+---
+name: verification-before-completion
+description: Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output before making any success claims; evidence before assertions always
+---
+
+# Verification Before Completion
+
+## Overview
+
+Claiming work is complete without verification is dishonesty, not efficiency.
+
+**Core principle:** Evidence before claims, always.
+
+**Violating the letter of this rule is violating the spirit of this rule.**
+
+## The Iron Law
+
+```
+NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
+```
+
+If you haven't run the verification command in this message, you cannot claim it passes.
+
+## The Gate Function
+
+```
+BEFORE claiming any status or expressing satisfaction:
+
+1. IDENTIFY: What command proves this claim?
+2. RUN: Execute the FULL command (fresh, complete)
+3. READ: Full output, check exit code, count failures
+4. VERIFY: Does output confirm the claim?
+   - If NO: State actual status with evidence
+   - If YES: State claim WITH evidence
+5. ONLY THEN: Make the claim
+
+Skip any step = lying, not verifying
+```
+
+## Common Failures
+
+| Claim | Requires | Not Sufficient |
+|-------|----------|----------------|
+| Tests pass | Test command output: 0 failures | Previous run, "should pass" |
+| Linter clean | Linter output: 0 errors | Partial check, extrapolation |
+| Build succeeds | Build command: exit 0 | Linter passing, logs look good |
+| Bug fixed | Test original symptom: passes | Code changed, assumed fixed |
+| Regression test works | Red-green cycle verified | Test passes once |
+| Agent completed | VCS diff shows changes | Agent reports "success" |
+| Requirements met | Line-by-line checklist | Tests passing |
+
+## Red Flags - STOP
+
+- Using "should", "probably", "seems to"
+- Expressing satisfaction before verification ("Great!", "Perfect!", "Done!", etc.)
+- About to commit/push/PR without verification
+- Trusting agent success reports
+- Relying on partial verification
+- Thinking "just this once"
+- Tired and wanting work over
+- **ANY wording implying success without having run verification**
+
+## Rationalization Prevention
+
+| Excuse | Reality |
+|--------|---------|
+| "Should work now" | RUN the verification |
+| "I'm confident" | Confidence ??evidence |
+| "Just this once" | No exceptions |
+| "Linter passed" | Linter ??compiler |
+| "Agent said success" | Verify independently |
+| "I'm tired" | Exhaustion ??excuse |
+| "Partial check is enough" | Partial proves nothing |
+| "Different words so rule doesn't apply" | Spirit over letter |
+
+## Key Patterns
+
+**Tests:**
+```
+??[Run test command] [See: 34/34 pass] "All tests pass"
+??"Should pass now" / "Looks correct"
+```
+
+**Regression tests (TDD Red-Green):**
+```
+??Write ??Run (pass) ??Revert fix ??Run (MUST FAIL) ??Restore ??Run (pass)
+??"I've written a regression test" (without red-green verification)
+```
+
+**Build:**
+```
+??[Run build] [See: exit 0] "Build passes"
+??"Linter passed" (linter doesn't check compilation)
+```
+
+**Requirements:**
+```
+??Re-read plan ??Create checklist ??Verify each ??Report gaps or completion
+??"Tests pass, phase complete"
+```
+
+**Agent delegation:**
+```
+??Agent reports success ??Check VCS diff ??Verify changes ??Report actual state
+??Trust agent report
+```
+
+## Why This Matters
+
+From 24 failure memories:
+- your human partner said "I don't believe you" - trust broken
+- Undefined functions shipped - would crash
+- Missing requirements shipped - incomplete features
+- Time wasted on false completion ??redirect ??rework
+- Violates: "Honesty is a core value. If you lie, you'll be replaced."
+
+## When To Apply
+
+**ALWAYS before:**
+- ANY variation of success/completion claims
+- ANY expression of satisfaction
+- ANY positive statement about work state
+- Committing, PR creation, task completion
+- Moving to next task
+- Delegating to agents
+
+**Rule applies to:**
+- Exact phrases
+- Paraphrases and synonyms
+- Implications of success
+- ANY communication suggesting completion/correctness
+
+## The Bottom Line
+
+**No shortcuts for verification.**
+
+Run the command. Read the output. THEN claim the result.
+
+This is non-negotiable.
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$env:PYTHONPATH='"'scripts'; @'
+from __future__ import annotations
+
+import hashlib
+import json
+from pathlib import Path
+
+from ai_image_pipeline_v3.one_asset_transaction import verify_one_asset_transaction
+from ai_image_pipeline_v3.qa import inspect_image_detail
+
+root = Path.cwd()
+pending_path = root / 'ai_image' / 'manifests' / 'pending-imagegen.json'
+pending = json.loads(pending_path.read_text(encoding='utf-8'))
+
+def sha256(path: Path) -> str:
+    h = hashlib.sha256()
+    with path.open('rb') as f:
+        for chunk in iter(lambda: f.read(1024 * 1024), b''):
+            h.update(chunk)
+    return h.hexdigest()
+
+expected = {
+    'chunkId': pending.get('chunkId'),
+    'assetId': pending.get('assetId'),
+    'profileId': pending.get('profileId'),
+    'gender': pending.get('gender'),
+    'numericId': pending.get('numericId'),
+    'shotType': pending.get('shotType'),
+    'attempt': pending.get('attempt'),
+    'expectedRawPath': pending.get('expectedRawPath'),
+    'expectedFinalPath': pending.get('expectedFinalPath'),
+    'expectedReceiptPath': pending.get('expectedReceiptPath'),
+    'referencePath': pending.get('referenceImagePath'),
+}
+if expected['referencePath']:
+    expected['referencePathSha256'] = sha256(Path(expected['referencePath']))
+receipt_path = Path(pending['expectedReceiptPath'])
+verified = verify_one_asset_transaction(root=root, receipt_path=receipt_path, expected=expected, pending_payload=pending)
+raw = inspect_image_detail(Path(pending['expectedRawPath']))
+final = inspect_image_detail(Path(pending['expectedFinalPath']))
+print(json.dumps({
+    'assetId': pending.get('assetId'),
+    'pendingStatus': pending.get('status'),
+    'recoveryStatus': pending.get('recoveryStatus'),
+    'receiptVerified': verified.get('valid'),
+    'rawOk': raw.get('ok'),
+    'finalOk': final.get('ok'),
+    'rawSize': [raw.get('width'), raw.get('height')],
+    'finalSize': [final.get('width'), final.get('height')],
+    'receiptPath': str(receipt_path),
+}, ensure_ascii=False, indent=2))
+'@ | python -" in C:\Users\samsung\StudioProjects\semisemifinal
+ succeeded in 1585ms:
+{
+  "assetId": "female_029__silhouette_card__v001",
+  "pendingStatus": "resolved",
+  "recoveryStatus": "recovered",
+  "receiptVerified": true,
+  "rawOk": true,
+  "finalOk": true,
+  "rawSize": [
+    1024,
+    1536
+  ],
+  "finalSize": [
+    1024,
+    1536
+  ],
+  "receiptPath": "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\ai_image\\reports\\chunks\\chunk_20260510T185001Z\\transactions\\female_029__silhouette_card__v001_attempt1.json"
+}
+
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+정확히 한 개 Image Gen transaction만 실행했습니다.
+
+- Asset: `female_029__silhouette_card__v001`
+- Raw: [female_029__silhouette_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_029__silhouette_card__v001__attempt01.png)
+- Final: [silhouette_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/029/silhouette_card.png)
+- Receipt: [female_029__silhouette_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T185001Z/transactions/female_029__silhouette_card__v001_attempt1.json)
+
+검증 결과: `pendingStatus=resolved`, `recoveryStatus=recovered`, receipt 검증 `true`, raw/final 파일 QA 모두 `ok`, 크기 `1024x1536`. Global file QA나 visual QA는 실행하지 않았고, receipt도 visual/identity/distribution approval을 claim하지 않습니다.
+hook: Stop
+hook: Stop Completed
+tokens used
+68,815

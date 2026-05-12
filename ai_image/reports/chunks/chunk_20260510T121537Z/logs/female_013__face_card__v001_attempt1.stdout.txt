@@ -1,0 +1,21 @@
+SUCCESS: The process with PID 24496 (child process of PID 7960) has been terminated.
+SUCCESS: The process with PID 24944 (child process of PID 7960) has been terminated.
+SUCCESS: The process with PID 23184 (child process of PID 7960) has been terminated.
+SUCCESS: The process with PID 33324 (child process of PID 7960) has been terminated.
+SUCCESS: The process with PID 3864 (child process of PID 7960) has been terminated.
+Completed exactly one Seolleyeon AI profile asset using Codex internal Image Gen only.
+
+- Asset: `female_013__face_card__v001`
+- Shot type: `face_card`
+- Status: `vision_approved`
+- Raw: `ai_image/raw/female_013__face_card__v001__attempt01.png`
+- Final: `ai_image/female/013/face_card.png`
+- Approved copy: `ai_image/approved/female_013__face_card__v001.png`
+
+Validation:
+- Size: `1024x1536`
+- Raw/final/approved SHA-256 match
+- `pending-imagegen.json` is resolved
+- `generation_manifest.jsonl` and `generation_status.csv` show `vision_approved`
+- No recommender tracked diff detected
+- Stopped after this one asset; no silhouette/vibe generation.

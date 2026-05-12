@@ -1,0 +1,33 @@
+{
+  "qaType": "seolleyeon_visual_verdict_asset_v3",
+  "sheetId": "manual_single_asset_20260510_female_004_face_card",
+  "assets": [
+    {
+      "assetId": "female_004__face_card__v001",
+      "profileId": "female_004",
+      "gender": "female",
+      "shotType": "face_card",
+      "targetFaceType": "cat_like",
+      "observedFaceType": "cat_like",
+      "faceTypeConfidence": 0.72,
+      "targetLooksLevelBand": "2.5-3.2",
+      "observedLooksLevelBand": "2.5-3.2",
+      "looksLevelConfidence": 0.7,
+      "adultVisual": true,
+      "photoRealism": 5,
+      "campusRealism": 4,
+      "brandFit": 5,
+      "shotTypeReadable": true,
+      "influencerRisk": 0,
+      "childlikeRisk": 0,
+      "schoolUniformRisk": 0,
+      "sexualizationRisk": 0,
+      "artifactRisk": 0,
+      "metadataMismatch": false,
+      "mismatchFields": [],
+      "decision": "approved",
+      "rejectReasons": [],
+      "notes": "Manual Codex visual review from generated face_card: adult-looking realistic Korean university-student style, modest cardigan, neutral background, no text/logo/watermark, no visible hard-reject artifacts."
+    }
+  ]
+}

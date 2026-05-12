@@ -1,0 +1,62 @@
+*** Begin Patch
+*** Update File: seolleyeon_clip_train_export.py
+@@
+-def ai_profile_to_storage_url(
+-    ai_profile_id: str,
+-    *,
+-    bucket: str = "seolleyeon.firebasestorage.app",
+-) -> str:
+-    """female_385 -> Firebase Storage download URL"""
++def ai_profile_to_storage_urls(
++    ai_profile_id: str,
++    *,
++    bucket: str = "seolleyeon.firebasestorage.app",
++    layout: Optional[str] = None,
++) -> List[str]:
++    """
++    female_385 -> Firebase Storage download URL list.
++
++    layout is controlled by AI_PROFILE_ASSET_LAYOUT:
++      - legacy:       ai_profiles/female/385.png
++      - v3_multishot: ai_profiles/female/385/face_card.png,
++                      ai_profiles/female/385/silhouette_card.png,
++                      ai_profiles/female/385/vibe_card.png
++      - v3_hybrid:    legacy + v3 paths
++
++    Keep default as legacy so existing uploads do not break.
++    Turn on v3_multishot only after all 3 shot images are uploaded.
++    """
+     m = re.match(r"^(female|male)_(\d+)$", str(ai_profile_id))
+     if not m:
+         raise ValueError(f"Invalid ai_profile_id: {ai_profile_id}")
+     folder, pid = m.group(1), m.group(2)
+-    path = f"ai_profiles/{folder}/{pid}.png"
+-    encoded = quote(path, safe="")
+-    return f"https://firebasestorage.googleapis.com/v0/b/{bucket}/o/{encoded}?alt=media"
++    layout = (layout or os.environ.get("AI_PROFILE_ASSET_LAYOUT", "legacy")).strip().lower()
++
++    legacy_path = f"ai_profiles/{folder}/{pid}.png"
++    v3_paths = [
++        f"ai_profiles/{folder}/{pid}/face_card.png",
++        f"ai_profiles/{folder}/{pid}/silhouette_card.png",
++        f"ai_profiles/{folder}/{pid}/vibe_card.png",
++    ]
++    if layout in {"v3", "v3_multishot", "multi_shot"}:
++        paths = v3_paths
++    elif layout in {"v3_hybrid", "hybrid"}:
++        paths = [legacy_path] + v3_paths
++    else:
++        paths = [legacy_path]
++
++    urls = []
++    for path in paths:
++        encoded = quote(path, safe="")
++        urls.append(f"https://firebasestorage.googleapis.com/v0/b/{bucket}/o/{encoded}?alt=media")
++    return urls
+@@
+-                    url = ai_profile_to_storage_url(t, bucket=bucket)
+-                    uid_to_urls[t] = [url]
++                    uid_to_urls[t] = ai_profile_to_storage_urls(t, bucket=bucket)
+                 except Exception:
+                     pass
+*** End Patch

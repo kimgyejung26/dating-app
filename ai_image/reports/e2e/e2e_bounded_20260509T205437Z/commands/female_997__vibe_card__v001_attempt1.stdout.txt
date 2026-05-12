@@ -1,0 +1,6 @@
+SUCCESS: The process with PID 2472 (child process of PID 11928) has been terminated.
+SUCCESS: The process with PID 12368 (child process of PID 11928) has been terminated.
+SUCCESS: The process with PID 12548 (child process of PID 11928) has been terminated.
+SUCCESS: The process with PID 30564 (child process of PID 11928) has been terminated.
+SUCCESS: The process with PID 21524 (child process of PID 11928) has been terminated.
+I’m checking the existing checkpoint only; if it does not already identify this exact asset, I’ll update that one metadata file before the single generation call.

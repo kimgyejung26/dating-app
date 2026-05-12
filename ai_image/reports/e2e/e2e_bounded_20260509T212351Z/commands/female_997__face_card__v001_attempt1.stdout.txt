@@ -1,0 +1,6 @@
+SUCCESS: The process with PID 32704 (child process of PID 15892) has been terminated.
+SUCCESS: The process with PID 23932 (child process of PID 15892) has been terminated.
+SUCCESS: The process with PID 12488 (child process of PID 15892) has been terminated.
+SUCCESS: The process with PID 30772 (child process of PID 15892) has been terminated.
+SUCCESS: The process with PID 30860 (child process of PID 15892) has been terminated.
+Using `seolleyeon-ai-profile-imagegen` only to honor the project routing for this single imagegen call; I will stop immediately after generation with no recovery, file handling, or QA.

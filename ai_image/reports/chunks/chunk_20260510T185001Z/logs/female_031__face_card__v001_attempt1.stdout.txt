@@ -1,0 +1,17 @@
+SUCCESS: The process with PID 13816 (child process of PID 23392) has been terminated.
+SUCCESS: The process with PID 25172 (child process of PID 23392) has been terminated.
+SUCCESS: The process with PID 34140 (child process of PID 23392) has been terminated.
+SUCCESS: The process with PID 25180 (child process of PID 23392) has been terminated.
+SUCCESS: The process with PID 34536 (child process of PID 23392) has been terminated.
+Ran exactly one Seolleyeon one-asset Image Gen transaction.
+
+Asset: `female_031__face_card__v001`  
+Status: recovered, pending resolved, receipt verified, file QA passed.
+
+Outputs:
+- [raw attempt](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_031__face_card__v001__attempt01.png)
+- [final candidate](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/031/face_card.png)
+- [transaction receipt](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T185001Z/transactions/female_031__face_card__v001_attempt1.json)
+- [pending checkpoint](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/pending-imagegen.json) is now `resolved`
+
+Validation: receipt verification returned `valid: true`; file QA passed at `1023x1537` PNG. No recommender or pipeline code files were modified.

@@ -1,0 +1,15 @@
+SUCCESS: The process with PID 34356 (child process of PID 21976) has been terminated.
+SUCCESS: The process with PID 13532 (child process of PID 21976) has been terminated.
+SUCCESS: The process with PID 14104 (child process of PID 21976) has been terminated.
+SUCCESS: The process with PID 34956 (child process of PID 21976) has been terminated.
+SUCCESS: The process with PID 27396 (child process of PID 21976) has been terminated.
+Done — exactly one Seolleyeon asset generated with Codex internal Image Gen only.
+
+- Asset: `female_007__face_card__v001`
+- Status: `vision_approved`
+- Raw: `ai_image/raw/female_007__face_card__v001__attempt01.png`
+- Final: `ai_image/female/007/face_card.png`
+- Approved copy: `ai_image/approved/female_007__face_card__v001.png`
+- Pending checkpoint: resolved
+- Recommender files changed: none
+[omx] postLaunch: reaped 15 orphaned OMX MCP process(es).

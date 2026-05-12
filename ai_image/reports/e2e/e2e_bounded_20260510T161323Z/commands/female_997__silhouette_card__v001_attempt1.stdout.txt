@@ -1,0 +1,6 @@
+SUCCESS: The process with PID 34680 (child process of PID 20604) has been terminated.
+SUCCESS: The process with PID 34028 (child process of PID 20604) has been terminated.
+SUCCESS: The process with PID 34112 (child process of PID 20604) has been terminated.
+SUCCESS: The process with PID 13108 (child process of PID 20604) has been terminated.
+SUCCESS: The process with PID 22712 (child process of PID 20604) has been terminated.
+The skill requires a pending-imagegen checkpoint before the imagegen call. I’m checking whether the bounded executor already staged that checkpoint so I can avoid unnecessary file changes.

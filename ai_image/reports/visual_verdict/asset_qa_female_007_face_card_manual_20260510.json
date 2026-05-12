@@ -1,0 +1,34 @@
+{
+  "qaType": "seolleyeon_visual_verdict_asset_v3",
+  "schemaVersion": "seolleyeon_visual_verdict_asset_v3",
+  "sheetId": "manual_single_asset_female_007_face_card_20260510",
+  "assets": [
+    {
+      "assetId": "female_007__face_card__v001",
+      "profileId": "female_007",
+      "gender": "female",
+      "shotType": "face_card",
+      "targetFaceType": "mixed_neutral",
+      "observedFaceType": "mixed_neutral",
+      "faceTypeConfidence": 0.72,
+      "targetLooksLevelBand": "3.9-4.3",
+      "observedLooksLevelBand": "3.9-4.3",
+      "looksLevelConfidence": 0.72,
+      "adultVisual": true,
+      "photoRealism": 4.6,
+      "campusRealism": 4.2,
+      "brandFit": 4.3,
+      "shotTypeReadable": true,
+      "influencerRisk": 1.2,
+      "childlikeRisk": 0.4,
+      "schoolUniformRisk": 0.0,
+      "sexualizationRisk": 0.0,
+      "artifactRisk": 0.4,
+      "metadataMismatch": false,
+      "mismatchFields": [],
+      "decision": "approved",
+      "rejectReasons": [],
+      "notes": "Manual visual QA of recovered single asset: adult, realistic, modest navy knit, no text/logo/watermark, no visible distortion, calm Seolleyeon face_card tone."
+    }
+  ]
+}

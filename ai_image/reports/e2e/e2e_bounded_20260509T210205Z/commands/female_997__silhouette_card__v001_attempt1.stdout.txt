@@ -1,0 +1,6 @@
+SUCCESS: The process with PID 14976 (child process of PID 14676) has been terminated.
+SUCCESS: The process with PID 31096 (child process of PID 14676) has been terminated.
+SUCCESS: The process with PID 1660 (child process of PID 14676) has been terminated.
+SUCCESS: The process with PID 13556 (child process of PID 14676) has been terminated.
+SUCCESS: The process with PID 32180 (child process of PID 14676) has been terminated.
+The global skill path listed in the session was stale for that skill; I’m checking the project-local skill copy under `.agents/skills` and then I’ll make the single imagegen call.

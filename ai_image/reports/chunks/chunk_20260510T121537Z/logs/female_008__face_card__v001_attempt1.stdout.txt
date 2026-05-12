@@ -1,0 +1,20 @@
+SUCCESS: The process with PID 33916 (child process of PID 33172) has been terminated.
+SUCCESS: The process with PID 6432 (child process of PID 33172) has been terminated.
+SUCCESS: The process with PID 21104 (child process of PID 33172) has been terminated.
+SUCCESS: The process with PID 33696 (child process of PID 33172) has been terminated.
+SUCCESS: The process with PID 26244 (child process of PID 33172) has been terminated.
+Done — exactly 1 Codex internal Image Gen call, for one Seolleyeon asset only.
+
+- Asset: `female_008__face_card__v001`
+- Shot: `face_card`
+- Raw saved: `ai_image/raw/female_008__face_card__v001__attempt01.png`
+- Final saved: `ai_image/female/008/face_card.png`
+- Approved copy: `ai_image/approved/female_008__face_card__v001.png`
+- Pending checkpoint: resolved in `ai_image/manifests/pending-imagegen.json`
+- Updated: `generation_manifest.jsonl`, `generation_status.csv`, QA reports, summary
+
+Validation:
+- Used Codex built-in imagegen only; no OpenAI Image API / Batch API.
+- Final/approved image passes file QA at `1024x1536`.
+- Raw output preserved; final was locally crop-resized for QA aspect compliance.
+- Stopped after this one asset; no silhouette/vibe generation.

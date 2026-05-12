@@ -1,0 +1,16 @@
+SUCCESS: The process with PID 17220 (child process of PID 11156) has been terminated.
+SUCCESS: The process with PID 18076 (child process of PID 11156) has been terminated.
+SUCCESS: The process with PID 31828 (child process of PID 11156) has been terminated.
+SUCCESS: The process with PID 19032 (child process of PID 11156) has been terminated.
+SUCCESS: The process with PID 24104 (child process of PID 11156) has been terminated.
+Executed exactly one Seolleyeon Image Gen call for `female_031__silhouette_card__v001`.
+
+Transaction result: `failed` by file QA, not retried. The generated file was `908x1733` and rejected for `bad_aspect_ratio`.
+
+Artifacts written:
+- Raw: [female_031__silhouette_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_031__silhouette_card__v001__attempt01.png)
+- Final candidate: [silhouette_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/031/silhouette_card.png)
+- Rejected copy: [female_031__silhouette_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/rejected/female_031__silhouette_card__v001__attempt01.png)
+- Receipt: [female_031__silhouette_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T185001Z/transactions/female_031__silhouette_card__v001_attempt1.json)
+
+Verification: pending is resolved, generated session contains 1 PNG, all expected paths exist, manifest status is `file_rejected`, and tracked recommender files show no diff.

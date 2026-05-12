@@ -1,0 +1,31 @@
+{
+  "assetId": "female_002__face_card__v001",
+  "profileId": "female_002",
+  "gender": "female",
+  "numericId": "002",
+  "shotType": "face_card",
+  "attempt": 1,
+  "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\nslightly narrow eyes, a refined face line, a subtle chic expression, a clean medium nose bridge, soft oval face shape, medium-sized eyes, slightly lifted outer eye corners, soft jawline, moderate cheek fullness, medium-high nose bridge, natural medium lips, natural brows, natural skin texture, noticeably attractive but still realistic, refined natural grooming, not celebrity-like, not a photoshoot model, quiet romantic but mature mood.\n\nHair and styling:\nmedium-length, natural dark brown, slightly wavy hair with light natural bangs, light natural makeup, intellectual neat campus fashion, neat regular fit, campus-appropriate and modest. Outfit: minimal navy knit top with a calm campus mood.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+  "promptHash": "0b7f9ba28e40debbc07512e4",
+  "queuePath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/imagegen_queue.jsonl",
+  "manifestPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/generation_manifest.jsonl",
+  "pendingPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/pending-imagegen.json",
+  "expectedRawPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_002__face_card__v001__attempt01.png",
+  "expectedFinalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/002/face_card.png",
+  "referenceAssetId": "",
+  "referenceImagePath": "",
+  "codexGeneratedImagesDir": "C:/Users/samsung/.codex/generated_images",
+  "status": "recovered",
+  "createdAt": "2026-05-06T20:28:08+00:00",
+  "recoveryInstructions": [
+    "After the $imagegen result, do not continue to the next queued asset.",
+    "First run make ai-image-recover or scripts/recover_pending_imagegen_v3.py.",
+    "Map identity from this pending-imagegen.json only; do not infer identity visually.",
+    "Copy raw output to expectedRawPath and final candidate to expectedFinalPath."
+  ],
+  "lastImagegenInstruction": "Built-in Codex imagegen invoked for female_002__face_card__v001. Recover before next asset.",
+  "sourcePath": "C:/Users/samsung/.codex/generated_images/019dfc15-4925-7110-93dc-1de65f4f247f/ig_0026fd79950353e20169fba6d979d881919405d45dc8f71b33.png",
+  "rawPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_002__face_card__v001__attempt01.png",
+  "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/002/face_card.png",
+  "recoveredAt": "2026-05-06T20:44:42+00:00"
+}

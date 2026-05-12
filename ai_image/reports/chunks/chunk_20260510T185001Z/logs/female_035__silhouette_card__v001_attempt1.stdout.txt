@@ -1,0 +1,15 @@
+SUCCESS: The process with PID 24936 (child process of PID 35960) has been terminated.
+SUCCESS: The process with PID 36564 (child process of PID 35960) has been terminated.
+SUCCESS: The process with PID 3676 (child process of PID 35960) has been terminated.
+SUCCESS: The process with PID 22584 (child process of PID 35960) has been terminated.
+SUCCESS: The process with PID 11320 (child process of PID 35960) has been terminated.
+완료했습니다. 정확히 한 번만 Image Gen을 호출했고, `female_035__silhouette_card__v001` attempt 1만 처리했습니다.
+
+결과:
+- Final: `ai_image/female/035/silhouette_card.png`
+- Raw: `ai_image/raw/female_035__silhouette_card__v001__attempt01.png`
+- Receipt: `ai_image/reports/chunks/chunk_20260510T185001Z/transactions/female_035__silhouette_card__v001_attempt1.json`
+- `pending-imagegen.json`은 `resolved` 상태입니다.
+- 단일 asset file QA 통과: `1023x1537`, PNG, reasons 없음
+- 시각/정책 QA, distribution audit, completion check는 실행하지 않았습니다.
+- recommender 파일 diff는 없습니다.

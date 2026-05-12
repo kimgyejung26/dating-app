@@ -1,0 +1,33 @@
+{
+  "phase": "verified",
+  "backupDir": "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\ai_image\\manifests\\backup_before_smoke_20260506T210810Z",
+  "targetAssets": 9,
+  "targetIdentities": 3,
+  "currentAssetId": "male_901__vibe_card__v001",
+  "currentProfileId": "male_901",
+  "currentShotType": "vibe_card",
+  "currentAttempt": 1,
+  "generatedCount": 9,
+  "lastRecoveredAssetId": "male_901__face_card__v001",
+  "updatedAt": "2026-05-06T21:36:33.789314+00:00",
+  "approvedAssetIds": [
+    "female_901__face_card__v001",
+    "female_901__silhouette_card__v001",
+    "female_901__vibe_card__v001",
+    "female_902__face_card__v001",
+    "female_902__silhouette_card__v001",
+    "female_902__vibe_card__v001",
+    "male_901__face_card__v001",
+    "male_901__silhouette_card__v001",
+    "male_901__vibe_card__v001"
+  ],
+  "verifiedApprovedAssets": 9,
+  "contactSheets": [
+    "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\ai_image\\reports\\contact_sheets\\smoke_contact_sheet_female_face_card.png",
+    "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\ai_image\\reports\\contact_sheets\\smoke_contact_sheet_female_silhouette_card.png",
+    "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\ai_image\\reports\\contact_sheets\\smoke_contact_sheet_female_vibe_card.png",
+    "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\ai_image\\reports\\contact_sheets\\smoke_contact_sheet_male_face_card.png",
+    "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\ai_image\\reports\\contact_sheets\\smoke_contact_sheet_male_silhouette_card.png",
+    "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\ai_image\\reports\\contact_sheets\\smoke_contact_sheet_male_vibe_card.png"
+  ]
+}

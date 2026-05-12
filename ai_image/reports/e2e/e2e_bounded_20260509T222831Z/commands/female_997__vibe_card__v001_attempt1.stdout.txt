@@ -1,0 +1,6 @@
+SUCCESS: The process with PID 12320 (child process of PID 28204) has been terminated.
+SUCCESS: The process with PID 26124 (child process of PID 28204) has been terminated.
+SUCCESS: The process with PID 27172 (child process of PID 28204) has been terminated.
+SUCCESS: The process with PID 32184 (child process of PID 28204) has been terminated.
+SUCCESS: The process with PID 7280 (child process of PID 28204) has been terminated.
+The Seolleyeon workflow requires a checkpoint before the imagegen call. I’ll update only the pending imagegen manifest for this one asset, then make the single built-in generation call and do nothing afterward.

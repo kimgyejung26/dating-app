@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "seolleyeon_one_asset_transaction_v3",
+  "transactionId": "chunk_20260510T160411Z_female_011__vibe_card__v001_attempt1",
+  "chunkId": "chunk_20260510T160411Z",
+  "assetId": "female_011__vibe_card__v001",
+  "profileId": "female_011",
+  "gender": "female",
+  "numericId": "011",
+  "shotType": "vibe_card",
+  "attempt": 1,
+  "startedAt": "2026-05-10T18:18:14+00:00",
+  "finishedAt": "2026-05-10T18:18:14+00:00",
+  "generated": "unknown",
+  "recovered": true,
+  "pendingResolved": true,
+  "fileQaRan": true,
+  "fileQaPassed": true,
+  "rawPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_011__vibe_card__v001__attempt01.png",
+  "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/011/vibe_card.png",
+  "sourceGeneratedImagePath": "",
+  "referencePath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/011/face_card.png",
+  "fileQa": {
+    "decision": "file_passed",
+    "width": 1024,
+    "height": 1536,
+    "format": "PNG",
+    "aspectRatio": 0.6666666666666666,
+    "sizeBytes": 2662155,
+    "reasons": []
+  },
+  "workerActions": [
+    "parent_reconcile_existing_file",
+    "file_qa_ran"
+  ],
+  "stdoutLog": "",
+  "stderrLog": "",
+  "error": null,
+  "status": "succeeded",
+  "source": "parent_reconcile_existing_file"
+}

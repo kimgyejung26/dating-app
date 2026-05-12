@@ -1,0 +1,40 @@
+{
+  "qaType": "seolleyeon_visual_verdict_asset_v3",
+  "sheetId": "e2e_bounded_20260509T205437Z_contact_sheet_female_silhouette_card",
+  "assets": [
+    {
+      "assetId": "female_997__silhouette_card__v001",
+      "profileId": "female_997",
+      "gender": "female",
+      "shotType": "silhouette_card",
+      "targetFaceType": "deer_like",
+      "observedFaceType": "deer_like",
+      "faceTypeConfidence": 0.62,
+      "targetLooksLevelBand": "2.5-3.2",
+      "observedLooksLevelBand": "2.5-3.2",
+      "looksLevelConfidence": 0.72,
+      "adultVisual": true,
+      "photoRealism": 4.5,
+      "campusRealism": 4.6,
+      "brandFit": 4.5,
+      "shotTypeReadable": true,
+      "influencerRisk": 0.8,
+      "childlikeRisk": 1.1,
+      "schoolUniformRisk": 0.0,
+      "sexualizationRisk": 0.0,
+      "artifactRisk": 0.4,
+      "metadataMismatch": false,
+      "mismatchFields": [],
+      "decision": "approved",
+      "rejectReasons": [],
+      "notes": "Realistic adult campus full-body profile with modest styling and readable silhouette; face type evidence is moderate due distance but consistent enough for approval."
+    }
+  ],
+  "summary": {
+    "approvedCount": 1,
+    "needsReviewCount": 0,
+    "rejectedCount": 0,
+    "hardRejectCount": 0,
+    "metadataMismatchCount": 0
+  }
+}

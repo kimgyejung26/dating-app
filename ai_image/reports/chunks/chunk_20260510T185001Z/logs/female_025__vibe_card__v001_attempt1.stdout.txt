@@ -1,0 +1,20 @@
+SUCCESS: The process with PID 21424 (child process of PID 3916) has been terminated.
+SUCCESS: The process with PID 35244 (child process of PID 3916) has been terminated.
+SUCCESS: The process with PID 8064 (child process of PID 3916) has been terminated.
+SUCCESS: The process with PID 34156 (child process of PID 3916) has been terminated.
+SUCCESS: The process with PID 32944 (child process of PID 3916) has been terminated.
+정확히 1개 asset Image Gen 트랜잭션만 실행했습니다.
+
+대상: `female_025__vibe_card__v001`  
+결과 파일: [vibe_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/025/vibe_card.png)  
+Raw: [female_025__vibe_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_025__vibe_card__v001__attempt01.png)  
+Receipt: [female_025__vibe_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T185001Z/transactions/female_025__vibe_card__v001_attempt1.json)
+
+검증 결과:
+- Image Gen 호출: 1회
+- `pending-imagegen.json`: resolved
+- receipt verification: valid
+- file QA: pass, `1024x1536` PNG
+- manifest status: `file_needs_review`
+
+Visual QA, distribution audit, approval manifest 업데이트는 실행하지 않았습니다. Recommender/script tracked diff도 없습니다.

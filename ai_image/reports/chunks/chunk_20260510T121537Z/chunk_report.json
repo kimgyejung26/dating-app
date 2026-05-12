@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "seolleyeon_bounded_chunk_report_v3",
+  "chunkId": "chunk_20260510T121537Z",
+  "status": "running",
+  "chunk_unattended_verification": "PENDING",
+  "chunk_qa_complete": false,
+  "chunk_distribution_updated": false,
+  "chunk_new_generated_assets": 12,
+  "chunk_new_recovered_assets": 15,
+  "chunk_new_file_qa_passed_assets": 14,
+  "chunk_new_visual_approved_assets": 0,
+  "chunk_new_approved_identities": 0,
+  "chunk_new_needs_review_identities": 0,
+  "chunk_new_rejected_identities": 0,
+  "selectedIdentityCount": 24,
+  "selectedAssetCount": 72,
+  "remainingDeficits": {
+    "approvedCompleteIdentities": {
+      "target": 240,
+      "current": 0,
+      "deficit": 240,
+      "surplus": 0,
+      "exactMatch": false
+    },
+    "approvedImages": {
+      "target": 720,
+      "current": 0,
+      "deficit": 720,
+      "surplus": 0,
+      "exactMatch": false
+    },
+    "femaleApprovedIdentities": {
+      "target": 120,
+      "current": 0,
+      "deficit": 120,
+      "surplus": 0,
+      "exactMatch": false
+    },
+    "maleApprovedIdentities": {
+      "target": 120,
+      "current": 0,
+      "deficit": 120,
+      "surplus": 0,
+      "exactMatch": false
+    }
+  },
+  "surplusBuckets": [],
+  "updatedAt": "2026-05-10T15:46:45+00:00"
+}

@@ -1,0 +1,407 @@
+Reading prompt from stdin...
+2026-05-09T22:39:01.705267Z  WARN codex_core_plugins::startup_remote_sync: startup remote plugin sync failed; will retry on next app-server start error=remote plugin sync request to https://chatgpt.com/backend-api/plugins/list failed with status 403 Forbidden: <html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style global>body{font-family:Arial,Helvetica,sans-serif}.container{align-items:center;display:flex;flex-direction:column;gap:2rem;height:100%;justify-content:center;width:100%}@keyframes enlarge-appear{0%{opacity:0;transform:scale(75%) rotate(-90deg)}to{opacity:1;transform:scale(100%) rotate(0deg)}}.logo{color:#8e8ea0}.scale-appear{animation:enlarge-appear .4s ease-out}@media (min-width:768px){.scale-appear{height:48px;width:48px}}.data:empty{display:none}.data{border-radius:5px;color:#8e8ea0;text-align:center}@media (prefers-color-scheme:dark){body{background-color:#343541}.logo{color:#acacbe}}</style>
+  <meta http-equiv="refresh" content="360"></head>
+  <body>
+    <div class="container">
+      <div class="logo">
+        <svg
+          width="41"
+          height="41"
+          viewBox="0 0 41 41"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          strokeWidth="2"
+          class="scale-appear"
+        >
+          <path
+            d="M37.5324 16.8707C37.9808 15.5241 38.1363 14.0974 37.9886 12.6859C37.8409 11.2744 37.3934 9.91076 36.676 8.68622C35.6126 6.83404 33.9882 5.3676 32.0373 4.4985C30.0864 3.62941 27.9098 3.40259 25.8215 3.85078C24.8796 2.7893 23.7219 1.94125 22.4257 1.36341C21.1295 0.785575 19.7249 0.491269 18.3058 0.500197C16.1708 0.495044 14.0893 1.16803 12.3614 2.42214C10.6335 3.67624 9.34853 5.44666 8.6917 7.47815C7.30085 7.76286 5.98686 8.3414 4.8377 9.17505C3.68854 10.0087 2.73073 11.0782 2.02839 12.312C0.956464 14.1591 0.498905 16.2988 0.721698 18.4228C0.944492 20.5467 1.83612 22.5449 3.268 24.1293C2.81966 25.4759 2.66413 26.9026 2.81182 28.3141C2.95951 29.7256 3.40701 31.0892 4.12437 32.3138C5.18791 34.1659 6.8123 35.6322 8.76321 36.5013C10.7141 37.3704 12.8907 37.5973 14.9789 37.1492C15.9208 38.2107 17.0786 39.0587 18.3747 39.6366C19.6709 40.2144 21.0755 40.5087 22.4946 40.4998C24.6307 40.5054 26.7133 39.8321 28.4418 38.5772C30.1704 37.3223 31.4556 35.5506 32.1119 33.5179C33.5027 33.2332 34.8167 32.6547 35.9659 31.821C37.115 30.9874 38.0728 29.9178 38.7752 28.684C39.8458 26.8371 40.3023 24.6979 40.0789 22.5748C39.8556 20.4517 38.9639 18.4544 37.5324 16.8707ZM22.4978 37.8849C20.7443 37.8874 19.0459 37.2733 17.6994 36.1501C17.7601 36.117 17.8666 36.0586 17.936 36.0161L25.9004 31.4156C26.1003 31.3019 26.2663 31.137 26.3813 30.9378C26.4964 30.7386 26.5563 30.5124 26.5549 30.2825V19.0542L29.9213 20.998C29.9389 21.0068 29.9541 21.0198 29.9656 21.0359C29.977 21.052 29.9842 21.0707 29.9867 21.0902V30.3889C29.9842 32.375 29.1946 34.2791 27.7909 35.6841C26.3872 37.0892 24.4838 37.8806 22.4978 37.8849ZM6.39227 31.0064C5.51397 29.4888 5.19742 27.7107 5.49804 25.9832C5.55718 26.0187 5.66048 26.0818 5.73461 26.1244L13.699 30.7248C13.8975 30.8408 14.1233 30.902 14.3532 30.902C14.583 30.902 14.8088 30.8408 15.0073 30.7248L24.731 25.1103V28.9979C24.7321 29.0177 24.7283 29.0376 24.7199 29.0556C24.7115 29.0736 24.6988 29.0893 24.6829 29.1012L16.6317 33.7497C14.9096 34.7416 12.8643 35.0097 10.9447 34.4954C9.02506 33.9811 7.38785 32.7263 6.39227 31.0064ZM4.29707 13.6194C5.17156 12.0998 6.55279 10.9364 8.19885 10.3327C8.19885 10.4013 8.19491 10.5228 8.19491 10.6071V19.808C8.19351 20.0378 8.25334 20.2638 8.36823 20.4629C8.48312 20.6619 8.64893 20.8267 8.84863 20.9404L18.5723 26.5542L15.206 28.4979C15.1894 28.5089 15.1703 28.5155 15.1505 28.5173C15.1307 28.5191 15.1107 28.516 15.0924 28.5082L7.04046 23.8557C5.32135 22.8601 4.06716 21.2235 3.55289 19.3046C3.03862 17.3858 3.30624 15.3413 4.29707 13.6194ZM31.955 20.0556L22.2312 14.4411L25.5976 12.4981C25.6142 12.4872 25.6333 12.4805 25.6531 12.4787C25.6729 12.4769 25.6928 12.4801 25.7111 12.4879L33.7631 17.1364C34.9967 17.849 36.0017 18.8982 36.6606 20.1613C37.3194 21.4244 37.6047 22.849 37.4832 24.2684C37.3617 25.6878 36.8382 27.0432 35.9743 28.1759C35.1103 29.3086 33.9415 30.1717 32.6047 30.6641C32.6047 30.5947 32.6047 30.4733 32.6047 30.3889V21.188C32.6066 20.9586 32.5474 20.7328 32.4332 20.5338C32.319 20.3348 32.154 20.1698 31.955 20.0556ZM35.3055 15.0128C35.2464 14.9765 35.1431 14.9142 35.069 14.8717L27.1045 10.2712C26.906 10.1554 26.6803 10.0943 26.4504 10.0943C26.2206 10.0943 25.9948 10.1554 25.7963 10.2712L16.0726 15.8858V11.9982C16.0715 11.9783 16.0753 11.9585 16.0837 11.9405C16.0921 11.9225 16.1048 11.9068 16.1207 11.8949L24.1719 7.25025C25.4053 6.53903 26.8158 6.19376 28.2383 6.25482C29.6608 6.31589 31.0364 6.78077 32.2044 7.59508C33.3723 8.40939 34.2842 9.53945 34.8334 10.8531C35.3826 12.1667 35.5464 13.6095 35.3055 15.0128ZM14.2424 21.9419L10.8752 19.9981C10.8576 19.9893 10.8423 19.9763 10.8309 19.9602C10.8195 19.9441 10.8122 19.9254 10.8098 19.9058V10.6071C10.8107 9.18295 11.2173 7.78848 11.9819 6.58696C12.7466 5.38544 13.8377 4.42659 15.1275 3.82264C16.4173 3.21869 17.8524 2.99464 19.2649 3.1767C20.6775 3.35876 22.0089 3.93941 23.1034 4.85067C23.0427 4.88379 22.937 4.94215 22.8668 4.98473L14.9024 9.58517C14.7025 9.69878 14.5366 9.86356 14.4215 10.0626C14.3065 10.2616 14.2466 10.4877 14.2479 10.7175L14.2424 21.9419ZM16.071 17.9991L20.4018 15.4978L24.7325 17.9975V22.9985L20.4018 25.4983L16.071 22.9985V17.9991Z"
+            fill="currentColor"
+          />
+        </svg>
+      </div>
+      <div class="data"><div class="main-wrapper" role="main"><div class="main-content"><noscript><div class="h2"><span id="challenge-error-text">Enable JavaScript and cookies to continue</span></div></noscript></div></div><script>(function(){window._cf_chl_opt = {cFPWv: 'g',cH: 'bMHNBQ0xunZ98N0MAWTPYvD1OUdg_y7jJe5hz7xxRig-1778366341-1.2.1.1-w_.BT4QCl8ESO0ZLIJe1ccXPDaklJPEgBd4blRl_up0nx01jqU9pIdiruUZYcddn',cITimeS: '1778366341',cRay: '9f9432a25993780d',cTplB: '0',cTplC:1,cTplO:0,cTplV:5,cType: 'managed',cUPMDTk:"/backend-api/plugins/list?__cf_chl_tk=zocRWmEJIWqTZ.q9Reo78WhQt7MlUoZ9gbCj.yBn84M-1778366341-1.0.1.1-1AdrZ5dGxL4OO6PwlC1hqa2TMpnY2PWxscYI2m5.7po",cvId: '3',cZone: 'chatgpt.com',fa:"/backend-api/plugins/list?__cf_chl_f_tk=zocRWmEJIWqTZ.q9Reo78WhQt7MlUoZ9gbCj.yBn84M-1778366341-1.0.1.1-1AdrZ5dGxL4OO6PwlC1hqa2TMpnY2PWxscYI2m5.7po",md: 'kLW9Y8sDabx8Pqdu6sSdhfThymhC0qKQ9ihY7oWcBy8-1778366341-1.2.1.1-HAioaM74qqEEg0ZRc7bSHNN8nfKKluMfdbICnn9NJLYbSpHS8cEx5d7vUjPg38mnrLYZzdW4yCBrcUbV7XyBtuIF3mYawiXUrQC76nK4XgfcUM2caHWlw1Qurvp1VNCQ62.aFFTlPlXIJZJLP45jTjAmtimgrcELC1fsdV4r0wEV2yhIgtkwHSQ_u8ag_g29YP3dMsZkcpZzZRcc_k.INMv4VBzbniYwbL7rdlM0ktyok52US.dNrRXdf05gbw2FHLLGN0V8dyKxLM2u2VhlC9QZObonrT7oe6BgwwliTBbIkt_bFkfJvpAszqg3VAz5wWJWRSDdC_llMnrvvZMY1DLln5dvSswvWnBiwQ1WaMCITVOesPwR_HTw9HprsTYqXRUleToc55lzp4W_Jzh5Yuk6hd0NqoFoA3crLaZbMoc4jUIgEDn3DEppcspZYFKix8kQZeTJaCtrnAdWXE3JekbWNg9MVojSnpQzbvVctwL8dqEyew9zf8T3joJtMcrXvsKcBqtxdopgIVFAIQI4tnJzUA3GUa.noXW5mpt9F1Fypr7ZV7hfz4wq6avG6bVFzwtojTDdyhjnC3hPlcLo9jYoktqu_skArfMyEZk3oC16Qn3znPM5iGZMwI.XkzAgHxh6qTxpzTl4k9NTLBzhhEI_015.lRIHPvBZFSG_uK6B3yLV2kvFZyyMoV9CZppfSebU58waGZ4Cd7YvuKk7SJkXu5DKgd0xYQkblqOyL5bHwse0PoGX1vPMkN0WMgXHC948QIaDViW0lKLuHtUuoaQ7kAmq2pdPdeuNOAMlC_K96kKVXKdQCmy04_.BmuHCYd.KOVmhvbsAxb20Fzam69MnaQmOwyfHMiVeQTFj1GbF6YyS7iapndxOojB0qeLu1Zg.G81l4ty9zxD0Xy0_BeekJlXaFjfI5X.NTjpk.jykUmRxfx3b6vX0CYGED1md2DDt5J._OqFaeqs35r756NuXOOO1bROedJh4q0j9itACWYtjVJuujg76xcWu2M2wgegfXHG9NyxsfT33FBerFGwOTWr2IK8lqamyfDso25U',mdrd: 'yGaGcLslO0rC2blc3ZoFvKi6M0OAMoNMs9Nze2VEVxM-1778366341-1.2.1.1-Gs_wZj8bUrynWoujm6EwMqw_pF_9uUjDkCNaY01TNyUSPUxdFdhnJMQa4F1Xc4fPFoGEHe4YD.hptfLNR1AsJSVPogy4HBpCvFjkDDxAv_IOKaGpAVS2zITri_9ggY3QkH_y3YsqOgslfTC0GKRCffDweauwpH1UxqDfhtLuvjBTxfZUPk3Jvq_ObItkaSI05VgANX5yawCuZBlCMfg2K2yMKeoiakRw_khAW0jGAcdUjLeOr_roNTY6xtb5nNr1RmPG6txE2a1.QDNHIuySf60AJWbs1ljBn6bPueQbX61SC_dcbGjyFh5PVRtc_9riBmbcwED3KgxdYFUhoTehF_l0tlMkAnrB2h0wSJvlwW.U_JhgSkHwYwjuG8RzncELiiFi9k5FWw_9ZppomeJNibaQje8L7U.7WuyvEoCZJCLia5x1QPpNIgDHEfQo5gb_yD1CAxdiGy2t0DfIk_pZT0XH_tGLoOfaDNuKcndEoVbdPq6Wam4xw0RMZjIuTDf2WtRwvRnhqUDsHifNQKBi2.7HkHto52qPOeAeV7hrBb.8CohJVhHxkOztvK.suCXg.jQLrQA8z4GMivL28evE55aX1jaEuj016W4rEn24mthDfSaTWWfshH9DAvaVfEG.8IJbAdZK84ZfFOKWw.eHm0mmuchJjHdtjzOit6.FfJRfPcr01W8K1TCGhr6CPUnRnC7lry49w9H9EyLYJTouGOanFGuNv_ZccWZT6qF1cphCaEEUUg4s.S7ssqZgVl1Q51i5XQcSLtGguEJeC7toeErEA4r7iKAyG1TBaNCrpdqxWFe3pOJYzqXAJYKgdpeogHAhLeelPo3npYFmckienHsul2EaNP5uTNo_h8SxUwh.j5jfRR6.V1tPHn72CEX8dbloA5x9EmzvuawAU1aH1jiFJKjkT0Sx2BcEI5myHZMF4810hf_Is0TyGrTB_7WJiSaCm8YR5YCh8twQLvLy3.ymxL1F.JaYHjM.HYvyBVD96tO8y5KiTsbdkr.Au343Fe1jtbIb5DJiiJUjXjwT1DcVbPVm7wqjs0mLECCf9cYNnv9w6DExN7jjrHWSjsrj5sZ2V9ik9kW4tgyiM9uuZtn13QcFWu4k9Fr3Cv9YPrz5MBF.Byept4aAL2MfljxkPlumWcTeZKibyIBMTJWt3ywx_lZ0fFlQhnWbrFccBqoACqMQefnoCcjpnKEH7z8M1TCpGOK64QWH_VKjYAWljSRflJdYZx3yuK7_BCW2veKXY1gf4SOSdl2f.L.EM6eYzW.s385uUQvUwHdwm7ttn0TbqTpFbzIBxK8jfztXlsqmzupZ6K0.vy6ZRw28R5CZJ.yXkgmEmIVnebpBGvLUccEWVP2BXKxDLr9_eS2tVJ0hsYcDbPLSwAxe6okAWwHPnvmm1_LCT9kZ9n4qheQsnJ2zxSkRuUR32KuSsbIOWWHD8Wvf1QTRvhRiuLDw_XzjnkYKsUhWKCB.OK3mAuTplLk4LGdJaCCa3Kyrz3kdKD_zgPdDpWF6x6mrk259VmXca6y_19cSbqxLyij7D6SOepQsj9Rq2_OTSNex2xHmrEfUyvIsC7gut9pwUJkvR5ZhvbwIenjfpoJeiMalNb6YSuK5.rNfnvrJxI7_UitM8N7_CfjcbvGuqGJ7PbYLCnWwnW4Us5l46lfLWYngz68TENHk1R0mRDzK1LsNDMRe8n4sykNXcIbNrkY87CVmHHmwBpqtOLmxUaccKgHVaTfUguBNd9hMzFwn8dMk38U.4mVVk9Lw0ZmgAt_aXATzBD37XkA5RedcvmmV4bY3Q5GvsHpoysaXdFGyjZSYc6G4h2Qqo3FuQMj57.maXzz1vg7XO7FUft5JAUhF1LtO00SFxs2..gfdFOltC3TmUzSuXxs9eh7AquPK5gqDib3.IejeSFeyYBe9N2hi3H4X3g0U7sqRBv9Zl4l8CSvojtSfyIcE4ZJl68FBMkOhet.33bK8TDKpef2iu22kxFKkL_cSURxT6CBE.demQYAfai_Q0sG9XIRxvSzBj1tolt1sFV09MxfInVikkkA9Nx7wIIHSB7RMPxXIa5_xBqc4B0XJ8MIXUOD5dRU.IlCOjWCa71H7Jnl3_qqydlb0TyIMXCGiCA7xkcKWED7jYUVCSsX9nxmO_9xE0jtcdjK8UrrTC4abFNPz3ukAnxFJ21JENmW7Hkf.Ts1xL_OdaI7BERGzoKcW9Zt3wWRxsDqbjMtT2HkFanOrKWoO.f9UYlmG89xzfCaPP03IRniDAYHeFvjeJrsxMo9tKTeMZCJ91sl79LQw',};var a = document.createElement('script');a.src = '/cdn-cgi/challenge-platform/h/g/orchestrate/chl_page/v1?ray=9f9432a25993780d';window._cf_chl_opt.cOgUHash = location.hash === '' && location.href.indexOf('#') !== -1 ? '#' : location.hash;window._cf_chl_opt.cOgUQuery = location.search === '' && location.href.slice(0, location.href.length - window._cf_chl_opt.cOgUHash.length).indexOf('?') !== -1 ? '?' : location.search;if (window.history && window.history.replaceState) {var ogU = location.pathname + window._cf_chl_opt.cOgUQuery + window._cf_chl_opt.cOgUHash;history.replaceState(null, null,"/backend-api/plugins/list?__cf_chl_rt_tk=zocRWmEJIWqTZ.q9Reo78WhQt7MlUoZ9gbCj.yBn84M-1778366341-1.0.1.1-1AdrZ5dGxL4OO6PwlC1hqa2TMpnY2PWxscYI2m5.7po"+ window._cf_chl_opt.cOgUHash);a.onload = function() {history.replaceState(null, null, ogU);}}document.getElementsByTagName('head')[0].appendChild(a);}());</script></div>
+    </div>
+  </body>
+</html>
+
+2026-05-09T22:39:01.715316Z  WARN codex_core_plugins::manager: failed to warm featured plugin ids cache error=remote plugin sync request to https://chatgpt.com/backend-api/plugins/featured failed with status 403 Forbidden: <html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style global>body{font-family:Arial,Helvetica,sans-serif}.container{align-items:center;display:flex;flex-direction:column;gap:2rem;height:100%;justify-content:center;width:100%}@keyframes enlarge-appear{0%{opacity:0;transform:scale(75%) rotate(-90deg)}to{opacity:1;transform:scale(100%) rotate(0deg)}}.logo{color:#8e8ea0}.scale-appear{animation:enlarge-appear .4s ease-out}@media (min-width:768px){.scale-appear{height:48px;width:48px}}.data:empty{display:none}.data{border-radius:5px;color:#8e8ea0;text-align:center}@media (prefers-color-scheme:dark){body{background-color:#343541}.logo{color:#acacbe}}</style>
+  <meta http-equiv="refresh" content="360"></head>
+  <body>
+    <div class="container">
+      <div class="logo">
+        <svg
+          width="41"
+          height="41"
+          viewBox="0 0 41 41"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          strokeWidth="2"
+          class="scale-appear"
+        >
+          <path
+            d="M37.5324 16.8707C37.9808 15.5241 38.1363 14.0974 37.9886 12.6859C37.8409 11.2744 37.3934 9.91076 36.676 8.68622C35.6126 6.83404 33.9882 5.3676 32.0373 4.4985C30.0864 3.62941 27.9098 3.40259 25.8215 3.85078C24.8796 2.7893 23.7219 1.94125 22.4257 1.36341C21.1295 0.785575 19.7249 0.491269 18.3058 0.500197C16.1708 0.495044 14.0893 1.16803 12.3614 2.42214C10.6335 3.67624 9.34853 5.44666 8.6917 7.47815C7.30085 7.76286 5.98686 8.3414 4.8377 9.17505C3.68854 10.0087 2.73073 11.0782 2.02839 12.312C0.956464 14.1591 0.498905 16.2988 0.721698 18.4228C0.944492 20.5467 1.83612 22.5449 3.268 24.1293C2.81966 25.4759 2.66413 26.9026 2.81182 28.3141C2.95951 29.7256 3.40701 31.0892 4.12437 32.3138C5.18791 34.1659 6.8123 35.6322 8.76321 36.5013C10.7141 37.3704 12.8907 37.5973 14.9789 37.1492C15.9208 38.2107 17.0786 39.0587 18.3747 39.6366C19.6709 40.2144 21.0755 40.5087 22.4946 40.4998C24.6307 40.5054 26.7133 39.8321 28.4418 38.5772C30.1704 37.3223 31.4556 35.5506 32.1119 33.5179C33.5027 33.2332 34.8167 32.6547 35.9659 31.821C37.115 30.9874 38.0728 29.9178 38.7752 28.684C39.8458 26.8371 40.3023 24.6979 40.0789 22.5748C39.8556 20.4517 38.9639 18.4544 37.5324 16.8707ZM22.4978 37.8849C20.7443 37.8874 19.0459 37.2733 17.6994 36.1501C17.7601 36.117 17.8666 36.0586 17.936 36.0161L25.9004 31.4156C26.1003 31.3019 26.2663 31.137 26.3813 30.9378C26.4964 30.7386 26.5563 30.5124 26.5549 30.2825V19.0542L29.9213 20.998C29.9389 21.0068 29.9541 21.0198 29.9656 21.0359C29.977 21.052 29.9842 21.0707 29.9867 21.0902V30.3889C29.9842 32.375 29.1946 34.2791 27.7909 35.6841C26.3872 37.0892 24.4838 37.8806 22.4978 37.8849ZM6.39227 31.0064C5.51397 29.4888 5.19742 27.7107 5.49804 25.9832C5.55718 26.0187 5.66048 26.0818 5.73461 26.1244L13.699 30.7248C13.8975 30.8408 14.1233 30.902 14.3532 30.902C14.583 30.902 14.8088 30.8408 15.0073 30.7248L24.731 25.1103V28.9979C24.7321 29.0177 24.7283 29.0376 24.7199 29.0556C24.7115 29.0736 24.6988 29.0893 24.6829 29.1012L16.6317 33.7497C14.9096 34.7416 12.8643 35.0097 10.9447 34.4954C9.02506 33.9811 7.38785 32.7263 6.39227 31.0064ZM4.29707 13.6194C5.17156 12.0998 6.55279 10.9364 8.19885 10.3327C8.19885 10.4013 8.19491 10.5228 8.19491 10.6071V19.808C8.19351 20.0378 8.25334 20.2638 8.36823 20.4629C8.48312 20.6619 8.64893 20.8267 8.84863 20.9404L18.5723 26.5542L15.206 28.4979C15.1894 28.5089 15.1703 28.5155 15.1505 28.5173C15.1307 28.5191 15.1107 28.516 15.0924 28.5082L7.04046 23.8557C5.32135 22.8601 4.06716 21.2235 3.55289 19.3046C3.03862 17.3858 3.30624 15.3413 4.29707 13.6194ZM31.955 20.0556L22.2312 14.4411L25.5976 12.4981C25.6142 12.4872 25.6333 12.4805 25.6531 12.4787C25.6729 12.4769 25.6928 12.4801 25.7111 12.4879L33.7631 17.1364C34.9967 17.849 36.0017 18.8982 36.6606 20.1613C37.3194 21.4244 37.6047 22.849 37.4832 24.2684C37.3617 25.6878 36.8382 27.0432 35.9743 28.1759C35.1103 29.3086 33.9415 30.1717 32.6047 30.6641C32.6047 30.5947 32.6047 30.4733 32.6047 30.3889V21.188C32.6066 20.9586 32.5474 20.7328 32.4332 20.5338C32.319 20.3348 32.154 20.1698 31.955 20.0556ZM35.3055 15.0128C35.2464 14.9765 35.1431 14.9142 35.069 14.8717L27.1045 10.2712C26.906 10.1554 26.6803 10.0943 26.4504 10.0943C26.2206 10.0943 25.9948 10.1554 25.7963 10.2712L16.0726 15.8858V11.9982C16.0715 11.9783 16.0753 11.9585 16.0837 11.9405C16.0921 11.9225 16.1048 11.9068 16.1207 11.8949L24.1719 7.25025C25.4053 6.53903 26.8158 6.19376 28.2383 6.25482C29.6608 6.31589 31.0364 6.78077 32.2044 7.59508C33.3723 8.40939 34.2842 9.53945 34.8334 10.8531C35.3826 12.1667 35.5464 13.6095 35.3055 15.0128ZM14.2424 21.9419L10.8752 19.9981C10.8576 19.9893 10.8423 19.9763 10.8309 19.9602C10.8195 19.9441 10.8122 19.9254 10.8098 19.9058V10.6071C10.8107 9.18295 11.2173 7.78848 11.9819 6.58696C12.7466 5.38544 13.8377 4.42659 15.1275 3.82264C16.4173 3.21869 17.8524 2.99464 19.2649 3.1767C20.6775 3.35876 22.0089 3.93941 23.1034 4.85067C23.0427 4.88379 22.937 4.94215 22.8668 4.98473L14.9024 9.58517C14.7025 9.69878 14.5366 9.86356 14.4215 10.0626C14.3065 10.2616 14.2466 10.4877 14.2479 10.7175L14.2424 21.9419ZM16.071 17.9991L20.4018 15.4978L24.7325 17.9975V22.9985L20.4018 25.4983L16.071 22.9985V17.9991Z"
+            fill="currentColor"
+          />
+        </svg>
+      </div>
+      <div class="data"><div class="main-wrapper" role="main"><div class="main-content"><noscript><div class="h2"><span id="challenge-error-text">Enable JavaScript and cookies to continue</span></div></noscript></div></div><script>(function(){window._cf_chl_opt = {cFPWv: 'g',cH: '_v1k1oTvSUueWEi5u9vYjHqTEuA_JOPJGTO7eSIeF7A-1778366341-1.2.1.1-xMt1juwHM7touiW4k_PWCeAVtmyNDJc4y1ZCfotFQnmHFdaBbybZER2ZPWxmeLil',cITimeS: '1778366341',cRay: '9f9432a26b97ea14',cTplB: '0',cTplC:1,cTplO:0,cTplV:5,cType: 'managed',cUPMDTk:"/backend-api/plugins/featured?platform=codex&__cf_chl_tk=9DokXhZLwkcuWu1tdBKZAexO9jRAG2.J8GyrbPIU7Zg-1778366341-1.0.1.1-IJlqHm4tep2CPUW.ILe2GPOYLidYc25Fe09H.sCXsO4",cvId: '3',cZone: 'chatgpt.com',fa:"/backend-api/plugins/featured?platform=codex&__cf_chl_f_tk=9DokXhZLwkcuWu1tdBKZAexO9jRAG2.J8GyrbPIU7Zg-1778366341-1.0.1.1-IJlqHm4tep2CPUW.ILe2GPOYLidYc25Fe09H.sCXsO4",md: 'jW.pbRwI4R7T7vlwHe9VlAZqbPzGb3d9HT6rHUd0Hpg-1778366341-1.2.1.1-zCH0BR_2LrlZVRAG46IBZBAkKgkFVVXlTlfKKKlrM.kxr8UbhNAovYu2BWjMbjNyb0NbiEBFj_nBBkBiKkE_l.BZ0sQ9VeVgae1wkIPBmRNqhjP9Mbv2YlptvDpBzVSmG4oVD9nRuWn6c5lynMTiJ2g51bBHWYts7DyNNlLozS277y5BzZdLMjquh9PtgiZZRwvpEWbAi8EAsL5CqBwsU3uHyumaVH9PlEBlxBllK34gimhTS9fCP50bJF06im68v09xsDTEGH92vcVuCZ8Tro8Tu46tYDI.ut8nXaarn0KHGenQX0cjSXDiuVB6mNc0oHKa_xMBcgzmw0XjR6w7yspkxPhZYtI4xIEbk688ubyjaSBQwz2.fqx61EiX9.radMmkYYGfbDsBkTOB5cQatOWe.PM9Rjjms37lifUYzMjaDhmT4AVxyyGR0ASrMJ3sdzhoZhrB.NdbY.Z5VRWZuKU8ZIGdcBmtF6rw5rC16jk4NdIn6qbMAUzdEvnob5kun4yOqcUMmpEjrStnrJeT7lsUCVeThuczKIBs0Gz98rKzdSxFdpp1PcToG8Ej_ZjB_UnjqyMH7HLR59c8HzD236mgPB9OuCkGAG1rEYy56JaH8lB9E1jaARN0OSH0JAaZy_dT8I4UiWEIBouWQMrAU0NQbNs6vyBDgS2yRyLfs9X.yCD8RGdQsFyfo6XfXQGHEdwFfu0CMXC.emby1KWNDMk_NZyY3jL8OEHXE3RYnprhURzlZTFRFMfVjaKQTp3LZfTb67IG1N8hY8btuczGV1Z9b7WeSWLiFrEnqdUWebL8cPrfPIwhMM8OHRPmfQx1wnKHojwKCWg3vO5fYkunkVcG6Xdb663.H1Yx4jCfh5IhZDAYRfY6ZP1dXeEGaMbBZvwzaLXgK1mZZza6GptJeJjvTj.G7sGhe4Wh_DfclERZ_Ou0ynsnW9h6eiAtT432Sf3.XDfrqugzW94J3Us5Qs0uNSaN_G2TUM9x6v.xjHwPLhtmqU0rUhYqJHAYqKgc..aB_zQEYjSx_8.LiBd8LTIAWg_A7INZm12P2oXEUOKqFoA3DcatdVv25L3tyJ21',mdrd: 'e0A3h2Q2Pc1f.EgHLGSNDhZJx9eVjokuo0g71e.GasU-1778366341-1.2.1.1-BaFSVzz03hlQv2SZIwOxBaSQf2hvGZkT_ftg_LW0JTpEdxDPqohmvfgTut8azQHi.luAHPZXY1wAz9G2B7_sPRYaoiivDRw1jg4MBo1qwIqfQ.tltOkLKM1g.7akMjbwzvbv.bR2wy6xWPGHlt1DOjjuLbXdm5w71XFXKZodt4HYLUDaU.7hE_cRsvz7r2UGtS7MEypbefJYBWP0OTpuNbtpTWHIgCBxj96LBKPUb7vUkX6MMbDp6fXTwsfWyIi9KdzaJZXD9OEIoXdrYt7BgBWuC0IC1fc._b.PS0G27J5Nn_xrRLbJL_XlKy2DrYlm6DIlJOcq4SMws8lxW_IY5QtadqbXIME65C_WVHG0kQ_86PHZbWalhFJNZON4ZkdWXfnj4vq9a4DlJAPu7EVliPLBGavoD5h7Y._O70y0WyEAUe8L_ywJdd1vKoi4rraNC_ZSVZnx4nWEaRiv0IqU4uU8UOzOVkoQHSnyiKE3Py.GfSjrNWu5_h1swXyf6hXF9DamBtZZgeEUEgpvj6djRc.efTbA7StUvGTJdf8IiT3bCTzsuH9bORKivIbtH89Ix_tgzBowV53Yc4wmEZoObCTei.4Tf1lV9iJ.7Nb4.Q.BDD.Kt4sCba5xFTxG4nLZncppa.TlFica.irkXzm4CQGsgoAdGCEoO9u3lboLVC0FWyVKsk4tFE0i8NzxfSO_zhN8BlKaOdqKa7tSYO4LSOFvY8yuIR85Y41pE.DMe_8_EjsGMDHNIvYr.wQgXM2N2Zhqm5mOvLkrD2BS2_toi_Mxd_qYq0janQVrwJBHZngwMJkPOkEqasGpk9CXZZY9gF3zrerZdrpCyX42ll.4Mp2w8BIc3C6JMDvLMjqhEVyyN81NXzKVF6UKjMjvgmmXByLBIVgx_xcwhs5tF4ACoKntFtedPZbpRjSxGAtn8jnk00PEsKbXOs9MkLF7olB2vsbuSqOEol8yPX4euNuZYZoDGyoSNFJm4wC5INq3u8v07Y9c.y0P4KAhCdEeg2VJb3NGifH.g06VHzfiR3r2IN9_myQvj1xCxOt6Hk23uss5HjfIyCkbtEXqUZCP.4lAZA1CRiyvwfNijTPTqIypZX8M3Mpn4JGQCL0iLjrIXFV6HLxEclP0lFJWWUXeXj_2HmO1MIcQRdf.A1qNcas1mqufRjEns5dGPe1Cnpcri727WQvh9t.pHZwvpFBYl6dnZfpIZ03wHxW6VF64OC414_KIwYQW_5heZC5R1PR7qgVl6tsMQCFIvQNy1jqbXL2IcrzUwIC5PoEjwN8R2F5z7bL3GNfmUcimOSg4CuDAmogoxSVvWZa4pB_J6HL3BJNni0JCPCjzgMjoHQrHrkKyicQSlafabihRgKfA_BQX50ahwoZlBj6RpWS2Y9wb1hlJgUK72XDtFBuj9nTaRiudWUoMI_9MiI1qWLDT2.V9OxVwwh2R2ZUs5BwyePIZ5Vge39b4176t6Iv7E34.ZAOlFFxIGqwpkbhL_C.wuISua0I9KUGjmJBuZGvymjyReM.g8IkSQZew7UDHswNFpogjMCe9WOfE2aaDSvLY2zVe9iXOwvhvvlYMFesOOfVcoBhWJujJq7430Xfc9NFv7rflEPiCxXUQBSzp1Jx9IdPkdkrM9lreUARbETaxvDSPtm6out0zYIpWBCbxkUEQE7Fn7L16pgDgrzh0rZM4GGE2zdnqBNHtBrdiN9b7kM35jlh1XZFant6.tANnhKaZcY.ZUgNrPNe8K2mNa_4TOqC3mHfQoYl17nONpEpILF14s.Nt2JdVVbK8jpmdx0PXTvpcS.S42nTMo4mgoVXosUWCNM9sJ8aB7WguZwzRMG4JYmZHOc.t3b1iBCG5P9XYKhSAcbEXwS2IqhBCg4Shmzv5Syu23rO3HpK4jV_l5wL9N7Sq0txngf8ZhVF3yAOPNl8bXKjv0rHmsBGBSNXCQWoX8YEw8gK8LhCepZocKMUQb_uUlwnGz0_aULAP7F7CQ5TrAnaVSC6YVQ9537wQ7chEG7yoa7nnq4VUOz72nNMoiwPTbQAXmVfP8Kz1_peba1PGhjLU4imawPCA.4.NctljDCOmcxtD7iTuYXkA3QjYl4M6lZlWHiB62cXodebqE8iBKnlCYmJjPlmr2gtZ0Fe7qEhDZhRnEWXTIZaLS009Bf9hUrNgrvSg0FFRxUvvuOCIHQz.HJHpYVoVAlL2A4Z8.bFmCdmj_1deE_5xYn7YL9WVwMnFuoojcUwlYisSgIkPtBNu58SPk6x2I7lMh.6ibgY',};var a = document.createElement('script');a.src = '/cdn-cgi/challenge-platform/h/g/orchestrate/chl_page/v1?ray=9f9432a26b97ea14';window._cf_chl_opt.cOgUHash = location.hash === '' && location.href.indexOf('#') !== -1 ? '#' : location.hash;window._cf_chl_opt.cOgUQuery = location.search === '' && location.href.slice(0, location.href.length - window._cf_chl_opt.cOgUHash.length).indexOf('?') !== -1 ? '?' : location.search;if (window.history && window.history.replaceState) {var ogU = location.pathname + window._cf_chl_opt.cOgUQuery + window._cf_chl_opt.cOgUHash;history.replaceState(null, null,"/backend-api/plugins/featured?platform=codex&__cf_chl_rt_tk=9DokXhZLwkcuWu1tdBKZAexO9jRAG2.J8GyrbPIU7Zg-1778366341-1.0.1.1-IJlqHm4tep2CPUW.ILe2GPOYLidYc25Fe09H.sCXsO4"+ window._cf_chl_opt.cOgUHash);a.onload = function() {history.replaceState(null, null, ogU);}}document.getElementsByTagName('head')[0].appendChild(a);}());</script></div>
+    </div>
+  </body>
+</html>
+
+2026-05-09T22:39:02.912695Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=C:\Users\samsung\.codex\.tmp\plugins\plugins\build-ios-apps\.codex-plugin/plugin.json
+2026-05-09T22:39:02.916803Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\plugin-eval\.codex-plugin/plugin.json
+2026-05-09T22:39:02.953312Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\twilio-developer-kit\.codex-plugin/plugin.json
+2026-05-09T22:39:02.953840Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-09T22:39:04.690618Z  WARN codex_core::shell_snapshot: Failed to create shell snapshot for powershell: Shell snapshot not supported yet for PowerShell
+OpenAI Codex v0.130.0-alpha.5
+--------
+workdir: C:\Users\samsung\StudioProjects\semisemifinal
+model: gpt-5.5
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, C:\Users\samsung\.codex\memories] (network access enabled)
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 019e0ee4-edb8-73b1-a447-83e000921b80
+--------
+user
+# Visual Verdict Distribution Audit Prompt
+
+Seolleyeon is a university-only, trust-based relationship platform. It is not a lightweight dating app. These are synthetic profile assets for cold-start preference learning. Images must look like realistic adult Korean university student profile photos, must support Quiet Romance / Clear Trust, and must not feel like dating-app face-rating game assets.
+
+## Canonical Hard Reject List
+
+Reject if:
+
+- appears under 20
+- childlike or teenager-like
+- school uniform
+- idol trainee styling
+- celebrity lookalike
+- influencer photoshoot
+- glamour studio lighting
+- nightclub / party / neon / bar / luxury hotel mood
+- sexualized styling
+- revealing outfit / swimsuit / lingerie
+- heavy beauty filter
+- plastic skin
+- distorted face
+- distorted hands / fingers / arms / legs / body
+- unrealistic body proportions
+- visible school logo
+- readable university name
+- brand logo
+- watermark
+- generated text inside image
+- image feels like a dating-app face-rating game asset
+
+Hard reject or exclude any identity containing an asset where the person appears under 20, childlike or teenager-like, wears a school uniform, uses idol trainee styling, resembles a celebrity lookalike, looks like an influencer photoshoot, uses glamour studio lighting, has nightclub / party / neon / bar / luxury hotel mood, includes sexualized styling, revealing outfit, swimsuit, lingerie, heavy beauty filter, plastic skin, distorted face, distorted hands / fingers / arms / legs / body, unrealistic body proportions, visible school logo, readable university name, brand logo, watermark, generated text inside image, or feels like a dating-app face-rating game asset.
+
+Do not approve the final dataset based on generated image count, raw image count, or the existence of 720 files. Final approval requires exact approved complete identity counts, exact identity-level distribution, zero over-level `4.4-5.0` approved identities, and no invalid identities.
+
+You are `$visual-verdict` performing the final visual and manifest distribution audit for the Seolleyeon AI profile image dataset.
+
+Seolleyeon is a university-only, trust-based relationship platform. Count only realistic adult Korean university student profile identities that passed asset QA and identity QA.
+
+Return strict JSON only. Do not include markdown, comments, explanations, code fences, or trailing text.
+
+## Counting Rules
+
+Count distribution at identity level, not image level.
+
+An identity counts only when all conditions are true:
+
+- `completeIdentityDecision` is `approved`.
+- `countsTowardDistribution` is true.
+- `face_card`, `silhouette_card`, and `vibe_card` all exist.
+- all three assets are approved.
+- same-person identity consistency passed.
+- no metadata mismatch remains unresolved.
+- no visual bucket ambiguity remains unresolved.
+- `observedLooksLevelBand` is not `4.4-5.0`.
+
+Do not count `needs_review`, rejected, metadata mismatch, unresolved bucket mismatch, inactive reserve, missing-shot, or over-level identities.
+
+## Exact Targets
+
+Final target:
+
+- approved complete identities: 240
+- approved images: 720
+- female approved complete identities: 120
+- male approved complete identities: 120
+
+Global faceType targets:
+
+- `cat_like`: 34
+- `dog_like`: 38
+- `hamster_like`: 24
+- `bear_like`: 29
+- `fox_like`: 29
+- `deer_like`: 43
+- `horse_like`: 19
+- `mixed_neutral`: 24
+
+Female faceType targets:
+
+- `cat_like`: 17
+- `dog_like`: 19
+- `hamster_like`: 12
+- `bear_like`: 15
+- `fox_like`: 14
+- `deer_like`: 22
+- `horse_like`: 9
+- `mixed_neutral`: 12
+
+Male faceType targets:
+
+- `cat_like`: 17
+- `dog_like`: 19
+- `hamster_like`: 12
+- `bear_like`: 14
+- `fox_like`: 15
+- `deer_like`: 21
+- `horse_like`: 10
+- `mixed_neutral`: 12
+
+Global looksLevelBand targets:
+
+- `1.5-2.4`: 36
+- `2.5-3.2`: 108
+- `3.3-3.8`: 72
+- `3.9-4.3`: 24
+- `4.4-5.0`: 0
+
+Female looksLevelBand targets:
+
+- `1.5-2.4`: 18
+- `2.5-3.2`: 54
+- `3.3-3.8`: 36
+- `3.9-4.3`: 12
+- `4.4-5.0`: 0
+
+Male looksLevelBand targets:
+
+- `1.5-2.4`: 18
+- `2.5-3.2`: 54
+- `3.3-3.8`: 36
+- `3.9-4.3`: 12
+- `4.4-5.0`: 0
+
+## Required JSON Schema
+
+Return exactly one JSON object with this shape:
+
+```json
+{
+  "qaType": "seolleyeon_visual_verdict_distribution_v3",
+  "finalDecision": "approved|needs_more_generation|needs_manual_review|rejected",
+  "approvedCompleteIdentityCount": 0,
+  "approvedImageCount": 0,
+  "femaleApprovedIdentityCount": 0,
+  "maleApprovedIdentityCount": 0,
+  "globalFaceTypeCounts": {},
+  "globalFaceTypeDeficits": {},
+  "globalFaceTypeSurpluses": {},
+  "genderFaceTypeCounts": {
+    "female": {},
+    "male": {}
+  },
+  "genderFaceTypeDeficits": {
+    "female": {},
+    "male": {}
+  },
+  "genderFaceTypeSurpluses": {
+    "female": {},
+    "male": {}
+  },
+  "globalLooksLevelBandCounts": {},
+  "globalLooksLevelBandDeficits": {},
+  "globalLooksLevelBandSurpluses": {},
+  "genderLooksLevelBandCounts": {
+    "female": {},
+    "male": {}
+  },
+  "genderLooksLevelBandDeficits": {
+    "female": {},
+    "male": {}
+  },
+  "genderLooksLevelBandSurpluses": {
+    "female": {},
+    "male": {}
+  },
+  "invalidIdentities": [
+    {
+      "profileId": "string",
+      "reason": "string",
+      "recommendedAction": "retry|replace_with_reserve|manual_review|remove"
+    }
+  ],
+  "nextGenerationDirective": {
+    "shouldGenerateMore": true,
+    "targetBuckets": [
+      {
+        "gender": "female|male",
+        "faceType": "cat_like|dog_like|hamster_like|bear_like|fox_like|deer_like|horse_like|mixed_neutral",
+        "looksLevelBand": "1.5-2.4|2.5-3.2|3.3-3.8|3.9-4.3",
+        "neededIdentities": 0,
+        "priority": "high|medium|low"
+      }
+    ],
+    "stopGeneratingBuckets": [
+      {
+        "gender": "female|male|any",
+        "faceType": "string",
+        "looksLevelBand": "string",
+        "reason": "quota_full|surplus|over_level_risk"
+      }
+    ]
+  },
+  "notes": "short summary"
+}
+```
+
+All count maps must include every target bucket, even when the value is `0`.
+
+## Deficits And Surpluses
+
+For each bucket:
+
+- `count` is the number of approved complete identities that count toward distribution.
+- `deficit = max(0, target - count)`.
+- `surplus = max(0, count - target)`.
+
+Never create a `targetBuckets` entry for `4.4-5.0`. The target for `4.4-5.0` is always `0`.
+
+Add `stopGeneratingBuckets` entries when:
+
+- a bucket has no deficit.
+- a bucket has surplus.
+- the looks level band is `4.4-5.0`.
+
+## Next Generation Directive
+
+Set `nextGenerationDirective.shouldGenerateMore=true` when any valid deficit exists.
+
+`targetBuckets` must include only deficit buckets that are allowed for generation:
+
+- `gender` must be `female` or `male`.
+- `faceType` must be one of the eight approved face types.
+- `looksLevelBand` must be one of `1.5-2.4`, `2.5-3.2`, `3.3-3.8`, `3.9-4.3`.
+- `neededIdentities` must be the number of identities still needed for that gender + faceType + looksLevelBand combination.
+
+Use priority:
+
+- `high` for large deficits or buckets blocking gender-level targets.
+- `medium` for moderate deficits.
+- `low` for small deficits.
+
+## Invalid Identities
+
+Add an `invalidIdentities` item for any identity that should not count because of:
+
+- missing shot
+- any asset not approved
+- same-person identity mismatch
+- visual bucket ambiguity
+- metadata mismatch
+- observed `4.4-5.0`
+- hard reject or brand/safety violation
+- unresolved manual review
+
+Use `recommendedAction`:
+
+- `retry` for bad or missing individual shots.
+- `replace_with_reserve` for identity-level failure or exhausted retries.
+- `manual_review` for ambiguity or audit disagreement.
+- `remove` for unsafe, off-brand, or unusable identity groups.
+
+## Final Decision Rules
+
+Set `finalDecision` to `approved` only if all of these are true:
+
+- `approvedCompleteIdentityCount = 240`
+- `approvedImageCount = 720`
+- `femaleApprovedIdentityCount = 120`
+- `maleApprovedIdentityCount = 120`
+- every global faceType count exactly matches target
+- every gender faceType count exactly matches target
+- every global looksLevelBand count exactly matches target
+- every gender looksLevelBand count exactly matches target
+- `4.4-5.0` count is `0` globally and for each gender
+- `invalidIdentities` is empty
+
+Set `finalDecision` to `needs_more_generation` if valid deficits exist and there is no blocking ambiguity.
+
+Set `finalDecision` to `needs_manual_review` if visual bucket ambiguity, metadata mismatch, Python/visual audit disagreement, or unresolved review prevents exact counting.
+
+Set `finalDecision` to `rejected` if systemic safety violations, systemic brand violations, widespread under-20/childlike appearances, or widespread non-realistic/influencer/idol-style assets are present.
+
+The final set is approved only when every exact count matches. Do not approve partial completion.
+
+
+ACTIVE CODEX DISTRIBUTION AUDIT INSTRUCTIONS:
+Return strict JSON only. Numeric distribution audit is the final numeric authority. If visual evidence is insufficient, use finalDecision=needs_manual_review. If the dataset is incomplete, use finalDecision=needs_more_generation.
+
+sheetId: e2e_bounded_20260509T222831Z__chunk_001
+sheetPath: C:\Users\samsung\StudioProjects\semisemifinal\ai_image\reports\chunks\e2e_bounded_20260509T222831Z\contact_sheets\chunk_001.png
+distributionSummary: {"numericAudit": {"schemaVersion": "seolleyeon_ai_image_distribution_audit_v3", "targetsPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/config/AI_IMAGE_DISTRIBUTION_TARGETS_V3.json", "countingUnit": "identity", "approvedCompleteIdentityCount": 1, "approvedImageCount": 3, "femaleApprovedIdentityCount": 1, "maleApprovedIdentityCount": 0, "globalFaceTypeCounts": {"cat_like": 0, "dog_like": 0, "hamster_like": 0, "bear_like": 1, "fox_like": 0, "deer_like": 0, "horse_like": 0, "mixed_neutral": 0}, "globalFaceTypeDeficits": {"cat_like": 34, "dog_like": 38, "hamster_like": 24, "bear_like": 28, "fox_like": 29, "deer_like": 43, "horse_like": 19, "mixed_neutral": 24}, "globalFaceTypeSurpluses": {"cat_like": 0, "dog_like": 0, "hamster_like": 0, "bear_like": 0, "fox_like": 0, "deer_like": 0, "horse_like": 0, "mixed_neutral": 0}, "genderFaceTypeCounts": {"female": {"cat_like": 0, "dog_like": 0, "hamster_like": 0, "bear_like": 1, "fox_like": 0, "deer_like": 0, "horse_like": 0, "mixed_neutral": 0}, "male": {"cat_like": 0, "dog_like": 0, "hamster_like": 0, "bear_like": 0, "fox_like": 0, "deer_like": 0, "horse_like": 0, "mixed_neutral": 0}}, "genderFaceTypeDeficits": {"female": {"cat_like": 17, "dog_like": 19, "hamster_like": 12, "bear_like": 14, "fox_like": 14, "deer_like": 22, "horse_like": 9, "mixed_neutral": 12}, "male": {"cat_like": 17, "dog_like": 19, "hamster_like": 12, "bear_like": 14, "fox_like": 15, "deer_like": 21, "horse_like": 10, "mixed_neutral": 12}}, "genderFaceTypeSurpluses": {"female": {"cat_like": 0, "dog_like": 0, "hamster_like": 0, "bear_like": 0, "fox_like": 0, "deer_like": 0, "horse_like": 0, "mixed_neutral": 0}, "male": {"cat_like": 0, "dog_like": 0, "hamster_like": 0, "bear_like": 0, "fox_like": 0, "deer_like": 0, "horse_like": 0, "mixed_neutral": 0}}, "globalLooksLevelBandCounts": {"1.5-2.4": 0, "2.5-3.2": 1, "3.3-3.8": 0, "3.9-4.3": 0, "4.4-5.0": 0}, "globalLooksLevelBandDeficits": {"1.5-2.4": 36, "2.5-3.2": 107, "3.3-3.8": 72, "3.9-4.3": 24, "4.4-5.0": 0}, "globalLooksLevelBandSurpluses": {"1.5-2.4": 0, "2.5-3.2": 0, "3.3-3.8": 0, "3.9-4.3": 0, "4.4-5.0": 0}, "genderLooksLevelBandCounts": {"female": {"1.5-2.4": 0, "2.5-3.2": 1, "3.3-3.8": 0, "3.9-4.3": 0, "4.4-5.0": 0}, "male": {"1.5-2.4": 0, "2.5-3.2": 0, "3.3-3.8": 0, "3.9-4.3": 0, "4.4-5.0": 0}}, "genderLooksLevelBandDeficits": {"female": {"1.5-2.4": 18, "2.5-3.2": 53, "3.3-3.8": 36, "3.9-4.3": 12, "4.4-5.0": 0}, "male": {"1.5-2.4": 18, "2.5-3.2": 54, "3.3-3.8": 36, "3.9-4.3": 12, "4.4-5.0": 0}}, "genderLooksLevelBandSurpluses": {"female": {"1.5-2.4": 0, "2.5-3.2": 0, "3.3-3.8": 0, "3.9-4.3": 0, "4.4-5.0": 0}, "male": {"1.5-2.4": 0, "2.5-3.2": 0, "3.3-3.8": 0, "3.9-4.3": 0, "4.4-5.0": 0}}, "approvedCompleteIdentities": 1, "approvedImages": 3, "femaleApprovedCompleteIdentities": 1, "maleApprovedCompleteIdentities": 0, "countChecks": {"approvedCompleteIdentities": {"target": 240, "current": 1, "deficit": 239, "surplus": 0, "exactMatch": false}, "approvedImages": {"target": 720, "current": 3, "deficit": 717, "surplus": 0, "exactMatch": false}, "femaleApprovedIdentities": {"target": 120, "current": 1, "deficit": 119, "surplus": 0, "exactMatch": false}, "maleApprovedIdentities": {"target": 120, "current": 0, "deficit": 120, "surplus": 0, "exactMatch": false}}, "bucketChecks": [{"scope": "global", "dimension": "faceType", "bucket": "cat_like", "target": 34, "current": 0, "deficit": 34, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "global", "dimension": "faceType", "bucket": "dog_like", "target": 38, "current": 0, "deficit": 38, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "global", "dimension": "faceType", "bucket": "hamster_like", "target": 24, "current": 0, "deficit": 24, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "global", "dimension": "faceType", "bucket": "bear_like", "target": 29, "current": 1, "deficit": 28, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "global", "dimension": "faceType", "bucket": "fox_like", "target": 29, "current": 0, "deficit": 29, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "global", "dimension": "faceType", "bucket": "deer_like", "target": 43, "current": 0, "deficit": 43, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "global", "dimension": "faceType", "bucket": "horse_like", "target": 19, "current": 0, "deficit": 19, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "global", "dimension": "faceType", "bucket": "mixed_neutral", "target": 24, "current": 0, "deficit": 24, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "global", "dimension": "looksLevelBand", "bucket": "1.5-2.4", "target": 36, "current": 0, "deficit": 36, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "global", "dimension": "looksLevelBand", "bucket": "2.5-3.2", "target": 108, "current": 1, "deficit": 107, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "global", "dimension": "looksLevelBand", "bucket": "3.3-3.8", "target": 72, "current": 0, "deficit": 72, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "global", "dimension": "looksLevelBand", "bucket": "3.9-4.3", "target": 24, "current": 0, "deficit": 24, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "global", "dimension": "looksLevelBand", "bucket": "4.4-5.0", "target": 0, "current": 0, "deficit": 0, "surplus": 0, "exactMatch": true, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "female", "dimension": "faceType", "bucket": "cat_like", "target": 17, "current": 0, "deficit": 17, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "female", "dimension": "faceType", "bucket": "dog_like", "target": 19, "current": 0, "deficit": 19, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "female", "dimension": "faceType", "bucket": "hamster_like", "target": 12, "current": 0, "deficit": 12, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "female", "dimension": "faceType", "bucket": "bear_like", "target": 15, "current": 1, "deficit": 14, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "female", "dimension": "faceType", "bucket": "fox_like", "target": 14, "current": 0, "deficit": 14, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "female", "dimension": "faceType", "bucket": "deer_like", "target": 22, "current": 0, "deficit": 22, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "female", "dimension": "faceType", "bucket": "horse_like", "target": 9, "current": 0, "deficit": 9, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "female", "dimension": "faceType", "bucket": "mixed_neutral", "target": 12, "current": 0, "deficit": 12, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "female", "dimension": "looksLevelBand", "bucket": "1.5-2.4", "target": 18, "current": 0, "deficit": 18, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "female", "dimension": "looksLevelBand", "bucket": "2.5-3.2", "target": 54, "current": 1, "deficit": 53, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "female", "dimension": "looksLevelBand", "bucket": "3.3-3.8", "target": 36, "current": 0, "deficit": 36, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "female", "dimension": "looksLevelBand", "bucket": "3.9-4.3", "target": 12, "current": 0, "deficit": 12, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "female", "dimension": "looksLevelBand", "bucket": "4.4-5.0", "target": 0, "current": 0, "deficit": 0, "surplus": 0, "exactMatch": true, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "male", "dimension": "faceType", "bucket": "cat_like", "target": 17, "current": 0, "deficit": 17, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "male", "dimension": "faceType", "bucket": "dog_like", "target": 19, "current": 0, "deficit": 19, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "male", "dimension": "faceType", "bucket": "hamster_like", "target": 12, "current": 0, "deficit": 12, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "male", "dimension": "faceType", "bucket": "bear_like", "target": 14, "current": 0, "deficit": 14, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "male", "dimension": "faceType", "bucket": "fox_like", "target": 15, "current": 0, "deficit": 15, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "male", "dimension": "faceType", "bucket": "deer_like", "target": 21, "current": 0, "deficit": 21, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "male", "dimension": "faceType", "bucket": "horse_like", "target": 10, "current": 0, "deficit": 10, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "male", "dimension": "faceType", "bucket": "mixed_neutral", "target": 12, "current": 0, "deficit": 12, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "male", "dimension": "looksLevelBand", "bucket": "1.5-2.4", "target": 18, "current": 0, "deficit": 18, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "male", "dimension": "looksLevelBand", "bucket": "2.5-3.2", "target": 54, "current": 0, "deficit": 54, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "male", "dimension": "looksLevelBand", "bucket": "3.3-3.8", "target": 36, "current": 0, "deficit": 36, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "male", "dimension": "looksLevelBand", "bucket": "3.9-4.3", "target": 12, "current": 0, "deficit": 12, "surplus": 0, "exactMatch": false, "updatedAt": "2026-05-09T22:39:00+00:00"}, {"scope": "male", "dimension": "looksLevelBand", "bucket": "4.4-5.0", "target": 0, "current": 0, "deficit": 0, "surplus": 0, "exactMatch": true, "updatedAt": "2026-05-09T22:39:00+00:00"}], "forbiddenBuckets": [{"gender": "female", "faceType": "any", "looksLevelBand": "4.4-5.0", "reason": "over_level_risk"}, {"gender": "male", "faceType": "any", "looksLevelBand": "4.4-5.0", "reason": "over_level_risk"}], "nextTargetBuckets": [{"gender": "male", "faceType": "deer_like", "looksLevelBand": "2.5-3.2", "neededIdentities": 21, "combinedDeficit": 345, "priority": "high"}, {"gender": "female", "faceType": "deer_like", "looksLevelBand": "2.5-3.2", "neededIdentities": 22, "combinedDeficit": 344, "priority": "high"}, {"gender": "male", "faceType": "dog_like", "looksLevelBand": "2.5-3.2", "neededIdentities": 19, "combinedDeficit": 338, "priority": "high"}, {"gender": "female", "faceType": "dog_like", "looksLevelBand": "2.5-3.2", "neededIdentities": 19, "combinedDeficit": 336, "priority": "high"}, {"gender": "male", "faceType": "cat_like", "looksLevelBand": "2.5-3.2", "neededIdentities": 17, "combinedDeficit": 332, "priority": "high"}, {"gender": "female", "faceType": "cat_like", "looksLevelBand": "2.5-3.2", "neededIdentities": 17, "combinedDeficit": 330, "priority": "high"}, {"gender": "male", "faceType": "fox_like", "looksLevelBand": "2.5-3.2", "neededIdentities": 15, "combinedDeficit": 325, "priority": "high"}, {"gender": "male", "faceType": "bear_like", "looksLevelBand": "2.5-3.2", "neededIdentities": 14, "combinedDeficit": 323, "priority": "high"}, {"gender": "female", "faceType": "fox_like", "looksLevelBand": "2.5-3.2", "neededIdentities": 14, "combinedDeficit": 322, "priority": "high"}, {"gender": "female", "faceType": "bear_like", "looksLevelBand": "2.5-3.2", "neededIdentities": 14, "combinedDeficit": 321, "priority": "high"}, {"gender": "male", "faceType": "hamster_like", "looksLevelBand": "2.5-3.2", "neededIdentities": 12, "combinedDeficit": 317, "priority": "high"}, {"gender": "male", "faceType": "mixed_neutral", "looksLevelBand": "2.5-3.2", "neededIdentities": 12, "combinedDeficit": 317, "priority": "high"}, {"gender": "female", "faceType": "hamster_like", "looksLevelBand": "2.5-3.2", "neededIdentities": 12, "combinedDeficit": 315, "priority": "high"}, {"gender": "female", "faceType": "mixed_neutral", "looksLevelBand": "2.5-3.2", "neededIdentities": 12, "combinedDeficit": 315, "priority": "high"}, {"gender": "male", "faceType": "horse_like", "looksLevelBand": "2.5-3.2", "neededIdentities": 10, "combinedDeficit": 310, "priority": "high"}, {"gender": "female", "faceType": "horse_like", "looksLevelBand": "2.5-3.2", "neededIdentities": 9, "combinedDeficit": 307, "priority": "high"}, {"gender": "female", "faceType": "deer_like", "looksLevelBand": "3.3-3.8", "neededIdentities": 22, "combinedDeficit": 292, "priority": "high"}, {"gender": "male", "faceType": "deer_like", "looksLevelBand": "3.3-3.8", "neededIdentities": 21, "combinedDeficit": 292, "priority": "high"}, {"gender": "male", "faceType": "dog_like", "looksLevelBand": "3.3-3.8", "neededIdentities": 19, "combinedDeficit": 285, "priority": "high"}, {"gender": "female", "faceType": "dog_like", "looksLevelBand": "3.3-3.8", "neededIdentities": 19, "combinedDeficit": 284, "priority": "high"}, {"gender": "male", "faceType": "cat_like", "looksLevelBand": "3.3-3.8", "neededIdentities": 17, "combinedDeficit": 279, "priority": "high"}, {"gender": "female", "faceType": "cat_like", "looksLevelBand": "3.3-3.8", "neededIdentities": 17, "combinedDeficit": 278, "priority": "high"}, {"gender": "male", "faceType": "fox_like", "looksLevelBand": "3.3-3.8", "neededIdentities": 15, "combinedDeficit": 272, "priority": "high"}, {"gender": "female", "faceType": "fox_like", "looksLevelBand": "3.3-3.8", "neededIdentities": 14, "combinedDeficit": 270, "priority": "high"}, {"gender": "male", "faceType": "bear_like", "looksLevelBand": "3.3-3.8", "neededIdentities": 14, "combinedDeficit": 270, "priority": "high"}, {"gender": "female", "faceType": "bear_like", "looksLevelBand": "3.3-3.8", "neededIdentities": 14, "combinedDeficit": 269, "priority": "high"}, {"gender": "male", "faceType": "hamster_like", "looksLevelBand": "3.3-3.8", "neededIdentities": 12, "combinedDeficit": 264, "priority": "high"}, {"gender": "male", "faceType": "mixed_neutral", "looksLevelBand": "3.3-3.8", "neededIdentities": 12, "combinedDeficit": 264, "priority": "high"}, {"gender": "female", "faceType": "hamster_like", "looksLevelBand": "3.3-3.8", "neededIdentities": 12, "combinedDeficit": 263, "priority": "high"}, {"gender": "female", "faceType": "mixed_neutral", "looksLevelBand": "3.3-3.8", "neededIdentities": 12, "combinedDeficit": 263, "priority": "high"}, {"gender": "male", "faceType": "horse_like", "looksLevelBand": "3.3-3.8", "neededIdentities": 10, "combinedDeficit": 257, "priority": "high"}, {"gender": "female", "faceType": "horse_like", "looksLevelBand": "3.3-3.8", "neededIdentities": 9, "combinedDeficit": 255, "priority": "high"}, {"gender": "female", "faceType": "deer_like", "looksLevelBand": "1.5-2.4", "neededIdentities": 18, "combinedDeficit": 238, "priority": "high"}, {"gender": "male", "faceType": "deer_like", "looksLevelBand": "1.5-2.4", "neededIdentities": 18, "combinedDeficit": 238, "priority": "high"}, {"gender": "male", "faceType": "dog_like", "looksLevelBand": "1.5-2.4", "neededIdentities": 18, "combinedDeficit": 231, "priority": "high"}, {"gender": "female", "faceType": "dog_like", "looksLevelBand": "1.5-2.4", "neededIdentities": 18, "combinedDeficit": 230, "priority": "high"}, {"gender": "male", "faceType": "cat_like", "looksLevelBand": "1.5-2.4", "neededIdentities": 17, "combinedDeficit": 225, "priority": "high"}, {"gender": "female", "faceType": "cat_like", "looksLevelBand": "1.5-2.4", "neededIdentities": 17, "combinedDeficit": 224, "priority": "high"}, {"gender": "female", "faceType": "deer_like", "looksLevelBand": "3.9-4.3", "neededIdentities": 12, "combinedDeficit": 220, "priority": "high"}, {"gender": "male", "faceType": "deer_like", "looksLevelBand": "3.9-4.3", "neededIdentities": 12, "combinedDeficit": 220, "priority": "high"}, {"gender": "male", "faceType": "fox_like", "looksLevelBand": "1.5-2.4", "neededIdentities": 15, "combinedDeficit": 218, "priority": "high"}, {"gender": "female", "faceType": "fox_like", "looksLevelBand": "1.5-2.4", "neededIdentities": 14, "combinedDeficit": 216, "priority": "high"}, {"gender": "male", "faceType": "bear_like", "looksLevelBand": "1.5-2.4", "neededIdentities": 14, "combinedDeficit": 216, "priority": "high"}, {"gender": "female", "faceType": "bear_like", "looksLevelBand": "1.5-2.4", "neededIdentities": 14, "combinedDeficit": 215, "priority": "high"}, {"gender": "male", "faceType": "dog_like", "looksLevelBand": "3.9-4.3", "neededIdentities": 12, "combinedDeficit": 213, "priority": "high"}, {"gender": "female", "faceType": "dog_like", "looksLevelBand": "3.9-4.3", "neededIdentities": 12, "combinedDeficit": 212, "priority": "high"}, {"gender": "male", "faceType": "hamster_like", "looksLevelBand": "1.5-2.4", "neededIdentities": 12, "combinedDeficit": 210, "priority": "high"}, {"gender": "male", "faceType": "mixed_neutral", "looksLevelBand": "1.5-2.4", "neededIdentities": 12, "combinedDeficit": 210, "priority": "high"}, {"gender": "female", "faceType": "hamster_like", "looksLevelBand": "1.5-2.4", "neededIdentities": 12, "combinedDeficit": 209, "priority": "high"}, {"gender": "female", "faceType": "mixed_neutral", "looksLevelBand": "1.5-2.4", "neededIdentities": 12, "combinedDeficit": 209, "priority": "high"}, {"gender": "male", "faceType": "cat_like", "looksLevelBand": "3.9-4.3", "neededIdentities": 12, "combinedDeficit": 207, "priority": "high"}, {"gender": "female", "faceType": "cat_like", "looksLevelBand": "3.9-4.3", "neededIdentities": 12, "combinedDeficit": 206, "priority": "high"}, {"gender": "male", "faceType": "horse_like", "looksLevelBand": "1.5-2.4", "neededIdentities": 10, "combinedDeficit": 203, "priority": "high"}, {"gender": "female", "faceType": "horse_like", "looksLevelBand": "1.5-2.4", "neededIdentities": 9, "combinedDeficit": 201, "priority": "high"}, {"gender": "male", "faceType": "fox_like", "looksLevelBand": "3.9-4.3", "neededIdentities": 12, "combinedDeficit": 200, "priority": "high"}, {"gender": "female", "faceType": "fox_like", "looksLevelBand": "3.9-4.3", "neededIdentities": 12, "combinedDeficit": 198, "priority": "high"}, {"gender": "male", "faceType": "bear_like", "looksLevelBand": "3.9-4.3", "neededIdentities": 12, "combinedDeficit": 198, "priority": "high"}, {"gender": "female", "faceType": "bear_like", "looksLevelBand": "3.9-4.3", "neededIdentities": 12, "combinedDeficit": 197, "priority": "high"}, {"gender": "male", "faceType": "hamster_like", "looksLevelBand": "3.9-4.3", "neededIdentities": 12, "combinedDeficit": 192, "priority": "high"}, {"gender": "male", "faceType": "mixed_neutral", "looksLevelBand": "3.9-4.3", "neededIdentities": 12, "combinedDeficit": 192, "priority": "high"}, {"gender": "female", "faceType": "hamster_like", "looksLevelBand": "3.9-4.3", "neededIdentities": 12, "combinedDeficit": 191, "priority": "high"}, {"gender": "female", "faceType": "mixed_neutral", "looksLevelBand": "3.9-4.3", "neededIdentities": 12, "combinedDeficit": 191, "priority": "high"}, {"gender": "male", "faceType": "horse_like", "looksLevelBand": "3.9-4.3", "neededIdentities": 10, "combinedDeficit": 185, "priority": "high"}, {"gender": "female", "faceType": "horse_like", "looksLevelBand": "3.9-4.3", "neededIdentities": 9, "combinedDeficit": 183, "priority": "high"}], "overLevelApprovedIdentities": [], "needsReviewIdentities": [{"profileId": "female_001", "gender": "female", "numericId": "001", "targetFaceType": "deer_like", "observedFaceType": "unclear", "countedFaceType": "", "targetLooksLevel": "", "targetLooksLevelBand": "3.3-3.8", "observedLooksLevelBand": "unclear", "faceType": "", "looksLevelBand": "", "countedLooksLevelBand": "", "assetIds": {"face_card": "female_001__face_card__v001", "silhouette_card": "female_001__silhouette_card__v001", "vibe_card": "female_001__vibe_card__v001"}, "finalPaths": {"face_card": "", "silhouette_card": "", "vibe_card": ""}, "identityScope": "production", "isReserve": false, "reserveStatus": "", "completeIdentityDecision": "rejected", "sameIdentity": false, "countsTowardDistribution": false, "completeApproved": false, "approvedShotCount": 0, "assetDecisions": {"face_card": "rejected", "silhouette_card": "missing", "vibe_card": "missing"}, "missingShotTypes": ["face_card", "silhouette_card", "vibe_card"], "metadataMismatch": false, "overLevel": false, "needsReview": true, "rejected": true, "reasons": ["countsTowardDistribution_not_true", "faceType_unclear", "identity_not_approved", "looksLevelBand_unclear", "not_all_shots_approved:face_card,silhouette_card,vibe_card", "sameIdentity_false"], "updatedAt": "2026-05-09T22:39:00+00:00"}, {"profileId": "female_902", "gender": "female", "numericId": "902", "targetFaceType": "deer_like", "observedFaceType": "deer_like", "countedFaceType": "deer_like", "targetLooksLevel": "", "targetLooksLevelBand": "2.5-3.2", "observedLooksLevelBand": "unclear", "faceType": "deer_like", "looksLevelBand": "", "countedLooksLevelBand": "", "assetIds": {"face_card": "female_902__face_card__v001", "silhouette_card": "female_902__silhouette_card__v001", "vibe_card": "female_902__vibe_card__v001"}, "finalPaths": {"face_card": "", "silhouette_card": "", "vibe_card": ""}, "identityScope": "production", "isReserve": false, "reserveStatus": "", "completeIdentityDecision": "rejected", "sameIdentity": true, "countsTowardDistribution": false, "completeApproved": false, "approvedShotCount": 0, "assetDecisions": {"face_card": "rejected", "silhouette_card": "rejected", "vibe_card": "rejected"}, "missingShotTypes": ["face_card", "silhouette_card", "vibe_card"], "metadataMismatch": true, "overLevel": false, "needsReview": true, "rejected": true, "reasons": ["countsTowardDistribution_not_true", "identity_not_approved", "looksLevelBand_observed_target_mismatch", "metadata_mismatch", "not_all_shots_approved:face_card,silhouette_card,vibe_card"], "updatedAt": "2026-05-09T22:39:00+00:00"}, {"profileId": "female_997", "gender": "female", "numericId": "997", "targetFaceType": "deer_like", "observedFaceType": "deer_like", "countedFaceType": "deer_like", "targetLooksLevel": "", "targetLooksLevelBand": "2.5-3.2", "observedLooksLevelBand": "unclear", "faceType": "deer_like", "looksLevelBand": "", "countedLooksLevelBand": "", "assetIds": {"face_card": "female_997__face_card__v001", "silhouette_card": "female_997__silhouette_card__v001", "vibe_card": "female_997__vibe_card__v001"}, "finalPaths": {"face_card": "", "silhouette_card": "", "vibe_card": ""}, "identityScope": "production", "isReserve": false, "reserveStatus": "", "completeIdentityDecision": "rejected", "sameIdentity": true, "countsTowardDistribution": false, "completeApproved": false, "approvedShotCount": 1, "assetDecisions": {"face_card": "rejected", "silhouette_card": "approved", "vibe_card": "rejected"}, "missingShotTypes": ["face_card", "vibe_card"], "metadataMismatch": true, "overLevel": false, "needsReview": true, "rejected": true, "reasons": ["countsTowardDistribution_not_true", "identity_not_approved", "looksLevelBand_observed_target_mismatch", "metadata_mismatch", "not_all_shots_approved:face_card,vibe_card"], "updatedAt": "2026-05-09T22:39:00+00:00"}, {"profileId": "male_901", "gender": "male", "numericId": "901", "targetFaceType": "mixed_neutral", "observedFaceType": "unclear", "countedFaceType": "", "targetLooksLevel": "", "targetLooksLevelBand": "1.5-2.4", "observedLooksLevelBand": "unclear", "faceType": "", "looksLevelBand": "", "countedLooksLevelBand": "", "assetIds": {"face_card": "male_901__face_card__v001", "silhouette_card": "male_901__silhouette_card__v001", "vibe_card": "male_901__vibe_card__v001"}, "finalPaths": {"face_card": "", "silhouette_card": "", "vibe_card": ""}, "identityScope": "production", "isReserve": false, "reserveStatus": "", "completeIdentityDecision": "rejected", "sameIdentity": true, "countsTowardDistribution": false, "completeApproved": false, "approvedShotCount": 0, "assetDecisions": {"face_card": "rejected", "silhouette_card": "rejected", "vibe_card": "rejected"}, "missingShotTypes": ["face_card", "silhouette_card", "vibe_card"], "metadataMismatch": true, "overLevel": false, "needsReview": true, "rejected": true, "reasons": ["countsTowardDistribution_not_true", "faceType_observed_target_mismatch", "identity_not_approved", "looksLevelBand_observed_target_mismatch", "metadata_mismatch", "not_all_shots_approved:face_card,silhouette_card,vibe_card"], "updatedAt": "2026-05-09T22:39:00+00:00"}], "metadataMismatchIdentities": [{"profileId": "female_902", "gender": "female", "numericId": "902", "targetFaceType": "deer_like", "observedFaceType": "deer_like", "countedFaceType": "deer_like", "targetLooksLevel": "", "targetLooksLevelBand": "2.5-3.2", "observedLooksLevelBand": "unclear", "faceType": "deer_like", "looksLevelBand": "", "countedLooksLevelBand": "", "assetIds": {"face_card": "female_902__face_card__v001", "silhouette_card": "female_902__silhouette_card__v001", "vibe_card": "female_902__vibe_card__v001"}, "finalPaths": {"face_card": "", "silhouette_card": "", "vibe_card": ""}, "identityScope": "production", "isReserve": false, "reserveStatus": "", "completeIdentityDecision": "rejected", "sameIdentity": true, "countsTowardDistribution": false, "completeApproved": false, "approvedShotCount": 0, "assetDecisions": {"face_card": "rejected", "silhouette_card": "rejected", "vibe_card": "rejected"}, "missingShotTypes": ["face_card", "silhouette_card", "vibe_card"], "metadataMismatch": true, "overLevel": false, "needsReview": true, "rejected": true, "reasons": ["countsTowardDistribution_not_true", "identity_not_approved", "looksLevelBand_observed_target_mismatch", "metadata_mismatch", "not_all_shots_approved:face_card,silhouette_card,vibe_card"], "updatedAt": "2026-05-09T22:39:00+00:00"}, {"profileId": "female_997", "gender": "female", "numericId": "997", "targetFaceType": "deer_like", "observedFaceType": "deer_like", "countedFaceType": "deer_like", "targetLooksLevel": "", "targetLooksLevelBand": "2.5-3.2", "observedLooksLevelBand": "unclear", "faceType": "deer_like", "looksLevelBand": "", "countedLooksLevelBand": "", "assetIds": {"face_card": "female_997__face_card__v001", "silhouette_card": "female_997__silhouette_card__v001", "vibe_card": "female_997__vibe_card__v001"}, "finalPaths": {"face_card": "", "silhouette_card": "", "vibe_card": ""}, "identityScope": "production", "isReserve": false, "reserveStatus": "", "completeIdentityDecision": "rejected", "sameIdentity": true, "countsTowardDistribution": false, "completeApproved": false, "approvedShotCount": 1, "assetDecisions": {"face_card": "rejected", "silhouette_card": "approved", "vibe_card": "rejected"}, "missingShotTypes": ["face_card", "vibe_card"], "metadataMismatch": true, "overLevel": false, "needsReview": true, "rejected": true, "reasons": ["countsTowardDistribution_not_true", "identity_not_approved", "looksLevelBand_observed_target_mismatch", "metadata_mismatch", "not_all_shots_approved:face_card,vibe_card"], "updatedAt": "2026-05-09T22:39:00+00:00"}, {"profileId": "male_901", "gender": "male", "numericId": "901", "targetFaceType": "mixed_neutral", "observedFaceType": "unclear", "countedFaceType": "", "targetLooksLevel": "", "targetLooksLevelBand": "1.5-2.4", "observedLooksLevelBand": "unclear", "faceType": "", "looksLevelBand": "", "countedLooksLevelBand": "", "assetIds": {"face_card": "male_901__face_card__v001", "silhouette_card": "male_901__silhouette_card__v001", "vibe_card": "male_901__vibe_card__v001"}, "finalPaths": {"face_card": "", "silhouette_card": "", "vibe_card": ""}, "identityScope": "production", "isReserve": false, "reserveStatus": "", "completeIdentityDecision": "rejected", "sameIdentity": true, "countsTowardDistribution": false, "completeApproved": false, "approvedShotCount": 0, "assetDecisions": {"face_card": "rejected", "silhouette_card": "rejected", "vibe_card": "rejected"}, "missingShotTypes": ["face_card", "silhouette_card", "vibe_card"], "metadataMismatch": true, "overLevel": false, "needsReview": true, "rejected": true, "reasons": ["countsTowardDistribution_not_true", "faceType_observed_target_mismatch", "identity_not_approved", "looksLevelBand_observed_target_mismatch", "metadata_mismatch", "not_all_shots_approved:face_card,silhouette_card,vibe_card"], "updatedAt": "2026-05-09T22:39:00+00:00"}], "rejectedIdentities": [{"profileId": "female_001", "gender": "female", "numericId": "001", "targetFaceType": "deer_like", "observedFaceType": "unclear", "countedFaceType": "", "targetLooksLevel": "", "targetLooksLevelBand": "3.3-3.8", "observedLooksLevelBand": "unclear", "faceType": "", "looksLevelBand": "", "countedLooksLevelBand": "", "assetIds": {"face_card": "female_001__face_card__v001", "silhouette_card": "female_001__silhouette_card__v001", "vibe_card": "female_001__vibe_card__v001"}, "finalPaths": {"face_card": "", "silhouette_card": "", "vibe_card": ""}, "identityScope": "production", "isReserve": false, "reserveStatus": "", "completeIdentityDecision": "rejected", "sameIdentity": false, "countsTowardDistribution": false, "completeApproved": false, "approvedShotCount": 0, "assetDecisions": {"face_card": "rejecte
+Required qaType: seolleyeon_visual_verdict_distribution_v3.
+deprecated: `[features].codex_hooks` is deprecated. Use `[features].hooks` instead.
+Enable it with `--enable hooks` or `[features].hooks` in config.toml. See https://developers.openai.com/codex/config-basic#feature-flags for details.
+2026-05-09T22:39:09.359725Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=C:\Users\samsung\.codex\.tmp\plugins\plugins\build-ios-apps\.codex-plugin/plugin.json
+2026-05-09T22:39:09.364215Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\plugin-eval\.codex-plugin/plugin.json
+2026-05-09T22:39:09.393999Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\twilio-developer-kit\.codex-plugin/plugin.json
+2026-05-09T22:39:09.394603Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-09T22:39:09.472663Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-09T22:39:09.472708Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-09T22:39:09.477813Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-09T22:39:09.477885Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-09T22:39:09.482539Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-09T22:39:09.482596Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-09T22:39:09.487093Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-09T22:39:09.487148Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-09T22:39:09.491432Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-09T22:39:09.491477Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-09T22:39:09.498399Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-09T22:39:09.498456Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-09T22:39:09.755827Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-09T22:39:09.799712Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-09T22:39:09.800480Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+hook: SessionStart
+hook: SessionStart Completed
+hook: UserPromptSubmit
+hook: UserPromptSubmit Completed
+2026-05-09T22:39:16.643809Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: prompt must be at most 128 characters path=C:\Users\samsung\.codex\.tmp\plugins\plugins\build-ios-apps\.codex-plugin/plugin.json
+2026-05-09T22:39:16.647819Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\plugin-eval\.codex-plugin/plugin.json
+2026-05-09T22:39:16.678611Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\twilio-developer-kit\.codex-plugin/plugin.json
+2026-05-09T22:39:16.679047Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-09T22:39:16.742190Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-09T22:39:16.742244Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-09T22:39:16.747046Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-09T22:39:16.747120Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-09T22:39:16.751696Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-09T22:39:16.751738Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-09T22:39:16.755555Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-09T22:39:16.755594Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-09T22:39:16.759234Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-09T22:39:16.759279Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-09T22:39:16.763757Z  WARN codex_core_skills::loader: ignoring interface.icon_small: icon path must not contain '..'
+2026-05-09T22:39:16.763857Z  WARN codex_core_skills::loader: ignoring interface.icon_large: icon path must not contain '..'
+2026-05-09T22:39:16.960990Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-09T22:39:17.000131Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+2026-05-09T22:39:17.000878Z  WARN codex_core_plugins::manifest: ignoring interface.defaultPrompt: maximum of 3 prompts is supported path=C:\Users\samsung\.codex\.tmp\plugins\plugins\openai-developers\.codex-plugin/plugin.json
+codex
+{"qaType":"seolleyeon_visual_verdict_distribution_v3","finalDecision":"needs_more_generation","approvedCompleteIdentityCount":1,"approvedImageCount":3,"femaleApprovedIdentityCount":1,"maleApprovedIdentityCount":0,"globalFaceTypeCounts":{"cat_like":0,"dog_like":0,"hamster_like":0,"bear_like":1,"fox_like":0,"deer_like":0,"horse_like":0,"mixed_neutral":0},"globalFaceTypeDeficits":{"cat_like":34,"dog_like":38,"hamster_like":24,"bear_like":28,"fox_like":29,"deer_like":43,"horse_like":19,"mixed_neutral":24},"globalFaceTypeSurpluses":{"cat_like":0,"dog_like":0,"hamster_like":0,"bear_like":0,"fox_like":0,"deer_like":0,"horse_like":0,"mixed_neutral":0},"genderFaceTypeCounts":{"female":{"cat_like":0,"dog_like":0,"hamster_like":0,"bear_like":1,"fox_like":0,"deer_like":0,"horse_like":0,"mixed_neutral":0},"male":{"cat_like":0,"dog_like":0,"hamster_like":0,"bear_like":0,"fox_like":0,"deer_like":0,"horse_like":0,"mixed_neutral":0}},"genderFaceTypeDeficits":{"female":{"cat_like":17,"dog_like":19,"hamster_like":12,"bear_like":14,"fox_like":14,"deer_like":22,"horse_like":9,"mixed_neutral":12},"male":{"cat_like":17,"dog_like":19,"hamster_like":12,"bear_like":14,"fox_like":15,"deer_like":21,"horse_like":10,"mixed_neutral":12}},"genderFaceTypeSurpluses":{"female":{"cat_like":0,"dog_like":0,"hamster_like":0,"bear_like":0,"fox_like":0,"deer_like":0,"horse_like":0,"mixed_neutral":0},"male":{"cat_like":0,"dog_like":0,"hamster_like":0,"bear_like":0,"fox_like":0,"deer_like":0,"horse_like":0,"mixed_neutral":0}},"globalLooksLevelBandCounts":{"1.5-2.4":0,"2.5-3.2":1,"3.3-3.8":0,"3.9-4.3":0,"4.4-5.0":0},"globalLooksLevelBandDeficits":{"1.5-2.4":36,"2.5-3.2":107,"3.3-3.8":72,"3.9-4.3":24,"4.4-5.0":0},"globalLooksLevelBandSurpluses":{"1.5-2.4":0,"2.5-3.2":0,"3.3-3.8":0,"3.9-4.3":0,"4.4-5.0":0},"genderLooksLevelBandCounts":{"female":{"1.5-2.4":0,"2.5-3.2":1,"3.3-3.8":0,"3.9-4.3":0,"4.4-5.0":0},"male":{"1.5-2.4":0,"2.5-3.2":0,"3.3-3.8":0,"3.9-4.3":0,"4.4-5.0":0}},"genderLooksLevelBandDeficits":{"female":{"1.5-2.4":18,"2.5-3.2":53,"3.3-3.8":36,"3.9-4.3":12,"4.4-5.0":0},"male":{"1.5-2.4":18,"2.5-3.2":54,"3.3-3.8":36,"3.9-4.3":12,"4.4-5.0":0}},"genderLooksLevelBandSurpluses":{"female":{"1.5-2.4":0,"2.5-3.2":0,"3.3-3.8":0,"3.9-4.3":0,"4.4-5.0":0},"male":{"1.5-2.4":0,"2.5-3.2":0,"3.3-3.8":0,"3.9-4.3":0,"4.4-5.0":0}},"invalidIdentities":[{"profileId":"female_001","reason":"identity rejected: missing all shots, faceType unclear, looksLevelBand unclear, same-person identity consistency failed, no approved assets","recommendedAction":"replace_with_reserve"},{"profileId":"female_902","reason":"identity rejected: all assets rejected, metadata mismatch, observed looks level unresolved against target, no approved shots","recommendedAction":"replace_with_reserve"},{"profileId":"female_997","reason":"identity rejected: face_card and vibe_card rejected, metadata mismatch, observed looks level unresolved against target, only silhouette_card approved","recommendedAction":"retry"},{"profileId":"male_901","reason":"identity rejected: all assets rejected, metadata mismatch, faceType mismatch or unclear, looksLevelBand mismatch or unclear, no approved shots","recommendedAction":"replace_with_reserve"}],"nextGenerationDirective":{"shouldGenerateMore":true,"targetBuckets":[{"gender":"male","faceType":"deer_like","looksLevelBand":"2.5-3.2","neededIdentities":21,"priority":"high"},{"gender":"female","faceType":"deer_like","looksLevelBand":"2.5-3.2","neededIdentities":22,"priority":"high"},{"gender":"male","faceType":"dog_like","looksLevelBand":"2.5-3.2","neededIdentities":19,"priority":"high"},{"gender":"female","faceType":"dog_like","looksLevelBand":"2.5-3.2","neededIdentities":19,"priority":"high"},{"gender":"male","faceType":"cat_like","looksLevelBand":"2.5-3.2","neededIdentities":17,"priority":"high"},{"gender":"female","faceType":"cat_like","looksLevelBand":"2.5-3.2","neededIdentities":17,"priority":"high"},{"gender":"male","faceType":"fox_like","looksLevelBand":"2.5-3.2","neededIdentities":15,"priority":"high"},{"gender":"male","faceType":"bear_like","looksLevelBand":"2.5-3.2","neededIdentities":14,"priority":"high"},{"gender":"female","faceType":"fox_like","looksLevelBand":"2.5-3.2","neededIdentities":14,"priority":"high"},{"gender":"female","faceType":"bear_like","looksLevelBand":"2.5-3.2","neededIdentities":14,"priority":"high"},{"gender":"male","faceType":"hamster_like","looksLevelBand":"2.5-3.2","neededIdentities":12,"priority":"high"},{"gender":"male","faceType":"mixed_neutral","looksLevelBand":"2.5-3.2","neededIdentities":12,"priority":"high"},{"gender":"female","faceType":"hamster_like","looksLevelBand":"2.5-3.2","neededIdentities":12,"priority":"high"},{"gender":"female","faceType":"mixed_neutral","looksLevelBand":"2.5-3.2","neededIdentities":12,"priority":"high"},{"gender":"male","faceType":"horse_like","looksLevelBand":"2.5-3.2","neededIdentities":10,"priority":"high"},{"gender":"female","faceType":"horse_like","looksLevelBand":"2.5-3.2","neededIdentities":9,"priority":"high"},{"gender":"female","faceType":"deer_like","looksLevelBand":"3.3-3.8","neededIdentities":22,"priority":"high"},{"gender":"male","faceType":"deer_like","looksLevelBand":"3.3-3.8","neededIdentities":21,"priority":"high"},{"gender":"male","faceType":"dog_like","looksLevelBand":"3.3-3.8","neededIdentities":19,"priority":"high"},{"gender":"female","faceType":"dog_like","looksLevelBand":"3.3-3.8","neededIdentities":19,"priority":"high"},{"gender":"male","faceType":"cat_like","looksLevelBand":"3.3-3.8","neededIdentities":17,"priority":"high"},{"gender":"female","faceType":"cat_like","looksLevelBand":"3.3-3.8","neededIdentities":17,"priority":"high"},{"gender":"male","faceType":"fox_like","looksLevelBand":"3.3-3.8","neededIdentities":15,"priority":"high"},{"gender":"female","faceType":"fox_like","looksLevelBand":"3.3-3.8","neededIdentities":14,"priority":"high"},{"gender":"male","faceType":"bear_like","looksLevelBand":"3.3-3.8","neededIdentities":14,"priority":"high"},{"gender":"female","faceType":"bear_like","looksLevelBand":"3.3-3.8","neededIdentities":14,"priority":"high"},{"gender":"male","faceType":"hamster_like","looksLevelBand":"3.3-3.8","neededIdentities":12,"priority":"high"},{"gender":"male","faceType":"mixed_neutral","looksLevelBand":"3.3-3.8","neededIdentities":12,"priority":"high"},{"gender":"female","faceType":"hamster_like","looksLevelBand":"3.3-3.8","neededIdentities":12,"priority":"high"},{"gender":"female","faceType":"mixed_neutral","looksLevelBand":"3.3-3.8","neededIdentities":12,"priority":"high"},{"gender":"male","faceType":"horse_like","looksLevelBand":"3.3-3.8","neededIdentities":10,"priority":"high"},{"gender":"female","faceType":"horse_like","looksLevelBand":"3.3-3.8","neededIdentities":9,"priority":"high"},{"gender":"female","faceType":"deer_like","looksLevelBand":"1.5-2.4","neededIdentities":18,"priority":"high"},{"gender":"male","faceType":"deer_like","looksLevelBand":"1.5-2.4","neededIdentities":18,"priority":"high"},{"gender":"male","faceType":"dog_like","looksLevelBand":"1.5-2.4","neededIdentities":18,"priority":"high"},{"gender":"female","faceType":"dog_like","looksLevelBand":"1.5-2.4","neededIdentities":18,"priority":"high"},{"gender":"male","faceType":"cat_like","looksLevelBand":"1.5-2.4","neededIdentities":17,"priority":"high"},{"gender":"female","faceType":"cat_like","looksLevelBand":"1.5-2.4","neededIdentities":17,"priority":"high"},{"gender":"female","faceType":"deer_like","looksLevelBand":"3.9-4.3","neededIdentities":12,"priority":"high"},{"gender":"male","faceType":"deer_like","looksLevelBand":"3.9-4.3","neededIdentities":12,"priority":"high"},{"gender":"male","faceType":"fox_like","looksLevelBand":"1.5-2.4","neededIdentities":15,"priority":"high"},{"gender":"female","faceType":"fox_like","looksLevelBand":"1.5-2.4","neededIdentities":14,"priority":"high"},{"gender":"male","faceType":"bear_like","looksLevelBand":"1.5-2.4","neededIdentities":14,"priority":"high"},{"gender":"female","faceType":"bear_like","looksLevelBand":"1.5-2.4","neededIdentities":14,"priority":"high"},{"gender":"male","faceType":"dog_like","looksLevelBand":"3.9-4.3","neededIdentities":12,"priority":"high"},{"gender":"female","faceType":"dog_like","looksLevelBand":"3.9-4.3","neededIdentities":12,"priority":"high"},{"gender":"male","faceType":"hamster_like","looksLevelBand":"1.5-2.4","neededIdentities":12,"priority":"high"},{"gender":"male","faceType":"mixed_neutral","looksLevelBand":"1.5-2.4","neededIdentities":12,"priority":"high"},{"gender":"female","faceType":"hamster_like","looksLevelBand":"1.5-2.4","neededIdentities":12,"priority":"high"},{"gender":"female","faceType":"mixed_neutral","looksLevelBand":"1.5-2.4","neededIdentities":12,"priority":"high"},{"gender":"male","faceType":"cat_like","looksLevelBand":"3.9-4.3","neededIdentities":12,"priority":"high"},{"gender":"female","faceType":"cat_like","looksLevelBand":"3.9-4.3","neededIdentities":12,"priority":"high"},{"gender":"male","faceType":"horse_like","looksLevelBand":"1.5-2.4","neededIdentities":10,"priority":"high"},{"gender":"female","faceType":"horse_like","looksLevelBand":"1.5-2.4","neededIdentities":9,"priority":"high"},{"gender":"male","faceType":"fox_like","looksLevelBand":"3.9-4.3","neededIdentities":12,"priority":"high"},{"gender":"female","faceType":"fox_like","looksLevelBand":"3.9-4.3","neededIdentities":12,"priority":"high"},{"gender":"male","faceType":"bear_like","looksLevelBand":"3.9-4.3","neededIdentities":12,"priority":"high"},{"gender":"female","faceType":"bear_like","looksLevelBand":"3.9-4.3","neededIdentities":12,"priority":"high"},{"gender":"male","faceType":"hamster_like","looksLevelBand":"3.9-4.3","neededIdentities":12,"priority":"high"},{"gender":"male","faceType":"mixed_neutral","looksLevelBand":"3.9-4.3","neededIdentities":12,"priority":"high"},{"gender":"female","faceType":"hamster_like","looksLevelBand":"3.9-4.3","neededIdentities":12,"priority":"high"},{"gender":"female","faceType":"mixed_neutral","looksLevelBand":"3.9-4.3","neededIdentities":12,"priority":"high"},{"gender":"male","faceType":"horse_like","looksLevelBand":"3.9-4.3","neededIdentities":10,"priority":"high"},{"gender":"female","faceType":"horse_like","looksLevelBand":"3.9-4.3","neededIdentities":9,"priority":"high"}],"stopGeneratingBuckets":[{"gender":"female","faceType":"any","looksLevelBand":"4.4-5.0","reason":"over_level_risk"},{"gender":"male","faceType":"any","looksLevelBand":"4.4-5.0","reason":"over_level_risk"}]},"notes":"Dataset is far below final target: 1 approved complete identity and 3 approved images count toward distribution. Continue generation for all allowed deficit buckets; keep 4.4-5.0 stopped."}
+hook: Stop
+2026-05-09T22:40:30.947053Z  WARN codex_core::session::turn: after_agent hook failed; continuing turn_id=019e0ee4-f0f7-7c93-95d7-8af5c707c63e hook_name=legacy_notify error=파일 이름이나 확장명이 너무 깁니다. (os error 206)
+hook: Stop Completed
+tokens used
+18,355

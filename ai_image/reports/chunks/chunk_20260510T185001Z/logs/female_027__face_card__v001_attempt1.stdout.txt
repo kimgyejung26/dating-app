@@ -1,0 +1,13 @@
+SUCCESS: The process with PID 34680 (child process of PID 2464) has been terminated.
+SUCCESS: The process with PID 11660 (child process of PID 2464) has been terminated.
+SUCCESS: The process with PID 17916 (child process of PID 2464) has been terminated.
+SUCCESS: The process with PID 10944 (child process of PID 2464) has been terminated.
+SUCCESS: The process with PID 2008 (child process of PID 2464) has been terminated.
+Ran exactly one Seolleyeon one-asset Image Gen transaction for `female_027__face_card__v001`.
+
+Saved outputs:
+- Final: [face_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/027/face_card.png)
+- Raw: [female_027__face_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_027__face_card__v001__attempt01.png)
+- Receipt: [female_027__face_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T185001Z/transactions/female_027__face_card__v001_attempt1.json)
+
+Validation evidence: one generated image appeared after the checkpoint, receipt verification passed, pending is resolved, file QA passed at `1024x1536`, and `generation_status.csv` now marks the asset as `file_needs_review` for later visual QA. No recommender diff was detected.

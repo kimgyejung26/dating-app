@@ -1,0 +1,45 @@
+SUCCESS: The process with PID 27444 (child process of PID 30200) has been terminated.
+SUCCESS: The process with PID 1596 (child process of PID 30200) has been terminated.
+SUCCESS: The process with PID 22964 (child process of PID 30200) has been terminated.
+SUCCESS: The process with PID 24348 (child process of PID 30200) has been terminated.
+SUCCESS: The process with PID 12836 (child process of PID 30200) has been terminated.
+{
+  "qaType": "seolleyeon_visual_verdict_asset_v3",
+  "sheetId": "e2e_bounded_20260509T221650Z__e2e_bounded_20260509T221650Z_contact_sheet_female_silhouette_card",
+  "assets": [
+    {
+      "assetId": "female_997__silhouette_card__v001",
+      "profileId": "female_997",
+      "gender": "female",
+      "shotType": "silhouette_card",
+      "targetFaceType": "deer_like",
+      "observedFaceType": "deer_like",
+      "faceTypeConfidence": 0.72,
+      "targetLooksLevelBand": "2.5-3.2",
+      "observedLooksLevelBand": "2.5-3.2",
+      "looksLevelConfidence": 0.74,
+      "adultVisual": true,
+      "photoRealism": 4.5,
+      "campusRealism": 4.6,
+      "brandFit": 4.4,
+      "shotTypeReadable": true,
+      "influencerRisk": 0.8,
+      "childlikeRisk": 0.4,
+      "schoolUniformRisk": 0.0,
+      "sexualizationRisk": 0.0,
+      "artifactRisk": 0.6,
+      "metadataMismatch": false,
+      "mismatchFields": [],
+      "decision": "approved",
+      "rejectReasons": [],
+      "notes": "Realistic adult campus walkway silhouette image with modest styling, calm trust tone, and no hard reject issues."
+    }
+  ],
+  "summary": {
+    "approvedCount": 1,
+    "needsReviewCount": 0,
+    "rejectedCount": 0,
+    "hardRejectCount": 0,
+    "metadataMismatchCount": 0
+  }
+}

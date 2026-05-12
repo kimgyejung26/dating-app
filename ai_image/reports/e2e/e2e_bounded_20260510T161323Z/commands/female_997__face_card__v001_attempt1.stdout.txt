@@ -1,0 +1,6 @@
+SUCCESS: The process with PID 33716 (child process of PID 33192) has been terminated.
+SUCCESS: The process with PID 3956 (child process of PID 33192) has been terminated.
+SUCCESS: The process with PID 31344 (child process of PID 33192) has been terminated.
+SUCCESS: The process with PID 33960 (child process of PID 33192) has been terminated.
+SUCCESS: The process with PID 12844 (child process of PID 33192) has been terminated.
+I’m checkpointing only the pending asset identity, then I’ll issue one built-in image generation call and stop. I won’t touch recommender code, API paths, recovery, file moves, or QA.

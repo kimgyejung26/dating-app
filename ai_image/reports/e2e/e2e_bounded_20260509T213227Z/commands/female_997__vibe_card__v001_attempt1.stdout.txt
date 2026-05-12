@@ -1,0 +1,6 @@
+SUCCESS: The process with PID 31808 (child process of PID 17992) has been terminated.
+SUCCESS: The process with PID 14084 (child process of PID 17992) has been terminated.
+SUCCESS: The process with PID 1140 (child process of PID 17992) has been terminated.
+SUCCESS: The process with PID 23132 (child process of PID 17992) has been terminated.
+SUCCESS: The process with PID 10032 (child process of PID 17992) has been terminated.
+생성 전 체크포인트는 이 프로젝트 규칙의 필수 조건이지만, 산출 이미지 파일 처리는 하지 않습니다. 기존 pending 파일이 이 단일 asset과 일치하는지 먼저 확인하고, 필요하면 그 파일만 맞춰둔 뒤 Image Gen을 호출하겠습니다.

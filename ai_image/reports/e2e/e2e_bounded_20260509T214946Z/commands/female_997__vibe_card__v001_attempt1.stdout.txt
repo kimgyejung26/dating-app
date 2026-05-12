@@ -1,0 +1,6 @@
+SUCCESS: The process with PID 16556 (child process of PID 12544) has been terminated.
+SUCCESS: The process with PID 8672 (child process of PID 12544) has been terminated.
+SUCCESS: The process with PID 22752 (child process of PID 12544) has been terminated.
+SUCCESS: The process with PID 4116 (child process of PID 12544) has been terminated.
+SUCCESS: The process with PID 26524 (child process of PID 12544) has been terminated.
+

@@ -1,0 +1,13 @@
+SUCCESS: The process with PID 30740 (child process of PID 6980) has been terminated.
+SUCCESS: The process with PID 33548 (child process of PID 6980) has been terminated.
+SUCCESS: The process with PID 33492 (child process of PID 6980) has been terminated.
+SUCCESS: The process with PID 29920 (child process of PID 6980) has been terminated.
+SUCCESS: The process with PID 19376 (child process of PID 6980) has been terminated.
+Ran exactly one Seolleyeon one-asset Image Gen transaction for `female_030__vibe_card__v001` attempt 1.
+
+Output paths:
+- Raw: [female_030__vibe_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_030__vibe_card__v001__attempt01.png)
+- Final candidate: [vibe_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/030/vibe_card.png)
+- Receipt: [female_030__vibe_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T185001Z/transactions/female_030__vibe_card__v001_attempt1.json)
+
+Verification passed: `pending-imagegen.json` is resolved, receipt verification returned `valid=true`, and single-asset file QA passed as PNG `981x1604`, `2,017,357` bytes. No visual, identity, distribution, or final approval was claimed.

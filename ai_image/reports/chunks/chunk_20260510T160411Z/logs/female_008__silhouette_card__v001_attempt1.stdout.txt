@@ -1,0 +1,13 @@
+SUCCESS: The process with PID 10400 (child process of PID 6556) has been terminated.
+SUCCESS: The process with PID 32912 (child process of PID 6556) has been terminated.
+SUCCESS: The process with PID 31920 (child process of PID 6556) has been terminated.
+SUCCESS: The process with PID 8480 (child process of PID 6556) has been terminated.
+SUCCESS: The process with PID 3988 (child process of PID 6556) has been terminated.
+Ran exactly one Seolleyeon one-asset Image Gen transaction for `female_008__silhouette_card__v001`.
+
+Saved outputs:
+- Final: [silhouette_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/008/silhouette_card.png)
+- Raw: [female_008__silhouette_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_008__silhouette_card__v001__attempt01.png)
+- Receipt: [female_008__silhouette_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T160411Z/transactions/female_008__silhouette_card__v001_attempt1.json)
+
+Verification passed: receipt `valid: true`, pending `resolved: true`, raw/final files exist, file QA passed as PNG `941x1672`, no reasons. I did not run visual approval, distribution audit, or create an approved copy; status remains `recovered_pending_qa`.

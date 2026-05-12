@@ -1,0 +1,13 @@
+SUCCESS: The process with PID 24888 (child process of PID 29060) has been terminated.
+SUCCESS: The process with PID 10776 (child process of PID 29060) has been terminated.
+SUCCESS: The process with PID 22676 (child process of PID 29060) has been terminated.
+SUCCESS: The process with PID 25444 (child process of PID 29060) has been terminated.
+SUCCESS: The process with PID 200 (child process of PID 29060) has been terminated.
+Completed exactly one Image Gen transaction for `female_033__face_card__v001`.
+
+Artifacts:
+- Final: [face_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/033/face_card.png)
+- Raw: [attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_033__face_card__v001__attempt01.png)
+- Receipt: [transaction JSON](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T185001Z/transactions/female_033__face_card__v001_attempt1.json)
+
+Validation: pending checkpoint is resolved, receipt verification passed, raw/final/source hashes match, and file QA passed as `1024x1536` PNG. Asset status is `file_needs_review` because visual policy QA was not run. `ai-image-dry-run` could not be run because the Makefile has no such target.

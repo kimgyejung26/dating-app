@@ -1,0 +1,1277 @@
+{
+  "schemaVersion": "seolleyeon_bounded_chunk_plan_v3",
+  "chunkId": "chunk_20260510T111239Z",
+  "createdAt": "2026-05-10T11:12:39+00:00",
+  "status": "planned",
+  "dryRun": true,
+  "maxIdentities": 24,
+  "maxAssets": 72,
+  "selectedIdentityCount": 24,
+  "selectedAssetCount": 72,
+  "selectionSource": "latest_distribution_audit",
+  "targetsJson": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/config/AI_IMAGE_DISTRIBUTION_TARGETS_V3.json",
+  "distributionAuditJson": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/latest_distribution_audit.json",
+  "allowedBuckets": [
+    {
+      "gender": "female",
+      "targetFaceType": "bear_like",
+      "targetLooksLevelBand": "2.5-3.2"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "bear_like",
+      "targetLooksLevelBand": "3.3-3.8"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "bear_like",
+      "targetLooksLevelBand": "3.9-4.3"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "cat_like",
+      "targetLooksLevelBand": "1.5-2.4"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "cat_like",
+      "targetLooksLevelBand": "2.5-3.2"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "deer_like",
+      "targetLooksLevelBand": "3.3-3.8"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "deer_like",
+      "targetLooksLevelBand": "3.9-4.3"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "dog_like",
+      "targetLooksLevelBand": "1.5-2.4"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "dog_like",
+      "targetLooksLevelBand": "2.5-3.2"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "dog_like",
+      "targetLooksLevelBand": "3.3-3.8"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "fox_like",
+      "targetLooksLevelBand": "3.9-4.3"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "hamster_like",
+      "targetLooksLevelBand": "1.5-2.4"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "hamster_like",
+      "targetLooksLevelBand": "3.3-3.8"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "hamster_like",
+      "targetLooksLevelBand": "3.9-4.3"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "horse_like",
+      "targetLooksLevelBand": "2.5-3.2"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "horse_like",
+      "targetLooksLevelBand": "3.9-4.3"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "mixed_neutral",
+      "targetLooksLevelBand": "2.5-3.2"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "mixed_neutral",
+      "targetLooksLevelBand": "3.9-4.3"
+    }
+  ],
+  "forbiddenBuckets": [],
+  "identities": [
+    {
+      "profileId": "female_001",
+      "gender": "female",
+      "numericId": "001",
+      "targetFaceType": "deer_like",
+      "targetLooksLevelBand": "3.3-3.8",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_001__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 1,
+          "maxAttempts": 3,
+          "promptHash": "abcc029d6a8a396abbc8dfe1",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/001/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_001__face_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_001__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "2e5e11e1be89d8358772b822",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/001/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_001__silhouette_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_001__face_card__v001"
+        },
+        {
+          "assetId": "female_001__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "edd49077769ba47d9497e5aa",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/001/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_001__vibe_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_001__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_002",
+      "gender": "female",
+      "numericId": "002",
+      "targetFaceType": "fox_like",
+      "targetLooksLevelBand": "3.9-4.3",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_002__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "0b7f9ba28e40debbc07512e4",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/002/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_002__face_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_002__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "48a376496b92d81df01a4f88",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/002/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_002__silhouette_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_002__face_card__v001"
+        },
+        {
+          "assetId": "female_002__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "7e460ab9c93aba9bd8c2f926",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/002/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_002__vibe_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_002__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_003",
+      "gender": "female",
+      "numericId": "003",
+      "targetFaceType": "fox_like",
+      "targetLooksLevelBand": "3.9-4.3",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_003__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "7fa020a9e3504ed5b5c5c3ba",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/003/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_003__face_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_003__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "879527faf0ac7de8b7125843",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/003/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_003__silhouette_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_003__face_card__v001"
+        },
+        {
+          "assetId": "female_003__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "4db9c617874942d54a0cf046",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/003/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_003__vibe_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_003__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_004",
+      "gender": "female",
+      "numericId": "004",
+      "targetFaceType": "cat_like",
+      "targetLooksLevelBand": "2.5-3.2",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_004__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "99731c5c2dea8e39101a8048",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/004/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_004__face_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_004__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "b38029c151d33f47a82a5042",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/004/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_004__silhouette_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_004__face_card__v001"
+        },
+        {
+          "assetId": "female_004__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "02a921eb2b546da3561e0e3e",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/004/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_004__vibe_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_004__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_005",
+      "gender": "female",
+      "numericId": "005",
+      "targetFaceType": "horse_like",
+      "targetLooksLevelBand": "3.9-4.3",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_005__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "1b3fff98b677af3c11e3dc21",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/005/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_005__face_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_005__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "e043bf2111f708c5b489c889",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/005/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_005__silhouette_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_005__face_card__v001"
+        },
+        {
+          "assetId": "female_005__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "afccb44dfadb43d114ad9c84",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/005/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_005__vibe_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_005__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_006",
+      "gender": "female",
+      "numericId": "006",
+      "targetFaceType": "hamster_like",
+      "targetLooksLevelBand": "3.9-4.3",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_006__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "99f44929111b6d5a5919c0e3",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/006/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_006__face_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_006__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "4b2d3f54eb5cb6736f0fe874",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/006/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_006__silhouette_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_006__face_card__v001"
+        },
+        {
+          "assetId": "female_006__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "475f729763ba0417f7a89108",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/006/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_006__vibe_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_006__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_007",
+      "gender": "female",
+      "numericId": "007",
+      "targetFaceType": "dog_like",
+      "targetLooksLevelBand": "2.5-3.2",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_007__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "7dd4c689f9ec3f0ba3fe6a14",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/007/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_007__face_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_007__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "7f6a4fb3d1eebe9f7972b9e0",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/007/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_007__silhouette_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_007__face_card__v001"
+        },
+        {
+          "assetId": "female_007__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "c3a4cfebdf789a3e261d0340",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/007/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_007__vibe_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_007__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_008",
+      "gender": "female",
+      "numericId": "008",
+      "targetFaceType": "hamster_like",
+      "targetLooksLevelBand": "3.3-3.8",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_008__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "99099a27954bbb8fea8767e5",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/008/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_008__face_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_008__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "d2ffd6a9e6c6aecbbba76db6",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/008/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_008__silhouette_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_008__face_card__v001"
+        },
+        {
+          "assetId": "female_008__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "57bbd42ca841be5f5af51c25",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/008/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_008__vibe_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_008__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_009",
+      "gender": "female",
+      "numericId": "009",
+      "targetFaceType": "horse_like",
+      "targetLooksLevelBand": "2.5-3.2",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_009__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "7d4673e947fd3e03b0e7d761",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/009/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_009__face_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_009__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "2e6a0f6a18d9b47813daf058",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/009/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_009__silhouette_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_009__face_card__v001"
+        },
+        {
+          "assetId": "female_009__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "adf6b2c2596b8abfbe4ed9b1",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/009/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_009__vibe_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_009__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_010",
+      "gender": "female",
+      "numericId": "010",
+      "targetFaceType": "dog_like",
+      "targetLooksLevelBand": "1.5-2.4",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_010__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "6723af42e2220485f78fa62d",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/010/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_010__face_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_010__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "318938097e1969ea76e77abe",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/010/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_010__silhouette_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_010__face_card__v001"
+        },
+        {
+          "assetId": "female_010__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "160d752610b062cdd2d64e31",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/010/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_010__vibe_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_010__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_011",
+      "gender": "female",
+      "numericId": "011",
+      "targetFaceType": "bear_like",
+      "targetLooksLevelBand": "3.3-3.8",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_011__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "a5103d08d13e61cb5b38ef02",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/011/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_011__face_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_011__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "9c8df7292687b4a0621636eb",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/011/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_011__silhouette_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_011__face_card__v001"
+        },
+        {
+          "assetId": "female_011__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "8de57886f6ca49979f5df42b",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/011/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_011__vibe_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_011__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_012",
+      "gender": "female",
+      "numericId": "012",
+      "targetFaceType": "deer_like",
+      "targetLooksLevelBand": "3.9-4.3",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_012__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "358a90cf3f2b8514eb465bf4",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/012/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_012__face_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_012__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "95c7856b92c6619ac5c19a7e",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/012/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_012__silhouette_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_012__face_card__v001"
+        },
+        {
+          "assetId": "female_012__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "0ecff552dabb1c3f712d42b2",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/012/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_012__vibe_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_012__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_013",
+      "gender": "female",
+      "numericId": "013",
+      "targetFaceType": "bear_like",
+      "targetLooksLevelBand": "2.5-3.2",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_013__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "a930b7e7f196a962ce985174",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/013/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_013__face_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_013__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "3b367b0ed4ea232b730f6133",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/013/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_013__silhouette_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_013__face_card__v001"
+        },
+        {
+          "assetId": "female_013__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "59baa697f8d8bb02e7f1074c",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/013/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_013__vibe_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_013__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_014",
+      "gender": "female",
+      "numericId": "014",
+      "targetFaceType": "dog_like",
+      "targetLooksLevelBand": "3.3-3.8",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_014__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "5fa19271a2462468c6ba5e5c",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/014/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_014__face_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_014__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "bc6b8061baafb1b68abb71a3",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/014/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_014__silhouette_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_014__face_card__v001"
+        },
+        {
+          "assetId": "female_014__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "e637da2e042e61b4cb611bfb",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/014/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_014__vibe_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_014__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_015",
+      "gender": "female",
+      "numericId": "015",
+      "targetFaceType": "hamster_like",
+      "targetLooksLevelBand": "3.3-3.8",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_015__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "2b7eaa6409bcd8b42243159c",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/015/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_015__face_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_015__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "7455542cf6fe129660fc17d2",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/015/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_015__silhouette_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_015__face_card__v001"
+        },
+        {
+          "assetId": "female_015__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "131323b1320baf2d26e1b908",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/015/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_015__vibe_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_015__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_016",
+      "gender": "female",
+      "numericId": "016",
+      "targetFaceType": "cat_like",
+      "targetLooksLevelBand": "2.5-3.2",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_016__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "9d519b4fd4fc4a454698f54a",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/016/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_016__face_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_016__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "b3262d4ca7bd11eb34e4fb40",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/016/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_016__silhouette_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_016__face_card__v001"
+        },
+        {
+          "assetId": "female_016__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "5aaa9a083612b7dace98f44c",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/016/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_016__vibe_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_016__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_017",
+      "gender": "female",
+      "numericId": "017",
+      "targetFaceType": "bear_like",
+      "targetLooksLevelBand": "2.5-3.2",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_017__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "da8b9eb1b18a617e2e8b39e5",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/017/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_017__face_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_017__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "060522e1b03da2a0d454cba8",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/017/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_017__silhouette_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_017__face_card__v001"
+        },
+        {
+          "assetId": "female_017__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "6fd5bc521085e34d4351aa85",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/017/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_017__vibe_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_017__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_018",
+      "gender": "female",
+      "numericId": "018",
+      "targetFaceType": "mixed_neutral",
+      "targetLooksLevelBand": "2.5-3.2",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_018__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "c7d2d35572ff8e8998df970b",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/018/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_018__face_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_018__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "ea9cd86f4f533e0ec697c26d",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/018/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_018__silhouette_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_018__face_card__v001"
+        },
+        {
+          "assetId": "female_018__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "8355261efdab69e6d3aba473",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/018/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_018__vibe_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_018__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_019",
+      "gender": "female",
+      "numericId": "019",
+      "targetFaceType": "dog_like",
+      "targetLooksLevelBand": "2.5-3.2",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_019__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "2a11896a4af79075863636f5",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/019/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_019__face_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_019__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "8be97f37e2fe69bb874103d5",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/019/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_019__silhouette_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_019__face_card__v001"
+        },
+        {
+          "assetId": "female_019__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "60cb50979d2a7095db1befbd",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/019/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_019__vibe_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_019__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_020",
+      "gender": "female",
+      "numericId": "020",
+      "targetFaceType": "dog_like",
+      "targetLooksLevelBand": "3.3-3.8",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_020__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "0ce8cc5c3eaf754f079207a1",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/020/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_020__face_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_020__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "b998d2da92cd1aa98b2e9e17",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/020/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_020__silhouette_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_020__face_card__v001"
+        },
+        {
+          "assetId": "female_020__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "304eb323b5b7193a3631f4d0",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/020/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_020__vibe_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_020__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_021",
+      "gender": "female",
+      "numericId": "021",
+      "targetFaceType": "hamster_like",
+      "targetLooksLevelBand": "1.5-2.4",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_021__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "6138aad3b967bb98b0bab269",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/021/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_021__face_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_021__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "7deb813e7d085ef7d80e3ecc",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/021/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_021__silhouette_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_021__face_card__v001"
+        },
+        {
+          "assetId": "female_021__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "0b3eae97501a408d39ab447b",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/021/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_021__vibe_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_021__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_022",
+      "gender": "female",
+      "numericId": "022",
+      "targetFaceType": "mixed_neutral",
+      "targetLooksLevelBand": "3.9-4.3",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_022__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "75a687033555ce414e8cad07",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/022/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_022__face_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_022__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "9a51f79bb78339508bba2b38",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/022/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_022__silhouette_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_022__face_card__v001"
+        },
+        {
+          "assetId": "female_022__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "3cfd9d3bf49a22472a42adff",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/022/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_022__vibe_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_022__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_023",
+      "gender": "female",
+      "numericId": "023",
+      "targetFaceType": "cat_like",
+      "targetLooksLevelBand": "1.5-2.4",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_023__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "beb3605f800b4221f979aa1b",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/023/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_023__face_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_023__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "d938c07c52f5ddc06215bf53",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/023/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_023__silhouette_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_023__face_card__v001"
+        },
+        {
+          "assetId": "female_023__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "4cd57615df68ad4e1a2dcdcc",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/023/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_023__vibe_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_023__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_024",
+      "gender": "female",
+      "numericId": "024",
+      "targetFaceType": "bear_like",
+      "targetLooksLevelBand": "3.9-4.3",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_024__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "f7ce5791d63535b6c2bef7db",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/024/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_024__face_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_024__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "862807e16121e18bc354d70d",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/024/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_024__silhouette_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_024__face_card__v001"
+        },
+        {
+          "assetId": "female_024__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "promptHash": "112d52d5ff33a1a95ca93018",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/024/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_024__vibe_card__v001__attemptXX.png",
+          "requiresReferenceAssetId": "female_024__face_card__v001"
+        }
+      ]
+    }
+  ],
+  "initialProgress": {
+    "approvedIdentityCount": 1,
+    "approvedAssetCount": 3,
+    "assetQaCount": 10,
+    "identityQaCount": 4,
+    "resolvedPendingCount": 12,
+    "rejectedIdentityCount": 3,
+    "needsReviewIdentityCount": 0,
+    "remainingDeficits": {
+      "approvedCompleteIdentities": {
+        "target": 240,
+        "current": 1,
+        "deficit": 239,
+        "surplus": 0,
+        "exactMatch": false
+      },
+      "approvedImages": {
+        "target": 720,
+        "current": 3,
+        "deficit": 717,
+        "surplus": 0,
+        "exactMatch": false
+      },
+      "femaleApprovedIdentities": {
+        "target": 120,
+        "current": 1,
+        "deficit": 119,
+        "surplus": 0,
+        "exactMatch": false
+      },
+      "maleApprovedIdentities": {
+        "target": 120,
+        "current": 0,
+        "deficit": 120,
+        "surplus": 0,
+        "exactMatch": false
+      }
+    },
+    "surplusBuckets": []
+  }
+}

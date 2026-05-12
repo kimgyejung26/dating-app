@@ -1,0 +1,13 @@
+SUCCESS: The process with PID 24632 (child process of PID 27496) has been terminated.
+SUCCESS: The process with PID 13516 (child process of PID 27496) has been terminated.
+SUCCESS: The process with PID 9736 (child process of PID 27496) has been terminated.
+SUCCESS: The process with PID 29720 (child process of PID 27496) has been terminated.
+SUCCESS: The process with PID 4648 (child process of PID 27496) has been terminated.
+정확히 한 개 Image Gen transaction만 실행했습니다.
+
+- Asset: `female_029__silhouette_card__v001`
+- Raw: [female_029__silhouette_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_029__silhouette_card__v001__attempt01.png)
+- Final: [silhouette_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/029/silhouette_card.png)
+- Receipt: [female_029__silhouette_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T185001Z/transactions/female_029__silhouette_card__v001_attempt1.json)
+
+검증 결과: `pendingStatus=resolved`, `recoveryStatus=recovered`, receipt 검증 `true`, raw/final 파일 QA 모두 `ok`, 크기 `1024x1536`. Global file QA나 visual QA는 실행하지 않았고, receipt도 visual/identity/distribution approval을 claim하지 않습니다.

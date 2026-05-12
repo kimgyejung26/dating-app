@@ -1,0 +1,50 @@
+{
+  "qaType": "seolleyeon_visual_verdict_identity_v3",
+  "sheetId": "active_visual_identity_qa_merged",
+  "identities": [
+    {
+      "profileId": "female_997",
+      "gender": "female",
+      "targetFaceType": "deer_like",
+      "observedFaceType": "deer_like",
+      "targetLooksLevelBand": "2.5-3.2",
+      "observedLooksLevelBand": "3.3-3.8",
+      "assetIds": {
+        "face_card": "female_997__face_card__v001",
+        "silhouette_card": "female_997__silhouette_card__v001",
+        "vibe_card": "female_997__vibe_card__v001"
+      },
+      "assetDecisions": {
+        "face_card": "rejected",
+        "silhouette_card": "approved",
+        "vibe_card": "rejected"
+      },
+      "faceToSilhouetteConsistency": 4.0,
+      "faceToVibeConsistency": 4.2,
+      "sameIdentity": true,
+      "completeIdentityDecision": "rejected",
+      "countsTowardDistribution": false,
+      "failedShotTypes": [
+        "face_card",
+        "vibe_card"
+      ],
+      "retryShotTypes": [
+        "face_card",
+        "vibe_card"
+      ],
+      "rejectReasons": [
+        "asset_rejected_face_card",
+        "asset_rejected_vibe_card",
+        "targetLooksLevelBand_mismatch"
+      ],
+      "notes": "All shots appear broadly same identity, but face_card and vibe_card were asset-rejected due looks-level band mismatch above target."
+    }
+  ],
+  "summary": {
+    "approvedCompleteIdentities": 0,
+    "needsReviewIdentities": 0,
+    "rejectedIdentities": 1,
+    "missingShotIdentities": 0,
+    "identityMismatchCount": 0
+  }
+}

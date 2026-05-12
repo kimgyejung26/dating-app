@@ -1,0 +1,18 @@
+SUCCESS: The process with PID 21688 (child process of PID 14684) has been terminated.
+SUCCESS: The process with PID 24788 (child process of PID 14684) has been terminated.
+SUCCESS: The process with PID 33556 (child process of PID 14684) has been terminated.
+SUCCESS: The process with PID 13816 (child process of PID 14684) has been terminated.
+SUCCESS: The process with PID 16460 (child process of PID 14684) has been terminated.
+완료했습니다. Built-in Image Gen은 정확히 1회만 호출했고, 대상은 `pending-imagegen.json` 기준 `female_029__vibe_card__v001` attempt 1입니다.
+
+결과:
+- Final: [vibe_card.png](/C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/029/vibe_card.png)
+- Raw: [female_029__vibe_card__v001__attempt01.png](/C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_029__vibe_card__v001__attempt01.png)
+- Receipt: [female_029__vibe_card__v001_attempt1.json](/C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T185001Z/transactions/female_029__vibe_card__v001_attempt1.json)
+
+검증:
+- `pending-imagegen.json` resolved
+- `generation_status.csv` status: `recovered_pending_qa`
+- receipt verifier passed
+- file QA passed: PNG, `1023x1537`, no file-level issues
+- global visual QA / distribution audit / approval copy는 실행하지 않았습니다.

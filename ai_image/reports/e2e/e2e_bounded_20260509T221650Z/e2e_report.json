@@ -1,0 +1,375 @@
+{
+  "schemaVersion": "seolleyeon_bounded_imagegen_e2e_smoke_v3",
+  "chunkId": "e2e_bounded_20260509T221650Z",
+  "status": "failed",
+  "failureReason": "unexpected_error",
+  "failureDetails": {
+    "error": "Codex visual QA subprocess failed: [WinError 206] 파일 이름이나 확장명이 너무 깁니다",
+    "type": "ActiveVisualVerdictError"
+  },
+  "startTime": "2026-05-09T22:16:50+00:00",
+  "endTime": "2026-05-09T22:26:56+00:00",
+  "statement": "This E2E validates one bounded chunk only and does not validate full dataset completion.",
+  "environment": {
+    "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "selectedAgent": "codex",
+    "imagegenAvailability": true,
+    "referenceImageInputAvailable": true,
+    "referenceImageArgMode": "image",
+    "visualVerdictAvailability": true,
+    "codexGeneratedImagesDir": "C:\\Users\\samsung\\.codex\\generated_images"
+  },
+  "commands": [
+    {
+      "args": [
+        "codex",
+        "exec",
+        "-C",
+        "C:\\Users\\samsung\\StudioProjects\\semisemifinal",
+        "Use Codex internal Image Gen only for exactly one Seolleyeon AI profile asset.\nDo not use OpenAI Image API. Do not use Batch API. Do not require OPENAI_API_KEY.\nDo not modify CLIP/SVD/KNN/RRF recommender files or any recommender pipeline code.\nGenerate exactly one image, then stop. Do not continue to the next asset. Do not run QA.\nDo not recover, copy, move, rename, or import generated files; the parent bounded executor owns recovery and file QA after this call.\n\nOutput geometry requirement:\n- Generate a portrait image close to 2:3 aspect ratio, ideally 1024x1536.\n- Do not create an ultra-tall, panoramic, square, or heavily cropped image.\n- The recovered file must satisfy vertical profile file QA aspect ratio checks.\n\nSingle asset to generate:\nassetId: female_997__face_card__v001\nprofileId: female_997\ngender: female\nnumericId: 997\nshotType: face_card\ntargetFaceType: deer_like\ntargetLooksLevelBand: 2.5-3.2\nattempt: 1\npromptHash: 963b790e742628329a750438\nexpectedRawPath: C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_997__face_card__v001__attempt01.png\nexpectedFinalPath: C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/997/face_card.png\n\nGeneration prompt:\nGenerate exactly one vertical realistic smartphone profile photo.\n\nAsset metadata:\nassetId: female_997__face_card__v001\nprofileId: female_997\nshotType: face_card\n\nUse this prompt:\nA realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\na soft oval face, medium-large calm eyes, a delicate jawline, a gentle quiet expression, naturally rounded face shape, medium-large eyes, neutral eye tilt, naturally defined jawline, subtle cheek fullness, natural medium nose bridge, soft fuller lips, natural brows, clear natural skin texture, realistic attractive appearance, balanced facial symmetry, clear natural skin, well-kept but not influencer-like, warm sporty mood.\n\nHair and styling:\nlong, natural dark brown, soft wavy hair with light natural bangs, natural makeup, soft mature romantic everyday fashion, slim-regular fit without being tight, campus-appropriate and modest. Outfit: cream sweatshirt with a simple collar detail.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.\n\nRules:\n- one image only\n- no text in image\n- no watermark\n- no logo\n- adult Korean university student\n- realistic, calm, trustworthy\n- not influencer-like\n- not school uniform\n- not childlike\n\n"
+      ],
+      "cwd": "C:\\Users\\samsung\\StudioProjects\\semisemifinal",
+      "return_code": 0,
+      "shell": false,
+      "stdout_path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/commands/female_997__face_card__v001_attempt1.stdout.txt",
+      "stderr_path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/commands/female_997__face_card__v001_attempt1.stderr.txt",
+      "stdout_snippet": "SUCCESS: The process with PID 28324 (child process of PID 24808) has been terminated.\nSUCCESS: The process with PID 2596 (child process of PID 24808) has been terminated.\nSUCCESS: The process with PID 21912 (child process of PID 24808) has been terminated.\nSUCCESS: The process with PID 31300 (child process of PID 24808) has been terminated.\nSUCCESS: The process with PID 30184 (child process of PID 24808) has been terminated.\nI have the relevant rule loaded: this call is limited to the single `female_997__face_card__v001` `face_card`. I’m generating now with a vertical 2:3 portrait constraint and then stopping.\n",
+      "stderr_snippet": "Reading additional input from stdin...\n2026-05-09T22:16:51.881362Z  WARN codex_core_plugins::startup_remote_sync: startup remote plugin sync failed; will retry on next app-server start error=remote plugin sync request to https://chatgpt.com/backend-api/plugins/list failed with status 403 Forbidden: <html>\n  <head>\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <style global>body{font-family:Arial,Helvetica,sans-serif}.container{align-items:center;display:flex;flex-direction:column;gap:2rem;height:100%;justify-content:center;width:100%}@keyframes enlarge-appear{0%{opacity:0;transform:scale(75%) rotate(-90deg)}to{opacity:1;transform:scale(100%) rotate(0deg)}}.logo{color:#8e8ea0}.scale-appear{animation:enlarge-appear .4s ease-out}@media (min-width:768px){.scale-appear{height:48px;width:48px}}.data:empty{display:none}.data{border-radius:5px;color:#8e8ea0;text-align:center}@media (prefers-color-scheme:dark){body{background-color:#343541}.logo{color:#acacbe}}</style>\n  <meta http-equiv=\"refresh\" content=\"360\"></head>\n  <body>\n    <div class=\"container\">\n      <div class=\"logo\">\n        <svg\n          width=\"41\"\n          height=\"41\"\n          viewBox=\"0 0 41 41\"\n          fill=\"none\"\n          xmlns=\"http://www.w3.org/2000/svg\"\n          strokeWidth=\"2\"\n          class=\"scale-appear\"\n        >\n          <path\n            d=\"M37.5324 16.8707C37.9808 15.5241 38.1363 14.0974 37.9886 12.6859C37.8409 11.2744 37.3934 9.91076 36.676 8.68622C35.6126 6.83404 33.9882 5.3676 32.0373 4.4985C30.0864 3.62941 27.9098 3.40259 25.8215 3.85078C24.8796 2.7893 23.7219 1.94125 22.4257 1.36341C21.1295 0.785575 19.7249 0.491269 18.3058 0.500197C16.1708 0.495044 14.0893 1.16803 12.3614 2.42214C10.6335 3.67624 9.34853 5.44666 8.6917 7.47815C7.30085 7.76286 5.98686 8.3414 4.8377 9.17505C3.68854 10.0087 2.73073 11.0782 2.02839 12.312C0.956464 14.1591 0.498905 16.2988 0.721698 18.4228C0.944492 20.5467 1.83612 22.5449 3.268 24.1293C2.81966 25.4759 2.66413 26.9026 2.811"
+    },
+    {
+      "args": [
+        "codex",
+        "exec",
+        "--image",
+        "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\ai_image\\female\\997\\face_card.png",
+        "-C",
+        "C:\\Users\\samsung\\StudioProjects\\semisemifinal",
+        "Use Codex internal Image Gen only for exactly one Seolleyeon AI profile asset.\nDo not use OpenAI Image API. Do not use Batch API. Do not require OPENAI_API_KEY.\nDo not modify CLIP/SVD/KNN/RRF recommender files or any recommender pipeline code.\nGenerate exactly one image, then stop. Do not continue to the next asset. Do not run QA.\nDo not recover, copy, move, rename, or import generated files; the parent bounded executor owns recovery and file QA after this call.\n\nOutput geometry requirement:\n- Generate a portrait image close to 2:3 aspect ratio, ideally 1024x1536.\n- Do not create an ultra-tall, panoramic, square, or heavily cropped image.\n- The recovered file must satisfy vertical profile file QA aspect ratio checks.\n\nSingle asset to generate:\nassetId: female_997__silhouette_card__v001\nprofileId: female_997\ngender: female\nnumericId: 997\nshotType: silhouette_card\ntargetFaceType: deer_like\ntargetLooksLevelBand: 2.5-3.2\nattempt: 1\npromptHash: 87639824f10e994f2a03e719\nexpectedRawPath: C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_997__silhouette_card__v001__attempt01.png\nexpectedFinalPath: C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/997/silhouette_card.png\n\nReference requirement:\n- referenceAssetId: female_997__face_card__v001\n- referenceImagePath: C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/997/face_card.png\n- Use this face_card as the same-person identity anchor.\n- If this Codex/Image Gen surface cannot use that reference image, stop and report reference_image_input_unavailable; do not generate an independent dependent shot.\n\nGeneration prompt:\nUsing the attached face_card image as the same person reference, generate exactly one silhouette_card image.\n\nAsset metadata:\nassetId: female_997__silhouette_card__v001\nprofileId: female_997\nshotType: silhouette_card\n\nGoal:\nSame person as the reference face_card.\nGenerate a realistic 3/4 body or full-body smartphone profile photo.\nThe body frame and proportions should be readable.\nCampus-appropriate modest clothing.\nNo oversized padding.\nNo revealing outfit.\nNo school uniform.\nNo text, no logo, no watermark.\n\nUse this prompt:\nA realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 161cm, medium frame, average build with a soft natural body line, natural muscularity, medium shoulder width, straight natural waist line, narrow hip line, balanced leg proportion, balanced torso length, realistic adult head-to-body ratio, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nneat blouse, regular-fit slacks, light cardigan, campus tote bag. soft mature romantic everyday fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.\n\n"
+      ],
+      "cwd": "C:\\Users\\samsung\\StudioProjects\\semisemifinal",
+      "return_code": 0,
+      "shell": false,
+      "stdout_path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/commands/female_997__silhouette_card__v001_attempt1.stdout.txt",
+      "stderr_path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/commands/female_997__silhouette_card__v001_attempt1.stderr.txt",
+      "stdout_snippet": "SUCCESS: The process with PID 23084 (child process of PID 11508) has been terminated.\nSUCCESS: The process with PID 13588 (child process of PID 11508) has been terminated.\nSUCCESS: The process with PID 30236 (child process of PID 11508) has been terminated.\nSUCCESS: The process with PID 16896 (child process of PID 11508) has been terminated.\nSUCCESS: The process with PID 19312 (child process of PID 11508) has been terminated.\n참조 입력은 현재 대화에 첨부된 이미지로 사용 가능합니다. 생성 전 체크포인트가 이미 해당 asset으로 잡혀 있는지 확인하고, 필요하면 `pending-imagegen.json`만 맞춘 뒤 바로 이미지 생성 1회를 호출합니다.\n",
+      "stderr_snippet": "Reading additional input from stdin...\n2026-05-09T22:20:12.559745Z  WARN codex_core_plugins::startup_remote_sync: startup remote plugin sync failed; will retry on next app-server start error=remote plugin sync request to https://chatgpt.com/backend-api/plugins/list failed with status 403 Forbidden: <html>\n  <head>\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <style global>body{font-family:Arial,Helvetica,sans-serif}.container{align-items:center;display:flex;flex-direction:column;gap:2rem;height:100%;justify-content:center;width:100%}@keyframes enlarge-appear{0%{opacity:0;transform:scale(75%) rotate(-90deg)}to{opacity:1;transform:scale(100%) rotate(0deg)}}.logo{color:#8e8ea0}.scale-appear{animation:enlarge-appear .4s ease-out}@media (min-width:768px){.scale-appear{height:48px;width:48px}}.data:empty{display:none}.data{border-radius:5px;color:#8e8ea0;text-align:center}@media (prefers-color-scheme:dark){body{background-color:#343541}.logo{color:#acacbe}}</style>\n  <meta http-equiv=\"refresh\" content=\"360\"></head>\n  <body>\n    <div class=\"container\">\n      <div class=\"logo\">\n        <svg\n          width=\"41\"\n          height=\"41\"\n          viewBox=\"0 0 41 41\"\n          fill=\"none\"\n          xmlns=\"http://www.w3.org/2000/svg\"\n          strokeWidth=\"2\"\n          class=\"scale-appear\"\n        >\n          <path\n            d=\"M37.5324 16.8707C37.9808 15.5241 38.1363 14.0974 37.9886 12.6859C37.8409 11.2744 37.3934 9.91076 36.676 8.68622C35.6126 6.83404 33.9882 5.3676 32.0373 4.4985C30.0864 3.62941 27.9098 3.40259 25.8215 3.85078C24.8796 2.7893 23.7219 1.94125 22.4257 1.36341C21.1295 0.785575 19.7249 0.491269 18.3058 0.500197C16.1708 0.495044 14.0893 1.16803 12.3614 2.42214C10.6335 3.67624 9.34853 5.44666 8.6917 7.47815C7.30085 7.76286 5.98686 8.3414 4.8377 9.17505C3.68854 10.0087 2.73073 11.0782 2.02839 12.312C0.956464 14.1591 0.498905 16.2988 0.721698 18.4228C0.944492 20.5467 1.83612 22.5449 3.268 24.1293C2.81966 25.4759 2.66413 26.9026 2.811"
+    },
+    {
+      "args": [
+        "codex",
+        "exec",
+        "--image",
+        "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\ai_image\\female\\997\\face_card.png",
+        "-C",
+        "C:\\Users\\samsung\\StudioProjects\\semisemifinal",
+        "Use Codex internal Image Gen only for exactly one Seolleyeon AI profile asset.\nDo not use OpenAI Image API. Do not use Batch API. Do not require OPENAI_API_KEY.\nDo not modify CLIP/SVD/KNN/RRF recommender files or any recommender pipeline code.\nGenerate exactly one image, then stop. Do not continue to the next asset. Do not run QA.\nDo not recover, copy, move, rename, or import generated files; the parent bounded executor owns recovery and file QA after this call.\n\nOutput geometry requirement:\n- Generate a portrait image close to 2:3 aspect ratio, ideally 1024x1536.\n- Do not create an ultra-tall, panoramic, square, or heavily cropped image.\n- The recovered file must satisfy vertical profile file QA aspect ratio checks.\n\nSingle asset to generate:\nassetId: female_997__vibe_card__v001\nprofileId: female_997\ngender: female\nnumericId: 997\nshotType: vibe_card\ntargetFaceType: deer_like\ntargetLooksLevelBand: 2.5-3.2\nattempt: 1\npromptHash: a00805b20c965e2db2ab7dd4\nexpectedRawPath: C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_997__vibe_card__v001__attempt01.png\nexpectedFinalPath: C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/997/vibe_card.png\n\nReference requirement:\n- referenceAssetId: female_997__face_card__v001\n- referenceImagePath: C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/997/face_card.png\n- Use this face_card as the same-person identity anchor.\n- If this Codex/Image Gen surface cannot use that reference image, stop and report reference_image_input_unavailable; do not generate an independent dependent shot.\n\nGeneration prompt:\nUsing the attached face_card image as the same person reference, generate exactly one vibe_card image.\n\nAsset metadata:\nassetId: female_997__vibe_card__v001\nprofileId: female_997\nshotType: vibe_card\n\nGoal:\nSame person as the reference face_card.\nGenerate a realistic campus/cafe/library/exhibition lifestyle profile photo.\nThe mood should be calm, sincere, and trustworthy.\nNot nightlife.\nNot influencer content.\nNo readable logo, school name, text, or watermark.\n\nUse this prompt:\nA realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, a soft oval face, medium-large calm eyes, a delicate jawline, a gentle quiet expression, same long, natural dark brown, soft wavy hair with light natural bangs, same natural grooming.\n\nMood and lifestyle:\nstanding near a campus garden with a relaxed sincere expression, soft mature romantic everyday fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\nquiet campus cafe or study lounge, warm neutral interior, no brand logos, no readable text.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.\n\n"
+      ],
+      "cwd": "C:\\Users\\samsung\\StudioProjects\\semisemifinal",
+      "return_code": 0,
+      "shell": false,
+      "stdout_path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/commands/female_997__vibe_card__v001_attempt1.stdout.txt",
+      "stderr_path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/commands/female_997__vibe_card__v001_attempt1.stderr.txt",
+      "stdout_snippet": "SUCCESS: The process with PID 9796 (child process of PID 29132) has been terminated.\nSUCCESS: The process with PID 31692 (child process of PID 29132) has been terminated.\nSUCCESS: The process with PID 18852 (child process of PID 29132) has been terminated.\nSUCCESS: The process with PID 18932 (child process of PID 29132) has been terminated.\nSUCCESS: The process with PID 10968 (child process of PID 29132) has been terminated.\nThe reference file exists. I’m checking the pending checkpoint now; if it already matches this asset I’ll leave it alone, otherwise I’ll write only that small checkpoint before the single generation call.\n",
+      "stderr_snippet": "Reading additional input from stdin...\n2026-05-09T22:22:32.759833Z  WARN codex_core_plugins::manager: failed to warm featured plugin ids cache error=remote plugin sync request to https://chatgpt.com/backend-api/plugins/featured failed with status 403 Forbidden: <html>\n  <head>\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <style global>body{font-family:Arial,Helvetica,sans-serif}.container{align-items:center;display:flex;flex-direction:column;gap:2rem;height:100%;justify-content:center;width:100%}@keyframes enlarge-appear{0%{opacity:0;transform:scale(75%) rotate(-90deg)}to{opacity:1;transform:scale(100%) rotate(0deg)}}.logo{color:#8e8ea0}.scale-appear{animation:enlarge-appear .4s ease-out}@media (min-width:768px){.scale-appear{height:48px;width:48px}}.data:empty{display:none}.data{border-radius:5px;color:#8e8ea0;text-align:center}@media (prefers-color-scheme:dark){body{background-color:#343541}.logo{color:#acacbe}}</style>\n  <meta http-equiv=\"refresh\" content=\"360\"></head>\n  <body>\n    <div class=\"container\">\n      <div class=\"logo\">\n        <svg\n          width=\"41\"\n          height=\"41\"\n          viewBox=\"0 0 41 41\"\n          fill=\"none\"\n          xmlns=\"http://www.w3.org/2000/svg\"\n          strokeWidth=\"2\"\n          class=\"scale-appear\"\n        >\n          <path\n            d=\"M37.5324 16.8707C37.9808 15.5241 38.1363 14.0974 37.9886 12.6859C37.8409 11.2744 37.3934 9.91076 36.676 8.68622C35.6126 6.83404 33.9882 5.3676 32.0373 4.4985C30.0864 3.62941 27.9098 3.40259 25.8215 3.85078C24.8796 2.7893 23.7219 1.94125 22.4257 1.36341C21.1295 0.785575 19.7249 0.491269 18.3058 0.500197C16.1708 0.495044 14.0893 1.16803 12.3614 2.42214C10.6335 3.67624 9.34853 5.44666 8.6917 7.47815C7.30085 7.76286 5.98686 8.3414 4.8377 9.17505C3.68854 10.0087 2.73073 11.0782 2.02839 12.312C0.956464 14.1591 0.498905 16.2988 0.721698 18.4228C0.944492 20.5467 1.83612 22.5449 3.268 24.1293C2.81966 25.4759 2.66413 26.9026 2.81182 28.3141C2.95951 29.7256 3.40701 31."
+    }
+  ],
+  "shellFalseUsed": true,
+  "identity": {
+    "logicalIdentityId": "e2e_identity_001",
+    "profileId": "female_997",
+    "targetFaceType": "deer_like",
+    "targetLooksLevelBand": "2.5-3.2"
+  },
+  "assetStatus": {
+    "female_997__face_card__v001": {
+      "pendingSnapshot": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/pending_snapshots/female_997__face_card__v001_attempt1.json",
+      "referencePath": "",
+      "generatedSourceCandidates": [
+        "C:/Users/samsung/.codex/generated_images/019e0ed0-a405-7293-a69e-5f82005d9c27/ig_03bd4fbc5bda960b0169ffb29797f48191bfed9bd6e0092580.png"
+      ],
+      "recovery": "passed",
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/997/face_card.png",
+      "e2eCopies": {
+        "localPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/e2e_runs/e2e_bounded_20260509T221650Z/generated/female_997__face_card__v001__attempt01.png",
+        "rawPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/e2e_runs/e2e_bounded_20260509T221650Z/generated/female_997__face_card__v001__attempt01.png",
+        "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/e2e_runs/e2e_bounded_20260509T221650Z/generated/face_card.png"
+      },
+      "fileQa": {
+        "checked": 1,
+        "approved": 0,
+        "needs_manual_review": 1,
+        "rejected": 0,
+        "missing": 0
+      },
+      "fileQaRows": [
+        {
+          "assetId": "female_997__face_card__v001",
+          "profileId": "female_997",
+          "shotType": "face_card",
+          "qaStatus": "file_needs_review",
+          "imagePath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/997/face_card.png",
+          "width": 1024,
+          "height": 1536,
+          "fileBytes": 2480575,
+          "reasonCodes": [],
+          "updatedAt": "2026-05-09T22:20:11+00:00"
+        }
+      ]
+    },
+    "female_997__silhouette_card__v001": {
+      "pendingSnapshot": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/pending_snapshots/female_997__silhouette_card__v001_attempt1.json",
+      "referencePath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/997/face_card.png",
+      "generatedSourceCandidates": [
+        "C:/Users/samsung/.codex/generated_images/019e0ed3-b348-7f01-9e66-e3c3269b02be/ig_0b2ab62cd4f82d580169ffb36678fc8191bb872c6547ba3004.png"
+      ],
+      "recovery": "passed",
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/997/silhouette_card.png",
+      "e2eCopies": {
+        "localPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/e2e_runs/e2e_bounded_20260509T221650Z/generated/female_997__silhouette_card__v001__attempt01.png",
+        "rawPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/e2e_runs/e2e_bounded_20260509T221650Z/generated/female_997__silhouette_card__v001__attempt01.png",
+        "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/e2e_runs/e2e_bounded_20260509T221650Z/generated/silhouette_card.png"
+      },
+      "fileQa": {
+        "checked": 1,
+        "approved": 0,
+        "needs_manual_review": 1,
+        "rejected": 0,
+        "missing": 0
+      },
+      "fileQaRows": [
+        {
+          "assetId": "female_997__silhouette_card__v001",
+          "profileId": "female_997",
+          "shotType": "silhouette_card",
+          "qaStatus": "file_needs_review",
+          "imagePath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/997/silhouette_card.png",
+          "width": 1024,
+          "height": 1536,
+          "fileBytes": 3099009,
+          "reasonCodes": [],
+          "updatedAt": "2026-05-09T22:22:31+00:00"
+        }
+      ]
+    },
+    "female_997__vibe_card__v001": {
+      "pendingSnapshot": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/pending_snapshots/female_997__vibe_card__v001_attempt1.json",
+      "referencePath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/997/face_card.png",
+      "generatedSourceCandidates": [
+        "C:/Users/samsung/.codex/generated_images/019e0ed5-d805-7a62-bdf7-b752d64ad320/ig_0de82f43aef18d0c0169ffb3f8c5ec81919d5d3f2fb7eff978.png"
+      ],
+      "recovery": "passed",
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/997/vibe_card.png",
+      "e2eCopies": {
+        "localPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/e2e_runs/e2e_bounded_20260509T221650Z/generated/female_997__vibe_card__v001__attempt01.png",
+        "rawPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/e2e_runs/e2e_bounded_20260509T221650Z/generated/female_997__vibe_card__v001__attempt01.png",
+        "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/e2e_runs/e2e_bounded_20260509T221650Z/generated/vibe_card.png"
+      },
+      "fileQa": {
+        "checked": 1,
+        "approved": 0,
+        "needs_manual_review": 1,
+        "rejected": 0,
+        "missing": 0
+      },
+      "fileQaRows": [
+        {
+          "assetId": "female_997__vibe_card__v001",
+          "profileId": "female_997",
+          "shotType": "vibe_card",
+          "qaStatus": "file_needs_review",
+          "imagePath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/997/vibe_card.png",
+          "width": 1024,
+          "height": 1536,
+          "fileBytes": 2421697,
+          "reasonCodes": [],
+          "updatedAt": "2026-05-09T22:24:55+00:00"
+        }
+      ]
+    }
+  },
+  "artifacts": {
+    "preflight": {
+      "agentAvailable": true,
+      "selectedAgent": "codex",
+      "referenceImageInputAvailable": true,
+      "referenceImageArgMode": "image",
+      "visualVerdictAvailable": true
+    },
+    "chunkPlan": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/current_chunk_plan.json",
+    "chunkState": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/current_chunk_state.json",
+    "contactSheets": [
+      "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/e2e_bounded_20260509T221650Z/contact_sheets/e2e_bounded_20260509T221650Z_contact_sheet_female_face_card.png",
+      "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/e2e_bounded_20260509T221650Z/contact_sheets/e2e_bounded_20260509T221650Z_contact_sheet_female_silhouette_card.png",
+      "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/e2e_bounded_20260509T221650Z/contact_sheets/e2e_bounded_20260509T221650Z_contact_sheet_female_vibe_card.png",
+      "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/e2e_bounded_20260509T221650Z/contact_sheets/female_997.png",
+      "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/e2e_bounded_20260509T221650Z/contact_sheets/chunk_001.png"
+    ],
+    "productionStateRestored": true
+  },
+  "manualReviewFlags": [],
+  "gitStatusBefore": "?? .agents/\n?? AGENTS.md\n?? AI_IMAGE_CODEX_IMAGEGEN_README.md\n?? AI_IMAGE_DISTRIBUTION_CONTROL_README.md\n?? AI_IMAGE_PIPELINE_README.md\n?? AI_IMAGE_QUALITY_CONTRACT.md\n?? Makefile\n?? VISUAL_VERDICT_ASSET_QA_PROMPT.md\n?? ai_image/\n?? lib/ai_recommend_model/seolleyeon_ai_profile_prompt_v3_package/\n?? lib/shared/widgets/glass_bottom_nav/\n?? requirements_ai_image.txt\n?? scripts/\n?? tests/",
+  "gitStatusAfter": "?? .agents/\n?? AGENTS.md\n?? AI_IMAGE_CODEX_IMAGEGEN_README.md\n?? AI_IMAGE_DISTRIBUTION_CONTROL_README.md\n?? AI_IMAGE_PIPELINE_README.md\n?? AI_IMAGE_QUALITY_CONTRACT.md\n?? Makefile\n?? VISUAL_VERDICT_ASSET_QA_PROMPT.md\n?? ai_image/\n?? lib/ai_recommend_model/seolleyeon_ai_profile_prompt_v3_package/\n?? lib/shared/widgets/glass_bottom_nav/\n?? requirements_ai_image.txt\n?? scripts/\n?? tests/",
+  "protectedRecommenderHashesBefore": {
+    "seolleyeon_run_all.py": "<missing>",
+    "seolleyeon_svd_train_export.py": "<missing>",
+    "seolleyeon_knn_train_export.py": "<missing>",
+    "seolleyeon_clip_train_export.py": "<missing>",
+    "seolleyeon_clip_embedder.py": "<missing>",
+    "seolleyeon_rrf_export.py": "<missing>",
+    "seolleyeon_rec_common_v3.py": "<missing>"
+  },
+  "protectedRecommenderHashesAfter": {
+    "seolleyeon_run_all.py": "<missing>",
+    "seolleyeon_svd_train_export.py": "<missing>",
+    "seolleyeon_knn_train_export.py": "<missing>",
+    "seolleyeon_clip_train_export.py": "<missing>",
+    "seolleyeon_clip_embedder.py": "<missing>",
+    "seolleyeon_rrf_export.py": "<missing>",
+    "seolleyeon_rec_common_v3.py": "<missing>"
+  },
+  "protectedRecommenderUnchanged": true,
+  "backupRecords": [
+    {
+      "relative_path": "ai_image/manifests/generation_manifest.jsonl",
+      "existed": true,
+      "backup_path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/backup/ai_image/manifests/generation_manifest.jsonl"
+    },
+    {
+      "relative_path": "ai_image/manifests/imagegen_queue.jsonl",
+      "existed": true,
+      "backup_path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/backup/ai_image/manifests/imagegen_queue.jsonl"
+    },
+    {
+      "relative_path": "ai_image/manifests/ai_profile_assets_v3.jsonl",
+      "existed": true,
+      "backup_path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/backup/ai_image/manifests/ai_profile_assets_v3.jsonl"
+    },
+    {
+      "relative_path": "ai_image/manifests/ai_profile_specs_v3.jsonl",
+      "existed": true,
+      "backup_path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/backup/ai_image/manifests/ai_profile_specs_v3.jsonl"
+    },
+    {
+      "relative_path": "ai_image/manifests/identity_manifest.jsonl",
+      "existed": true,
+      "backup_path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/backup/ai_image/manifests/identity_manifest.jsonl"
+    },
+    {
+      "relative_path": "ai_image/manifests/current_chunk_plan.json",
+      "existed": true,
+      "backup_path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/backup/ai_image/manifests/current_chunk_plan.json"
+    },
+    {
+      "relative_path": "ai_image/manifests/current_chunk_state.json",
+      "existed": true,
+      "backup_path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/backup/ai_image/manifests/current_chunk_state.json"
+    },
+    {
+      "relative_path": "ai_image/manifests/pending-imagegen.json",
+      "existed": true,
+      "backup_path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/backup/ai_image/manifests/pending-imagegen.json"
+    },
+    {
+      "relative_path": "ai_image/manifests/completed_pending_imagegen.jsonl",
+      "existed": true,
+      "backup_path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/backup/ai_image/manifests/completed_pending_imagegen.jsonl"
+    },
+    {
+      "relative_path": "ai_image/manifests/asset_qa_manifest.jsonl",
+      "existed": true,
+      "backup_path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/backup/ai_image/manifests/asset_qa_manifest.jsonl"
+    },
+    {
+      "relative_path": "ai_image/manifests/identity_qa_manifest.jsonl",
+      "existed": true,
+      "backup_path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/backup/ai_image/manifests/identity_qa_manifest.jsonl"
+    },
+    {
+      "relative_path": "ai_image/manifests/approved_identity_manifest.jsonl",
+      "existed": true,
+      "backup_path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/backup/ai_image/manifests/approved_identity_manifest.jsonl"
+    },
+    {
+      "relative_path": "ai_image/manifests/rejected_identity_manifest.jsonl",
+      "existed": true,
+      "backup_path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/backup/ai_image/manifests/rejected_identity_manifest.jsonl"
+    },
+    {
+      "relative_path": "ai_image/manifests/needs_review_identity_manifest.jsonl",
+      "existed": true,
+      "backup_path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/backup/ai_image/manifests/needs_review_identity_manifest.jsonl"
+    },
+    {
+      "relative_path": "ai_image/manifests/manual_review_required.flag",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "ai_image/reports/generation_status.csv",
+      "existed": true,
+      "backup_path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/backup/ai_image/reports/generation_status.csv"
+    },
+    {
+      "relative_path": "ai_image/reports/distribution_report.csv",
+      "existed": true,
+      "backup_path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/backup/ai_image/reports/distribution_report.csv"
+    },
+    {
+      "relative_path": "ai_image/reports/distribution_audit.json",
+      "existed": true,
+      "backup_path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/backup/ai_image/reports/distribution_audit.json"
+    },
+    {
+      "relative_path": "ai_image/reports/latest_distribution_audit.json",
+      "existed": true,
+      "backup_path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/backup/ai_image/reports/latest_distribution_audit.json"
+    },
+    {
+      "relative_path": "ai_image/reports/visual_verdict/asset_qa_latest.json",
+      "existed": true,
+      "backup_path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/backup/ai_image/reports/visual_verdict/asset_qa_latest.json"
+    },
+    {
+      "relative_path": "ai_image/reports/visual_verdict/identity_qa_latest.json",
+      "existed": true,
+      "backup_path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/backup/ai_image/reports/visual_verdict/identity_qa_latest.json"
+    },
+    {
+      "relative_path": "ai_image/reports/visual_verdict/distribution_audit_latest.json",
+      "existed": true,
+      "backup_path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/e2e/e2e_bounded_20260509T221650Z/backup/ai_image/reports/visual_verdict/distribution_audit_latest.json"
+    },
+    {
+      "relative_path": "ai_image/female/997/face_card.png",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "ai_image/female/997/silhouette_card.png",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "ai_image/female/997/vibe_card.png",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "ai_image/raw/female_997__face_card__v001__attempt01.png",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "ai_image/raw/female_997__silhouette_card__v001__attempt01.png",
+      "existed": false,
+      "backup_path": ""
+    },
+    {
+      "relative_path": "ai_image/raw/female_997__vibe_card__v001__attempt01.png",
+      "existed": false,
+      "backup_path": ""
+    }
+  ],
+  "productionGenerationRun": false
+}

@@ -1,0 +1,13 @@
+SUCCESS: The process with PID 14164 (child process of PID 33172) has been terminated.
+SUCCESS: The process with PID 35240 (child process of PID 33172) has been terminated.
+SUCCESS: The process with PID 16816 (child process of PID 33172) has been terminated.
+SUCCESS: The process with PID 5208 (child process of PID 33172) has been terminated.
+SUCCESS: The process with PID 13132 (child process of PID 33172) has been terminated.
+Ran exactly one Seolleyeon one-asset Image Gen transaction for `female_030__silhouette_card__v001`.
+
+Saved and verified:
+- Final: `ai_image/female/030/silhouette_card.png`
+- Raw: `ai_image/raw/female_030__silhouette_card__v001__attempt01.png`
+- Receipt: `ai_image/reports/chunks/chunk_20260510T185001Z/transactions/female_030__silhouette_card__v001_attempt1.json`
+
+Validation evidence: pending is `resolved`, receipt verification passed, single-asset file QA passed (`941x1672`, PNG), and no recommender file diffs were detected.

@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "seolleyeon_forbidden_file_restore_v3",
+  "restoredAt": "2026-05-11T02:37:30+00:00",
+  "backupRoot": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T185001Z/forbidden_file_backups/female_032__vibe_card__v001_attempt1",
+  "quarantineRoot": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T185001Z/forbidden_file_backups/female_032__vibe_card__v001_attempt1/quarantine",
+  "items": [
+    {
+      "path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/asset_qa_manifest.jsonl",
+      "quarantinePath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T185001Z/forbidden_file_backups/female_032__vibe_card__v001_attempt1/quarantine/C__Users__samsung__StudioProjects__semisemifinal__ai_image__manifests__asset_qa_manifest.jsonl",
+      "action": "restored_from_backup"
+    }
+  ]
+}

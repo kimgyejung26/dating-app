@@ -1,0 +1,6 @@
+SUCCESS: The process with PID 28324 (child process of PID 24808) has been terminated.
+SUCCESS: The process with PID 2596 (child process of PID 24808) has been terminated.
+SUCCESS: The process with PID 21912 (child process of PID 24808) has been terminated.
+SUCCESS: The process with PID 31300 (child process of PID 24808) has been terminated.
+SUCCESS: The process with PID 30184 (child process of PID 24808) has been terminated.
+I have the relevant rule loaded: this call is limited to the single `female_997__face_card__v001` `face_card`. I’m generating now with a vertical 2:3 portrait constraint and then stopping.

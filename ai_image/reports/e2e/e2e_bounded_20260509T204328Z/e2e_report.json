@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "seolleyeon_bounded_imagegen_e2e_smoke_v3",
+  "chunkId": "e2e_bounded_20260509T204328Z",
+  "status": "preflight_passed",
+  "failureReason": "",
+  "failureDetails": {},
+  "startTime": "2026-05-09T20:43:28+00:00",
+  "endTime": "2026-05-09T20:43:29+00:00",
+  "statement": "This E2E validates one bounded chunk only and does not validate full dataset completion.",
+  "environment": {
+    "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "selectedAgent": "codex",
+    "imagegenAvailability": true,
+    "referenceImageInputAvailable": true,
+    "referenceImageArgMode": "image",
+    "visualVerdictAvailability": true,
+    "codexGeneratedImagesDir": "C:\\Users\\samsung\\.codex\\generated_images"
+  },
+  "commands": [],
+  "shellFalseUsed": true,
+  "identity": {
+    "logicalIdentityId": "e2e_identity_001",
+    "profileId": "female_997",
+    "targetFaceType": "deer_like",
+    "targetLooksLevelBand": "2.5-3.2"
+  },
+  "assetStatus": {},
+  "artifacts": {
+    "preflight": {
+      "agentAvailable": true,
+      "selectedAgent": "codex",
+      "referenceImageInputAvailable": true,
+      "referenceImageArgMode": "image",
+      "visualVerdictAvailable": true
+    }
+  },
+  "manualReviewFlags": [],
+  "gitStatusBefore": "?? .agents/\n?? AGENTS.md\n?? AI_IMAGE_CODEX_IMAGEGEN_README.md\n?? AI_IMAGE_DISTRIBUTION_CONTROL_README.md\n?? AI_IMAGE_PIPELINE_README.md\n?? AI_IMAGE_QUALITY_CONTRACT.md\n?? Makefile\n?? VISUAL_VERDICT_ASSET_QA_PROMPT.md\n?? ai_image/\n?? lib/ai_recommend_model/seolleyeon_ai_profile_prompt_v3_package/\n?? lib/shared/widgets/glass_bottom_nav/\n?? requirements_ai_image.txt\n?? scripts/\n?? tests/",
+  "gitStatusAfter": "?? .agents/\n?? AGENTS.md\n?? AI_IMAGE_CODEX_IMAGEGEN_README.md\n?? AI_IMAGE_DISTRIBUTION_CONTROL_README.md\n?? AI_IMAGE_PIPELINE_README.md\n?? AI_IMAGE_QUALITY_CONTRACT.md\n?? Makefile\n?? VISUAL_VERDICT_ASSET_QA_PROMPT.md\n?? ai_image/\n?? lib/ai_recommend_model/seolleyeon_ai_profile_prompt_v3_package/\n?? lib/shared/widgets/glass_bottom_nav/\n?? requirements_ai_image.txt\n?? scripts/\n?? tests/",
+  "protectedRecommenderHashesBefore": {
+    "seolleyeon_run_all.py": "<missing>",
+    "seolleyeon_svd_train_export.py": "<missing>",
+    "seolleyeon_knn_train_export.py": "<missing>",
+    "seolleyeon_clip_train_export.py": "<missing>",
+    "seolleyeon_clip_embedder.py": "<missing>",
+    "seolleyeon_rrf_export.py": "<missing>",
+    "seolleyeon_rec_common_v3.py": "<missing>"
+  },
+  "protectedRecommenderHashesAfter": {
+    "seolleyeon_run_all.py": "<missing>",
+    "seolleyeon_svd_train_export.py": "<missing>",
+    "seolleyeon_knn_train_export.py": "<missing>",
+    "seolleyeon_clip_train_export.py": "<missing>",
+    "seolleyeon_clip_embedder.py": "<missing>",
+    "seolleyeon_rrf_export.py": "<missing>",
+    "seolleyeon_rec_common_v3.py": "<missing>"
+  },
+  "protectedRecommenderUnchanged": true,
+  "backupRecords": [],
+  "productionGenerationRun": false
+}

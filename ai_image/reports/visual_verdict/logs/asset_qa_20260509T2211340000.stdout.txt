@@ -1,0 +1,6 @@
+SUCCESS: The process with PID 24108 (child process of PID 3956) has been terminated.
+SUCCESS: The process with PID 29536 (child process of PID 3956) has been terminated.
+SUCCESS: The process with PID 18756 (child process of PID 3956) has been terminated.
+SUCCESS: The process with PID 30948 (child process of PID 3956) has been terminated.
+SUCCESS: The process with PID 26076 (child process of PID 3956) has been terminated.
+{"qaType":"seolleyeon_visual_verdict_asset_v3","sheetId":"e2e_bounded_20260509T205437Z_contact_sheet_male_face_card","assets":[],"summary":{"approvedCount":0,"needsReviewCount":0,"rejectedCount":0,"hardRejectCount":0,"metadataMismatchCount":0}}

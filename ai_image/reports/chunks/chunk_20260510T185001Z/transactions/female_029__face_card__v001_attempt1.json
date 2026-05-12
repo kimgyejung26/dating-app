@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "seolleyeon_one_asset_transaction_v3",
+  "transactionId": "chunk_20260510T185001Z_female_029__face_card__v001_attempt1",
+  "chunkId": "chunk_20260510T185001Z",
+  "assetId": "female_029__face_card__v001",
+  "profileId": "female_029",
+  "gender": "female",
+  "numericId": "029",
+  "shotType": "face_card",
+  "attempt": 1,
+  "startedAt": "2026-05-11T01:25:26+00:00",
+  "finishedAt": "2026-05-11T01:30:02+00:00",
+  "generated": true,
+  "recovered": true,
+  "pendingResolved": true,
+  "fileQaRan": true,
+  "fileQaPassed": true,
+  "rawPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_029__face_card__v001__attempt01.png",
+  "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/029/face_card.png",
+  "sourceGeneratedImagePath": "C:/Users/samsung/.codex/generated_images/019e14a3-a656-7cb3-8568-2e45457a7570/ig_0071b028b736951a016a013087b4b48191bf04580c551e7c18.png",
+  "referencePath": null,
+  "referenceAttached": false,
+  "referencePathSha256": null,
+  "fileQa": {
+    "decision": "file_passed",
+    "raw": {
+      "ok": true,
+      "width": 1024,
+      "height": 1535,
+      "fileBytes": 2262410,
+      "format": "PNG",
+      "reasons": []
+    },
+    "final": {
+      "ok": true,
+      "width": 1024,
+      "height": 1535,
+      "fileBytes": 2262410,
+      "format": "PNG",
+      "reasons": []
+    },
+    "width": 1024,
+    "height": 1535,
+    "format": "PNG",
+    "aspectRatio": 0.6671009771986971,
+    "sizeBytes": 2262410,
+    "reasons": []
+  },
+  "workerActions": [
+    "codex_builtin_imagegen_called_once",
+    "recovered_pending_imagegen_no_global_qa",
+    "single_asset_file_qa_ran",
+    "receipt_written"
+  ],
+  "stdoutLog": "",
+  "stderrLog": "",
+  "error": null,
+  "status": "succeeded",
+  "source": "codex_builtin_imagegen_one_asset_transaction"
+}

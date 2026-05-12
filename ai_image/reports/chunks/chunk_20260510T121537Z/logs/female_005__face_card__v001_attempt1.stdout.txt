@@ -1,0 +1,6 @@
+SUCCESS: The process with PID 15544 (child process of PID 22100) has been terminated.
+SUCCESS: The process with PID 34764 (child process of PID 22100) has been terminated.
+SUCCESS: The process with PID 34348 (child process of PID 22100) has been terminated.
+SUCCESS: The process with PID 31624 (child process of PID 22100) has been terminated.
+SUCCESS: The process with PID 10960 (child process of PID 22100) has been terminated.
+Using `seolleyeon-ai-profile-imagegen` + `imagegen` skills: target is exactly one synthetic Seolleyeon asset, Codex internal Image Gen only, checkpoint before generation, no API/Batch usage.

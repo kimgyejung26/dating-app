@@ -1,0 +1,326 @@
+[
+  {
+    "schemaVersion": "ai_profile_image_v3",
+    "profileId": "female_137",
+    "assetId": "female_137__face_card__v001",
+    "gender": "female",
+    "shotType": "face_card",
+    "legacyStoragePath": "ai_profiles/female/137.png",
+    "storagePath": "ai_profiles/female/137/face_card.png",
+    "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\nbalanced natural facial proportions, medium eyes, a soft defined jawline, a calm sincere expression, soft oval face shape, medium-sized eyes, neutral to slightly downturned eye shape, soft but defined jawline, fuller cheeks, soft medium nose bridge, natural thinner lips, natural straight brows, natural skin texture, realistic attractive appearance, balanced facial symmetry, clear natural skin, well-kept but not influencer-like, quiet romantic but mature mood.\n\nHair and styling:\nbob-length, natural dark brown, soft straight hair, no bangs, light natural makeup, neat campus everyday fashion, slim-regular fit without being tight, campus-appropriate and modest. Outfit: muted rose blouse with a light cardigan.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+    "negative": "Avoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+    "metadata": {
+      "schemaVersion": "ai_profile_image_v3",
+      "profileId": "female_137",
+      "gender": "female",
+      "visualAge": 21,
+      "identitySeed": 10137,
+      "isSynthetic": true,
+      "face": {
+        "faceType": "neutral_mixed",
+        "looksLevel": 3.6,
+        "faceShape": "soft_oval",
+        "eyeSize": "medium",
+        "eyeTilt": "neutral_slight_downturned",
+        "jawline": "soft_defined",
+        "cheekFullness": "full",
+        "noseBridge": "soft_medium",
+        "lipFullness": "thin_natural",
+        "browThickness": "straight_natural",
+        "skinFinish": "natural",
+        "vibe": "quiet_romance"
+      },
+      "body": {
+        "heightCm": 167,
+        "weightKgInternal": 51,
+        "bodyFatVisual": "slim",
+        "frame": "small",
+        "muscularity": "natural",
+        "shoulderWidth": "narrow",
+        "waistDefinition": "soft_defined",
+        "hipWidth": "narrow",
+        "legRatio": "long",
+        "torsoLength": "balanced",
+        "headBodyRatio": "balanced"
+      },
+      "hair": {
+        "length": "bob",
+        "texture": "soft_straight",
+        "color": "natural_dark_brown",
+        "bangs": "none"
+      },
+      "styling": {
+        "makeupLevel": "light_natural",
+        "fashionMood": "campus_neat",
+        "outfitFit": "slim_regular",
+        "avoidSexualizedStyling": true
+      },
+      "shotOutfits": {
+        "faceCard": "muted rose blouse with a light cardigan",
+        "fullBody": "regular-fit light cardigan, relaxed straight pants, simple campus tote bag, clean sneakers"
+      },
+      "vibeActivity": "sitting by a window in a quiet campus cafe, reading lecture notes with a warm drink nearby",
+      "vibeLocation": "quiet campus cafe or study lounge, warm neutral interior, no brand logos, no readable text",
+      "storagePaths": {
+        "legacy": "ai_profiles/female/137.png",
+        "face_card": "ai_profiles/female/137/face_card.png",
+        "silhouette_card": "ai_profiles/female/137/silhouette_card.png",
+        "vibe_card": "ai_profiles/female/137/vibe_card.png"
+      },
+      "shotPlan": [
+        {
+          "shotType": "face_card",
+          "storagePath": "ai_profiles/female/137/face_card.png"
+        },
+        {
+          "shotType": "silhouette_card",
+          "storagePath": "ai_profiles/female/137/silhouette_card.png"
+        },
+        {
+          "shotType": "vibe_card",
+          "storagePath": "ai_profiles/female/137/vibe_card.png"
+        }
+      ],
+      "qa": {
+        "adultVisual": null,
+        "campusRealism": null,
+        "noSchoolUniform": null,
+        "noRevealingClothes": null,
+        "noInfluencerPhotoshoot": null,
+        "identityConsistentAcrossShots": null,
+        "approved": null
+      }
+    },
+    "qaChecklist": [
+      "adult_visual_age_20_plus",
+      "not_childlike_or_school_uniform",
+      "not_influencer_or_celebrity_like",
+      "not_glamour_studio_or_idol_profile",
+      "no_revealing_or_sexualized_styling",
+      "campus_or_neutral_context",
+      "no_readable_school_logo_or_personal_text",
+      "realistic_smartphone_profile_photo",
+      "face_readable_for_face_card",
+      "silhouette_readable_for_silhouette_card",
+      "vibe_readable_for_vibe_card",
+      "metadata_matches_image",
+      "identity_consistent_across_shots"
+    ]
+  },
+  {
+    "schemaVersion": "ai_profile_image_v3",
+    "profileId": "female_137",
+    "assetId": "female_137__silhouette_card__v001",
+    "gender": "female",
+    "shotType": "silhouette_card",
+    "legacyStoragePath": "ai_profiles/female/137.png",
+    "storagePath": "ai_profiles/female/137/silhouette_card.png",
+    "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 167cm, small frame, slim build, natural muscularity, narrow shoulders, softly defined waist, narrow hip line, long leg proportion while still realistic, balanced torso length, balanced adult head-to-body ratio, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nregular-fit light cardigan, relaxed straight pants, simple campus tote bag, clean sneakers. neat campus everyday fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+    "negative": "Avoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+    "metadata": {
+      "schemaVersion": "ai_profile_image_v3",
+      "profileId": "female_137",
+      "gender": "female",
+      "visualAge": 21,
+      "identitySeed": 10137,
+      "isSynthetic": true,
+      "face": {
+        "faceType": "neutral_mixed",
+        "looksLevel": 3.6,
+        "faceShape": "soft_oval",
+        "eyeSize": "medium",
+        "eyeTilt": "neutral_slight_downturned",
+        "jawline": "soft_defined",
+        "cheekFullness": "full",
+        "noseBridge": "soft_medium",
+        "lipFullness": "thin_natural",
+        "browThickness": "straight_natural",
+        "skinFinish": "natural",
+        "vibe": "quiet_romance"
+      },
+      "body": {
+        "heightCm": 167,
+        "weightKgInternal": 51,
+        "bodyFatVisual": "slim",
+        "frame": "small",
+        "muscularity": "natural",
+        "shoulderWidth": "narrow",
+        "waistDefinition": "soft_defined",
+        "hipWidth": "narrow",
+        "legRatio": "long",
+        "torsoLength": "balanced",
+        "headBodyRatio": "balanced"
+      },
+      "hair": {
+        "length": "bob",
+        "texture": "soft_straight",
+        "color": "natural_dark_brown",
+        "bangs": "none"
+      },
+      "styling": {
+        "makeupLevel": "light_natural",
+        "fashionMood": "campus_neat",
+        "outfitFit": "slim_regular",
+        "avoidSexualizedStyling": true
+      },
+      "shotOutfits": {
+        "faceCard": "muted rose blouse with a light cardigan",
+        "fullBody": "regular-fit light cardigan, relaxed straight pants, simple campus tote bag, clean sneakers"
+      },
+      "vibeActivity": "sitting by a window in a quiet campus cafe, reading lecture notes with a warm drink nearby",
+      "vibeLocation": "quiet campus cafe or study lounge, warm neutral interior, no brand logos, no readable text",
+      "storagePaths": {
+        "legacy": "ai_profiles/female/137.png",
+        "face_card": "ai_profiles/female/137/face_card.png",
+        "silhouette_card": "ai_profiles/female/137/silhouette_card.png",
+        "vibe_card": "ai_profiles/female/137/vibe_card.png"
+      },
+      "shotPlan": [
+        {
+          "shotType": "face_card",
+          "storagePath": "ai_profiles/female/137/face_card.png"
+        },
+        {
+          "shotType": "silhouette_card",
+          "storagePath": "ai_profiles/female/137/silhouette_card.png"
+        },
+        {
+          "shotType": "vibe_card",
+          "storagePath": "ai_profiles/female/137/vibe_card.png"
+        }
+      ],
+      "qa": {
+        "adultVisual": null,
+        "campusRealism": null,
+        "noSchoolUniform": null,
+        "noRevealingClothes": null,
+        "noInfluencerPhotoshoot": null,
+        "identityConsistentAcrossShots": null,
+        "approved": null
+      }
+    },
+    "qaChecklist": [
+      "adult_visual_age_20_plus",
+      "not_childlike_or_school_uniform",
+      "not_influencer_or_celebrity_like",
+      "not_glamour_studio_or_idol_profile",
+      "no_revealing_or_sexualized_styling",
+      "campus_or_neutral_context",
+      "no_readable_school_logo_or_personal_text",
+      "realistic_smartphone_profile_photo",
+      "face_readable_for_face_card",
+      "silhouette_readable_for_silhouette_card",
+      "vibe_readable_for_vibe_card",
+      "metadata_matches_image",
+      "identity_consistent_across_shots"
+    ]
+  },
+  {
+    "schemaVersion": "ai_profile_image_v3",
+    "profileId": "female_137",
+    "assetId": "female_137__vibe_card__v001",
+    "gender": "female",
+    "shotType": "vibe_card",
+    "legacyStoragePath": "ai_profiles/female/137.png",
+    "storagePath": "ai_profiles/female/137/vibe_card.png",
+    "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, balanced natural facial proportions, medium eyes, a soft defined jawline, a calm sincere expression, same bob-length, natural dark brown, soft straight hair, no bangs, same natural grooming.\n\nMood and lifestyle:\nsitting by a window in a quiet campus cafe, reading lecture notes with a warm drink nearby, neat campus everyday fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\nquiet campus cafe or study lounge, warm neutral interior, no brand logos, no readable text.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+    "negative": "Avoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+    "metadata": {
+      "schemaVersion": "ai_profile_image_v3",
+      "profileId": "female_137",
+      "gender": "female",
+      "visualAge": 21,
+      "identitySeed": 10137,
+      "isSynthetic": true,
+      "face": {
+        "faceType": "neutral_mixed",
+        "looksLevel": 3.6,
+        "faceShape": "soft_oval",
+        "eyeSize": "medium",
+        "eyeTilt": "neutral_slight_downturned",
+        "jawline": "soft_defined",
+        "cheekFullness": "full",
+        "noseBridge": "soft_medium",
+        "lipFullness": "thin_natural",
+        "browThickness": "straight_natural",
+        "skinFinish": "natural",
+        "vibe": "quiet_romance"
+      },
+      "body": {
+        "heightCm": 167,
+        "weightKgInternal": 51,
+        "bodyFatVisual": "slim",
+        "frame": "small",
+        "muscularity": "natural",
+        "shoulderWidth": "narrow",
+        "waistDefinition": "soft_defined",
+        "hipWidth": "narrow",
+        "legRatio": "long",
+        "torsoLength": "balanced",
+        "headBodyRatio": "balanced"
+      },
+      "hair": {
+        "length": "bob",
+        "texture": "soft_straight",
+        "color": "natural_dark_brown",
+        "bangs": "none"
+      },
+      "styling": {
+        "makeupLevel": "light_natural",
+        "fashionMood": "campus_neat",
+        "outfitFit": "slim_regular",
+        "avoidSexualizedStyling": true
+      },
+      "shotOutfits": {
+        "faceCard": "muted rose blouse with a light cardigan",
+        "fullBody": "regular-fit light cardigan, relaxed straight pants, simple campus tote bag, clean sneakers"
+      },
+      "vibeActivity": "sitting by a window in a quiet campus cafe, reading lecture notes with a warm drink nearby",
+      "vibeLocation": "quiet campus cafe or study lounge, warm neutral interior, no brand logos, no readable text",
+      "storagePaths": {
+        "legacy": "ai_profiles/female/137.png",
+        "face_card": "ai_profiles/female/137/face_card.png",
+        "silhouette_card": "ai_profiles/female/137/silhouette_card.png",
+        "vibe_card": "ai_profiles/female/137/vibe_card.png"
+      },
+      "shotPlan": [
+        {
+          "shotType": "face_card",
+          "storagePath": "ai_profiles/female/137/face_card.png"
+        },
+        {
+          "shotType": "silhouette_card",
+          "storagePath": "ai_profiles/female/137/silhouette_card.png"
+        },
+        {
+          "shotType": "vibe_card",
+          "storagePath": "ai_profiles/female/137/vibe_card.png"
+        }
+      ],
+      "qa": {
+        "adultVisual": null,
+        "campusRealism": null,
+        "noSchoolUniform": null,
+        "noRevealingClothes": null,
+        "noInfluencerPhotoshoot": null,
+        "identityConsistentAcrossShots": null,
+        "approved": null
+      }
+    },
+    "qaChecklist": [
+      "adult_visual_age_20_plus",
+      "not_childlike_or_school_uniform",
+      "not_influencer_or_celebrity_like",
+      "not_glamour_studio_or_idol_profile",
+      "no_revealing_or_sexualized_styling",
+      "campus_or_neutral_context",
+      "no_readable_school_logo_or_personal_text",
+      "realistic_smartphone_profile_photo",
+      "face_readable_for_face_card",
+      "silhouette_readable_for_silhouette_card",
+      "vibe_readable_for_vibe_card",
+      "metadata_matches_image",
+      "identity_consistent_across_shots"
+    ]
+  }
+]

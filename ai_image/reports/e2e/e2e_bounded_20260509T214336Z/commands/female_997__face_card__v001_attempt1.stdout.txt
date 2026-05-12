@@ -1,0 +1,6 @@
+SUCCESS: The process with PID 24012 (child process of PID 24504) has been terminated.
+SUCCESS: The process with PID 25256 (child process of PID 24504) has been terminated.
+SUCCESS: The process with PID 12740 (child process of PID 24504) has been terminated.
+SUCCESS: The process with PID 25152 (child process of PID 24504) has been terminated.
+SUCCESS: The process with PID 21912 (child process of PID 24504) has been terminated.
+The Seolleyeon skill requires a pending checkpoint before `$imagegen`; I’m checking only that checkpoint state now. I will not touch recommender code or recover generated files afterward.

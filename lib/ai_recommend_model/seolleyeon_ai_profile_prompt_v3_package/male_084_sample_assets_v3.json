@@ -1,0 +1,326 @@
+[
+  {
+    "schemaVersion": "ai_profile_image_v3",
+    "profileId": "male_084",
+    "assetId": "male_084__face_card__v001",
+    "gender": "male",
+    "shotType": "face_card",
+    "legacyStoragePath": "ai_profiles/male/084.png",
+    "storagePath": "ai_profiles/male/084/face_card.png",
+    "prompt": "A realistic adult Korean university student, approximately 22 years old, an adult man, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\nbalanced natural facial proportions, medium eyes, a soft defined jawline, a calm sincere expression, soft rectangular face shape, round medium eyes, slightly lifted outer eye corners, slightly angular but realistic jawline, lightly defined cheekbones, natural medium nose bridge, natural thinner lips, light natural brows, real skin texture with very mild imperfections, noticeably attractive but still realistic, refined natural grooming, not celebrity-like, not a photoshoot model, soft and gentle mood.\n\nHair and styling:\nmedium-length, dark brown, soft textured hair with soft natural fringe, clean natural grooming, casual campus everyday fashion, relaxed fit, campus-appropriate and modest. Outfit: clean oxford shirt under a casual knit vest.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+    "negative": "Avoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+    "metadata": {
+      "schemaVersion": "ai_profile_image_v3",
+      "profileId": "male_084",
+      "gender": "male",
+      "visualAge": 22,
+      "identitySeed": 20084,
+      "isSynthetic": true,
+      "face": {
+        "faceType": "neutral_mixed",
+        "looksLevel": 4.2,
+        "faceShape": "soft_rectangular",
+        "eyeSize": "round_medium",
+        "eyeTilt": "slightly_lifted",
+        "jawline": "slightly_angular",
+        "cheekFullness": "defined",
+        "noseBridge": "medium",
+        "lipFullness": "thin_natural",
+        "browThickness": "light_natural",
+        "skinFinish": "slightly_textured",
+        "vibe": "soft"
+      },
+      "body": {
+        "heightCm": 186,
+        "weightKgInternal": 70,
+        "bodyFatVisual": "healthy_average",
+        "frame": "broad",
+        "muscularity": "moderate_natural",
+        "shoulderWidth": "broad",
+        "waistDefinition": "straight",
+        "hipWidth": "medium",
+        "legRatio": "slightly_long",
+        "torsoLength": "balanced",
+        "headBodyRatio": "realistic"
+      },
+      "hair": {
+        "length": "medium",
+        "texture": "textured",
+        "color": "dark_brown",
+        "bangs": "soft_fringe"
+      },
+      "styling": {
+        "makeupLevel": "clean_grooming",
+        "fashionMood": "campus_casual",
+        "outfitFit": "relaxed_fit",
+        "avoidSexualizedStyling": true
+      },
+      "shotOutfits": {
+        "faceCard": "clean oxford shirt under a casual knit vest",
+        "fullBody": "casual jacket over a plain T-shirt, regular-fit slacks, simple backpack"
+      },
+      "vibeActivity": "sitting in a quiet library lounge with a notebook and laptop on the table",
+      "vibeLocation": "quiet university walkway with trees and neutral campus buildings, no visible school logo, no readable text",
+      "storagePaths": {
+        "legacy": "ai_profiles/male/084.png",
+        "face_card": "ai_profiles/male/084/face_card.png",
+        "silhouette_card": "ai_profiles/male/084/silhouette_card.png",
+        "vibe_card": "ai_profiles/male/084/vibe_card.png"
+      },
+      "shotPlan": [
+        {
+          "shotType": "face_card",
+          "storagePath": "ai_profiles/male/084/face_card.png"
+        },
+        {
+          "shotType": "silhouette_card",
+          "storagePath": "ai_profiles/male/084/silhouette_card.png"
+        },
+        {
+          "shotType": "vibe_card",
+          "storagePath": "ai_profiles/male/084/vibe_card.png"
+        }
+      ],
+      "qa": {
+        "adultVisual": null,
+        "campusRealism": null,
+        "noSchoolUniform": null,
+        "noRevealingClothes": null,
+        "noInfluencerPhotoshoot": null,
+        "identityConsistentAcrossShots": null,
+        "approved": null
+      }
+    },
+    "qaChecklist": [
+      "adult_visual_age_20_plus",
+      "not_childlike_or_school_uniform",
+      "not_influencer_or_celebrity_like",
+      "not_glamour_studio_or_idol_profile",
+      "no_revealing_or_sexualized_styling",
+      "campus_or_neutral_context",
+      "no_readable_school_logo_or_personal_text",
+      "realistic_smartphone_profile_photo",
+      "face_readable_for_face_card",
+      "silhouette_readable_for_silhouette_card",
+      "vibe_readable_for_vibe_card",
+      "metadata_matches_image",
+      "identity_consistent_across_shots"
+    ]
+  },
+  {
+    "schemaVersion": "ai_profile_image_v3",
+    "profileId": "male_084",
+    "assetId": "male_084__silhouette_card__v001",
+    "gender": "male",
+    "shotType": "silhouette_card",
+    "legacyStoragePath": "ai_profiles/male/084.png",
+    "storagePath": "ai_profiles/male/084/silhouette_card.png",
+    "prompt": "A realistic adult Korean university student, approximately 22 years old, an adult man, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 186cm, broad frame, healthy average build, moderate natural muscularity, broad shoulders, straight natural waist line, medium hip line, slightly long leg proportion, balanced torso length, realistic adult head-to-body ratio, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\ncasual jacket over a plain T-shirt, regular-fit slacks, simple backpack. casual campus everyday fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+    "negative": "Avoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+    "metadata": {
+      "schemaVersion": "ai_profile_image_v3",
+      "profileId": "male_084",
+      "gender": "male",
+      "visualAge": 22,
+      "identitySeed": 20084,
+      "isSynthetic": true,
+      "face": {
+        "faceType": "neutral_mixed",
+        "looksLevel": 4.2,
+        "faceShape": "soft_rectangular",
+        "eyeSize": "round_medium",
+        "eyeTilt": "slightly_lifted",
+        "jawline": "slightly_angular",
+        "cheekFullness": "defined",
+        "noseBridge": "medium",
+        "lipFullness": "thin_natural",
+        "browThickness": "light_natural",
+        "skinFinish": "slightly_textured",
+        "vibe": "soft"
+      },
+      "body": {
+        "heightCm": 186,
+        "weightKgInternal": 70,
+        "bodyFatVisual": "healthy_average",
+        "frame": "broad",
+        "muscularity": "moderate_natural",
+        "shoulderWidth": "broad",
+        "waistDefinition": "straight",
+        "hipWidth": "medium",
+        "legRatio": "slightly_long",
+        "torsoLength": "balanced",
+        "headBodyRatio": "realistic"
+      },
+      "hair": {
+        "length": "medium",
+        "texture": "textured",
+        "color": "dark_brown",
+        "bangs": "soft_fringe"
+      },
+      "styling": {
+        "makeupLevel": "clean_grooming",
+        "fashionMood": "campus_casual",
+        "outfitFit": "relaxed_fit",
+        "avoidSexualizedStyling": true
+      },
+      "shotOutfits": {
+        "faceCard": "clean oxford shirt under a casual knit vest",
+        "fullBody": "casual jacket over a plain T-shirt, regular-fit slacks, simple backpack"
+      },
+      "vibeActivity": "sitting in a quiet library lounge with a notebook and laptop on the table",
+      "vibeLocation": "quiet university walkway with trees and neutral campus buildings, no visible school logo, no readable text",
+      "storagePaths": {
+        "legacy": "ai_profiles/male/084.png",
+        "face_card": "ai_profiles/male/084/face_card.png",
+        "silhouette_card": "ai_profiles/male/084/silhouette_card.png",
+        "vibe_card": "ai_profiles/male/084/vibe_card.png"
+      },
+      "shotPlan": [
+        {
+          "shotType": "face_card",
+          "storagePath": "ai_profiles/male/084/face_card.png"
+        },
+        {
+          "shotType": "silhouette_card",
+          "storagePath": "ai_profiles/male/084/silhouette_card.png"
+        },
+        {
+          "shotType": "vibe_card",
+          "storagePath": "ai_profiles/male/084/vibe_card.png"
+        }
+      ],
+      "qa": {
+        "adultVisual": null,
+        "campusRealism": null,
+        "noSchoolUniform": null,
+        "noRevealingClothes": null,
+        "noInfluencerPhotoshoot": null,
+        "identityConsistentAcrossShots": null,
+        "approved": null
+      }
+    },
+    "qaChecklist": [
+      "adult_visual_age_20_plus",
+      "not_childlike_or_school_uniform",
+      "not_influencer_or_celebrity_like",
+      "not_glamour_studio_or_idol_profile",
+      "no_revealing_or_sexualized_styling",
+      "campus_or_neutral_context",
+      "no_readable_school_logo_or_personal_text",
+      "realistic_smartphone_profile_photo",
+      "face_readable_for_face_card",
+      "silhouette_readable_for_silhouette_card",
+      "vibe_readable_for_vibe_card",
+      "metadata_matches_image",
+      "identity_consistent_across_shots"
+    ]
+  },
+  {
+    "schemaVersion": "ai_profile_image_v3",
+    "profileId": "male_084",
+    "assetId": "male_084__vibe_card__v001",
+    "gender": "male",
+    "shotType": "vibe_card",
+    "legacyStoragePath": "ai_profiles/male/084.png",
+    "storagePath": "ai_profiles/male/084/vibe_card.png",
+    "prompt": "A realistic adult Korean university student, approximately 22 years old, an adult man, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, balanced natural facial proportions, medium eyes, a soft defined jawline, a calm sincere expression, same medium-length, dark brown, soft textured hair with soft natural fringe, same natural grooming.\n\nMood and lifestyle:\nsitting in a quiet library lounge with a notebook and laptop on the table, casual campus everyday fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings, no visible school logo, no readable text.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+    "negative": "Avoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+    "metadata": {
+      "schemaVersion": "ai_profile_image_v3",
+      "profileId": "male_084",
+      "gender": "male",
+      "visualAge": 22,
+      "identitySeed": 20084,
+      "isSynthetic": true,
+      "face": {
+        "faceType": "neutral_mixed",
+        "looksLevel": 4.2,
+        "faceShape": "soft_rectangular",
+        "eyeSize": "round_medium",
+        "eyeTilt": "slightly_lifted",
+        "jawline": "slightly_angular",
+        "cheekFullness": "defined",
+        "noseBridge": "medium",
+        "lipFullness": "thin_natural",
+        "browThickness": "light_natural",
+        "skinFinish": "slightly_textured",
+        "vibe": "soft"
+      },
+      "body": {
+        "heightCm": 186,
+        "weightKgInternal": 70,
+        "bodyFatVisual": "healthy_average",
+        "frame": "broad",
+        "muscularity": "moderate_natural",
+        "shoulderWidth": "broad",
+        "waistDefinition": "straight",
+        "hipWidth": "medium",
+        "legRatio": "slightly_long",
+        "torsoLength": "balanced",
+        "headBodyRatio": "realistic"
+      },
+      "hair": {
+        "length": "medium",
+        "texture": "textured",
+        "color": "dark_brown",
+        "bangs": "soft_fringe"
+      },
+      "styling": {
+        "makeupLevel": "clean_grooming",
+        "fashionMood": "campus_casual",
+        "outfitFit": "relaxed_fit",
+        "avoidSexualizedStyling": true
+      },
+      "shotOutfits": {
+        "faceCard": "clean oxford shirt under a casual knit vest",
+        "fullBody": "casual jacket over a plain T-shirt, regular-fit slacks, simple backpack"
+      },
+      "vibeActivity": "sitting in a quiet library lounge with a notebook and laptop on the table",
+      "vibeLocation": "quiet university walkway with trees and neutral campus buildings, no visible school logo, no readable text",
+      "storagePaths": {
+        "legacy": "ai_profiles/male/084.png",
+        "face_card": "ai_profiles/male/084/face_card.png",
+        "silhouette_card": "ai_profiles/male/084/silhouette_card.png",
+        "vibe_card": "ai_profiles/male/084/vibe_card.png"
+      },
+      "shotPlan": [
+        {
+          "shotType": "face_card",
+          "storagePath": "ai_profiles/male/084/face_card.png"
+        },
+        {
+          "shotType": "silhouette_card",
+          "storagePath": "ai_profiles/male/084/silhouette_card.png"
+        },
+        {
+          "shotType": "vibe_card",
+          "storagePath": "ai_profiles/male/084/vibe_card.png"
+        }
+      ],
+      "qa": {
+        "adultVisual": null,
+        "campusRealism": null,
+        "noSchoolUniform": null,
+        "noRevealingClothes": null,
+        "noInfluencerPhotoshoot": null,
+        "identityConsistentAcrossShots": null,
+        "approved": null
+      }
+    },
+    "qaChecklist": [
+      "adult_visual_age_20_plus",
+      "not_childlike_or_school_uniform",
+      "not_influencer_or_celebrity_like",
+      "not_glamour_studio_or_idol_profile",
+      "no_revealing_or_sexualized_styling",
+      "campus_or_neutral_context",
+      "no_readable_school_logo_or_personal_text",
+      "realistic_smartphone_profile_photo",
+      "face_readable_for_face_card",
+      "silhouette_readable_for_silhouette_card",
+      "vibe_readable_for_vibe_card",
+      "metadata_matches_image",
+      "identity_consistent_across_shots"
+    ]
+  }
+]

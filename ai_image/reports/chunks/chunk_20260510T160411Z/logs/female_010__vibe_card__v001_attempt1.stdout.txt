@@ -1,0 +1,16 @@
+SUCCESS: The process with PID 28536 (child process of PID 31972) has been terminated.
+SUCCESS: The process with PID 34120 (child process of PID 31972) has been terminated.
+SUCCESS: The process with PID 21180 (child process of PID 31972) has been terminated.
+SUCCESS: The process with PID 33504 (child process of PID 31972) has been terminated.
+SUCCESS: The process with PID 13484 (child process of PID 31972) has been terminated.
+Ran exactly one Image Gen transaction for `female_010__vibe_card__v001` attempt `1`.
+
+Result: the transaction receipt was written, but the transaction status is `failed` because single-asset file QA rejected the generated PNG for `bad_aspect_ratio` (`853x1844`, aspect ratio `0.463`). I did not retry.
+
+Outputs:
+- Receipt: [female_010__vibe_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T160411Z/transactions/female_010__vibe_card__v001_attempt1.json)
+- Raw: [female_010__vibe_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_010__vibe_card__v001__attempt01.png)
+- Final candidate: [vibe_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/010/vibe_card.png)
+- Rejected copy: [female_010__vibe_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/rejected/female_010__vibe_card__v001__attempt01.png)
+
+Validation audit exited `0`: pending checkpoint resolved, receipt exists with no forbidden approval claims, all expected paths exist, source image was left in place, and manifest status is `file_rejected`.

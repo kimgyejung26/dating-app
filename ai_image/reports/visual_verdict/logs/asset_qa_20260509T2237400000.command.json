@@ -1,0 +1,15 @@
+{
+  "args": [
+    "codex",
+    "exec",
+    "--image",
+    "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\ai_image\\reports\\chunks\\e2e_bounded_20260509T222831Z\\contact_sheets\\e2e_bounded_20260509T222831Z_contact_sheet_female_vibe_card.png",
+    "-C",
+    "C:\\Users\\samsung\\StudioProjects\\semisemifinal"
+  ],
+  "imagePaths": [
+    "C:\\Users\\samsung\\StudioProjects\\semisemifinal\\ai_image\\reports\\chunks\\e2e_bounded_20260509T222831Z\\contact_sheets\\e2e_bounded_20260509T222831Z_contact_sheet_female_vibe_card.png"
+  ],
+  "promptViaStdin": true,
+  "promptChars": 14882
+}

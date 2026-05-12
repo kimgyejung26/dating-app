@@ -1,0 +1,1 @@
+{"assetId": "female_002__face_card__v001", "profileId": "female_002", "shotType": "face_card", "attempt": 1, "beforeStatus": "cancelled_before_imagegen", "afterStatus": "cleared", "reason": "user requested manifest clear", "action": "clear_cancelled", "expectedRawExists": true, "expectedFinalExists": true, "resolvedAt": "2026-05-08T11:51:47+00:00"}

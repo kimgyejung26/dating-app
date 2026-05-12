@@ -1,0 +1,21 @@
+SUCCESS: The process with PID 16160 (child process of PID 35200) has been terminated.
+SUCCESS: The process with PID 34780 (child process of PID 35200) has been terminated.
+SUCCESS: The process with PID 33584 (child process of PID 35200) has been terminated.
+SUCCESS: The process with PID 10696 (child process of PID 35200) has been terminated.
+SUCCESS: The process with PID 31792 (child process of PID 35200) has been terminated.
+Ran exactly one Seolleyeon one-asset Image Gen transaction.
+
+Asset: `female_030__face_card__v001` attempt `1`
+
+Outputs:
+- Raw: [female_030__face_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_030__face_card__v001__attempt01.png)
+- Final: [face_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/030/face_card.png)
+- Receipt: [female_030__face_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T185001Z/transactions/female_030__face_card__v001_attempt1.json)
+
+Verification evidence:
+- Transaction receipt verification returned `valid: true`.
+- Pending checkpoint is `resolved` and no longer requires recovery.
+- File integrity QA passed: `997x1577` PNG, `2245601` bytes.
+- `generation_status.csv` now marks the asset `file_needs_review`, meaning visual approval is still pending and was not claimed.
+- Exactly one generated image file was present in this transaction’s generated-image folder.
+- No recommender files were modified.

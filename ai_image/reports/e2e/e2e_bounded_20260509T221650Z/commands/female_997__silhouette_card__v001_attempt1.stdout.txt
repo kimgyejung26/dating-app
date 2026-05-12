@@ -1,0 +1,6 @@
+SUCCESS: The process with PID 23084 (child process of PID 11508) has been terminated.
+SUCCESS: The process with PID 13588 (child process of PID 11508) has been terminated.
+SUCCESS: The process with PID 30236 (child process of PID 11508) has been terminated.
+SUCCESS: The process with PID 16896 (child process of PID 11508) has been terminated.
+SUCCESS: The process with PID 19312 (child process of PID 11508) has been terminated.
+참조 입력은 현재 대화에 첨부된 이미지로 사용 가능합니다. 생성 전 체크포인트가 이미 해당 asset으로 잡혀 있는지 확인하고, 필요하면 `pending-imagegen.json`만 맞춘 뒤 바로 이미지 생성 1회를 호출합니다.

@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "ai_profile_image_v3",
+  "profileId": "female_137",
+  "gender": "female",
+  "visualAge": 21,
+  "identitySeed": 10137,
+  "isSynthetic": true,
+  "face": {
+    "faceType": "neutral_mixed",
+    "looksLevel": 3.6,
+    "faceShape": "soft_oval",
+    "eyeSize": "medium",
+    "eyeTilt": "neutral_slight_downturned",
+    "jawline": "soft_defined",
+    "cheekFullness": "full",
+    "noseBridge": "soft_medium",
+    "lipFullness": "thin_natural",
+    "browThickness": "straight_natural",
+    "skinFinish": "natural",
+    "vibe": "quiet_romance"
+  },
+  "body": {
+    "heightCm": 167,
+    "weightKgInternal": 51,
+    "bodyFatVisual": "slim",
+    "frame": "small",
+    "muscularity": "natural",
+    "shoulderWidth": "narrow",
+    "waistDefinition": "soft_defined",
+    "hipWidth": "narrow",
+    "legRatio": "long",
+    "torsoLength": "balanced",
+    "headBodyRatio": "balanced"
+  },
+  "hair": {
+    "length": "bob",
+    "texture": "soft_straight",
+    "color": "natural_dark_brown",
+    "bangs": "none"
+  },
+  "styling": {
+    "makeupLevel": "light_natural",
+    "fashionMood": "campus_neat",
+    "outfitFit": "slim_regular",
+    "avoidSexualizedStyling": true
+  },
+  "shotOutfits": {
+    "faceCard": "muted rose blouse with a light cardigan",
+    "fullBody": "regular-fit light cardigan, relaxed straight pants, simple campus tote bag, clean sneakers"
+  },
+  "vibeActivity": "sitting by a window in a quiet campus cafe, reading lecture notes with a warm drink nearby",
+  "vibeLocation": "quiet campus cafe or study lounge, warm neutral interior, no brand logos, no readable text",
+  "storagePaths": {
+    "legacy": "ai_profiles/female/137.png",
+    "face_card": "ai_profiles/female/137/face_card.png",
+    "silhouette_card": "ai_profiles/female/137/silhouette_card.png",
+    "vibe_card": "ai_profiles/female/137/vibe_card.png"
+  },
+  "shotPlan": [
+    {
+      "shotType": "face_card",
+      "storagePath": "ai_profiles/female/137/face_card.png"
+    },
+    {
+      "shotType": "silhouette_card",
+      "storagePath": "ai_profiles/female/137/silhouette_card.png"
+    },
+    {
+      "shotType": "vibe_card",
+      "storagePath": "ai_profiles/female/137/vibe_card.png"
+    }
+  ],
+  "qa": {
+    "adultVisual": null,
+    "campusRealism": null,
+    "noSchoolUniform": null,
+    "noRevealingClothes": null,
+    "noInfluencerPhotoshoot": null,
+    "identityConsistentAcrossShots": null,
+    "approved": null
+  }
+}

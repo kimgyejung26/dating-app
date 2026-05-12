@@ -1,0 +1,18 @@
+SUCCESS: The process with PID 33228 (child process of PID 21876) has been terminated.
+SUCCESS: The process with PID 12580 (child process of PID 21876) has been terminated.
+SUCCESS: The process with PID 34860 (child process of PID 21876) has been terminated.
+SUCCESS: The process with PID 19396 (child process of PID 21876) has been terminated.
+SUCCESS: The process with PID 328 (child process of PID 21876) has been terminated.
+완료했습니다.
+
+- Mode: Codex internal Image Gen only
+- Image Gen calls: exactly 1
+- Asset: `female_012__face_card__v001`
+- Raw: `ai_image/raw/female_012__face_card__v001__attempt01.png`
+- Final candidate: `ai_image/female/012/face_card.png`
+- QA result: `file_rejected` — `bad_aspect_ratio` (`862x1824`)
+- Rejected copy: `ai_image/rejected/female_012__face_card__v001__attempt01.png`
+- Pending checkpoint: resolved/recovered
+- No OpenAI Image API, Batch API, or API key used
+- Stop condition: no retry, to preserve exactly one generation.
+[omx] postLaunch: reaped 5 orphaned OMX MCP process(es).

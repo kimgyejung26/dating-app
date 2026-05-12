@@ -1,0 +1,5 @@
+[omx] preLaunch warning: ENOENT: no such file or directory, mkdir 'C:\Users\samsung\StudioProjects\semisemifinal\C:\Users\samsung\.omx-runs\run-20260510163622-87e6\.omx\state\sessions\omx-1778431093575-bnfidv'
+Error: AbsolutePathBuf deserialized without a base path
+in `model_instructions_file`
+
+[omx] postLaunch: session archive failed: ENOENT: no such file or directory, mkdir 'C:\Users\samsung\StudioProjects\semisemifinal\C:\Users\samsung\.omx-runs\run-20260510163622-87e6\.omx\logs'

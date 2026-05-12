@@ -1,0 +1,6 @@
+SUCCESS: The process with PID 7280 (child process of PID 840) has been terminated.
+SUCCESS: The process with PID 24492 (child process of PID 840) has been terminated.
+SUCCESS: The process with PID 12672 (child process of PID 840) has been terminated.
+SUCCESS: The process with PID 13356 (child process of PID 840) has been terminated.
+SUCCESS: The process with PID 15304 (child process of PID 840) has been terminated.
+I’m checkpointing only the pending imagegen identity before the generation call, per the project rule. I won’t import or QA the generated output afterward.

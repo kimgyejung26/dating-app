@@ -1,0 +1,13 @@
+SUCCESS: The process with PID 35196 (child process of PID 32884) has been terminated.
+SUCCESS: The process with PID 28444 (child process of PID 32884) has been terminated.
+SUCCESS: The process with PID 10076 (child process of PID 32884) has been terminated.
+SUCCESS: The process with PID 8744 (child process of PID 32884) has been terminated.
+SUCCESS: The process with PID 18232 (child process of PID 32884) has been terminated.
+Completed exactly one Seolleyeon one-asset Image Gen transaction for `female_027__silhouette_card__v001`.
+
+Saved:
+- Final: [silhouette_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/027/silhouette_card.png)
+- Raw: [female_027__silhouette_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_027__silhouette_card__v001__attempt01.png)
+- Receipt: [female_027__silhouette_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T185001Z/transactions/female_027__silhouette_card__v001_attempt1.json)
+
+Validation passed: receipt verifier returned `valid: true`, file QA passed at `1023x1537`, raw/final hashes match, and `pending-imagegen.json` is resolved. No approved or rejected review copy was written; the asset remains `file_needs_review` for visual policy QA.

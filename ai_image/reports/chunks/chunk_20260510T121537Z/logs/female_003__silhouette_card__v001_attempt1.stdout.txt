@@ -1,0 +1,14 @@
+[omx] Reaped 25 orphaned OMX MCP process(es) before launch.
+SUCCESS: The process with PID 24476 (child process of PID 4576) has been terminated.
+SUCCESS: The process with PID 2464 (child process of PID 4576) has been terminated.
+SUCCESS: The process with PID 9872 (child process of PID 4576) has been terminated.
+SUCCESS: The process with PID 3280 (child process of PID 4576) has been terminated.
+SUCCESS: The process with PID 24472 (child process of PID 4576) has been terminated.
+Done. Exactly 1 Codex internal Image Gen asset processed:
+
+- Asset: `female_003__silhouette_card__v001`
+- Status: `vision_approved`
+- Raw: `ai_image/raw/female_003__silhouette_card__v001__attempt01.png`
+- Final: `ai_image/female/003/silhouette_card.png`
+- Approved copy: `ai_image/approved/female_003__silhouette_card__v001.png`
+- Pending checkpoint: resolved

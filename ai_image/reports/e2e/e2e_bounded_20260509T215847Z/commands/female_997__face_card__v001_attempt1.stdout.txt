@@ -1,0 +1,6 @@
+SUCCESS: The process with PID 6568 (child process of PID 12840) has been terminated.
+SUCCESS: The process with PID 25060 (child process of PID 12840) has been terminated.
+SUCCESS: The process with PID 29108 (child process of PID 12840) has been terminated.
+SUCCESS: The process with PID 26896 (child process of PID 12840) has been terminated.
+SUCCESS: The process with PID 22068 (child process of PID 12840) has been terminated.
+The Seolleyeon skill requires a `pending-imagegen.json` checkpoint before the generation call. I’m checking that identity checkpoint only; I won’t recover, move, import, or QA the generated image.

@@ -1,0 +1,13 @@
+SUCCESS: The process with PID 23440 (child process of PID 29780) has been terminated.
+SUCCESS: The process with PID 30592 (child process of PID 29780) has been terminated.
+SUCCESS: The process with PID 20604 (child process of PID 29780) has been terminated.
+SUCCESS: The process with PID 30276 (child process of PID 29780) has been terminated.
+SUCCESS: The process with PID 29572 (child process of PID 29780) has been terminated.
+Ran exactly one Seolleyeon one-asset Image Gen transaction for `female_029__face_card__v001`.
+
+Saved and verified:
+- Raw: [female_029__face_card__v001__attempt01.png](</C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_029__face_card__v001__attempt01.png>)
+- Final: [face_card.png](</C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/029/face_card.png>)
+- Receipt: [female_029__face_card__v001_attempt1.json](</C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T185001Z/transactions/female_029__face_card__v001_attempt1.json>)
+
+Validation passed: pending checkpoint is resolved, receipt verification returned `valid: true`, and file QA passed as PNG `1024x1535`. I did not run global QA, visual QA, distribution audit, completion check, or prepare another asset. No recommender diff was detected.

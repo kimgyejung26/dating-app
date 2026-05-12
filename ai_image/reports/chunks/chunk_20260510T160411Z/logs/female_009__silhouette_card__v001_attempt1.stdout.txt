@@ -1,0 +1,15 @@
+SUCCESS: The process with PID 23268 (child process of PID 18532) has been terminated.
+SUCCESS: The process with PID 27860 (child process of PID 18532) has been terminated.
+SUCCESS: The process with PID 15512 (child process of PID 18532) has been terminated.
+Ran exactly one built-in `image_gen` transaction for `female_009__silhouette_card__v001`, attempt `1`. No retry was run.
+
+Outcome: recovered, then file-QA rejected due `bad_aspect_ratio`: `862x1824`, ratio `0.4726`, outside allowed `0.55-0.85`.
+
+Saved evidence:
+- Raw: [female_009__silhouette_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_009__silhouette_card__v001__attempt01.png)
+- Final candidate: [silhouette_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/009/silhouette_card.png)
+- Rejected copy: [female_009__silhouette_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/rejected/female_009__silhouette_card__v001__attempt01.png)
+- Receipt: [female_009__silhouette_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T160411Z/transactions/female_009__silhouette_card__v001_attempt1.json)
+
+`pending-imagegen.json` is resolved, `generation_status.csv` now marks the asset `file_rejected`, and no approved copy was written. I did not touch recommender scripts.
+SUCCESS: The process with PID 23308 (child process of PID 18532) has been terminated.

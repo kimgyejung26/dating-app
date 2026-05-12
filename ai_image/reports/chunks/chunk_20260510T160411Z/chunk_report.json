@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "seolleyeon_bounded_chunk_report_v3",
+  "chunkId": "chunk_20260510T160411Z",
+  "status": "abandoned",
+  "chunk_unattended_verification": "PENDING",
+  "chunk_qa_complete": false,
+  "chunk_distribution_updated": false,
+  "chunk_new_generated_assets": 6,
+  "chunk_new_recovered_assets": 43,
+  "chunk_new_file_qa_passed_assets": 19,
+  "chunk_new_visual_approved_assets": 0,
+  "chunk_new_approved_identities": 0,
+  "chunk_new_needs_review_identities": 0,
+  "chunk_new_rejected_identities": 0,
+  "selectedIdentityCount": 24,
+  "selectedAssetCount": 72,
+  "remainingDeficits": {
+    "approvedCompleteIdentities": {
+      "target": 240,
+      "current": 0,
+      "deficit": 240,
+      "surplus": 0,
+      "exactMatch": false
+    },
+    "approvedImages": {
+      "target": 720,
+      "current": 0,
+      "deficit": 720,
+      "surplus": 0,
+      "exactMatch": false
+    },
+    "femaleApprovedIdentities": {
+      "target": 120,
+      "current": 0,
+      "deficit": 120,
+      "surplus": 0,
+      "exactMatch": false
+    },
+    "maleApprovedIdentities": {
+      "target": 120,
+      "current": 0,
+      "deficit": 120,
+      "surplus": 0,
+      "exactMatch": false
+    }
+  },
+  "surplusBuckets": [],
+  "updatedAt": "2026-05-10T18:50:02+00:00",
+  "abandonedAt": "2026-05-10T18:50:02+00:00",
+  "abandonReason": "fresh_production_replan_after_distribution_audit",
+  "replacementChunkId": "chunk_20260510T185001Z",
+  "abandonedAssetCount": 72,
+  "abandonedChunkManifest": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/abandoned_chunk_manifest.jsonl"
+}

@@ -1,0 +1,6 @@
+SUCCESS: The process with PID 8152 (child process of PID 13576) has been terminated.
+SUCCESS: The process with PID 16424 (child process of PID 13576) has been terminated.
+SUCCESS: The process with PID 31100 (child process of PID 13576) has been terminated.
+SUCCESS: The process with PID 26764 (child process of PID 13576) has been terminated.
+SUCCESS: The process with PID 17696 (child process of PID 13576) has been terminated.
+Checkpointing the asset identity now because this repo requires `pending-imagegen.json` before an Image Gen call. I’m not touching recommender files, QA, import, recovery, or final asset paths.

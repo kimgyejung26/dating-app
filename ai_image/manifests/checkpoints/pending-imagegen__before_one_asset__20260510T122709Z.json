@@ -1,0 +1,31 @@
+{
+  "assetId": "female_003__silhouette_card__v001",
+  "profileId": "female_003",
+  "gender": "female",
+  "numericId": "003",
+  "shotType": "silhouette_card",
+  "attempt": 1,
+  "prompt": "Using the attached face_card image as the same person reference, generate exactly one silhouette_card image.\n\nAsset metadata:\nassetId: female_003__silhouette_card__v001\nprofileId: female_003\nshotType: silhouette_card\n\nGoal:\nSame person as the reference face_card.\nGenerate a realistic 3/4 body or full-body smartphone profile photo.\nThe body frame and proportions should be readable.\nCampus-appropriate modest clothing.\nNo oversized padding.\nNo revealing outfit.\nNo school uniform.\nNo text, no logo, no watermark.\n\nUse this prompt:\nA realistic adult Korean university student, approximately 20 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 162cm, small-to-medium frame, naturally fit build, low natural muscularity, narrow-to-medium shoulders, waist not strongly emphasized, medium hip line, balanced leg proportion, slightly short but balanced torso length, balanced adult head-to-body ratio, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nregular-fit light cardigan, relaxed straight pants, simple campus tote bag, clean sneakers. casual campus everyday fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.\n",
+  "promptHash": "d237cdc1ecbea9ad729a7d11",
+  "queuePath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/imagegen_queue.jsonl",
+  "manifestPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/generation_manifest.jsonl",
+  "pendingPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/pending-imagegen.json",
+  "expectedRawPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_003__silhouette_card__v001__attempt01.png",
+  "expectedFinalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/003/silhouette_card.png",
+  "expectedApprovedPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/approved/female_003__silhouette_card__v001.png",
+  "expectedRejectedPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/rejected/female_003__silhouette_card__v001__attempt01.png",
+  "referenceAssetId": "female_003__face_card__v001",
+  "referenceImagePath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/003/face_card.png",
+  "codexGeneratedImagesDir": "C:\\Users\\samsung\\.codex\\generated_images",
+  "status": "pending_imagegen",
+  "createdAt": "2026-05-10T12:23:49+00:00",
+  "recoveryInstructions": [
+    "After the $imagegen result, do not continue to the next queued asset.",
+    "First run mingw32-make ai-image-recover or scripts/recover_pending_imagegen_v3.py.",
+    "Map identity from this pending-imagegen.json only; do not infer identity visually.",
+    "Copy raw output to expectedRawPath and final candidate to expectedFinalPath.",
+    "Run QA before preparing another $imagegen prompt."
+  ],
+  "chunkId": "chunk_20260510T121537Z",
+  "boundedExecutor": true
+}

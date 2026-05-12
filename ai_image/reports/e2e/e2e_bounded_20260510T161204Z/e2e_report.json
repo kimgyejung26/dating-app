@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "seolleyeon_bounded_imagegen_e2e_smoke_v3",
+  "chunkId": "e2e_bounded_20260510T161204Z",
+  "status": "preflight_passed",
+  "failureReason": "",
+  "failureDetails": {},
+  "startTime": "2026-05-10T16:12:04+00:00",
+  "endTime": "2026-05-10T16:12:05+00:00",
+  "statement": "This E2E validates one bounded chunk only and does not validate full dataset completion.",
+  "environment": {
+    "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "selectedAgent": "codex",
+    "imagegenAvailability": true,
+    "referenceImageInputAvailable": true,
+    "referenceImageArgMode": "image",
+    "visualVerdictAvailability": true,
+    "codexGeneratedImagesDir": "C:\\Users\\samsung\\.codex\\generated_images"
+  },
+  "commands": [],
+  "shellFalseUsed": true,
+  "identity": {
+    "logicalIdentityId": "e2e_identity_001",
+    "profileId": "female_997",
+    "targetFaceType": "deer_like",
+    "targetLooksLevelBand": "2.5-3.2"
+  },
+  "assetStatus": {},
+  "artifacts": {
+    "preflight": {
+      "agentAvailable": true,
+      "selectedAgent": "codex",
+      "referenceImageInputAvailable": true,
+      "referenceImageArgMode": "image",
+      "visualVerdictAvailable": true
+    }
+  },
+  "manualReviewFlags": [],
+  "gitStatusBefore": "?? .agents/\n?? AGENTS.md\n?? AI_IMAGE_CODEX_IMAGEGEN_README.md\n?? AI_IMAGE_DISTRIBUTION_CONTROL_README.md\n?? AI_IMAGE_PIPELINE_README.md\n?? AI_IMAGE_QUALITY_CONTRACT.md\n?? Makefile\n?? VISUAL_VERDICT_ASSET_QA_PROMPT.md\n?? ai_image/\n?? lib/ai_recommend_model/seolleyeon_ai_profile_prompt_v3_package/\n?? lib/shared/widgets/glass_bottom_nav/\n?? requirements_ai_image.txt\n?? scripts/\n?? tests/",
+  "gitStatusAfter": "?? .agents/\n?? AGENTS.md\n?? AI_IMAGE_CODEX_IMAGEGEN_README.md\n?? AI_IMAGE_DISTRIBUTION_CONTROL_README.md\n?? AI_IMAGE_PIPELINE_README.md\n?? AI_IMAGE_QUALITY_CONTRACT.md\n?? Makefile\n?? VISUAL_VERDICT_ASSET_QA_PROMPT.md\n?? ai_image/\n?? lib/ai_recommend_model/seolleyeon_ai_profile_prompt_v3_package/\n?? lib/shared/widgets/glass_bottom_nav/\n?? requirements_ai_image.txt\n?? scripts/\n?? tests/",
+  "protectedRecommenderHashesBefore": {
+    "lib/ai_recommend_model/seolleyeon_run_all.py": "c5118a401c7bc9a1de3569b2537b0f6fdd9b5e26d00adbb258378ad03b85c0d9",
+    "lib/ai_recommend_model/seolleyeon_svd_train_export.py": "d08780139ed08ff0b18c70af853415a0f5c748bbcebd2b822da56dfe87989cc6",
+    "lib/ai_recommend_model/seolleyeon_knn_train_export.py": "469a73aeeafacfb487ca3f5639ec9c5f44216d3221d9a4077ae29df276f5ab2b",
+    "lib/ai_recommend_model/seolleyeon_clip_train_export.py": "fe277dd68e8a09fa5f31304882a650979a054ce0ac7069b635317c0d53f75ec1",
+    "lib/ai_recommend_model/seolleyeon_clip_embedder.py": "3913e2374f85d49126b7f52aba29b4441b4bb396c7a122264fa37e3dea11ab64",
+    "lib/ai_recommend_model/seolleyeon_rrf_export.py": "3d699237d2a3503d329b738e4c4b77a22fa8febf2b72819e14973478e4519b5b",
+    "lib/ai_recommend_model/seolleyeon_rec_common_v3.py": "b9495079e0d708849109dbbc94a742d067f293ef3c8eaf252e2a99226e3b6cc7"
+  },
+  "protectedRecommenderHashesAfter": {
+    "lib/ai_recommend_model/seolleyeon_run_all.py": "c5118a401c7bc9a1de3569b2537b0f6fdd9b5e26d00adbb258378ad03b85c0d9",
+    "lib/ai_recommend_model/seolleyeon_svd_train_export.py": "d08780139ed08ff0b18c70af853415a0f5c748bbcebd2b822da56dfe87989cc6",
+    "lib/ai_recommend_model/seolleyeon_knn_train_export.py": "469a73aeeafacfb487ca3f5639ec9c5f44216d3221d9a4077ae29df276f5ab2b",
+    "lib/ai_recommend_model/seolleyeon_clip_train_export.py": "fe277dd68e8a09fa5f31304882a650979a054ce0ac7069b635317c0d53f75ec1",
+    "lib/ai_recommend_model/seolleyeon_clip_embedder.py": "3913e2374f85d49126b7f52aba29b4441b4bb396c7a122264fa37e3dea11ab64",
+    "lib/ai_recommend_model/seolleyeon_rrf_export.py": "3d699237d2a3503d329b738e4c4b77a22fa8febf2b72819e14973478e4519b5b",
+    "lib/ai_recommend_model/seolleyeon_rec_common_v3.py": "b9495079e0d708849109dbbc94a742d067f293ef3c8eaf252e2a99226e3b6cc7"
+  },
+  "protectedRecommenderUnchanged": true,
+  "backupRecords": [],
+  "productionGenerationRun": false
+}

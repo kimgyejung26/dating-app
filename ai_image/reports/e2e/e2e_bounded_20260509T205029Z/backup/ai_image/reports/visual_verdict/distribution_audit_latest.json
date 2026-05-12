@@ -1,0 +1,727 @@
+{
+  "qaType": "seolleyeon_visual_verdict_distribution_v3",
+  "finalDecision": "needs_more_generation",
+  "approvedCompleteIdentityCount": 1,
+  "approvedImageCount": 3,
+  "femaleApprovedIdentityCount": 1,
+  "maleApprovedIdentityCount": 0,
+  "globalFaceTypeCounts": {
+    "cat_like": 0,
+    "dog_like": 0,
+    "hamster_like": 0,
+    "bear_like": 1,
+    "fox_like": 0,
+    "deer_like": 0,
+    "horse_like": 0,
+    "mixed_neutral": 0
+  },
+  "globalFaceTypeDeficits": {
+    "cat_like": 34,
+    "dog_like": 38,
+    "hamster_like": 24,
+    "bear_like": 28,
+    "fox_like": 29,
+    "deer_like": 43,
+    "horse_like": 19,
+    "mixed_neutral": 24
+  },
+  "globalFaceTypeSurpluses": {
+    "cat_like": 0,
+    "dog_like": 0,
+    "hamster_like": 0,
+    "bear_like": 0,
+    "fox_like": 0,
+    "deer_like": 0,
+    "horse_like": 0,
+    "mixed_neutral": 0
+  },
+  "genderFaceTypeCounts": {
+    "female": {
+      "cat_like": 0,
+      "dog_like": 0,
+      "hamster_like": 0,
+      "bear_like": 1,
+      "fox_like": 0,
+      "deer_like": 0,
+      "horse_like": 0,
+      "mixed_neutral": 0
+    },
+    "male": {
+      "cat_like": 0,
+      "dog_like": 0,
+      "hamster_like": 0,
+      "bear_like": 0,
+      "fox_like": 0,
+      "deer_like": 0,
+      "horse_like": 0,
+      "mixed_neutral": 0
+    }
+  },
+  "genderFaceTypeDeficits": {
+    "female": {
+      "cat_like": 17,
+      "dog_like": 19,
+      "hamster_like": 12,
+      "bear_like": 14,
+      "fox_like": 14,
+      "deer_like": 22,
+      "horse_like": 9,
+      "mixed_neutral": 12
+    },
+    "male": {
+      "cat_like": 17,
+      "dog_like": 19,
+      "hamster_like": 12,
+      "bear_like": 14,
+      "fox_like": 15,
+      "deer_like": 21,
+      "horse_like": 10,
+      "mixed_neutral": 12
+    }
+  },
+  "genderFaceTypeSurpluses": {
+    "female": {
+      "cat_like": 0,
+      "dog_like": 0,
+      "hamster_like": 0,
+      "bear_like": 0,
+      "fox_like": 0,
+      "deer_like": 0,
+      "horse_like": 0,
+      "mixed_neutral": 0
+    },
+    "male": {
+      "cat_like": 0,
+      "dog_like": 0,
+      "hamster_like": 0,
+      "bear_like": 0,
+      "fox_like": 0,
+      "deer_like": 0,
+      "horse_like": 0,
+      "mixed_neutral": 0
+    }
+  },
+  "globalLooksLevelBandCounts": {
+    "1.5-2.4": 0,
+    "2.5-3.2": 1,
+    "3.3-3.8": 0,
+    "3.9-4.3": 0,
+    "4.4-5.0": 0
+  },
+  "globalLooksLevelBandDeficits": {
+    "1.5-2.4": 36,
+    "2.5-3.2": 107,
+    "3.3-3.8": 72,
+    "3.9-4.3": 24,
+    "4.4-5.0": 0
+  },
+  "globalLooksLevelBandSurpluses": {
+    "1.5-2.4": 0,
+    "2.5-3.2": 0,
+    "3.3-3.8": 0,
+    "3.9-4.3": 0,
+    "4.4-5.0": 0
+  },
+  "genderLooksLevelBandCounts": {
+    "female": {
+      "1.5-2.4": 0,
+      "2.5-3.2": 1,
+      "3.3-3.8": 0,
+      "3.9-4.3": 0,
+      "4.4-5.0": 0
+    },
+    "male": {
+      "1.5-2.4": 0,
+      "2.5-3.2": 0,
+      "3.3-3.8": 0,
+      "3.9-4.3": 0,
+      "4.4-5.0": 0
+    }
+  },
+  "genderLooksLevelBandDeficits": {
+    "female": {
+      "1.5-2.4": 18,
+      "2.5-3.2": 53,
+      "3.3-3.8": 36,
+      "3.9-4.3": 12,
+      "4.4-5.0": 0
+    },
+    "male": {
+      "1.5-2.4": 18,
+      "2.5-3.2": 54,
+      "3.3-3.8": 36,
+      "3.9-4.3": 12,
+      "4.4-5.0": 0
+    }
+  },
+  "genderLooksLevelBandSurpluses": {
+    "female": {
+      "1.5-2.4": 0,
+      "2.5-3.2": 0,
+      "3.3-3.8": 0,
+      "3.9-4.3": 0,
+      "4.4-5.0": 0
+    },
+    "male": {
+      "1.5-2.4": 0,
+      "2.5-3.2": 0,
+      "3.3-3.8": 0,
+      "3.9-4.3": 0,
+      "4.4-5.0": 0
+    }
+  },
+  "invalidIdentities": [
+    {
+      "profileId": "female_001",
+      "reason": "countsTowardDistribution_not_true;faceType_unclear;identity_not_approved;looksLevelBand_unclear;not_all_shots_approved:face_card,silhouette_card,vibe_card;sameIdentity_false",
+      "recommendedAction": "retry_or_replace_with_reserve"
+    },
+    {
+      "profileId": "female_902",
+      "reason": "countsTowardDistribution_not_true;identity_not_approved;looksLevelBand_observed_target_mismatch;metadata_mismatch;not_all_shots_approved:face_card,silhouette_card,vibe_card",
+      "recommendedAction": "retry_or_replace_with_reserve"
+    },
+    {
+      "profileId": "male_901",
+      "reason": "countsTowardDistribution_not_true;faceType_observed_target_mismatch;identity_not_approved;looksLevelBand_observed_target_mismatch;metadata_mismatch;not_all_shots_approved:face_card,silhouette_card,vibe_card",
+      "recommendedAction": "retry_or_replace_with_reserve"
+    }
+  ],
+  "nextGenerationDirective": {
+    "shouldGenerateMore": true,
+    "targetBuckets": [
+      {
+        "gender": "male",
+        "faceType": "deer_like",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 21,
+        "combinedDeficit": 345,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "deer_like",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 22,
+        "combinedDeficit": 344,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "dog_like",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 19,
+        "combinedDeficit": 338,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "dog_like",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 19,
+        "combinedDeficit": 336,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "cat_like",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 17,
+        "combinedDeficit": 332,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "cat_like",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 17,
+        "combinedDeficit": 330,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "fox_like",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 15,
+        "combinedDeficit": 325,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "bear_like",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 14,
+        "combinedDeficit": 323,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "fox_like",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 14,
+        "combinedDeficit": 322,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "bear_like",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 14,
+        "combinedDeficit": 321,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "hamster_like",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 12,
+        "combinedDeficit": 317,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "mixed_neutral",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 12,
+        "combinedDeficit": 317,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "hamster_like",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 12,
+        "combinedDeficit": 315,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "mixed_neutral",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 12,
+        "combinedDeficit": 315,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "horse_like",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 10,
+        "combinedDeficit": 310,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "horse_like",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 9,
+        "combinedDeficit": 307,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "deer_like",
+        "looksLevelBand": "3.3-3.8",
+        "neededIdentities": 22,
+        "combinedDeficit": 292,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "deer_like",
+        "looksLevelBand": "3.3-3.8",
+        "neededIdentities": 21,
+        "combinedDeficit": 292,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "dog_like",
+        "looksLevelBand": "3.3-3.8",
+        "neededIdentities": 19,
+        "combinedDeficit": 285,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "dog_like",
+        "looksLevelBand": "3.3-3.8",
+        "neededIdentities": 19,
+        "combinedDeficit": 284,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "cat_like",
+        "looksLevelBand": "3.3-3.8",
+        "neededIdentities": 17,
+        "combinedDeficit": 279,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "cat_like",
+        "looksLevelBand": "3.3-3.8",
+        "neededIdentities": 17,
+        "combinedDeficit": 278,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "fox_like",
+        "looksLevelBand": "3.3-3.8",
+        "neededIdentities": 15,
+        "combinedDeficit": 272,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "fox_like",
+        "looksLevelBand": "3.3-3.8",
+        "neededIdentities": 14,
+        "combinedDeficit": 270,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "bear_like",
+        "looksLevelBand": "3.3-3.8",
+        "neededIdentities": 14,
+        "combinedDeficit": 270,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "bear_like",
+        "looksLevelBand": "3.3-3.8",
+        "neededIdentities": 14,
+        "combinedDeficit": 269,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "hamster_like",
+        "looksLevelBand": "3.3-3.8",
+        "neededIdentities": 12,
+        "combinedDeficit": 264,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "mixed_neutral",
+        "looksLevelBand": "3.3-3.8",
+        "neededIdentities": 12,
+        "combinedDeficit": 264,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "hamster_like",
+        "looksLevelBand": "3.3-3.8",
+        "neededIdentities": 12,
+        "combinedDeficit": 263,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "mixed_neutral",
+        "looksLevelBand": "3.3-3.8",
+        "neededIdentities": 12,
+        "combinedDeficit": 263,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "horse_like",
+        "looksLevelBand": "3.3-3.8",
+        "neededIdentities": 10,
+        "combinedDeficit": 257,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "horse_like",
+        "looksLevelBand": "3.3-3.8",
+        "neededIdentities": 9,
+        "combinedDeficit": 255,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "deer_like",
+        "looksLevelBand": "1.5-2.4",
+        "neededIdentities": 18,
+        "combinedDeficit": 238,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "deer_like",
+        "looksLevelBand": "1.5-2.4",
+        "neededIdentities": 18,
+        "combinedDeficit": 238,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "dog_like",
+        "looksLevelBand": "1.5-2.4",
+        "neededIdentities": 18,
+        "combinedDeficit": 231,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "dog_like",
+        "looksLevelBand": "1.5-2.4",
+        "neededIdentities": 18,
+        "combinedDeficit": 230,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "cat_like",
+        "looksLevelBand": "1.5-2.4",
+        "neededIdentities": 17,
+        "combinedDeficit": 225,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "cat_like",
+        "looksLevelBand": "1.5-2.4",
+        "neededIdentities": 17,
+        "combinedDeficit": 224,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "deer_like",
+        "looksLevelBand": "3.9-4.3",
+        "neededIdentities": 12,
+        "combinedDeficit": 220,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "deer_like",
+        "looksLevelBand": "3.9-4.3",
+        "neededIdentities": 12,
+        "combinedDeficit": 220,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "fox_like",
+        "looksLevelBand": "1.5-2.4",
+        "neededIdentities": 15,
+        "combinedDeficit": 218,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "fox_like",
+        "looksLevelBand": "1.5-2.4",
+        "neededIdentities": 14,
+        "combinedDeficit": 216,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "bear_like",
+        "looksLevelBand": "1.5-2.4",
+        "neededIdentities": 14,
+        "combinedDeficit": 216,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "bear_like",
+        "looksLevelBand": "1.5-2.4",
+        "neededIdentities": 14,
+        "combinedDeficit": 215,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "dog_like",
+        "looksLevelBand": "3.9-4.3",
+        "neededIdentities": 12,
+        "combinedDeficit": 213,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "dog_like",
+        "looksLevelBand": "3.9-4.3",
+        "neededIdentities": 12,
+        "combinedDeficit": 212,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "hamster_like",
+        "looksLevelBand": "1.5-2.4",
+        "neededIdentities": 12,
+        "combinedDeficit": 210,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "mixed_neutral",
+        "looksLevelBand": "1.5-2.4",
+        "neededIdentities": 12,
+        "combinedDeficit": 210,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "hamster_like",
+        "looksLevelBand": "1.5-2.4",
+        "neededIdentities": 12,
+        "combinedDeficit": 209,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "mixed_neutral",
+        "looksLevelBand": "1.5-2.4",
+        "neededIdentities": 12,
+        "combinedDeficit": 209,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "cat_like",
+        "looksLevelBand": "3.9-4.3",
+        "neededIdentities": 12,
+        "combinedDeficit": 207,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "cat_like",
+        "looksLevelBand": "3.9-4.3",
+        "neededIdentities": 12,
+        "combinedDeficit": 206,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "horse_like",
+        "looksLevelBand": "1.5-2.4",
+        "neededIdentities": 10,
+        "combinedDeficit": 203,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "horse_like",
+        "looksLevelBand": "1.5-2.4",
+        "neededIdentities": 9,
+        "combinedDeficit": 201,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "fox_like",
+        "looksLevelBand": "3.9-4.3",
+        "neededIdentities": 12,
+        "combinedDeficit": 200,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "fox_like",
+        "looksLevelBand": "3.9-4.3",
+        "neededIdentities": 12,
+        "combinedDeficit": 198,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "bear_like",
+        "looksLevelBand": "3.9-4.3",
+        "neededIdentities": 12,
+        "combinedDeficit": 198,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "bear_like",
+        "looksLevelBand": "3.9-4.3",
+        "neededIdentities": 12,
+        "combinedDeficit": 197,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "hamster_like",
+        "looksLevelBand": "3.9-4.3",
+        "neededIdentities": 12,
+        "combinedDeficit": 192,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "mixed_neutral",
+        "looksLevelBand": "3.9-4.3",
+        "neededIdentities": 12,
+        "combinedDeficit": 192,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "hamster_like",
+        "looksLevelBand": "3.9-4.3",
+        "neededIdentities": 12,
+        "combinedDeficit": 191,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "mixed_neutral",
+        "looksLevelBand": "3.9-4.3",
+        "neededIdentities": 12,
+        "combinedDeficit": 191,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "horse_like",
+        "looksLevelBand": "3.9-4.3",
+        "neededIdentities": 10,
+        "combinedDeficit": 185,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "horse_like",
+        "looksLevelBand": "3.9-4.3",
+        "neededIdentities": 9,
+        "combinedDeficit": 183,
+        "priority": "high"
+      }
+    ],
+    "stopGeneratingBuckets": [
+      {
+        "gender": "female",
+        "faceType": "any",
+        "looksLevelBand": "4.4-5.0",
+        "reason": "over_level_risk"
+      },
+      {
+        "gender": "male",
+        "faceType": "any",
+        "looksLevelBand": "4.4-5.0",
+        "reason": "over_level_risk"
+      }
+    ]
+  },
+  "notes": "Manual distribution review after applying asset and identity QA: female_901 is the only countable approved complete identity. Dataset is not final-approved and still needs more generation; no asset or identity approvals were changed by this distribution review.",
+  "manualReview": {
+    "reviewedAt": "2026-05-09T18:25:21Z",
+    "basis": "asset_qa_manifest.jsonl, identity_qa_manifest.jsonl, approved_identity_manifest.jsonl, latest_distribution_audit.json",
+    "resolvedIssue": "previous distribution_audit_latest.json was stale and still said identity QA/approved manifest were missing"
+  }
+}

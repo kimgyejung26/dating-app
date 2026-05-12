@@ -1,0 +1,6 @@
+SUCCESS: The process with PID 27988 (child process of PID 31104) has been terminated.
+SUCCESS: The process with PID 27948 (child process of PID 31104) has been terminated.
+SUCCESS: The process with PID 22784 (child process of PID 31104) has been terminated.
+SUCCESS: The process with PID 1160 (child process of PID 31104) has been terminated.
+SUCCESS: The process with PID 26972 (child process of PID 31104) has been terminated.
+Before the imagegen call, I need to satisfy the project checkpoint rule by setting only `ai_image/manifests/pending-imagegen.json` for this asset. I will not touch recommender code or any generated image files.

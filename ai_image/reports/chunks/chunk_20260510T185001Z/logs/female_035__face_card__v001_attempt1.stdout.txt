@@ -1,0 +1,20 @@
+SUCCESS: The process with PID 34264 (child process of PID 4248) has been terminated.
+SUCCESS: The process with PID 34844 (child process of PID 4248) has been terminated.
+SUCCESS: The process with PID 25916 (child process of PID 4248) has been terminated.
+SUCCESS: The process with PID 35812 (child process of PID 4248) has been terminated.
+SUCCESS: The process with PID 5404 (child process of PID 4248) has been terminated.
+Completed exactly one built-in Image Gen transaction.
+
+Asset: `female_035__face_card__v001`, attempt 1  
+Recovered to:
+- [raw attempt](/C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_035__face_card__v001__attempt01.png)
+- [final candidate](/C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/035/face_card.png)
+- [transaction receipt](/C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T185001Z/transactions/female_035__face_card__v001_attempt1.json)
+
+Verification evidence:
+- Receipt verification returned `valid: true`
+- File QA passed: `1024x1536` PNG, no file-integrity reasons
+- `pending-imagegen.json` is now `status: resolved`
+- Chunk state for this asset is `file_qa_passed`
+
+I did not run another Image Gen call, visual QA, distribution audit, or clear the existing manual-review flag. That flag still points to the earlier `female_034__face_card__v001` receipt issue.

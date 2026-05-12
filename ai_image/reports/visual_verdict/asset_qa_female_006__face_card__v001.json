@@ -1,0 +1,40 @@
+{
+  "qaType": "seolleyeon_visual_verdict_asset_v3",
+  "sheetId": "single_asset_female_006_face_card_20260510T1259Z",
+  "assets": [
+    {
+      "assetId": "female_006__face_card__v001",
+      "profileId": "female_006",
+      "gender": "female",
+      "shotType": "face_card",
+      "targetFaceType": "hamster_like",
+      "observedFaceType": "hamster_like",
+      "faceTypeConfidence": 0.82,
+      "targetLooksLevelBand": "3.9-4.3",
+      "observedLooksLevelBand": "3.9-4.3",
+      "looksLevelConfidence": 0.78,
+      "adultVisual": true,
+      "photoRealism": 4.7,
+      "campusRealism": 4.1,
+      "brandFit": 4.5,
+      "shotTypeReadable": true,
+      "influencerRisk": 0.8,
+      "childlikeRisk": 0.7,
+      "schoolUniformRisk": 0.0,
+      "sexualizationRisk": 0.0,
+      "artifactRisk": 0.2,
+      "metadataMismatch": false,
+      "mismatchFields": [],
+      "decision": "approved",
+      "rejectReasons": [],
+      "notes": "Adult realistic Korean university-student face_card; neutral campus-safe styling, no text/logo, no hard-reject visual issues."
+    }
+  ],
+  "summary": {
+    "approvedCount": 1,
+    "needsReviewCount": 0,
+    "rejectedCount": 0,
+    "hardRejectCount": 0,
+    "metadataMismatchCount": 0
+  }
+}

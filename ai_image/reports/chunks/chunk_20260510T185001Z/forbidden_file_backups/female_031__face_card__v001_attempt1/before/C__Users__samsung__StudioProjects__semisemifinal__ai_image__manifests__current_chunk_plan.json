@@ -1,0 +1,1600 @@
+{
+  "schemaVersion": "seolleyeon_bounded_chunk_plan_v3",
+  "chunkId": "chunk_20260510T185001Z",
+  "createdAt": "2026-05-10T18:50:02+00:00",
+  "updatedAt": "2026-05-11T00:59:15+00:00",
+  "dryRun": false,
+  "planMode": "production",
+  "executable": true,
+  "status": "running",
+  "maxIdentities": 24,
+  "maxAssets": 72,
+  "selectedIdentityCount": 24,
+  "selectedAssetCount": 72,
+  "selectionSource": "latest_distribution_audit",
+  "root": "C:/Users/samsung/StudioProjects/semisemifinal",
+  "targetsJson": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/config/AI_IMAGE_DISTRIBUTION_TARGETS_V3.json",
+  "distributionAuditJson": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/latest_distribution_audit.json",
+  "queueJson": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/imagegen_queue.jsonl",
+  "assetManifestJson": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/ai_profile_assets_v3.jsonl",
+  "inputHashes": {
+    "targetsJsonSha256": "3be6f204302f51b642100221d8ad54e197201f0af342f553bcdbdf879eca18e5",
+    "distributionAuditJsonSha256": "3c0026648eb12f63a16d78c8365f421630148d6d55b5f8d10ef3b6fedc1d081a",
+    "queueJsonSha256": "58d3400c848808baed8f20482e2e0f036c033aa602333cceb76cd93ae0373233",
+    "assetManifestJsonSha256": "e106c3bdf7cfad6f6bd9c1e3d679c4b77143eec4240ddef1c3aaf8152523f94d"
+  },
+  "inputMtimes": {
+    "targetsJsonMtime": 1778146934.0287187,
+    "distributionAuditJsonMtime": 1778461086.9743545,
+    "queueJsonMtime": 1778108472.9287338,
+    "assetManifestJsonMtime": 1778108473.0034764
+  },
+  "allowedBuckets": [
+    {
+      "gender": "female",
+      "targetFaceType": "bear_like",
+      "targetLooksLevelBand": "1.5-2.4"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "bear_like",
+      "targetLooksLevelBand": "2.5-3.2"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "cat_like",
+      "targetLooksLevelBand": "2.5-3.2"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "deer_like",
+      "targetLooksLevelBand": "2.5-3.2"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "deer_like",
+      "targetLooksLevelBand": "3.3-3.8"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "deer_like",
+      "targetLooksLevelBand": "3.9-4.3"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "dog_like",
+      "targetLooksLevelBand": "1.5-2.4"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "dog_like",
+      "targetLooksLevelBand": "2.5-3.2"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "dog_like",
+      "targetLooksLevelBand": "3.3-3.8"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "dog_like",
+      "targetLooksLevelBand": "3.9-4.3"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "fox_like",
+      "targetLooksLevelBand": "2.5-3.2"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "fox_like",
+      "targetLooksLevelBand": "3.3-3.8"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "hamster_like",
+      "targetLooksLevelBand": "2.5-3.2"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "hamster_like",
+      "targetLooksLevelBand": "3.3-3.8"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "horse_like",
+      "targetLooksLevelBand": "2.5-3.2"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "mixed_neutral",
+      "targetLooksLevelBand": "1.5-2.4"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "mixed_neutral",
+      "targetLooksLevelBand": "2.5-3.2"
+    }
+  ],
+  "forbiddenBuckets": [],
+  "remainingDeficitsAtPlanTime": {
+    "femaleApprovedIdentities": 120,
+    "maleApprovedIdentities": 120,
+    "globalFaceTypeDeficits": {
+      "cat_like": 34,
+      "dog_like": 38,
+      "hamster_like": 24,
+      "bear_like": 29,
+      "fox_like": 29,
+      "deer_like": 43,
+      "horse_like": 19,
+      "mixed_neutral": 24
+    },
+    "genderFaceTypeDeficits": {
+      "female": {
+        "cat_like": 17,
+        "dog_like": 19,
+        "hamster_like": 12,
+        "bear_like": 15,
+        "fox_like": 14,
+        "deer_like": 22,
+        "horse_like": 9,
+        "mixed_neutral": 12
+      },
+      "male": {
+        "cat_like": 17,
+        "dog_like": 19,
+        "hamster_like": 12,
+        "bear_like": 14,
+        "fox_like": 15,
+        "deer_like": 21,
+        "horse_like": 10,
+        "mixed_neutral": 12
+      }
+    },
+    "globalLooksLevelBandDeficits": {
+      "1.5-2.4": 36,
+      "2.5-3.2": 108,
+      "3.3-3.8": 72,
+      "3.9-4.3": 24,
+      "4.4-5.0": 0
+    },
+    "genderLooksLevelBandDeficits": {
+      "female": {
+        "1.5-2.4": 18,
+        "2.5-3.2": 54,
+        "3.3-3.8": 36,
+        "3.9-4.3": 12,
+        "4.4-5.0": 0
+      },
+      "male": {
+        "1.5-2.4": 18,
+        "2.5-3.2": 54,
+        "3.3-3.8": 36,
+        "3.9-4.3": 12,
+        "4.4-5.0": 0
+      }
+    }
+  },
+  "identities": [
+    {
+      "profileId": "female_025",
+      "gender": "female",
+      "numericId": "025",
+      "targetFaceType": "dog_like",
+      "targetLooksLevelBand": "2.5-3.2",
+      "source": "primary",
+      "status": "assets_complete",
+      "assets": [
+        {
+          "assetId": "female_025__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "file_qa_passed",
+          "attempt": 1,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 23 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\nrounder medium eyes, soft cheeks, a gentle approachable expression, a warm relaxed smile, balanced natural face shape, medium-sized eyes, neutral eye tilt, slightly angular but realistic jawline, fuller cheeks, medium-high nose bridge, soft fuller lips, natural brows, natural skin texture, neat and likable impression, naturally balanced features, casual grooming without looking staged, warm sincere mood.\n\nHair and styling:\nbob-length, natural black, natural straight hair with light natural bangs, natural makeup, casual campus everyday fashion, regular fit, campus-appropriate and modest. Outfit: ivory knit cardigan over a simple inner top.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "a3dfcce304cf759c975bb1d7",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/025/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_025__face_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/025.png",
+          "storagePath": "ai_profiles/female/025/face_card.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_025__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "file_qa_passed",
+          "attempt": 1,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 23 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 168cm, small-to-medium frame, naturally fit build, low natural muscularity, narrow shoulders, naturally defined waist, narrow hip line, long leg proportion while still realistic, slightly short but balanced torso length, slightly small head-to-body impression but still realistic, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nsoft knit top, ankle-length straight skirt, simple tote bag, clean flats or sneakers. casual campus everyday fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "645e61fe4c84e0854c22a731",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/025/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_025__silhouette_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/025.png",
+          "storagePath": "ai_profiles/female/025/silhouette_card.png",
+          "requiresReferenceAssetId": "female_025__face_card__v001"
+        },
+        {
+          "assetId": "female_025__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "file_qa_passed",
+          "attempt": 1,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 23 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, rounder medium eyes, soft cheeks, a gentle approachable expression, a warm relaxed smile, same bob-length, natural black, natural straight hair with light natural bangs, same natural grooming.\n\nMood and lifestyle:\nsitting by a window in a quiet campus cafe, reading lecture notes with a warm drink nearby, casual campus everyday fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings, no visible school logo, no readable text.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "d8e6431ccd64d0694c05c31c",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/025/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_025__vibe_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/025.png",
+          "storagePath": "ai_profiles/female/025/vibe_card.png",
+          "requiresReferenceAssetId": "female_025__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_026",
+      "gender": "female",
+      "numericId": "026",
+      "targetFaceType": "deer_like",
+      "targetLooksLevelBand": "3.3-3.8",
+      "source": "primary",
+      "status": "failed",
+      "assets": [
+        {
+          "assetId": "female_026__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "file_qa_passed",
+          "attempt": 1,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\na soft oval face, medium-large calm eyes, a delicate jawline, a gentle quiet expression, balanced natural face shape, medium-sized eyes, neutral eye tilt, soft jawline, subtle cheek fullness, soft medium nose bridge, natural thinner lips, light natural brows, natural skin texture, realistic attractive appearance, balanced facial symmetry, clear natural skin, well-kept but not influencer-like, quiet calm mood.\n\nHair and styling:\nmedium-length, dark brown, soft straight hair with soft side bangs, natural makeup, intellectual neat campus fashion, neat regular fit, campus-appropriate and modest. Outfit: cream sweatshirt with a simple collar detail.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "a0fac19bcb2046576df07a0a",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/026/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_026__face_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/026.png",
+          "storagePath": "ai_profiles/female/026/face_card.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_026__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 163cm, small-to-medium frame, slim build, low natural muscularity, narrow-to-medium shoulders, straight natural waist line, medium hip line, long leg proportion while still realistic, slightly short but balanced torso length, balanced adult head-to-body ratio, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nminimal sweatshirt, straight denim pants, canvas tote bag, clean sneakers. intellectual neat campus fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "4c7f14f662849ab5dcbeedb3",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/026/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_026__silhouette_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/026.png",
+          "storagePath": "ai_profiles/female/026/silhouette_card.png",
+          "requiresReferenceAssetId": "female_026__face_card__v001"
+        },
+        {
+          "assetId": "female_026__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, a soft oval face, medium-large calm eyes, a delicate jawline, a gentle quiet expression, same medium-length, dark brown, soft straight hair with soft side bangs, same natural grooming.\n\nMood and lifestyle:\nstanding in a small exhibition space and looking at a framed artwork, intellectual neat campus fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings, no visible school logo, no readable text.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "4c6c0e2f4956c1a7307bfa25",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/026/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_026__vibe_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/026.png",
+          "storagePath": "ai_profiles/female/026/vibe_card.png",
+          "requiresReferenceAssetId": "female_026__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_027",
+      "gender": "female",
+      "numericId": "027",
+      "targetFaceType": "dog_like",
+      "targetLooksLevelBand": "1.5-2.4",
+      "source": "primary",
+      "status": "failed",
+      "assets": [
+        {
+          "assetId": "female_027__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "file_qa_passed",
+          "attempt": 1,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 20 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\nrounder medium eyes, soft cheeks, a gentle approachable expression, a warm relaxed smile, balanced natural face shape, medium-sized eyes, neutral eye tilt, soft jawline, lightly defined cheekbones, soft low-to-medium nose bridge, soft fuller lips, thicker natural brows, healthy natural skin texture, neat and likable impression, naturally balanced features, casual grooming without looking staged, clear trustworthy mood.\n\nHair and styling:\nbob-length, natural black, slightly wavy hair with light natural bangs, natural makeup, casual campus everyday fashion, regular fit, campus-appropriate and modest. Outfit: cream sweatshirt with a simple collar detail.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "d2d695d041129d16b3930c35",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/027/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_027__face_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/027.png",
+          "storagePath": "ai_profiles/female/027/face_card.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_027__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "file_qa_passed",
+          "attempt": 1,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 20 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 173cm, medium frame, healthy average build, natural muscularity, narrow shoulders, waist not strongly emphasized, soft medium hip line, balanced leg proportion, slightly short but balanced torso length, balanced adult head-to-body ratio, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nneat blouse, regular-fit slacks, light cardigan, campus tote bag. casual campus everyday fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "3b0fb68346aa336126bf3e10",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/027/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_027__silhouette_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/027.png",
+          "storagePath": "ai_profiles/female/027/silhouette_card.png",
+          "requiresReferenceAssetId": "female_027__face_card__v001"
+        },
+        {
+          "assetId": "female_027__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "file_qa_passed",
+          "attempt": 1,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 20 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, rounder medium eyes, soft cheeks, a gentle approachable expression, a warm relaxed smile, same bob-length, natural black, slightly wavy hair with light natural bangs, same natural grooming.\n\nMood and lifestyle:\nstanding in a small exhibition space and looking at a framed artwork, casual campus everyday fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\nquiet campus cafe or study lounge, warm neutral interior, no brand logos, no readable text.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "a3f9cb8da9f13cfcd56dc759",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/027/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_027__vibe_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/027.png",
+          "storagePath": "ai_profiles/female/027/vibe_card.png",
+          "requiresReferenceAssetId": "female_027__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_028",
+      "gender": "female",
+      "numericId": "028",
+      "targetFaceType": "mixed_neutral",
+      "targetLooksLevelBand": "2.5-3.2",
+      "source": "primary",
+      "status": "assets_complete",
+      "assets": [
+        {
+          "assetId": "female_028__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "file_qa_passed",
+          "attempt": 1,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 24 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\nbalanced natural facial proportions, medium eyes, a soft defined jawline, a calm sincere expression, balanced natural face shape, small-to-medium eyes, neutral eye tilt, soft but defined jawline, subtle cheek fullness, natural medium nose bridge, soft fuller lips, light natural brows, clear natural skin texture, neat and likable impression, naturally balanced features, casual grooming without looking staged, soft and gentle mood.\n\nHair and styling:\nmedium-long, natural dark brown, soft straight hair with light natural bangs, light natural makeup, casual campus everyday fashion, neat regular fit, campus-appropriate and modest. Outfit: muted rose blouse with a light cardigan.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "0f64edbe31628423df783f64",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/028/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_028__face_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/028.png",
+          "storagePath": "ai_profiles/female/028/face_card.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_028__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "file_qa_passed",
+          "attempt": 1,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 24 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 164cm, medium frame, slim build, low natural muscularity, narrow shoulders, naturally defined waist, narrow hip line, balanced leg proportion, slightly longer torso length, slightly small head-to-body impression but still realistic, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nneat blouse, regular-fit slacks, light cardigan, campus tote bag. casual campus everyday fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "7fc898fbdeee654533fe9b01",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/028/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_028__silhouette_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/028.png",
+          "storagePath": "ai_profiles/female/028/silhouette_card.png",
+          "requiresReferenceAssetId": "female_028__face_card__v001"
+        },
+        {
+          "assetId": "female_028__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "file_qa_passed",
+          "attempt": 1,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 24 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, balanced natural facial proportions, medium eyes, a soft defined jawline, a calm sincere expression, same medium-long, natural dark brown, soft straight hair with light natural bangs, same natural grooming.\n\nMood and lifestyle:\nstanding in a small exhibition space and looking at a framed artwork, casual campus everyday fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\nquiet campus cafe or study lounge, warm neutral interior, no brand logos, no readable text.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "925ebc7736b79a7351bde501",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/028/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_028__vibe_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/028.png",
+          "storagePath": "ai_profiles/female/028/vibe_card.png",
+          "requiresReferenceAssetId": "female_028__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_029",
+      "gender": "female",
+      "numericId": "029",
+      "targetFaceType": "cat_like",
+      "targetLooksLevelBand": "2.5-3.2",
+      "source": "primary",
+      "status": "assets_complete",
+      "assets": [
+        {
+          "assetId": "female_029__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "file_qa_passed",
+          "attempt": 1,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\nalmond-shaped eyes, slightly lifted outer eye corners, a composed expression, a defined but not sharp jawline, soft oval face shape, slightly narrow medium eyes, neutral eye tilt, slightly angular but realistic jawline, lightly defined cheekbones, soft low-to-medium nose bridge, natural thinner lips, thicker natural brows, clear natural skin texture, neat and likable impression, naturally balanced features, casual grooming without looking staged, quiet romantic but mature mood.\n\nHair and styling:\nmedium-long, natural black, slightly wavy hair with soft side bangs, natural makeup, minimal clean everyday fashion, slim-regular fit without being tight, campus-appropriate and modest. Outfit: muted rose blouse with a light cardigan.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "88d78e61352f2682d10402d4",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/029/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_029__face_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/029.png",
+          "storagePath": "ai_profiles/female/029/face_card.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_029__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "file_qa_passed",
+          "attempt": 1,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 165cm, small frame, soft slim build, natural muscularity, narrow shoulders, naturally defined waist, medium hip line, slightly long leg proportion, slightly short but balanced torso length, realistic adult head-to-body ratio, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nneat blouse, regular-fit slacks, light cardigan, campus tote bag. minimal clean everyday fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "12bf95d30a335c05e7f4d23d",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/029/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_029__silhouette_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/029.png",
+          "storagePath": "ai_profiles/female/029/silhouette_card.png",
+          "requiresReferenceAssetId": "female_029__face_card__v001"
+        },
+        {
+          "assetId": "female_029__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "file_qa_passed",
+          "attempt": 1,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, almond-shaped eyes, slightly lifted outer eye corners, a composed expression, a defined but not sharp jawline, same medium-long, natural black, slightly wavy hair with soft side bangs, same natural grooming.\n\nMood and lifestyle:\nstanding near a campus garden with a relaxed sincere expression, minimal clean everyday fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\ncalm library lounge or study area, no visible school name, no readable text.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "a1fff8fb418521978268920f",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/029/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_029__vibe_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/029.png",
+          "storagePath": "ai_profiles/female/029/vibe_card.png",
+          "requiresReferenceAssetId": "female_029__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_030",
+      "gender": "female",
+      "numericId": "030",
+      "targetFaceType": "bear_like",
+      "targetLooksLevelBand": "1.5-2.4",
+      "source": "primary",
+      "status": "assets_complete",
+      "assets": [
+        {
+          "assetId": "female_030__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "file_qa_passed",
+          "attempt": 1,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\na stable warm impression, slightly broader facial structure, thicker natural brows, a calm grounded expression, soft rectangular face shape, medium-sized eyes, neutral eye tilt, slightly angular but realistic jawline, moderate cheek fullness, medium-high nose bridge, natural medium lips, thicker natural brows, healthy natural skin texture, neat and likable impression, naturally balanced features, casual grooming without looking staged, quiet calm mood.\n\nHair and styling:\nmedium-length, dark brown, natural straight hair with light natural bangs, light natural makeup, soft mature romantic everyday fashion, relaxed fit, campus-appropriate and modest. Outfit: muted rose blouse with a light cardigan.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "46f20003e59448606156da4c",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/030/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_030__face_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/030.png",
+          "storagePath": "ai_profiles/female/030/face_card.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_030__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "file_qa_passed",
+          "attempt": 1,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 164cm, small-to-medium frame, average build with a soft natural body line, low natural muscularity, medium shoulder width, waist not strongly emphasized, soft medium hip line, long leg proportion while still realistic, slightly short but balanced torso length, realistic adult head-to-body ratio, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nminimal sweatshirt, straight denim pants, canvas tote bag, clean sneakers. soft mature romantic everyday fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "e29fff720d78e79c7d4a8852",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/030/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_030__silhouette_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/030.png",
+          "storagePath": "ai_profiles/female/030/silhouette_card.png",
+          "requiresReferenceAssetId": "female_030__face_card__v001"
+        },
+        {
+          "assetId": "female_030__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "file_qa_passed",
+          "attempt": 1,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, a stable warm impression, slightly broader facial structure, thicker natural brows, a calm grounded expression, same medium-length, dark brown, natural straight hair with light natural bangs, same natural grooming.\n\nMood and lifestyle:\nstanding in a small exhibition space and looking at a framed artwork, soft mature romantic everyday fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings, no visible school logo, no readable text.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "9ffe0c960881363a04915810",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/030/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_030__vibe_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/030.png",
+          "storagePath": "ai_profiles/female/030/vibe_card.png",
+          "requiresReferenceAssetId": "female_030__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_031",
+      "gender": "female",
+      "numericId": "031",
+      "targetFaceType": "dog_like",
+      "targetLooksLevelBand": "3.3-3.8",
+      "source": "primary",
+      "status": "running",
+      "assets": [
+        {
+          "assetId": "female_031__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "pending_imagegen",
+          "attempt": 1,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 22 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\nrounder medium eyes, soft cheeks, a gentle approachable expression, a warm relaxed smile, soft oval face shape, medium-sized eyes, neutral eye tilt, naturally defined jawline, moderate cheek fullness, medium-high nose bridge, natural thinner lips, thicker natural brows, real skin texture with very mild imperfections, realistic attractive appearance, balanced facial symmetry, clear natural skin, well-kept but not influencer-like, calm intellectual mood.\n\nHair and styling:\nmedium-length, natural black, soft wavy hair with soft side bangs, light natural makeup, intellectual neat campus fashion, neat regular fit, campus-appropriate and modest. Outfit: minimal navy knit top with a calm campus mood.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "81d2a81f70507a0bf30b1ebc",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/031/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_031__face_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/031.png",
+          "storagePath": "ai_profiles/female/031/face_card.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_031__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 22 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 158cm, small frame, average build with a soft natural body line, low natural muscularity, medium shoulder width, softly defined waist, narrow hip line, slightly long leg proportion, balanced torso length, balanced adult head-to-body ratio, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nsoft cardigan, relaxed wide-leg pants, minimal sneakers. intellectual neat campus fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "08a5d9bfa7183495ce1be4f9",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/031/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_031__silhouette_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/031.png",
+          "storagePath": "ai_profiles/female/031/silhouette_card.png",
+          "requiresReferenceAssetId": "female_031__face_card__v001"
+        },
+        {
+          "assetId": "female_031__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 22 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, rounder medium eyes, soft cheeks, a gentle approachable expression, a warm relaxed smile, same medium-length, natural black, soft wavy hair with soft side bangs, same natural grooming.\n\nMood and lifestyle:\nstanding in a small exhibition space and looking at a framed artwork, intellectual neat campus fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\nsmall park near campus with soft greenery, no identifiable personal information.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "50af386b0fa27bdcb8f43e7e",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/031/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_031__vibe_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/031.png",
+          "storagePath": "ai_profiles/female/031/vibe_card.png",
+          "requiresReferenceAssetId": "female_031__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_032",
+      "gender": "female",
+      "numericId": "032",
+      "targetFaceType": "hamster_like",
+      "targetLooksLevelBand": "2.5-3.2",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_032__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\na compact rounded face, fuller cheeks, a small soft nose, a warm and gentle expression, naturally rounded face shape, round medium eyes, neutral eye tilt, naturally defined jawline, lightly defined cheekbones, soft low-to-medium nose bridge, natural medium lips, light natural brows, real skin texture with very mild imperfections, realistic attractive appearance, balanced facial symmetry, clear natural skin, well-kept but not influencer-like, quiet calm mood.\n\nHair and styling:\nbob-length, natural black, soft straight hair with soft side bangs, light natural makeup, intellectual neat campus fashion, relaxed fit, campus-appropriate and modest. Outfit: minimal navy knit top with a calm campus mood.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "d67c969e514b03986f8a670f",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/032/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_032__face_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/032.png",
+          "storagePath": "ai_profiles/female/032/face_card.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_032__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 172cm, medium frame, slim build, low natural muscularity, narrow-to-medium shoulders, naturally defined waist, medium hip line, long leg proportion while still realistic, balanced torso length, balanced adult head-to-body ratio, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nsoft cardigan, relaxed wide-leg pants, minimal sneakers. intellectual neat campus fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "028c5ad2876055d299695571",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/032/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_032__silhouette_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/032.png",
+          "storagePath": "ai_profiles/female/032/silhouette_card.png",
+          "requiresReferenceAssetId": "female_032__face_card__v001"
+        },
+        {
+          "assetId": "female_032__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, a compact rounded face, fuller cheeks, a small soft nose, a warm and gentle expression, same bob-length, natural black, soft straight hair with soft side bangs, same natural grooming.\n\nMood and lifestyle:\nwalking slowly on a tree-lined campus path while holding a few books, intellectual neat campus fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings, no visible school logo, no readable text.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "008c80bd1d84f72f355d8169",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/032/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_032__vibe_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/032.png",
+          "storagePath": "ai_profiles/female/032/vibe_card.png",
+          "requiresReferenceAssetId": "female_032__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_033",
+      "gender": "female",
+      "numericId": "033",
+      "targetFaceType": "deer_like",
+      "targetLooksLevelBand": "2.5-3.2",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_033__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 23 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\na soft oval face, medium-large calm eyes, a delicate jawline, a gentle quiet expression, soft oval face shape, medium-large eyes, neutral eye tilt, rounded jawline, fuller cheeks, natural medium nose bridge, natural medium lips, natural straight brows, healthy natural skin texture, neat and likable impression, naturally balanced features, casual grooming without looking staged, calm intellectual mood.\n\nHair and styling:\nlong, natural dark brown, slightly wavy hair, no bangs, natural makeup, neat campus everyday fashion, relaxed fit, campus-appropriate and modest. Outfit: ivory knit cardigan over a simple inner top.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "170b3aa2cf3d215b8f50136c",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/033/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_033__face_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/033.png",
+          "storagePath": "ai_profiles/female/033/face_card.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_033__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 23 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 163cm, medium frame, healthy average build, natural muscularity, narrow shoulders, straight natural waist line, soft medium hip line, slightly long leg proportion, balanced torso length, slightly small head-to-body impression but still realistic, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nsoft knit top, ankle-length straight skirt, simple tote bag, clean flats or sneakers. neat campus everyday fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "85b1f82767e7a4138c767139",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/033/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_033__silhouette_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/033.png",
+          "storagePath": "ai_profiles/female/033/silhouette_card.png",
+          "requiresReferenceAssetId": "female_033__face_card__v001"
+        },
+        {
+          "assetId": "female_033__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 23 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, a soft oval face, medium-large calm eyes, a delicate jawline, a gentle quiet expression, same long, natural dark brown, slightly wavy hair, no bangs, same natural grooming.\n\nMood and lifestyle:\nstanding in a small exhibition space and looking at a framed artwork, neat campus everyday fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings, no visible school logo, no readable text.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "cfb643664c3f62ba31f4f4c0",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/033/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_033__vibe_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/033.png",
+          "storagePath": "ai_profiles/female/033/vibe_card.png",
+          "requiresReferenceAssetId": "female_033__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_034",
+      "gender": "female",
+      "numericId": "034",
+      "targetFaceType": "bear_like",
+      "targetLooksLevelBand": "2.5-3.2",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_034__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\na stable warm impression, slightly broader facial structure, thicker natural brows, a calm grounded expression, naturally rounded face shape, medium-sized eyes, neutral eye tilt, naturally defined jawline, fuller cheeks, medium-high nose bridge, soft fuller lips, natural straight brows, healthy natural skin texture, realistic attractive appearance, balanced facial symmetry, clear natural skin, well-kept but not influencer-like, quiet romantic but mature mood.\n\nHair and styling:\nbob-length, dark brown, soft straight hair with light natural bangs, light natural makeup, intellectual neat campus fashion, neat regular fit, campus-appropriate and modest. Outfit: minimal navy knit top with a calm campus mood.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "b9b8416640e2e34f0750b9da",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/034/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_034__face_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/034.png",
+          "storagePath": "ai_profiles/female/034/face_card.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_034__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 160cm, small frame, soft slim build, low natural muscularity, medium shoulder width, naturally defined waist, medium hip line, balanced leg proportion, balanced torso length, balanced adult head-to-body ratio, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nneat blouse, regular-fit slacks, light cardigan, campus tote bag. intellectual neat campus fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "c9fc1e3eb88aef1c4e4eb1dc",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/034/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_034__silhouette_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/034.png",
+          "storagePath": "ai_profiles/female/034/silhouette_card.png",
+          "requiresReferenceAssetId": "female_034__face_card__v001"
+        },
+        {
+          "assetId": "female_034__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, a stable warm impression, slightly broader facial structure, thicker natural brows, a calm grounded expression, same bob-length, dark brown, soft straight hair with light natural bangs, same natural grooming.\n\nMood and lifestyle:\nwalking slowly on a tree-lined campus path while holding a few books, intellectual neat campus fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings, no visible school logo, no readable text.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "f892e69b2b00cdddb2c313ac",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/034/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_034__vibe_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/034.png",
+          "storagePath": "ai_profiles/female/034/vibe_card.png",
+          "requiresReferenceAssetId": "female_034__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_035",
+      "gender": "female",
+      "numericId": "035",
+      "targetFaceType": "mixed_neutral",
+      "targetLooksLevelBand": "2.5-3.2",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_035__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\nbalanced natural facial proportions, medium eyes, a soft defined jawline, a calm sincere expression, soft rectangular face shape, round medium eyes, slightly lifted outer eye corners, rounded jawline, subtle cheek fullness, natural medium nose bridge, natural thinner lips, thicker natural brows, natural skin texture, neat and likable impression, naturally balanced features, casual grooming without looking staged, quiet calm mood.\n\nHair and styling:\nbob-length, natural black, natural straight hair with soft side bangs, light natural makeup, soft mature romantic everyday fashion, neat regular fit, campus-appropriate and modest. Outfit: cream sweatshirt with a simple collar detail.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "116601cc038156300aa220b1",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/035/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_035__face_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/035.png",
+          "storagePath": "ai_profiles/female/035/face_card.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_035__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 165cm, small-to-medium frame, naturally fit build, moderate natural muscularity, narrow shoulders, waist not strongly emphasized, soft medium hip line, long leg proportion while still realistic, slightly longer torso length, balanced adult head-to-body ratio, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nregular-fit light cardigan, relaxed straight pants, simple campus tote bag, clean sneakers. soft mature romantic everyday fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "3c9a0fe29e659de2ef57d281",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/035/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_035__silhouette_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/035.png",
+          "storagePath": "ai_profiles/female/035/silhouette_card.png",
+          "requiresReferenceAssetId": "female_035__face_card__v001"
+        },
+        {
+          "assetId": "female_035__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, balanced natural facial proportions, medium eyes, a soft defined jawline, a calm sincere expression, same bob-length, natural black, natural straight hair with soft side bangs, same natural grooming.\n\nMood and lifestyle:\nstanding near a campus garden with a relaxed sincere expression, soft mature romantic everyday fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\nsmall local exhibition space near campus, neutral walls, no readable text.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "36f183b3f183c7391189d8b8",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/035/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_035__vibe_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/035.png",
+          "storagePath": "ai_profiles/female/035/vibe_card.png",
+          "requiresReferenceAssetId": "female_035__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_036",
+      "gender": "female",
+      "numericId": "036",
+      "targetFaceType": "mixed_neutral",
+      "targetLooksLevelBand": "1.5-2.4",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_036__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 22 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\nbalanced natural facial proportions, medium eyes, a soft defined jawline, a calm sincere expression, balanced natural face shape, small-to-medium eyes, slightly lifted outer eye corners, soft but defined jawline, moderate cheek fullness, soft medium nose bridge, natural medium lips, natural straight brows, clear natural skin texture, neat and likable impression, naturally balanced features, casual grooming without looking staged, calm intellectual mood.\n\nHair and styling:\nbob-length, natural dark brown, soft wavy hair with light natural bangs, light natural makeup, soft mature romantic everyday fashion, slim-regular fit without being tight, campus-appropriate and modest. Outfit: ivory knit cardigan over a simple inner top.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "da37a5ba05ceef91dc504a14",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/036/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_036__face_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/036.png",
+          "storagePath": "ai_profiles/female/036/face_card.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_036__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 22 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 160cm, small frame, soft slim build, moderate natural muscularity, narrow-to-medium shoulders, waist not strongly emphasized, medium hip line, long leg proportion while still realistic, balanced torso length, realistic adult head-to-body ratio, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nsoft cardigan, relaxed wide-leg pants, minimal sneakers. soft mature romantic everyday fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "be9645e35f3b2a9f6d0ce0ff",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/036/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_036__silhouette_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/036.png",
+          "storagePath": "ai_profiles/female/036/silhouette_card.png",
+          "requiresReferenceAssetId": "female_036__face_card__v001"
+        },
+        {
+          "assetId": "female_036__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 22 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, balanced natural facial proportions, medium eyes, a soft defined jawline, a calm sincere expression, same bob-length, natural dark brown, soft wavy hair with light natural bangs, same natural grooming.\n\nMood and lifestyle:\nsitting in a quiet library lounge with a notebook and tablet on the table, soft mature romantic everyday fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\nsmall park near campus with soft greenery, no identifiable personal information.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "98bca0ab5c1f33d23b893ef5",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/036/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_036__vibe_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/036.png",
+          "storagePath": "ai_profiles/female/036/vibe_card.png",
+          "requiresReferenceAssetId": "female_036__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_037",
+      "gender": "female",
+      "numericId": "037",
+      "targetFaceType": "deer_like",
+      "targetLooksLevelBand": "3.9-4.3",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_037__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 20 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\na soft oval face, medium-large calm eyes, a delicate jawline, a gentle quiet expression, soft oval face shape, medium-large eyes, neutral to slightly downturned eye shape, rounded jawline, subtle cheek fullness, natural medium nose bridge, natural thinner lips, natural straight brows, real skin texture with very mild imperfections, realistic attractive appearance, balanced facial symmetry, clear natural skin, well-kept but not influencer-like, clear trustworthy mood.\n\nHair and styling:\nmedium-long, dark brown, slightly wavy hair, no bangs, natural makeup, soft mature romantic everyday fashion, relaxed fit, campus-appropriate and modest. Outfit: muted rose blouse with a light cardigan.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "5ac5ef3b2aa740a4fadd58b1",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/037/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_037__face_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/037.png",
+          "storagePath": "ai_profiles/female/037/face_card.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_037__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 20 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 165cm, small-to-medium frame, average build with a soft natural body line, low natural muscularity, medium shoulder width, naturally defined waist, medium hip line, balanced leg proportion, slightly short but balanced torso length, slightly small head-to-body impression but still realistic, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nneat blouse, regular-fit slacks, light cardigan, campus tote bag. soft mature romantic everyday fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "5ccb0da76c8342dc06338384",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/037/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_037__silhouette_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/037.png",
+          "storagePath": "ai_profiles/female/037/silhouette_card.png",
+          "requiresReferenceAssetId": "female_037__face_card__v001"
+        },
+        {
+          "assetId": "female_037__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 20 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, a soft oval face, medium-large calm eyes, a delicate jawline, a gentle quiet expression, same medium-long, dark brown, slightly wavy hair, no bangs, same natural grooming.\n\nMood and lifestyle:\nstanding in a small exhibition space and looking at a framed artwork, soft mature romantic everyday fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings, no visible school logo, no readable text.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "52e05671e519aa89b50b794d",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/037/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_037__vibe_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/037.png",
+          "storagePath": "ai_profiles/female/037/vibe_card.png",
+          "requiresReferenceAssetId": "female_037__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_038",
+      "gender": "female",
+      "numericId": "038",
+      "targetFaceType": "dog_like",
+      "targetLooksLevelBand": "3.9-4.3",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_038__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 22 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\nrounder medium eyes, soft cheeks, a gentle approachable expression, a warm relaxed smile, naturally rounded face shape, medium-large eyes, neutral eye tilt, naturally defined jawline, moderate cheek fullness, natural medium nose bridge, natural medium lips, natural brows, healthy natural skin texture, noticeably attractive but still realistic, refined natural grooming, not celebrity-like, not a photoshoot model, warm sincere mood.\n\nHair and styling:\nlong, dark brown, slightly wavy hair with light natural bangs, natural makeup, neat campus everyday fashion, relaxed fit, campus-appropriate and modest. Outfit: cream sweatshirt with a simple collar detail.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "0a6ab328a75c15cdee00e263",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/038/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_038__face_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/038.png",
+          "storagePath": "ai_profiles/female/038/face_card.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_038__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 22 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 163cm, medium frame, average build with a soft natural body line, moderate natural muscularity, medium shoulder width, waist not strongly emphasized, medium hip line, balanced leg proportion, balanced torso length, slightly small head-to-body impression but still realistic, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nsoft cardigan, relaxed wide-leg pants, minimal sneakers. neat campus everyday fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "09d8109fd14626c9566d9062",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/038/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_038__silhouette_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/038.png",
+          "storagePath": "ai_profiles/female/038/silhouette_card.png",
+          "requiresReferenceAssetId": "female_038__face_card__v001"
+        },
+        {
+          "assetId": "female_038__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 22 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, rounder medium eyes, soft cheeks, a gentle approachable expression, a warm relaxed smile, same long, dark brown, slightly wavy hair with light natural bangs, same natural grooming.\n\nMood and lifestyle:\nsitting in a quiet library lounge with a notebook and tablet on the table, neat campus everyday fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings, no visible school logo, no readable text.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "c5c6c7c16cc5b2639846abdd",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/038/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_038__vibe_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/038.png",
+          "storagePath": "ai_profiles/female/038/vibe_card.png",
+          "requiresReferenceAssetId": "female_038__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_039",
+      "gender": "female",
+      "numericId": "039",
+      "targetFaceType": "bear_like",
+      "targetLooksLevelBand": "2.5-3.2",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_039__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 23 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\na stable warm impression, slightly broader facial structure, thicker natural brows, a calm grounded expression, soft rectangular face shape, medium-sized eyes, neutral eye tilt, soft but defined jawline, lightly defined cheekbones, soft medium nose bridge, natural thinner lips, natural straight brows, clear natural skin texture, neat and likable impression, naturally balanced features, casual grooming without looking staged, warm sincere mood.\n\nHair and styling:\nmedium-length, natural black, natural straight hair with light natural bangs, natural makeup, minimal clean everyday fashion, slim-regular fit without being tight, campus-appropriate and modest. Outfit: ivory knit cardigan over a simple inner top.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "69b89080ec0e533f63b95c4d",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/039/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_039__face_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/039.png",
+          "storagePath": "ai_profiles/female/039/face_card.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_039__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 23 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 161cm, small-to-medium frame, average build with a soft natural body line, low natural muscularity, narrow shoulders, waist not strongly emphasized, medium hip line, long leg proportion while still realistic, slightly longer torso length, balanced adult head-to-body ratio, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nsoft knit top, ankle-length straight skirt, simple tote bag, clean flats or sneakers. minimal clean everyday fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "0da28d73408b84b8c36727bf",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/039/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_039__silhouette_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/039.png",
+          "storagePath": "ai_profiles/female/039/silhouette_card.png",
+          "requiresReferenceAssetId": "female_039__face_card__v001"
+        },
+        {
+          "assetId": "female_039__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 23 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, a stable warm impression, slightly broader facial structure, thicker natural brows, a calm grounded expression, same medium-length, natural black, natural straight hair with light natural bangs, same natural grooming.\n\nMood and lifestyle:\nsitting in a quiet library lounge with a notebook and tablet on the table, minimal clean everyday fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\nsmall local exhibition space near campus, neutral walls, no readable text.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "64410be063cd0e2c378e66ca",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/039/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_039__vibe_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/039.png",
+          "storagePath": "ai_profiles/female/039/vibe_card.png",
+          "requiresReferenceAssetId": "female_039__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_040",
+      "gender": "female",
+      "numericId": "040",
+      "targetFaceType": "horse_like",
+      "targetLooksLevelBand": "2.5-3.2",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_040__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 23 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\na slightly longer face proportion, a higher nose bridge, defined cheekbones, an elegant mature expression, soft rectangular face shape, medium-sized eyes, neutral eye tilt, naturally defined jawline, fuller cheeks, soft low-to-medium nose bridge, soft fuller lips, thicker natural brows, real skin texture with very mild imperfections, neat and likable impression, naturally balanced features, casual grooming without looking staged, warm sincere mood.\n\nHair and styling:\nbob-length, natural dark brown, slightly wavy hair, no bangs, light natural makeup, soft mature romantic everyday fashion, neat regular fit, campus-appropriate and modest. Outfit: cream sweatshirt with a simple collar detail.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "965f3e16ec8e796836039dc2",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/040/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_040__face_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/040.png",
+          "storagePath": "ai_profiles/female/040/face_card.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_040__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 23 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 167cm, medium frame, average build with a soft natural body line, natural muscularity, medium shoulder width, naturally defined waist, narrow hip line, slightly long leg proportion, slightly longer torso length, slightly small head-to-body impression but still realistic, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nneat blouse, regular-fit slacks, light cardigan, campus tote bag. soft mature romantic everyday fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "9d9909784267f560511aa037",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/040/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_040__silhouette_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/040.png",
+          "storagePath": "ai_profiles/female/040/silhouette_card.png",
+          "requiresReferenceAssetId": "female_040__face_card__v001"
+        },
+        {
+          "assetId": "female_040__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 23 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, a slightly longer face proportion, a higher nose bridge, defined cheekbones, an elegant mature expression, same bob-length, natural dark brown, slightly wavy hair, no bangs, same natural grooming.\n\nMood and lifestyle:\nstanding in a small exhibition space and looking at a framed artwork, soft mature romantic everyday fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\nquiet campus cafe or study lounge, warm neutral interior, no brand logos, no readable text.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "6796af376d47c76fd612c842",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/040/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_040__vibe_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/040.png",
+          "storagePath": "ai_profiles/female/040/vibe_card.png",
+          "requiresReferenceAssetId": "female_040__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_041",
+      "gender": "female",
+      "numericId": "041",
+      "targetFaceType": "fox_like",
+      "targetLooksLevelBand": "2.5-3.2",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_041__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 20 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\nslightly narrow eyes, a refined face line, a subtle chic expression, a clean medium nose bridge, soft oval face shape, slightly narrow medium eyes, slightly lifted outer eye corners, soft jawline, lightly defined cheekbones, soft medium nose bridge, soft fuller lips, natural brows, healthy natural skin texture, realistic attractive appearance, balanced facial symmetry, clear natural skin, well-kept but not influencer-like, subtle chic mood without looking cold.\n\nHair and styling:\nbob-length, dark brown, soft wavy hair with light natural bangs, natural makeup, soft mature romantic everyday fashion, regular fit, campus-appropriate and modest. Outfit: ivory knit cardigan over a simple inner top.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "9a8874fe7c3459c52f0cb6a7",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/041/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_041__face_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/041.png",
+          "storagePath": "ai_profiles/female/041/face_card.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_041__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 20 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 172cm, small-to-medium frame, slim build, low natural muscularity, medium shoulder width, straight natural waist line, narrow hip line, balanced leg proportion, slightly longer torso length, slightly small head-to-body impression but still realistic, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nneat blouse, regular-fit slacks, light cardigan, campus tote bag. soft mature romantic everyday fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "670391b0f9b554a2b09fa1ef",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/041/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_041__silhouette_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/041.png",
+          "storagePath": "ai_profiles/female/041/silhouette_card.png",
+          "requiresReferenceAssetId": "female_041__face_card__v001"
+        },
+        {
+          "assetId": "female_041__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 20 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, slightly narrow eyes, a refined face line, a subtle chic expression, a clean medium nose bridge, same bob-length, dark brown, soft wavy hair with light natural bangs, same natural grooming.\n\nMood and lifestyle:\nsitting by a window in a quiet campus cafe, reading lecture notes with a warm drink nearby, soft mature romantic everyday fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings, no visible school logo, no readable text.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "29881ba434524ee9d68ead99",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/041/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_041__vibe_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/041.png",
+          "storagePath": "ai_profiles/female/041/vibe_card.png",
+          "requiresReferenceAssetId": "female_041__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_042",
+      "gender": "female",
+      "numericId": "042",
+      "targetFaceType": "bear_like",
+      "targetLooksLevelBand": "2.5-3.2",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_042__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 20 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\na stable warm impression, slightly broader facial structure, thicker natural brows, a calm grounded expression, soft rectangular face shape, medium-sized eyes, neutral eye tilt, soft but defined jawline, moderate cheek fullness, natural medium nose bridge, natural thinner lips, light natural brows, real skin texture with very mild imperfections, neat and likable impression, naturally balanced features, casual grooming without looking staged, calm intellectual mood.\n\nHair and styling:\nmedium-length, natural dark brown, soft straight hair with soft side bangs, natural makeup, soft mature romantic everyday fashion, relaxed fit, campus-appropriate and modest. Outfit: soft beige cardigan with a plain white top.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "3e2361c356b40d64bf4b3465",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/042/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_042__face_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/042.png",
+          "storagePath": "ai_profiles/female/042/face_card.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_042__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 20 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 170cm, small frame, naturally fit build, low natural muscularity, narrow shoulders, straight natural waist line, medium hip line, slightly long leg proportion, slightly longer torso length, slightly small head-to-body impression but still realistic, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nsoft cardigan, relaxed wide-leg pants, minimal sneakers. soft mature romantic everyday fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "5901b7864380489ac147b9b7",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/042/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_042__silhouette_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/042.png",
+          "storagePath": "ai_profiles/female/042/silhouette_card.png",
+          "requiresReferenceAssetId": "female_042__face_card__v001"
+        },
+        {
+          "assetId": "female_042__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 20 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, a stable warm impression, slightly broader facial structure, thicker natural brows, a calm grounded expression, same medium-length, natural dark brown, soft straight hair with soft side bangs, same natural grooming.\n\nMood and lifestyle:\nstanding near a campus garden with a relaxed sincere expression, soft mature romantic everyday fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\nsmall local exhibition space near campus, neutral walls, no readable text.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "ac1d3994ef31c815951476da",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/042/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_042__vibe_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/042.png",
+          "storagePath": "ai_profiles/female/042/vibe_card.png",
+          "requiresReferenceAssetId": "female_042__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_043",
+      "gender": "female",
+      "numericId": "043",
+      "targetFaceType": "hamster_like",
+      "targetLooksLevelBand": "3.3-3.8",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_043__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\na compact rounded face, fuller cheeks, a small soft nose, a warm and gentle expression, soft oval face shape, round medium eyes, soft slightly downturned eye shape, soft jawline, moderate cheek fullness, natural medium nose bridge, natural thinner lips, thicker natural brows, natural skin texture, realistic attractive appearance, balanced facial symmetry, clear natural skin, well-kept but not influencer-like, calm intellectual mood.\n\nHair and styling:\nmedium-long, dark brown, slightly wavy hair with light natural bangs, light natural makeup, neat campus everyday fashion, slim-regular fit without being tight, campus-appropriate and modest. Outfit: soft beige cardigan with a plain white top.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "f650492954f3101a9d84494f",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/043/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_043__face_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/043.png",
+          "storagePath": "ai_profiles/female/043/face_card.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_043__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 168cm, small frame, average build with a soft natural body line, natural muscularity, narrow-to-medium shoulders, softly defined waist, medium hip line, balanced leg proportion, slightly longer torso length, slightly small head-to-body impression but still realistic, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nneat blouse, regular-fit slacks, light cardigan, campus tote bag. neat campus everyday fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "7bb12c99aec39957e5101c5e",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/043/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_043__silhouette_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/043.png",
+          "storagePath": "ai_profiles/female/043/silhouette_card.png",
+          "requiresReferenceAssetId": "female_043__face_card__v001"
+        },
+        {
+          "assetId": "female_043__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, a compact rounded face, fuller cheeks, a small soft nose, a warm and gentle expression, same medium-long, dark brown, slightly wavy hair with light natural bangs, same natural grooming.\n\nMood and lifestyle:\nstanding near a campus garden with a relaxed sincere expression, neat campus everyday fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings, no visible school logo, no readable text.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "c8bf63aba08e12ccba3b778e",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/043/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_043__vibe_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/043.png",
+          "storagePath": "ai_profiles/female/043/vibe_card.png",
+          "requiresReferenceAssetId": "female_043__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_044",
+      "gender": "female",
+      "numericId": "044",
+      "targetFaceType": "fox_like",
+      "targetLooksLevelBand": "3.3-3.8",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_044__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\nslightly narrow eyes, a refined face line, a subtle chic expression, a clean medium nose bridge, slightly longer face shape, slightly narrow medium eyes, slightly lifted outer eye corners, slightly angular but realistic jawline, lightly defined cheekbones, soft medium nose bridge, soft fuller lips, natural straight brows, natural skin texture, realistic attractive appearance, balanced facial symmetry, clear natural skin, well-kept but not influencer-like, quiet romantic but mature mood.\n\nHair and styling:\nmedium-long, natural black, soft straight hair with light natural bangs, natural makeup, neat campus everyday fashion, relaxed fit, campus-appropriate and modest. Outfit: soft beige cardigan with a plain white top.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "cb4e01ffba2bf51b818c0f51",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/044/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_044__face_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/044.png",
+          "storagePath": "ai_profiles/female/044/face_card.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_044__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 162cm, small-to-medium frame, healthy average build, low natural muscularity, medium shoulder width, softly defined waist, narrow hip line, balanced leg proportion, slightly longer torso length, realistic adult head-to-body ratio, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nregular-fit light cardigan, relaxed straight pants, simple campus tote bag, clean sneakers. neat campus everyday fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "c19b6edc1243f5b84ebf710c",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/044/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_044__silhouette_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/044.png",
+          "storagePath": "ai_profiles/female/044/silhouette_card.png",
+          "requiresReferenceAssetId": "female_044__face_card__v001"
+        },
+        {
+          "assetId": "female_044__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, slightly narrow eyes, a refined face line, a subtle chic expression, a clean medium nose bridge, same medium-long, natural black, soft straight hair with light natural bangs, same natural grooming.\n\nMood and lifestyle:\nsitting by a window in a quiet campus cafe, reading lecture notes with a warm drink nearby, neat campus everyday fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\ncalm library lounge or study area, no visible school name, no readable text.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "a3710e186a63fc140838f8b3",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/044/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_044__vibe_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/044.png",
+          "storagePath": "ai_profiles/female/044/vibe_card.png",
+          "requiresReferenceAssetId": "female_044__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_045",
+      "gender": "female",
+      "numericId": "045",
+      "targetFaceType": "mixed_neutral",
+      "targetLooksLevelBand": "1.5-2.4",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_045__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 22 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\nbalanced natural facial proportions, medium eyes, a soft defined jawline, a calm sincere expression, soft oval face shape, small-to-medium eyes, neutral to slightly downturned eye shape, naturally defined jawline, subtle cheek fullness, medium-high nose bridge, natural thinner lips, natural brows, real skin texture with very mild imperfections, ordinary and natural real student look, mild facial asymmetry allowed, not polished or model-like, calm intellectual mood.\n\nHair and styling:\nbob-length, natural dark brown, natural straight hair with light natural bangs, light natural makeup, intellectual neat campus fashion, slim-regular fit without being tight, campus-appropriate and modest. Outfit: ivory knit cardigan over a simple inner top.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "a9a06453a17fd5a410291c3b",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/045/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_045__face_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/045.png",
+          "storagePath": "ai_profiles/female/045/face_card.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_045__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 22 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 164cm, small-to-medium frame, soft slim build, moderate natural muscularity, narrow-to-medium shoulders, straight natural waist line, narrow hip line, long leg proportion while still realistic, slightly longer torso length, slightly small head-to-body impression but still realistic, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nsoft knit top, ankle-length straight skirt, simple tote bag, clean flats or sneakers. intellectual neat campus fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "4cbf2d23eba9bed0bb728e0d",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/045/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_045__silhouette_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/045.png",
+          "storagePath": "ai_profiles/female/045/silhouette_card.png",
+          "requiresReferenceAssetId": "female_045__face_card__v001"
+        },
+        {
+          "assetId": "female_045__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 22 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, balanced natural facial proportions, medium eyes, a soft defined jawline, a calm sincere expression, same bob-length, natural dark brown, natural straight hair with light natural bangs, same natural grooming.\n\nMood and lifestyle:\nwalking slowly on a tree-lined campus path while holding a few books, intellectual neat campus fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\nsmall park near campus with soft greenery, no identifiable personal information.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "e28d98aab46e3642c85b425b",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/045/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_045__vibe_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/045.png",
+          "storagePath": "ai_profiles/female/045/vibe_card.png",
+          "requiresReferenceAssetId": "female_045__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_046",
+      "gender": "female",
+      "numericId": "046",
+      "targetFaceType": "mixed_neutral",
+      "targetLooksLevelBand": "1.5-2.4",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_046__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 23 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\nbalanced natural facial proportions, medium eyes, a soft defined jawline, a calm sincere expression, soft oval face shape, round medium eyes, slightly lifted outer eye corners, soft jawline, subtle cheek fullness, medium-high nose bridge, natural thinner lips, thicker natural brows, clear natural skin texture, neat and likable impression, naturally balanced features, casual grooming without looking staged, soft and gentle mood.\n\nHair and styling:\nmedium-length, dark brown, slightly wavy hair with light natural bangs, natural makeup, casual campus everyday fashion, neat regular fit, campus-appropriate and modest. Outfit: minimal navy knit top with a calm campus mood.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "2605cde85a89b837719cf7c3",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/046/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_046__face_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/046.png",
+          "storagePath": "ai_profiles/female/046/face_card.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_046__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 23 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 158cm, small-to-medium frame, soft slim build, low natural muscularity, medium shoulder width, softly defined waist, narrow hip line, balanced leg proportion, slightly longer torso length, balanced adult head-to-body ratio, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nregular-fit light cardigan, relaxed straight pants, simple campus tote bag, clean sneakers. casual campus everyday fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "f0a53af519d1ced2f18bd698",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/046/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_046__silhouette_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/046.png",
+          "storagePath": "ai_profiles/female/046/silhouette_card.png",
+          "requiresReferenceAssetId": "female_046__face_card__v001"
+        },
+        {
+          "assetId": "female_046__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 23 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, balanced natural facial proportions, medium eyes, a soft defined jawline, a calm sincere expression, same medium-length, dark brown, slightly wavy hair with light natural bangs, same natural grooming.\n\nMood and lifestyle:\nstanding near a campus garden with a relaxed sincere expression, casual campus everyday fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\nsmall park near campus with soft greenery, no identifiable personal information.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "aa42915ccaa1b831cc2b9677",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/046/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_046__vibe_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/046.png",
+          "storagePath": "ai_profiles/female/046/vibe_card.png",
+          "requiresReferenceAssetId": "female_046__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_047",
+      "gender": "female",
+      "numericId": "047",
+      "targetFaceType": "dog_like",
+      "targetLooksLevelBand": "3.3-3.8",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_047__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 23 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\nrounder medium eyes, soft cheeks, a gentle approachable expression, a warm relaxed smile, balanced natural face shape, medium-sized eyes, soft slightly downturned eye shape, slightly angular but realistic jawline, subtle cheek fullness, soft medium nose bridge, soft fuller lips, light natural brows, natural skin texture, realistic attractive appearance, balanced facial symmetry, clear natural skin, well-kept but not influencer-like, clear trustworthy mood.\n\nHair and styling:\nmedium-length, natural black, slightly wavy hair with soft side bangs, light natural makeup, minimal clean everyday fashion, relaxed fit, campus-appropriate and modest. Outfit: cream sweatshirt with a simple collar detail.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "6b918cc74aafe23080387fd2",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/047/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_047__face_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/047.png",
+          "storagePath": "ai_profiles/female/047/face_card.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_047__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 23 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 167cm, small-to-medium frame, average build with a soft natural body line, natural muscularity, narrow shoulders, waist not strongly emphasized, narrow hip line, long leg proportion while still realistic, slightly longer torso length, slightly small head-to-body impression but still realistic, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nminimal sweatshirt, straight denim pants, canvas tote bag, clean sneakers. minimal clean everyday fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "48c743477227e628a14f185c",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/047/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_047__silhouette_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/047.png",
+          "storagePath": "ai_profiles/female/047/silhouette_card.png",
+          "requiresReferenceAssetId": "female_047__face_card__v001"
+        },
+        {
+          "assetId": "female_047__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 23 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, rounder medium eyes, soft cheeks, a gentle approachable expression, a warm relaxed smile, same medium-length, natural black, slightly wavy hair with soft side bangs, same natural grooming.\n\nMood and lifestyle:\nsitting by a window in a quiet campus cafe, reading lecture notes with a warm drink nearby, minimal clean everyday fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\nsmall park near campus with soft greenery, no identifiable personal information.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "2e50f0f84483ea8479bd5e17",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/047/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_047__vibe_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/047.png",
+          "storagePath": "ai_profiles/female/047/vibe_card.png",
+          "requiresReferenceAssetId": "female_047__face_card__v001"
+        }
+      ]
+    },
+    {
+      "profileId": "female_048",
+      "gender": "female",
+      "numericId": "048",
+      "targetFaceType": "fox_like",
+      "targetLooksLevelBand": "2.5-3.2",
+      "source": "primary",
+      "status": "planned",
+      "assets": [
+        {
+          "assetId": "female_048__face_card__v001",
+          "shotType": "face_card",
+          "order": 1,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 22 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\nslightly narrow eyes, a refined face line, a subtle chic expression, a clean medium nose bridge, soft oval face shape, medium-sized eyes, neutral eye tilt, soft jawline, moderate cheek fullness, soft medium nose bridge, natural medium lips, thicker natural brows, real skin texture with very mild imperfections, neat and likable impression, naturally balanced features, casual grooming without looking staged, subtle chic mood without looking cold.\n\nHair and styling:\nmedium-length, dark brown, natural straight hair, no bangs, light natural makeup, casual campus everyday fashion, neat regular fit, campus-appropriate and modest. Outfit: muted rose blouse with a light cardigan.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "aa36f434be47208e3f9af103",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/048/face_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_048__face_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/048.png",
+          "storagePath": "ai_profiles/female/048/face_card.png",
+          "requiresReferenceAssetId": null
+        },
+        {
+          "assetId": "female_048__silhouette_card__v001",
+          "shotType": "silhouette_card",
+          "order": 2,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 22 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nBody and silhouette:\nheight impression around 161cm, medium frame, slim build, moderate natural muscularity, narrow shoulders, straight natural waist line, narrow hip line, slightly long leg proportion, slightly short but balanced torso length, realistic adult head-to-body ratio, realistic adult body proportions, natural posture. Outfit shows the overall silhouette without being tight or revealing.\n\nStyling:\nregular-fit light cardigan, relaxed straight pants, simple campus tote bag, clean sneakers. casual campus everyday fashion, clean and modest.\n\nComposition:\nthree-quarter body or full-body photo, standing or walking naturally, body proportions readable, no oversized padding, no extreme wide-angle distortion, camera at chest height, enough space around the body.\n\nLocation:\nquiet university walkway with trees and neutral campus buildings in the background, no visible school logo, no readable text.\n\nLighting and camera:\nsoft daylight, realistic smartphone profile photo, natural colors, casual but carefully composed.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "ad2733988ec5f7010580137e",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/048/silhouette_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_048__silhouette_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/048.png",
+          "storagePath": "ai_profiles/female/048/silhouette_card.png",
+          "requiresReferenceAssetId": "female_048__face_card__v001"
+        },
+        {
+          "assetId": "female_048__vibe_card__v001",
+          "shotType": "vibe_card",
+          "order": 3,
+          "status": "planned",
+          "attempt": 0,
+          "maxAttempts": 3,
+          "prompt": "A realistic adult Korean university student, approximately 22 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, slightly narrow eyes, a refined face line, a subtle chic expression, a clean medium nose bridge, same medium-length, dark brown, natural straight hair, no bangs, same natural grooming.\n\nMood and lifestyle:\nsitting by a window in a quiet campus cafe, reading lecture notes with a warm drink nearby, casual campus everyday fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\nsmall local exhibition space near campus, neutral walls, no readable text.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
+          "promptHash": "3e0ccfa432d729404c783267",
+          "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/048/vibe_card.png",
+          "rawPathPattern": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_048__vibe_card__v001__attemptXX.png",
+          "legacyStoragePath": "ai_profiles/female/048.png",
+          "storagePath": "ai_profiles/female/048/vibe_card.png",
+          "requiresReferenceAssetId": "female_048__face_card__v001"
+        }
+      ]
+    }
+  ],
+  "initialProgress": {
+    "approvedIdentityCount": 0,
+    "approvedAssetCount": 0,
+    "assetQaCount": 283,
+    "identityQaCount": 4,
+    "resolvedPendingCount": 34,
+    "rejectedIdentityCount": 3,
+    "needsReviewIdentityCount": 0,
+    "remainingDeficits": {
+      "approvedCompleteIdentities": {
+        "target": 240,
+        "current": 0,
+        "deficit": 240,
+        "surplus": 0,
+        "exactMatch": false
+      },
+      "approvedImages": {
+        "target": 720,
+        "current": 0,
+        "deficit": 720,
+        "surplus": 0,
+        "exactMatch": false
+      },
+      "femaleApprovedIdentities": {
+        "target": 120,
+        "current": 0,
+        "deficit": 120,
+        "surplus": 0,
+        "exactMatch": false
+      },
+      "maleApprovedIdentities": {
+        "target": 120,
+        "current": 0,
+        "deficit": 120,
+        "surplus": 0,
+        "exactMatch": false
+      }
+    },
+    "surplusBuckets": []
+  },
+  "planHash": "0a6a3f832a744a89f813c9d2d36c400eff1f39e7e72b4476197c14b0d57b7ad7",
+  "abandonedPreviousChunk": {
+    "abandonedChunkId": "chunk_20260510T160411Z",
+    "abandonedAt": "2026-05-10T18:50:02+00:00",
+    "abandonReason": "fresh_production_replan_after_distribution_audit",
+    "replacementChunkId": "chunk_20260510T185001Z",
+    "abandonedAssetCount": 72,
+    "abandonedProfileCount": 24,
+    "abandonedChunkManifest": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/abandoned_chunk_manifest.jsonl",
+    "abandonedReportPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T160411Z/chunk_report.json"
+  },
+  "archivedPreviousPlan": {
+    "plan": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/plan_history/current_chunk_plan_20260510T185002Z.json",
+    "state": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/plan_history/current_chunk_state_20260510T185002Z.json"
+  },
+  "resumeInputRefreshHistory": [
+    {
+      "refreshedAt": "2026-05-11T00:57:52+00:00",
+      "reason": "reconcile_resume_distribution_audit_snapshot_refresh",
+      "previousPlanHash": "ffd47ccfce8d96bbda171c3c217c6991886cf2cab9af24247c4296fe8fd38bb1",
+      "reasonsBefore": [
+        "input_hash_changed:distributionAuditJsonSha256",
+        "input_mtime_newer:distributionAuditJson"
+      ]
+    },
+    {
+      "refreshedAt": "2026-05-11T00:59:15+00:00",
+      "reason": "reconcile_resume_distribution_audit_snapshot_refresh",
+      "previousPlanHash": "78f7ee644a8b9e66466efc318058b9624e8c5af9524c7bbba162b1e512c19cfc",
+      "reasonsBefore": [
+        "input_hash_changed:distributionAuditJsonSha256",
+        "input_mtime_newer:distributionAuditJson"
+      ]
+    }
+  ]
+}

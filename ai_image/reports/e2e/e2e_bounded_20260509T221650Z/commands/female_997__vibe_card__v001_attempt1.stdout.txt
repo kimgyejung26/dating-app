@@ -1,0 +1,6 @@
+SUCCESS: The process with PID 9796 (child process of PID 29132) has been terminated.
+SUCCESS: The process with PID 31692 (child process of PID 29132) has been terminated.
+SUCCESS: The process with PID 18852 (child process of PID 29132) has been terminated.
+SUCCESS: The process with PID 18932 (child process of PID 29132) has been terminated.
+SUCCESS: The process with PID 10968 (child process of PID 29132) has been terminated.
+The reference file exists. I’m checking the pending checkpoint now; if it already matches this asset I’ll leave it alone, otherwise I’ll write only that small checkpoint before the single generation call.

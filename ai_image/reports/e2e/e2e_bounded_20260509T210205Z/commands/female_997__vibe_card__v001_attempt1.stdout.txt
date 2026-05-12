@@ -1,0 +1,6 @@
+SUCCESS: The process with PID 1780 (child process of PID 21900) has been terminated.
+SUCCESS: The process with PID 32416 (child process of PID 21900) has been terminated.
+SUCCESS: The process with PID 22644 (child process of PID 21900) has been terminated.
+SUCCESS: The process with PID 15032 (child process of PID 21900) has been terminated.
+SUCCESS: The process with PID 20524 (child process of PID 21900) has been terminated.
+The pending checkpoint already matches `female_997__vibe_card__v001`, so no file edit is needed. I’m now making the single bounded Image Gen call using the attached face_card reference; after that I’ll stop without recovery, import, or QA.

@@ -1,0 +1,6 @@
+SUCCESS: The process with PID 29572 (child process of PID 25572) has been terminated.
+SUCCESS: The process with PID 22060 (child process of PID 25572) has been terminated.
+SUCCESS: The process with PID 30848 (child process of PID 25572) has been terminated.
+SUCCESS: The process with PID 21356 (child process of PID 25572) has been terminated.
+SUCCESS: The process with PID 21216 (child process of PID 25572) has been terminated.
+I have the relevant constraints loaded. Before the image call, I’m only going to checkpoint the requested asset identity in `pending-imagegen.json`; I will not touch recommender code or perform recovery/QA.

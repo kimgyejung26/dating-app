@@ -1,0 +1,23 @@
+SUCCESS: The process with PID 12924 (child process of PID 24612) has been terminated.
+SUCCESS: The process with PID 20496 (child process of PID 24612) has been terminated.
+SUCCESS: The process with PID 13236 (child process of PID 24612) has been terminated.
+SUCCESS: The process with PID 32988 (child process of PID 24612) has been terminated.
+SUCCESS: The process with PID 5376 (child process of PID 24612) has been terminated.
+완료했습니다. Codex built-in Image Gen만 사용해서 정확히 1개 asset만 생성했습니다.
+
+- Asset: `female_009__face_card__v001`
+- Mode: Codex internal `image_gen` only
+- Raw: `ai_image/raw/female_009__face_card__v001__attempt01.png`
+- Final: `ai_image/female/009/face_card.png`
+- Approved copy: `ai_image/approved/female_009__face_card__v001.png`
+- Pending checkpoint: resolved in `ai_image/manifests/pending-imagegen.json`
+- Manifest/status updated:
+  - `ai_image/manifests/generation_manifest.jsonl`
+  - `ai_image/reports/generation_status.csv`
+- Visual QA: `vision_approved`
+
+Validation:
+- Generated folder contained exactly 1 new image.
+- No OpenAI Image API / Batch API / API key used.
+- No recommender or code files were modified.
+[omx] postLaunch: reaped 5 orphaned OMX MCP process(es).

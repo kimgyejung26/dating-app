@@ -1,0 +1,6 @@
+SUCCESS: The process with PID 18976 (child process of PID 12532) has been terminated.
+SUCCESS: The process with PID 21936 (child process of PID 12532) has been terminated.
+SUCCESS: The process with PID 2416 (child process of PID 12532) has been terminated.
+SUCCESS: The process with PID 17716 (child process of PID 12532) has been terminated.
+SUCCESS: The process with PID 20708 (child process of PID 12532) has been terminated.
+I’m going to write only the required pending checkpoint under `ai_image/manifests/`, then call internal image generation once. I will not import, move, recover, rename, or QA the generated output.

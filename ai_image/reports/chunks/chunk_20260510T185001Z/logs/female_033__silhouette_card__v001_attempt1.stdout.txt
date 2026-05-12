@@ -1,0 +1,12 @@
+SUCCESS: The process with PID 17756 (child process of PID 34932) has been terminated.
+SUCCESS: The process with PID 14500 (child process of PID 34932) has been terminated.
+SUCCESS: The process with PID 37536 (child process of PID 34932) has been terminated.
+SUCCESS: The process with PID 32828 (child process of PID 34932) has been terminated.
+SUCCESS: The process with PID 20852 (child process of PID 34932) has been terminated.
+Done. Ran exactly one Image Gen transaction for `female_033__silhouette_card__v001`.
+
+Final asset: [silhouette_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/033/silhouette_card.png)  
+Raw recovery: [attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_033__silhouette_card__v001__attempt01.png)  
+Receipt: [transaction receipt](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T185001Z/transactions/female_033__silhouette_card__v001_attempt1.json)
+
+Validation passed: receipt verified, pending checkpoint resolved, file QA passed as PNG `1024x1536`, and `generation_status.csv` has the recovered asset row. I did not run global QA, visual QA, distribution audit, completion check, or advance to another asset.

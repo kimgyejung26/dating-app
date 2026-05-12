@@ -1,0 +1,13 @@
+SUCCESS: The process with PID 27016 (child process of PID 13384) has been terminated.
+SUCCESS: The process with PID 9896 (child process of PID 13384) has been terminated.
+SUCCESS: The process with PID 3424 (child process of PID 13384) has been terminated.
+SUCCESS: The process with PID 16128 (child process of PID 13384) has been terminated.
+SUCCESS: The process with PID 11600 (child process of PID 13384) has been terminated.
+Ran exactly one Seolleyeon one-asset Image Gen transaction for `female_032__face_card__v001`.
+
+Outputs:
+- Raw: [female_032__face_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_032__face_card__v001__attempt01.png)
+- Final candidate: [face_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/032/face_card.png)
+- Receipt: [female_032__face_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T185001Z/transactions/female_032__face_card__v001_attempt1.json)
+
+Validation passed: `verify_one_asset_transaction` returned `valid: true`; file QA saw a `941x1672` PNG, `1,982,126` bytes, with no file-level rejection reasons. `pending-imagegen.json` is resolved. I did not run global QA, visual approval, distribution audit, or touch recommender files.

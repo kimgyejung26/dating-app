@@ -1,0 +1,19 @@
+SUCCESS: The process with PID 24944 (child process of PID 11484) has been terminated.
+SUCCESS: The process with PID 35412 (child process of PID 11484) has been terminated.
+SUCCESS: The process with PID 33260 (child process of PID 11484) has been terminated.
+SUCCESS: The process with PID 17580 (child process of PID 11484) has been terminated.
+SUCCESS: The process with PID 25632 (child process of PID 11484) has been terminated.
+Ran exactly one Seolleyeon one-asset Image Gen transaction.
+
+Asset: `female_010__silhouette_card__v001`  
+Final: [silhouette_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/010/silhouette_card.png)  
+Raw: [female_010__silhouette_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_010__silhouette_card__v001__attempt01.png)  
+Receipt: [female_010__silhouette_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T160411Z/transactions/female_010__silhouette_card__v001_attempt1.json)
+
+Verification evidence:
+- `pending-imagegen.json`: `resolved`, recovery `recovered`
+- receipt verification: `true`
+- file QA: `file_needs_review`, integrity passed, active visual QA still required
+- raw/final image dimensions: `1024x1536`
+- generated images since checkpoint: `1`
+- no tracked diff under `lib/ai_recommend_model` or `scripts/ai_image_pipeline_v3` from verification command.

@@ -1,0 +1,6 @@
+SUCCESS: The process with PID 27784 (child process of PID 19188) has been terminated.
+SUCCESS: The process with PID 1252 (child process of PID 19188) has been terminated.
+SUCCESS: The process with PID 23188 (child process of PID 19188) has been terminated.
+SUCCESS: The process with PID 25484 (child process of PID 19188) has been terminated.
+SUCCESS: The process with PID 11928 (child process of PID 19188) has been terminated.
+Using `seolleyeon-ai-profile-imagegen` only to constrain this to one bounded internal Image Gen call. I will not run API calls, QA, or file recovery.

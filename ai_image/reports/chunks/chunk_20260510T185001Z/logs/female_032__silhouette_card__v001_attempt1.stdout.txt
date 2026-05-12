@@ -1,0 +1,13 @@
+SUCCESS: The process with PID 1572 (child process of PID 23656) has been terminated.
+SUCCESS: The process with PID 34212 (child process of PID 23656) has been terminated.
+SUCCESS: The process with PID 14028 (child process of PID 23656) has been terminated.
+SUCCESS: The process with PID 4584 (child process of PID 23656) has been terminated.
+SUCCESS: The process with PID 25296 (child process of PID 23656) has been terminated.
+Receipt written for exactly one asset transaction: `female_032__silhouette_card__v001`.
+
+Outputs:
+- Final candidate: [silhouette_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/032/silhouette_card.png)
+- Raw recovery: [female_032__silhouette_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_032__silhouette_card__v001__attempt01.png)
+- Receipt: [female_032__silhouette_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T185001Z/transactions/female_032__silhouette_card__v001_attempt1.json)
+
+Validation: pending checkpoint is resolved, `generation_status.csv` shows `recovered_pending_qa`, and single-asset file QA passed (`PNG`, `941x1672`, `2409773` bytes). I did not run global visual QA or mark it approved.

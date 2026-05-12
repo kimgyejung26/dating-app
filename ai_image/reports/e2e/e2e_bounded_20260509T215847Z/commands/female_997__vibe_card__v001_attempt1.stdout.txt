@@ -1,0 +1,6 @@
+SUCCESS: The process with PID 12776 (child process of PID 26804) has been terminated.
+SUCCESS: The process with PID 32180 (child process of PID 26804) has been terminated.
+SUCCESS: The process with PID 27256 (child process of PID 26804) has been terminated.
+SUCCESS: The process with PID 25216 (child process of PID 26804) has been terminated.
+SUCCESS: The process with PID 9896 (child process of PID 26804) has been terminated.
+I’m checking the pending-imagegen checkpoint now because the project rules make that the identity source before calling Image Gen. I’ll only touch that checkpoint if needed, then make the single generation call.

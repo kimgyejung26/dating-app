@@ -1,0 +1,18 @@
+SUCCESS: The process with PID 37444 (child process of PID 2816) has been terminated.
+SUCCESS: The process with PID 34848 (child process of PID 2816) has been terminated.
+SUCCESS: The process with PID 36220 (child process of PID 2816) has been terminated.
+SUCCESS: The process with PID 22560 (child process of PID 2816) has been terminated.
+SUCCESS: The process with PID 37452 (child process of PID 2816) has been terminated.
+Exactly one Seolleyeon one-asset Image Gen transaction was run for `female_033__vibe_card__v001`.
+
+Saved outputs:
+- Raw: `ai_image/raw/female_033__vibe_card__v001__attempt01.png`
+- Final candidate: `ai_image/female/033/vibe_card.png`
+- Receipt: `ai_image/reports/chunks/chunk_20260510T185001Z/transactions/female_033__vibe_card__v001_attempt1.json`
+
+Validation:
+- `pending-imagegen.json` resolved.
+- Receipt verify passed: `valid: true`.
+- File QA passed: `1024x1536` PNG, no file integrity errors.
+- Status is `file_needs_review`, meaning visual/policy QA is still pending.
+- No tracked recommender files changed.

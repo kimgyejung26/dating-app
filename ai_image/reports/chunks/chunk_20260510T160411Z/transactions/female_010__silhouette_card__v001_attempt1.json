@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "seolleyeon_one_asset_transaction_v3",
+  "transactionId": "chunk_20260510T160411Z_female_010__silhouette_card__v001_attempt1",
+  "chunkId": "chunk_20260510T160411Z",
+  "assetId": "female_010__silhouette_card__v001",
+  "profileId": "female_010",
+  "gender": "female",
+  "numericId": "010",
+  "shotType": "silhouette_card",
+  "attempt": 1,
+  "startedAt": "2026-05-10T17:48:20+00:00",
+  "finishedAt": "2026-05-10T17:48:20+00:00",
+  "generated": true,
+  "recovered": true,
+  "pendingResolved": true,
+  "fileQaRan": true,
+  "fileQaPassed": true,
+  "rawPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_010__silhouette_card__v001__attempt01.png",
+  "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/010/silhouette_card.png",
+  "sourceGeneratedImagePath": "C:/Users/samsung/.codex/generated_images/019e12fa-49a3-76f2-a541-311f2262b5c8/ig_01313805519e78e4016a00c3fa341481918ee35a5122ae7266.png",
+  "referencePath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/010/face_card.png",
+  "fileQa": {
+    "decision": "file_passed",
+    "width": 1024,
+    "height": 1536,
+    "format": "PNG",
+    "aspectRatio": 0.6666666666666666,
+    "sizeBytes": 2578065,
+    "reasons": []
+  },
+  "workerActions": [
+    "used_codex_builtin_imagegen_once",
+    "recovered_pending_imagegen",
+    "single_asset_file_qa_ran",
+    "receipt_written"
+  ],
+  "stdoutLog": "",
+  "stderrLog": "",
+  "error": null,
+  "status": "succeeded",
+  "source": "manual_one_asset_transaction_recovery",
+  "fileQaCounts": {
+    "checked": 1,
+    "approved": 0,
+    "needs_manual_review": 1,
+    "rejected": 0,
+    "missing": 0
+  }
+}

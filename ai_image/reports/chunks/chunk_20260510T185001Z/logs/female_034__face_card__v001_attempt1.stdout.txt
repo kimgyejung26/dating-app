@@ -1,0 +1,18 @@
+SUCCESS: The process with PID 34812 (child process of PID 31520) has been terminated.
+SUCCESS: The process with PID 24028 (child process of PID 31520) has been terminated.
+SUCCESS: The process with PID 38788 (child process of PID 31520) has been terminated.
+SUCCESS: The process with PID 37456 (child process of PID 31520) has been terminated.
+SUCCESS: The process with PID 37560 (child process of PID 31520) has been terminated.
+Ran exactly one Seolleyeon one-asset `$imagegen` transaction for `female_034__face_card__v001`.
+
+Result: generated and recovered, but not approved. File QA failed because the output aspect ratio was `883x1781` (`0.496`), below the allowed minimum `0.55`.
+
+Updated artifacts:
+- Raw: `ai_image/raw/female_034__face_card__v001__attempt01.png`
+- Final candidate: `ai_image/female/034/face_card.png`
+- Rejected copy: `ai_image/rejected/female_034__face_card__v001__attempt01.png`
+- Receipt: `ai_image/reports/chunks/chunk_20260510T185001Z/transactions/female_034__face_card__v001_attempt1.json`
+- `pending-imagegen.json` resolved
+- `generation_status.csv` updated to `failed`
+
+No retry was run, and no recommender code was modified.

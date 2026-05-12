@@ -1,0 +1,46 @@
+{
+  "qaType": "seolleyeon_visual_verdict_identity_v3",
+  "identities": [
+    {
+      "profileId": "female_997",
+      "gender": "female",
+      "targetFaceType": "deer_like",
+      "observedFaceType": "deer_like",
+      "targetLooksLevelBand": "2.5-3.2",
+      "observedLooksLevelBand": "3.3-3.8",
+      "assetIds": {
+        "face_card": "female_997__face_card__v001",
+        "silhouette_card": "female_997__silhouette_card__v001",
+        "vibe_card": "female_997__vibe_card__v001"
+      },
+      "assetDecisions": {
+        "face_card": "rejected",
+        "silhouette_card": "approved",
+        "vibe_card": "approved"
+      },
+      "faceToSilhouetteConsistency": 4.0,
+      "faceToVibeConsistency": 4.5,
+      "sameIdentity": true,
+      "completeIdentityDecision": "rejected",
+      "countsTowardDistribution": false,
+      "failedShotTypes": [
+        "face_card"
+      ],
+      "retryShotTypes": [
+        "face_card"
+      ],
+      "rejectReasons": [
+        "asset_rejected_face_card",
+        "looks_level_band_mismatch"
+      ],
+      "notes": "All three shots appear to preserve the same adult identity, but the face_card is asset-rejected and the observed looks band is above target."
+    }
+  ],
+  "summary": {
+    "approvedCompleteIdentities": 0,
+    "needsReviewIdentities": 0,
+    "rejectedIdentities": 1,
+    "missingShotIdentities": 0,
+    "identityMismatchCount": 0
+  }
+}

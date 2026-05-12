@@ -1,0 +1,6 @@
+SUCCESS: The process with PID 20524 (child process of PID 27396) has been terminated.
+SUCCESS: The process with PID 23468 (child process of PID 27396) has been terminated.
+SUCCESS: The process with PID 27516 (child process of PID 27396) has been terminated.
+SUCCESS: The process with PID 29784 (child process of PID 27396) has been terminated.
+SUCCESS: The process with PID 13020 (child process of PID 27396) has been terminated.
+Using `seolleyeon-ai-profile-imagegen` with internal Image Gen only. Stop condition is one dependent `silhouette_card` generation from the attached/reference face image, with no file recovery, QA, or pipeline edits.

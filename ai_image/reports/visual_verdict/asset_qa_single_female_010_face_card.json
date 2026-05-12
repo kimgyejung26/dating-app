@@ -1,0 +1,32 @@
+{
+  "qaType": "seolleyeon_visual_verdict_asset_v3",
+  "schemaVersion": "seolleyeon_visual_verdict_asset_v3_single",
+  "sheetId": "single_codex_builtin_imagegen_20260510_female_010_face_card",
+  "assets": [
+    {
+      "assetId": "female_010__face_card__v001",
+      "profileId": "female_010",
+      "gender": "female",
+      "shotType": "face_card",
+      "targetFaceType": "dog_like",
+      "observedFaceType": "dog_like",
+      "targetLooksLevelBand": "1.5-2.4",
+      "observedLooksLevelBand": "1.5-2.4",
+      "adultVisual": true,
+      "photoRealism": 4.6,
+      "campusRealism": 4.3,
+      "brandFit": 4.5,
+      "shotTypeReadable": true,
+      "influencerRisk": 0.6,
+      "childlikeRisk": 0.2,
+      "schoolUniformRisk": 0.0,
+      "sexualizationRisk": 0.0,
+      "artifactRisk": 0.4,
+      "metadataMismatch": false,
+      "mismatchFields": [],
+      "decision": "approved",
+      "rejectReasons": [],
+      "notes": "Single Codex built-in Image Gen face_card. Adult, realistic, modest campus-neutral profile; no readable text/logo/watermark; final candidate aspect-normalized from raw generated output."
+    }
+  ]
+}

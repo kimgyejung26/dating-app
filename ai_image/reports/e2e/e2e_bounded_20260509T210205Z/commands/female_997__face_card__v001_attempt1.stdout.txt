@@ -1,0 +1,6 @@
+SUCCESS: The process with PID 5424 (child process of PID 17724) has been terminated.
+SUCCESS: The process with PID 4944 (child process of PID 17724) has been terminated.
+SUCCESS: The process with PID 25180 (child process of PID 17724) has been terminated.
+SUCCESS: The process with PID 17240 (child process of PID 17724) has been terminated.
+SUCCESS: The process with PID 24660 (child process of PID 17724) has been terminated.
+I need one checkpoint before the image call because this project uses `pending-imagegen.json` as the asset identity handoff. I’ll update only that manifest file, then make exactly one `imagegen` call and stop.

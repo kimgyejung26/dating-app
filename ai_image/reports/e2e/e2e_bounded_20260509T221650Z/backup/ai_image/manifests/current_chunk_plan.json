@@ -1,0 +1,148 @@
+{
+  "schemaVersion": "seolleyeon_bounded_chunk_plan_v3",
+  "chunkId": "chunk_20260509T195732Z",
+  "createdAt": "2026-05-09T19:57:32+00:00",
+  "status": "planned",
+  "dryRun": true,
+  "maxIdentities": 24,
+  "maxAssets": 72,
+  "selectedIdentityCount": 0,
+  "selectedAssetCount": 0,
+  "selectionSource": "latest_distribution_audit",
+  "targetsJson": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/config/AI_IMAGE_DISTRIBUTION_TARGETS_V3.json",
+  "distributionAuditJson": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/latest_distribution_audit.json",
+  "allowedBuckets": [
+    {
+      "gender": "female",
+      "targetFaceType": "bear_like",
+      "targetLooksLevelBand": "2.5-3.2"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "bear_like",
+      "targetLooksLevelBand": "3.3-3.8"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "bear_like",
+      "targetLooksLevelBand": "3.9-4.3"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "cat_like",
+      "targetLooksLevelBand": "1.5-2.4"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "cat_like",
+      "targetLooksLevelBand": "2.5-3.2"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "deer_like",
+      "targetLooksLevelBand": "3.3-3.8"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "deer_like",
+      "targetLooksLevelBand": "3.9-4.3"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "dog_like",
+      "targetLooksLevelBand": "1.5-2.4"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "dog_like",
+      "targetLooksLevelBand": "2.5-3.2"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "dog_like",
+      "targetLooksLevelBand": "3.3-3.8"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "fox_like",
+      "targetLooksLevelBand": "3.9-4.3"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "hamster_like",
+      "targetLooksLevelBand": "1.5-2.4"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "hamster_like",
+      "targetLooksLevelBand": "3.3-3.8"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "hamster_like",
+      "targetLooksLevelBand": "3.9-4.3"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "horse_like",
+      "targetLooksLevelBand": "2.5-3.2"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "horse_like",
+      "targetLooksLevelBand": "3.9-4.3"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "mixed_neutral",
+      "targetLooksLevelBand": "2.5-3.2"
+    },
+    {
+      "gender": "female",
+      "targetFaceType": "mixed_neutral",
+      "targetLooksLevelBand": "3.9-4.3"
+    }
+  ],
+  "forbiddenBuckets": [],
+  "identities": [],
+  "initialProgress": {
+    "approvedIdentityCount": 1,
+    "approvedAssetCount": 3,
+    "assetQaCount": 10,
+    "identityQaCount": 4,
+    "resolvedPendingCount": 12,
+    "rejectedIdentityCount": 3,
+    "needsReviewIdentityCount": 0,
+    "remainingDeficits": {
+      "approvedCompleteIdentities": {
+        "target": 240,
+        "current": 1,
+        "deficit": 239,
+        "surplus": 0,
+        "exactMatch": false
+      },
+      "approvedImages": {
+        "target": 720,
+        "current": 3,
+        "deficit": 717,
+        "surplus": 0,
+        "exactMatch": false
+      },
+      "femaleApprovedIdentities": {
+        "target": 120,
+        "current": 1,
+        "deficit": 119,
+        "surplus": 0,
+        "exactMatch": false
+      },
+      "maleApprovedIdentities": {
+        "target": 120,
+        "current": 0,
+        "deficit": 120,
+        "surplus": 0,
+        "exactMatch": false
+      }
+    },
+    "surplusBuckets": []
+  }
+}

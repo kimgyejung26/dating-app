@@ -1,0 +1,10 @@
+SUCCESS: The process with PID 4420 (child process of PID 29296) has been terminated.
+SUCCESS: The process with PID 18324 (child process of PID 29296) has been terminated.
+SUCCESS: The process with PID 34184 (child process of PID 29296) has been terminated.
+SUCCESS: The process with PID 24820 (child process of PID 29296) has been terminated.
+SUCCESS: The process with PID 33992 (child process of PID 29296) has been terminated.
+Ran exactly one Seolleyeon one-asset Image Gen transaction for `female_026__face_card__v001`.
+
+Checkpoint was written before generation, the generated image was recovered to [raw](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_026__face_card__v001__attempt01.png) and [final](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/026/face_card.png), and the transaction receipt is at [female_026__face_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T185001Z/transactions/female_026__face_card__v001_attempt1.json).
+
+Verification evidence: receipt verifier returned `valid=True`; file QA passed as `1024x1536` PNG with no integrity reasons; `pending-imagegen.json` is resolved; bounded state for the asset is `file_qa_passed`. No visual QA, distribution audit, completion check, or next asset generation was run.

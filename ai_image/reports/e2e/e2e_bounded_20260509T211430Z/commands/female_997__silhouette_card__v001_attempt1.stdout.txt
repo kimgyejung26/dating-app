@@ -1,0 +1,6 @@
+SUCCESS: The process with PID 28360 (child process of PID 32492) has been terminated.
+SUCCESS: The process with PID 29236 (child process of PID 32492) has been terminated.
+SUCCESS: The process with PID 32016 (child process of PID 32492) has been terminated.
+SUCCESS: The process with PID 24572 (child process of PID 32492) has been terminated.
+SUCCESS: The process with PID 11992 (child process of PID 32492) has been terminated.
+I’ll checkpoint the exact asset identity before generation, as required by the project workflow. The stop condition remains one generated image only, with no recovery, import, rename, or QA from this surface.

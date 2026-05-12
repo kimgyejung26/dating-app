@@ -1,0 +1,347 @@
+{
+  "qaType": "seolleyeon_visual_verdict_distribution_v3",
+  "finalDecision": "needs_more_generation",
+  "approvedCompleteIdentityCount": 0,
+  "approvedImageCount": 0,
+  "femaleApprovedIdentityCount": 0,
+  "maleApprovedIdentityCount": 0,
+  "globalFaceTypeCounts": {
+    "cat_like": 0,
+    "dog_like": 0,
+    "hamster_like": 0,
+    "bear_like": 0,
+    "fox_like": 0,
+    "deer_like": 0,
+    "horse_like": 0,
+    "mixed_neutral": 0
+  },
+  "globalFaceTypeDeficits": {
+    "cat_like": 34,
+    "dog_like": 38,
+    "hamster_like": 24,
+    "bear_like": 29,
+    "fox_like": 29,
+    "deer_like": 43,
+    "horse_like": 19,
+    "mixed_neutral": 24
+  },
+  "globalFaceTypeSurpluses": {
+    "cat_like": 0,
+    "dog_like": 0,
+    "hamster_like": 0,
+    "bear_like": 0,
+    "fox_like": 0,
+    "deer_like": 0,
+    "horse_like": 0,
+    "mixed_neutral": 0
+  },
+  "genderFaceTypeCounts": {
+    "female": {
+      "cat_like": 0,
+      "dog_like": 0,
+      "hamster_like": 0,
+      "bear_like": 0,
+      "fox_like": 0,
+      "deer_like": 0,
+      "horse_like": 0,
+      "mixed_neutral": 0
+    },
+    "male": {
+      "cat_like": 0,
+      "dog_like": 0,
+      "hamster_like": 0,
+      "bear_like": 0,
+      "fox_like": 0,
+      "deer_like": 0,
+      "horse_like": 0,
+      "mixed_neutral": 0
+    }
+  },
+  "genderFaceTypeDeficits": {
+    "female": {
+      "cat_like": 17,
+      "dog_like": 19,
+      "hamster_like": 12,
+      "bear_like": 15,
+      "fox_like": 14,
+      "deer_like": 22,
+      "horse_like": 9,
+      "mixed_neutral": 12
+    },
+    "male": {
+      "cat_like": 17,
+      "dog_like": 19,
+      "hamster_like": 12,
+      "bear_like": 14,
+      "fox_like": 15,
+      "deer_like": 21,
+      "horse_like": 10,
+      "mixed_neutral": 12
+    }
+  },
+  "genderFaceTypeSurpluses": {
+    "female": {
+      "cat_like": 0,
+      "dog_like": 0,
+      "hamster_like": 0,
+      "bear_like": 0,
+      "fox_like": 0,
+      "deer_like": 0,
+      "horse_like": 0,
+      "mixed_neutral": 0
+    },
+    "male": {
+      "cat_like": 0,
+      "dog_like": 0,
+      "hamster_like": 0,
+      "bear_like": 0,
+      "fox_like": 0,
+      "deer_like": 0,
+      "horse_like": 0,
+      "mixed_neutral": 0
+    }
+  },
+  "globalLooksLevelBandCounts": {
+    "1.5-2.4": 0,
+    "2.5-3.2": 0,
+    "3.3-3.8": 0,
+    "3.9-4.3": 0,
+    "4.4-5.0": 0
+  },
+  "globalLooksLevelBandDeficits": {
+    "1.5-2.4": 36,
+    "2.5-3.2": 108,
+    "3.3-3.8": 72,
+    "3.9-4.3": 24,
+    "4.4-5.0": 0
+  },
+  "globalLooksLevelBandSurpluses": {
+    "1.5-2.4": 0,
+    "2.5-3.2": 0,
+    "3.3-3.8": 0,
+    "3.9-4.3": 0,
+    "4.4-5.0": 0
+  },
+  "genderLooksLevelBandCounts": {
+    "female": {
+      "1.5-2.4": 0,
+      "2.5-3.2": 0,
+      "3.3-3.8": 0,
+      "3.9-4.3": 0,
+      "4.4-5.0": 0
+    },
+    "male": {
+      "1.5-2.4": 0,
+      "2.5-3.2": 0,
+      "3.3-3.8": 0,
+      "3.9-4.3": 0,
+      "4.4-5.0": 0
+    }
+  },
+  "genderLooksLevelBandDeficits": {
+    "female": {
+      "1.5-2.4": 18,
+      "2.5-3.2": 54,
+      "3.3-3.8": 36,
+      "3.9-4.3": 12,
+      "4.4-5.0": 0
+    },
+    "male": {
+      "1.5-2.4": 18,
+      "2.5-3.2": 54,
+      "3.3-3.8": 36,
+      "3.9-4.3": 12,
+      "4.4-5.0": 0
+    }
+  },
+  "genderLooksLevelBandSurpluses": {
+    "female": {
+      "1.5-2.4": 0,
+      "2.5-3.2": 0,
+      "3.3-3.8": 0,
+      "3.9-4.3": 0,
+      "4.4-5.0": 0
+    },
+    "male": {
+      "1.5-2.4": 0,
+      "2.5-3.2": 0,
+      "3.3-3.8": 0,
+      "3.9-4.3": 0,
+      "4.4-5.0": 0
+    }
+  },
+  "invalidIdentities": [
+    {
+      "profileId": "female_001",
+      "reason": "Identity rejected: missing silhouette_card and vibe_card, face_card rejected, sameIdentity false, faceType unclear, looksLevelBand unclear, countsTowardDistribution false.",
+      "recommendedAction": "replace_with_reserve"
+    },
+    {
+      "profileId": "female_002",
+      "reason": "Identity not approved: missing all final shots, face_card needs review, faceType and looksLevelBand missing, countsTowardDistribution false.",
+      "recommendedAction": "retry"
+    },
+    {
+      "profileId": "female_003",
+      "reason": "Identity not approved: missing all final shots, face_card needs review, faceType and looksLevelBand missing, countsTowardDistribution false.",
+      "recommendedAction": "retry"
+    },
+    {
+      "profileId": "female_004",
+      "reason": "Identity not approved: missing all final shots, face_card needs review, faceType and looksLevelBand missing, countsTowardDistribution false.",
+      "recommendedAction": "retry"
+    },
+    {
+      "profileId": "female_005",
+      "reason": "Identity not approved: missing all final shots, face_card rejected, faceType and looksLevelBand missing, countsTowardDistribution false.",
+      "recommendedAction": "retry"
+    },
+    {
+      "profileId": "female_006",
+      "reason": "Identity not approved: missing all final shots, face_card needs review, faceType and looksLevelBand missing, countsTowardDistribution false.",
+      "recommendedAction": "retry"
+    },
+    {
+      "profileId": "female_007",
+      "reason": "Identity not approved: missing all final shots, face_card needs review, faceType and looksLevelBand missing, countsTowardDistribution false.",
+      "recommendedAction": "retry"
+    },
+    {
+      "profileId": "female_008",
+      "reason": "Identity not approved: missing all final shots, faceType and looksLevelBand unresolved, countsTowardDistribution false.",
+      "recommendedAction": "retry"
+    }
+  ],
+  "nextGenerationDirective": {
+    "shouldGenerateMore": true,
+    "targetBuckets": [
+      {
+        "gender": "female",
+        "faceType": "deer_like",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 22,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "deer_like",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 21,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "dog_like",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 19,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "dog_like",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 19,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "cat_like",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 17,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "cat_like",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 17,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "bear_like",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 15,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "fox_like",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 15,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "fox_like",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 14,
+        "priority": "high"
+      },
+      {
+        "gender": "male",
+        "faceType": "bear_like",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 14,
+        "priority": "high"
+      },
+      {
+        "gender": "female",
+        "faceType": "hamster_like",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 12,
+        "priority": "medium"
+      },
+      {
+        "gender": "female",
+        "faceType": "mixed_neutral",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 12,
+        "priority": "medium"
+      },
+      {
+        "gender": "male",
+        "faceType": "hamster_like",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 12,
+        "priority": "medium"
+      },
+      {
+        "gender": "male",
+        "faceType": "mixed_neutral",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 12,
+        "priority": "medium"
+      },
+      {
+        "gender": "male",
+        "faceType": "horse_like",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 10,
+        "priority": "medium"
+      },
+      {
+        "gender": "female",
+        "faceType": "horse_like",
+        "looksLevelBand": "2.5-3.2",
+        "neededIdentities": 9,
+        "priority": "medium"
+      }
+    ],
+    "stopGeneratingBuckets": [
+      {
+        "gender": "female",
+        "faceType": "any",
+        "looksLevelBand": "4.4-5.0",
+        "reason": "over_level_risk"
+      },
+      {
+        "gender": "male",
+        "faceType": "any",
+        "looksLevelBand": "4.4-5.0",
+        "reason": "over_level_risk"
+      }
+    ]
+  },
+  "notes": "Numeric audit is final authority for this chunk: 0 approved complete identities and 0 approved images count toward distribution. Dataset is incomplete with full target deficits remaining; generate more valid complete identities and keep 4.4-5.0 stopped."
+}

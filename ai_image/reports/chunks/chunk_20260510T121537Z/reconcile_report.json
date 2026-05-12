@@ -1,0 +1,118 @@
+{
+  "schemaVersion": "seolleyeon_bounded_chunk_reconcile_v3",
+  "chunkId": "chunk_20260510T121537Z",
+  "dryRun": false,
+  "apply": true,
+  "existingFinalFiles": 16,
+  "plannedExistingFiles": 16,
+  "reconciledAssets": [
+    {
+      "assetId": "female_001__face_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/001/face_card.png"
+    },
+    {
+      "assetId": "female_002__face_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/002/face_card.png"
+    },
+    {
+      "assetId": "female_003__face_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/003/face_card.png"
+    },
+    {
+      "assetId": "female_003__silhouette_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/003/silhouette_card.png"
+    },
+    {
+      "assetId": "female_004__face_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/004/face_card.png"
+    },
+    {
+      "assetId": "female_005__face_card__v001",
+      "fileQaPassed": false,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/005/face_card.png"
+    },
+    {
+      "assetId": "female_006__face_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/006/face_card.png"
+    },
+    {
+      "assetId": "female_007__face_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/007/face_card.png"
+    },
+    {
+      "assetId": "female_008__face_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/008/face_card.png"
+    },
+    {
+      "assetId": "female_009__face_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/009/face_card.png"
+    },
+    {
+      "assetId": "female_010__face_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/010/face_card.png"
+    },
+    {
+      "assetId": "female_011__face_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/011/face_card.png"
+    },
+    {
+      "assetId": "female_012__face_card__v001",
+      "fileQaPassed": false,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/012/face_card.png"
+    },
+    {
+      "assetId": "female_013__face_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/013/face_card.png"
+    },
+    {
+      "assetId": "female_014__face_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/014/face_card.png"
+    },
+    {
+      "assetId": "female_015__face_card__v001",
+      "fileQaPassed": true,
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/015/face_card.png"
+    }
+  ],
+  "reconstructedReceipts": [
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T121537Z/transactions/female_001__face_card__v001_attempt3.json",
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T121537Z/transactions/female_002__face_card__v001_attempt3.json",
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T121537Z/transactions/female_003__face_card__v001_attempt2.json",
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T121537Z/transactions/female_003__silhouette_card__v001_attempt1.json",
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T121537Z/transactions/female_004__face_card__v001_attempt1.json",
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T121537Z/transactions/female_005__face_card__v001_attempt1.json",
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T121537Z/transactions/female_006__face_card__v001_attempt1.json",
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T121537Z/transactions/female_007__face_card__v001_attempt1.json",
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T121537Z/transactions/female_008__face_card__v001_attempt1.json",
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T121537Z/transactions/female_009__face_card__v001_attempt1.json",
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T121537Z/transactions/female_010__face_card__v001_attempt1.json",
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T121537Z/transactions/female_011__face_card__v001_attempt1.json",
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T121537Z/transactions/female_012__face_card__v001_attempt1.json",
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T121537Z/transactions/female_013__face_card__v001_attempt1.json",
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T121537Z/transactions/female_014__face_card__v001_attempt1.json",
+    "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T121537Z/transactions/female_015__face_card__v001_attempt1.json"
+  ],
+  "fileQaPassedAssets": 14,
+  "fileQaFailedAssets": 2,
+  "quarantinedFiles": [],
+  "unknownFiles": [],
+  "pendingStatus": "resolved",
+  "manualFlagCanClear": true,
+  "reasonsIfCannotClear": [],
+  "stateChanged": true,
+  "reportPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T121537Z/reconcile_report.json",
+  "manualFlagCleared": true
+}

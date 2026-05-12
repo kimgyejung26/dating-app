@@ -1,0 +1,19 @@
+SUCCESS: The process with PID 16132 (child process of PID 34140) has been terminated.
+SUCCESS: The process with PID 34004 (child process of PID 34140) has been terminated.
+SUCCESS: The process with PID 35180 (child process of PID 34140) has been terminated.
+SUCCESS: The process with PID 9896 (child process of PID 34140) has been terminated.
+SUCCESS: The process with PID 14932 (child process of PID 34140) has been terminated.
+완료했습니다. 정확히 한 번 `$imagegen` 호출했고, 대상은 `female_028__silhouette_card__v001` 하나만 처리했습니다.
+
+결과:
+- Raw: [attempt01.png](C:\Users\samsung\StudioProjects\semisemifinal\ai_image\raw\female_028__silhouette_card__v001__attempt01.png)
+- Final candidate: [silhouette_card.png](C:\Users\samsung\StudioProjects\semisemifinal\ai_image\female\028\silhouette_card.png)
+- Receipt: [female_028__silhouette_card__v001_attempt1.json](C:\Users\samsung\StudioProjects\semisemifinal\ai_image\reports\chunks\chunk_20260510T185001Z\transactions\female_028__silhouette_card__v001_attempt1.json)
+
+Verification evidence:
+- `pending-imagegen.json` resolved with `recoveryStatus: recovered`
+- Receipt verification returned `valid: true`
+- File QA passed for raw and final: `1024x1536`, PNG, `2700765` bytes, no reason codes
+- `generation_status.csv` now marks this asset as `recovered_pending_qa`
+
+I did not mark it visually approved or copy it into `ai_image/approved/`; this transaction stops at recovered + file-QA-passed as requested.

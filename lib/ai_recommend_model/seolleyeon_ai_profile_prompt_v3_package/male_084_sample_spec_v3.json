@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "ai_profile_image_v3",
+  "profileId": "male_084",
+  "gender": "male",
+  "visualAge": 22,
+  "identitySeed": 20084,
+  "isSynthetic": true,
+  "face": {
+    "faceType": "neutral_mixed",
+    "looksLevel": 4.2,
+    "faceShape": "soft_rectangular",
+    "eyeSize": "round_medium",
+    "eyeTilt": "slightly_lifted",
+    "jawline": "slightly_angular",
+    "cheekFullness": "defined",
+    "noseBridge": "medium",
+    "lipFullness": "thin_natural",
+    "browThickness": "light_natural",
+    "skinFinish": "slightly_textured",
+    "vibe": "soft"
+  },
+  "body": {
+    "heightCm": 186,
+    "weightKgInternal": 70,
+    "bodyFatVisual": "healthy_average",
+    "frame": "broad",
+    "muscularity": "moderate_natural",
+    "shoulderWidth": "broad",
+    "waistDefinition": "straight",
+    "hipWidth": "medium",
+    "legRatio": "slightly_long",
+    "torsoLength": "balanced",
+    "headBodyRatio": "realistic"
+  },
+  "hair": {
+    "length": "medium",
+    "texture": "textured",
+    "color": "dark_brown",
+    "bangs": "soft_fringe"
+  },
+  "styling": {
+    "makeupLevel": "clean_grooming",
+    "fashionMood": "campus_casual",
+    "outfitFit": "relaxed_fit",
+    "avoidSexualizedStyling": true
+  },
+  "shotOutfits": {
+    "faceCard": "clean oxford shirt under a casual knit vest",
+    "fullBody": "casual jacket over a plain T-shirt, regular-fit slacks, simple backpack"
+  },
+  "vibeActivity": "sitting in a quiet library lounge with a notebook and laptop on the table",
+  "vibeLocation": "quiet university walkway with trees and neutral campus buildings, no visible school logo, no readable text",
+  "storagePaths": {
+    "legacy": "ai_profiles/male/084.png",
+    "face_card": "ai_profiles/male/084/face_card.png",
+    "silhouette_card": "ai_profiles/male/084/silhouette_card.png",
+    "vibe_card": "ai_profiles/male/084/vibe_card.png"
+  },
+  "shotPlan": [
+    {
+      "shotType": "face_card",
+      "storagePath": "ai_profiles/male/084/face_card.png"
+    },
+    {
+      "shotType": "silhouette_card",
+      "storagePath": "ai_profiles/male/084/silhouette_card.png"
+    },
+    {
+      "shotType": "vibe_card",
+      "storagePath": "ai_profiles/male/084/vibe_card.png"
+    }
+  ],
+  "qa": {
+    "adultVisual": null,
+    "campusRealism": null,
+    "noSchoolUniform": null,
+    "noRevealingClothes": null,
+    "noInfluencerPhotoshoot": null,
+    "identityConsistentAcrossShots": null,
+    "approved": null
+  }
+}

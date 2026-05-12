@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "seolleyeon_identity_context_v3",
+  "chunkId": "chunk_20260510T185001Z",
+  "profileId": "female_028",
+  "gender": "female",
+  "numericId": "028",
+  "targetFaceType": "mixed_neutral",
+  "targetLooksLevelBand": "2.5-3.2",
+  "faceAssetId": "female_028__face_card__v001",
+  "faceState": "file_qa_passed",
+  "faceFinalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/028/face_card.png",
+  "faceFinalSha256": "ee8a6e3e4bc0246f05d6b25360c4dae04f709d25dd6a7993b64efa0fb86ead85",
+  "hair": {
+    "length": "medium_long",
+    "texture": "soft_straight",
+    "color": "natural_dark_brown",
+    "bangs": "see_through_bangs"
+  },
+  "body": {
+    "heightCm": 164,
+    "weightKgInternal": 51,
+    "bodyFatVisual": "slim",
+    "frame": "medium",
+    "muscularity": "low_natural",
+    "shoulderWidth": "narrow",
+    "waistDefinition": "defined",
+    "hipWidth": "narrow",
+    "legRatio": "balanced",
+    "torsoLength": "slightly_long",
+    "headBodyRatio": "slightly_small_head"
+  },
+  "styling": {
+    "makeupLevel": "light_natural",
+    "fashionMood": "campus_casual",
+    "outfitFit": "neat_regular",
+    "avoidSexualizedStyling": true
+  },
+  "assets": [
+    {
+      "assetId": "female_028__face_card__v001",
+      "shotType": "face_card",
+      "state": "file_qa_passed",
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/028/face_card.png",
+      "requiresReferenceAssetId": null
+    },
+    {
+      "assetId": "female_028__silhouette_card__v001",
+      "shotType": "silhouette_card",
+      "state": "file_qa_passed",
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/028/silhouette_card.png",
+      "requiresReferenceAssetId": "female_028__face_card__v001"
+    },
+    {
+      "assetId": "female_028__vibe_card__v001",
+      "shotType": "vibe_card",
+      "state": "pending_imagegen",
+      "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/028/vibe_card.png",
+      "requiresReferenceAssetId": "female_028__face_card__v001"
+    }
+  ],
+  "updatedAt": "2026-05-11T01:14:55+00:00"
+}

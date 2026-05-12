@@ -1,0 +1,6 @@
+SUCCESS: The process with PID 23680 (child process of PID 8716) has been terminated.
+SUCCESS: The process with PID 19112 (child process of PID 8716) has been terminated.
+SUCCESS: The process with PID 12100 (child process of PID 8716) has been terminated.
+SUCCESS: The process with PID 16104 (child process of PID 8716) has been terminated.
+SUCCESS: The process with PID 29812 (child process of PID 8716) has been terminated.
+Target result: one `female_997__face_card__v001` portrait generation with built-in Image Gen only. Constraint checkpoint: I’m intentionally skipping the pipeline’s recovery and QA steps because your bounded executor owns them.
