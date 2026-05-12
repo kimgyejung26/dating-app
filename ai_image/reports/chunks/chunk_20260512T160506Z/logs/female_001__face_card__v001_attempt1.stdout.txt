@@ -1,0 +1,13 @@
+SUCCESS: The process with PID 5292 (child process of PID 2108) has been terminated.
+SUCCESS: The process with PID 14992 (child process of PID 2108) has been terminated.
+SUCCESS: The process with PID 21868 (child process of PID 2108) has been terminated.
+SUCCESS: The process with PID 8716 (child process of PID 2108) has been terminated.
+SUCCESS: The process with PID 21964 (child process of PID 2108) has been terminated.
+Ran exactly one Seolleyeon Image Gen transaction for `female_001__face_card__v001`.
+
+Saved outputs:
+- Raw: `ai_image/raw/female_001__face_card__v001__attempt01.png`
+- Final candidate: `ai_image/female/001/face_card.png`
+- Receipt: `ai_image/reports/chunks/chunk_20260512T160506Z/transactions/female_001__face_card__v001_attempt1.json`
+
+Validation evidence: one new Codex generated image was detected, pending is now `resolved`, receipt verification passed, and file QA passed at `1024x1536` PNG. Manifest status is `file_needs_review`; no visual approval or distribution approval was claimed.

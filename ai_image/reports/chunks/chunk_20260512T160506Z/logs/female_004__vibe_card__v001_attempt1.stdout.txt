@@ -1,0 +1,13 @@
+SUCCESS: The process with PID 37800 (child process of PID 11288) has been terminated.
+SUCCESS: The process with PID 24212 (child process of PID 11288) has been terminated.
+SUCCESS: The process with PID 23892 (child process of PID 11288) has been terminated.
+SUCCESS: The process with PID 36456 (child process of PID 11288) has been terminated.
+SUCCESS: The process with PID 37240 (child process of PID 11288) has been terminated.
+완료했습니다. 정확히 1회 Image Gen만 실행했고, 대상은 `female_004__vibe_card__v001` attempt 1입니다.
+
+생성 결과를 다음 위치에 복구했습니다:
+- [final candidate](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/004/vibe_card.png)
+- [raw attempt](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_004__vibe_card__v001__attempt01.png)
+- [transaction receipt](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/transactions/female_004__vibe_card__v001_attempt1.json)
+
+검증 결과: receipt valid, pending resolved, raw/final PNG file QA passed at `1024x1536`, checkpoint 이후 새 generated image 수 `1`. Recommender files 변경 없음. Visual/distribution/completion approval은 claim하지 않았습니다.

@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "seolleyeon_one_asset_transaction_v3",
+  "transactionId": "chunk_20260512T160506Z_female_006__silhouette_card__v001_attempt1",
+  "chunkId": "chunk_20260512T160506Z",
+  "assetId": "female_006__silhouette_card__v001",
+  "profileId": "female_006",
+  "gender": "female",
+  "numericId": "006",
+  "shotType": "silhouette_card",
+  "attempt": 1,
+  "startedAt": "2026-05-12T17:55:06+00:00",
+  "finishedAt": "2026-05-12T18:04:52+00:00",
+  "generated": true,
+  "recovered": true,
+  "pendingResolved": true,
+  "fileQaRan": true,
+  "fileQaPassed": true,
+  "rawPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_006__silhouette_card__v001__attempt01.png",
+  "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/006/silhouette_card.png",
+  "sourceGeneratedImagePath": "C:/Users/samsung/.codex/generated_images/019e1d54-2126-7440-8518-86a1ceff48da/ig_068b02f07aeb43a7016a036a1d7b5c81919d20bb8f961b3759.png",
+  "referencePath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/006/face_card.png",
+  "referenceAttached": true,
+  "referencePathSha256": "3ca6501aea0639eb3761b9f7e54f9edfebbd696802de5e7286ce8f662058540b",
+  "fileQa": {
+    "decision": "file_passed",
+    "width": 1229,
+    "height": 1844,
+    "format": "PNG",
+    "aspectRatio": 0.6664859002169198,
+    "sizeBytes": 2988256,
+    "raw": {
+      "ok": true,
+      "width": 1229,
+      "height": 1844,
+      "fileBytes": 2988256,
+      "format": "PNG",
+      "reasons": []
+    },
+    "final": {
+      "ok": true,
+      "width": 1229,
+      "height": 1844,
+      "fileBytes": 2988256,
+      "format": "PNG",
+      "reasons": []
+    },
+    "reasons": []
+  },
+  "workerActions": [
+    "codex_builtin_imagegen_called_once",
+    "recover_pending_imagegen_no_global_qa",
+    "aspect_ratio_normalized_from_single_generated_image",
+    "single_asset_file_qa_ran",
+    "receipt_written"
+  ],
+  "stdoutLog": "",
+  "stderrLog": "",
+  "error": null,
+  "status": "succeeded",
+  "source": "codex_builtin_imagegen"
+}

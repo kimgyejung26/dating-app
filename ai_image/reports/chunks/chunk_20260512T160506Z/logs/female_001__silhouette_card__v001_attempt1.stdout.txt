@@ -1,0 +1,13 @@
+SUCCESS: The process with PID 34416 (child process of PID 28356) has been terminated.
+SUCCESS: The process with PID 32832 (child process of PID 28356) has been terminated.
+SUCCESS: The process with PID 24196 (child process of PID 28356) has been terminated.
+SUCCESS: The process with PID 9360 (child process of PID 28356) has been terminated.
+SUCCESS: The process with PID 15772 (child process of PID 28356) has been terminated.
+Completed exactly one built-in Image Gen call and recovered it through the active pending checkpoint.
+
+Resolved asset: `female_036__silhouette_card__v001`
+Final image: [silhouette_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/036/silhouette_card.png)
+Raw image: [female_036__silhouette_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_036__silhouette_card__v001__attempt01.png)
+Receipt: [female_036__silhouette_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T185001Z/transactions/female_036__silhouette_card__v001_attempt1.json)
+
+Validation passed: receipt verifier returned `valid: true`, file QA passed, PNG is `1024x1536`. I did not run global QA, visual QA, distribution audit, or a second generation.

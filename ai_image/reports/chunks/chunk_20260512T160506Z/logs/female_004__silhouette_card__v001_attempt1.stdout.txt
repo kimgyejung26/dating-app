@@ -1,0 +1,13 @@
+SUCCESS: The process with PID 13448 (child process of PID 33112) has been terminated.
+SUCCESS: The process with PID 29172 (child process of PID 33112) has been terminated.
+SUCCESS: The process with PID 33872 (child process of PID 33112) has been terminated.
+SUCCESS: The process with PID 21012 (child process of PID 33112) has been terminated.
+SUCCESS: The process with PID 36244 (child process of PID 33112) has been terminated.
+Ran exactly one Seolleyeon one-asset Image Gen transaction for `female_004__silhouette_card__v001`.
+
+Result:
+- Final image: [silhouette_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/004/silhouette_card.png)
+- Raw recovery: [female_004__silhouette_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_004__silhouette_card__v001__attempt01.png)
+- Receipt: [female_004__silhouette_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/transactions/female_004__silhouette_card__v001_attempt1.json)
+
+Validation evidence: one new Codex generated image was recovered, `pending-imagegen.json` is resolved, receipt verification passed, and single-asset file QA passed (`941x1672`, PNG, no file-level errors). Recommender files were not modified.

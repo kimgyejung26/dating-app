@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "seolleyeon_one_asset_transaction_v3",
+  "transactionId": "chunk_20260512T160506Z_female_004__vibe_card__v001_attempt1",
+  "chunkId": "chunk_20260512T160506Z",
+  "assetId": "female_004__vibe_card__v001",
+  "profileId": "female_004",
+  "gender": "female",
+  "numericId": "004",
+  "shotType": "vibe_card",
+  "attempt": 1,
+  "startedAt": "2026-05-12T17:44:55+00:00",
+  "finishedAt": "2026-05-12T17:52:48+00:00",
+  "generated": true,
+  "recovered": true,
+  "pendingResolved": true,
+  "fileQaRan": true,
+  "fileQaPassed": true,
+  "rawPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_004__vibe_card__v001__attempt01.png",
+  "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/004/vibe_card.png",
+  "sourceGeneratedImagePath": "C:/Users/samsung/.codex/generated_images/019e1d4a-c167-7502-9914-104697f4f58f/ig_0d012048ec449ac3016a0367e920ac8191a1c160a57a5edff0.png",
+  "referencePath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/004/face_card.png",
+  "referenceAttached": true,
+  "referencePathSha256": "46bbd66d0f4f8a134c053f5fb0820dbaf14f83f5123d3ee91b80d987df62ee92",
+  "fileQa": {
+    "decision": "file_passed",
+    "raw": {
+      "ok": true,
+      "width": 1024,
+      "height": 1536,
+      "fileBytes": 2366629,
+      "format": "PNG",
+      "reasons": []
+    },
+    "final": {
+      "ok": true,
+      "width": 1024,
+      "height": 1536,
+      "fileBytes": 2366629,
+      "format": "PNG",
+      "reasons": []
+    },
+    "width": 1024,
+    "height": 1536,
+    "format": "PNG",
+    "aspectRatio": 0.6666666666666666,
+    "sizeBytes": 2366629,
+    "reasons": []
+  },
+  "workerActions": [
+    "checkpoint_verified_before_imagegen",
+    "codex_builtin_imagegen_invoked_once",
+    "generated_image_recovered_to_expected_raw_path",
+    "generated_image_recovered_to_expected_final_path",
+    "pending_imagegen_resolved",
+    "single_asset_file_qa_ran",
+    "receipt_written"
+  ],
+  "stdoutLog": "",
+  "stderrLog": "",
+  "error": null,
+  "status": "succeeded"
+}

@@ -1,0 +1,13 @@
+SUCCESS: The process with PID 17208 (child process of PID 14072) has been terminated.
+SUCCESS: The process with PID 37408 (child process of PID 14072) has been terminated.
+SUCCESS: The process with PID 23836 (child process of PID 14072) has been terminated.
+SUCCESS: The process with PID 18956 (child process of PID 14072) has been terminated.
+SUCCESS: The process with PID 31476 (child process of PID 14072) has been terminated.
+Done. Exactly one Image Gen transaction was run for `female_003__vibe_card__v001`.
+
+Saved:
+- [raw attempt](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_003__vibe_card__v001__attempt01.png)
+- [final asset](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/003/vibe_card.png)
+- [receipt](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/transactions/female_003__vibe_card__v001_attempt1.json)
+
+Validation: receipt verified `true`; file QA passed (`1023x1537`, PNG, no file-level errors). No recommender files changed.

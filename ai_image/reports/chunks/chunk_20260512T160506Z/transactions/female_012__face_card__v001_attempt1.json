@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "seolleyeon_one_asset_transaction_v3",
+  "transactionId": "chunk_20260512T160506Z_female_012__face_card__v001_attempt1",
+  "chunkId": "chunk_20260512T160506Z",
+  "assetId": "female_012__face_card__v001",
+  "profileId": "female_012",
+  "gender": "female",
+  "numericId": "012",
+  "shotType": "face_card",
+  "attempt": 1,
+  "startedAt": "2026-05-12T16:32:52+00:00",
+  "finishedAt": "2026-05-12T16:32:52+00:00",
+  "generated": "unknown",
+  "recovered": true,
+  "pendingResolved": true,
+  "fileQaRan": true,
+  "fileQaPassed": false,
+  "rawPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_012__face_card__v001__attempt01.png",
+  "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/012/face_card.png",
+  "sourceGeneratedImagePath": "",
+  "referencePath": null,
+  "referenceAttached": false,
+  "referencePathSha256": null,
+  "fileQa": {
+    "decision": "file_rejected",
+    "width": 862,
+    "height": 1824,
+    "format": "PNG",
+    "aspectRatio": 0.4725877192982456,
+    "sizeBytes": 2387670,
+    "reasons": [
+      "bad_aspect_ratio"
+    ]
+  },
+  "workerActions": [
+    "parent_reconcile_existing_file",
+    "file_qa_ran"
+  ],
+  "stdoutLog": "",
+  "stderrLog": "",
+  "error": "bad_aspect_ratio",
+  "status": "failed",
+  "source": "parent_reconcile_existing_file"
+}

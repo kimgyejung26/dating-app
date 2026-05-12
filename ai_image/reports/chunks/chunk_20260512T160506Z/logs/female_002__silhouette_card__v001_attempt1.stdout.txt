@@ -1,0 +1,15 @@
+SUCCESS: The process with PID 37952 (child process of PID 36420) has been terminated.
+SUCCESS: The process with PID 20516 (child process of PID 36420) has been terminated.
+SUCCESS: The process with PID 35128 (child process of PID 36420) has been terminated.
+SUCCESS: The process with PID 18368 (child process of PID 36420) has been terminated.
+SUCCESS: The process with PID 38328 (child process of PID 36420) has been terminated.
+완료했습니다. `$imagegen` 호출은 정확히 1회만 실행했고, `female_002__silhouette_card__v001`만 처리했습니다.
+
+결과:
+- Raw: `ai_image/raw/female_002__silhouette_card__v001__attempt01.png`
+- Final: `ai_image/female/002/silhouette_card.png`
+- Receipt: `ai_image/reports/chunks/chunk_20260512T160506Z/transactions/female_002__silhouette_card__v001_attempt1.json`
+- `pending-imagegen.json`: `resolved`
+- 검증: `verify_one_asset_transaction` 통과, file QA `ok=true`
+
+Visual approval은 따로 주장하지 않았고, recommender/scripts 쪽은 수정하지 않았습니다.
