@@ -744,7 +744,7 @@
       "targetFaceType": "mixed_neutral",
       "targetLooksLevelBand": "2.5-3.2",
       "source": "primary",
-      "status": "running",
+      "status": "assets_complete",
       "assets": [
         {
           "assetId": "female_035__face_card__v001",
@@ -780,7 +780,7 @@
           "assetId": "female_035__vibe_card__v001",
           "shotType": "vibe_card",
           "order": 3,
-          "status": "pending_imagegen",
+          "status": "file_qa_passed",
           "attempt": 1,
           "maxAttempts": 3,
           "prompt": "A realistic adult Korean university student, approximately 21 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nIdentity consistency:\nsame person as the canonical portrait, same general facial structure, balanced natural facial proportions, medium eyes, a soft defined jawline, a calm sincere expression, same bob-length, natural black, natural straight hair with soft side bangs, same natural grooming.\n\nMood and lifestyle:\nstanding near a campus garden with a relaxed sincere expression, soft mature romantic everyday fashion, calm, sincere, campus-based relationship platform mood, not flashy, not nightlife-oriented.\n\nComposition:\nhalf-body or environmental portrait, the person is naturally engaged in a quiet everyday activity, face still recognizable but not overly posed, relaxed shoulders, gentle expression.\n\nLocation:\nsmall local exhibition space near campus, neutral walls, no readable text.\n\nLighting and camera:\nsoft ambient daylight, realistic smartphone photo, warm but clean color tone, authentic profile image.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
@@ -800,14 +800,14 @@
       "targetFaceType": "mixed_neutral",
       "targetLooksLevelBand": "1.5-2.4",
       "source": "primary",
-      "status": "planned",
+      "status": "running",
       "assets": [
         {
           "assetId": "female_036__face_card__v001",
           "shotType": "face_card",
           "order": 1,
-          "status": "planned",
-          "attempt": 0,
+          "status": "pending_imagegen",
+          "attempt": 1,
           "maxAttempts": 3,
           "prompt": "A realistic adult Korean university student, approximately 22 years old, an adult woman, natural everyday profile photo, not a celebrity, not an influencer, authentic campus-based relationship profile style, calm and trustworthy impression.\n\nFace details:\nbalanced natural facial proportions, medium eyes, a soft defined jawline, a calm sincere expression, balanced natural face shape, small-to-medium eyes, slightly lifted outer eye corners, soft but defined jawline, moderate cheek fullness, soft medium nose bridge, natural medium lips, natural straight brows, clear natural skin texture, neat and likable impression, naturally balanced features, casual grooming without looking staged, calm intellectual mood.\n\nHair and styling:\nbob-length, natural dark brown, soft wavy hair with light natural bangs, light natural makeup, soft mature romantic everyday fashion, slim-regular fit without being tight, campus-appropriate and modest. Outfit: ivory knit cardigan over a simple inner top.\n\nComposition:\nhead-and-shoulders portrait, face clearly visible, looking near the camera with a natural relaxed expression, simple warm off-white or campus-neutral background, not a studio portrait.\n\nLighting and camera:\nsoft natural daylight, realistic smartphone camera photo, 35mm equivalent lens, slight depth of field, natural skin texture, highly realistic but casual.\n\nAvoid: childlike appearance, teenager, school uniform, idol trainee look, celebrity lookalike, influencer photoshoot, glamour studio lighting, heavy retouching, plastic skin, exaggerated beauty filter, revealing outfit, swimsuit, lingerie, nightclub, party scene, neon lighting, sexualized pose, luxury hotel background, identifiable school logo, visible real university name, text, watermark, distorted face, distorted hands, extra fingers, unrealistic body proportions.",
           "promptHash": "da37a5ba05ceef91dc504a14",

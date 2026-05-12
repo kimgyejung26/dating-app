@@ -1,0 +1,13 @@
+SUCCESS: The process with PID 35528 (child process of PID 6704) has been terminated.
+SUCCESS: The process with PID 7316 (child process of PID 6704) has been terminated.
+SUCCESS: The process with PID 34488 (child process of PID 6704) has been terminated.
+SUCCESS: The process with PID 18532 (child process of PID 6704) has been terminated.
+SUCCESS: The process with PID 38260 (child process of PID 6704) has been terminated.
+Completed exactly one Seolleyeon one-asset Image Gen transaction for `female_035__vibe_card__v001`.
+
+Output:
+- Final: [vibe_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/035/vibe_card.png)
+- Raw: [female_035__vibe_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_035__vibe_card__v001__attempt01.png)
+- Receipt: [female_035__vibe_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260510T185001Z/transactions/female_035__vibe_card__v001_attempt1.json)
+
+Validation: receipt verification passed, pending checkpoint is resolved, raw/final/source hashes match, file QA passed at `1024x1536`, and recommender files were not changed. Manifest status is `recovered_pending_qa`, so this does not claim visual approval.

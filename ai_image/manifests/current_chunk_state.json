@@ -3,7 +3,7 @@
   "chunkId": "chunk_20260510T185001Z",
   "planHash": "0a6a3f832a744a89f813c9d2d36c400eff1f39e7e72b4476197c14b0d57b7ad7",
   "status": "running",
-  "currentAssetId": "female_035__vibe_card__v001",
+  "currentAssetId": "female_036__face_card__v001",
   "completedAssetIds": [],
   "failedAssetIds": [],
   "assetStates": {
@@ -39,8 +39,8 @@
     "female_034__vibe_card__v001": "planned",
     "female_035__face_card__v001": "file_qa_passed",
     "female_035__silhouette_card__v001": "file_qa_passed",
-    "female_035__vibe_card__v001": "pending_imagegen",
-    "female_036__face_card__v001": "planned",
+    "female_035__vibe_card__v001": "file_qa_passed",
+    "female_036__face_card__v001": "pending_imagegen",
     "female_036__silhouette_card__v001": "planned",
     "female_036__vibe_card__v001": "planned",
     "female_037__face_card__v001": "planned",
@@ -91,8 +91,8 @@
     "female_032": "assets_complete",
     "female_033": "assets_complete",
     "female_034": "failed",
-    "female_035": "running",
-    "female_036": "planned",
+    "female_035": "assets_complete",
+    "female_036": "running",
     "female_037": "planned",
     "female_038": "planned",
     "female_039": "planned",
@@ -110,7 +110,7 @@
   "distributionAuditComplete": false,
   "startedAt": "2026-05-10T19:56:31+00:00",
   "createdAt": "2026-05-10T18:50:02+00:00",
-  "updatedAt": "2026-05-12T13:42:51+00:00",
-  "recoveredAssets": 96,
-  "generatedAssets": 21
+  "updatedAt": "2026-05-12T13:56:58+00:00",
+  "recoveredAssets": 97,
+  "generatedAssets": 22
 }
