@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "seolleyeon_forbidden_file_restore_v3",
+  "restoredAt": "2026-05-12T22:06:24+00:00",
+  "backupRoot": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/forbidden_file_backups/female_022__silhouette_card__v001_attempt1",
+  "quarantineRoot": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/forbidden_file_backups/female_022__silhouette_card__v001_attempt1/quarantine",
+  "items": [
+    {
+      "path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/current_chunk_plan.json",
+      "quarantinePath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/forbidden_file_backups/female_022__silhouette_card__v001_attempt1/quarantine/C__Users__samsung__StudioProjects__semisemifinal__ai_image__manifests__current_chunk_plan.json",
+      "action": "restored_from_backup"
+    },
+    {
+      "path": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/manifests/current_chunk_state.json",
+      "quarantinePath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/forbidden_file_backups/female_022__silhouette_card__v001_attempt1/quarantine/C__Users__samsung__StudioProjects__semisemifinal__ai_image__manifests__current_chunk_state.json",
+      "action": "restored_from_backup"
+    }
+  ]
+}

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -69,6 +70,9 @@ def build_parser() -> argparse.ArgumentParser:
         "bounded-chunk-qa",
         "bounded-chunk-finalize",
         "bounded-chunk-e2e-smoke",
+        "bounded-identity-worker",
+        "bounded-identity-parallel-run",
+        "hermes-wrapper",
         "supervisor-720",
         "supervisor-chunk-only",
         "supervisor-identity-only",
@@ -77,6 +81,18 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--root", default=None)
     parser.add_argument("--visual_json", default=None)
     parser.add_argument("--pending", default=None)
+    parser.add_argument("--run-id", "--run_id", dest="run_id", default="")
+    parser.add_argument("--task-brief", "--task_brief", dest="task_brief", default="")
+    parser.add_argument("--task-brief-file", "--task_brief_file", dest="task_brief_file", default=None)
+    parser.add_argument("--reference-image", "--reference_image", dest="reference_images", action="append", default=[])
+    parser.add_argument("--output-dir", "--output_dir", dest="output_dir", default="ai_image/runs")
+    parser.add_argument("--pass-threshold", "--pass_threshold", dest="pass_threshold", type=int, default=90)
+    parser.add_argument("--max-attempts", "--max_attempts", dest="max_attempts", type=int, default=3)
+    parser.add_argument("--execution-mode", "--execution_mode", dest="execution_mode", default="dry-run")
+    parser.add_argument("--allow-real-imagegen", "--allow_real_imagegen", dest="allow_real_imagegen", action="store_true", default=False)
+    parser.add_argument("--timeout-sec", "--timeout_sec", dest="timeout_sec", type=int, default=0)
+    parser.add_argument("--python-bin", "--python_bin", dest="python_bin", default=sys.executable)
+    parser.add_argument("--bash-bin", "--bash_bin", dest="bash_bin", default="bash")
     parser.add_argument("--chunk_id", default=None)
     parser.add_argument("--max_identities", type=int, default=24)
     parser.add_argument("--max_assets", type=int, default=72)
@@ -88,6 +104,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--abandon-current", "--abandon_current", dest="abandon_current", action="store_true", default=False)
     parser.add_argument("--agent-cmd", "--agent_cmd", dest="agent_cmd", default=None)
     parser.add_argument("--identity-id", "--identity_id", dest="identity_id", default="e2e_identity_001")
+    parser.add_argument("--worker-id", "--worker_id", dest="worker_id", default="")
+    parser.add_argument("--workers", type=int, default=3)
+    parser.add_argument("--fixture", action="store_true", default=False)
+    parser.add_argument("--fixture-fail-shot", "--fixture_fail_shot", dest="fixture_fail_shot", default="")
+    parser.add_argument("--asset-id", "--asset_id", dest="asset_id", default="")
     parser.add_argument("--keep-artifacts", "--keep_artifacts", dest="keep_artifacts", action="store_true", default=False)
     parser.add_argument("--no-restore", "--no_restore", dest="no_restore", action="store_true", default=False)
     parser.add_argument("--preflight-only", "--preflight_only", dest="preflight_only", action="store_true", default=False)
@@ -99,6 +120,17 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     command = args.command
+
+    if command == "hermes-wrapper":
+        from .hermes_wrapper import HermesWrapperError, config_from_args, run_hermes_wrapper
+
+        try:
+            result = run_hermes_wrapper(config_from_args(args))
+        except HermesWrapperError as exc:
+            _print_json({"status": "failed", "error": str(exc)})
+            return 2
+        _print_json(result.as_json())
+        return 0 if result.status != "failed" else 2
 
     if command == "prepare-720":
         from .prepare import prepare_assets
@@ -116,8 +148,10 @@ def main(argv: list[str] | None = None) -> int:
 
     if command == "recover":
         from .codex_imagegen import recover_pending_imagegen
+        from .identity_parallel import per_asset_pending_path
 
-        result = recover_pending_imagegen(root=args.root, force=args.force)
+        pending = per_asset_pending_path(args.root, args.asset_id) if args.asset_id else args.pending
+        result = recover_pending_imagegen(root=args.root, pending=pending, force=args.force)
         _print_json({key: str(value) if isinstance(value, Path) else value for key, value in result.__dict__.items()})
         return 0
 
@@ -179,6 +213,11 @@ def main(argv: list[str] | None = None) -> int:
         return 0 if result["passed"] else 1
 
     if command == "pending-status":
+        if args.asset_id:
+            from .identity_parallel import identity_parallel_status
+
+            _print_json(identity_parallel_status(root=args.root, asset_id=args.asset_id))
+            return 0
         from .pending_admin import pending_status_report
 
         _print_json(pending_status_report(root=args.root, pending=args.pending))
@@ -247,6 +286,40 @@ def main(argv: list[str] | None = None) -> int:
         result = run_e2e_smoke(config)
         _print_json(result)
         return 0 if result["status"] in {"passed", "preflight_passed"} else 2
+
+    if command in {"bounded-identity-worker", "bounded-identity-parallel-run"}:
+        from .identity_parallel import IdentityParallelConfig, IdentityWorkerConfig, run_identity_parallel, run_identity_worker
+
+        root = Path(args.root).resolve() if args.root else Path.cwd().resolve()
+        run_id = args.run_id or "identity_parallel_cli"
+        if not args.fixture:
+            _print_json({"status": "failed", "error": "--fixture is required; identity parallel execution is currently fixture/mock only."})
+            return 2
+        if command == "bounded-identity-worker":
+            result = run_identity_worker(
+                IdentityWorkerConfig(
+                    root=root,
+                    identity_id=args.identity_id,
+                    run_id=run_id,
+                    worker_id=args.worker_id or f"{run_id}-{args.identity_id}",
+                    fixture=True,
+                    fixture_fail_shot=args.fixture_fail_shot,
+                )
+            )
+            _print_json(result)
+            return 0 if result.get("status") not in {"failed"} else 2
+        result = run_identity_parallel(
+            IdentityParallelConfig(
+                root=root,
+                run_id=run_id,
+                workers=max(1, int(args.workers)),
+                fixture=True,
+                fixture_fail_shot=args.fixture_fail_shot,
+                max_identities=max(0, int(args.max_identities)),
+            )
+        )
+        _print_json(result)
+        return 0 if result.get("status") not in {"failed"} else 2
 
     if command.startswith("bounded-chunk-"):
         from .bounded_batch_executor import (

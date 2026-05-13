@@ -1,0 +1,8 @@
+Ran exactly one Seolleyeon one-asset Image Gen transaction for `female_023__face_card__v001`.
+
+Output:
+- Raw: [female_023__face_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_023__face_card__v001__attempt01.png)
+- Final: [face_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/023/face_card.png)
+- Receipt: [female_023__face_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/transactions/female_023__face_card__v001_attempt1.json)
+
+Validation passed: receipt verified, pending checkpoint resolved, raw/final PNGs are `1024x1536`, single-asset file QA passed, and no recommender files were changed. Visual approval/global QA was not run, so this is recovered transaction output, not an approved dataset asset yet.

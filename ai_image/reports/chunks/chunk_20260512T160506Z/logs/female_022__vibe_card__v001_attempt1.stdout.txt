@@ -1,0 +1,8 @@
+Ran exactly one Seolleyeon one-asset Image Gen transaction.
+
+Asset: `female_022__vibe_card__v001`  
+Final image: [vibe_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/022/vibe_card.png)  
+Raw recovery: [female_022__vibe_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_022__vibe_card__v001__attempt01.png)  
+Receipt: [female_022__vibe_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/transactions/female_022__vibe_card__v001_attempt1.json)
+
+Validation: one built-in Image Gen call, pending checkpoint resolved, receipt verified, file QA passed structurally at `1024x1536` PNG. It is marked `needs_manual_review`; I did not claim visual approval or write an approved copy. No recommender files were touched.

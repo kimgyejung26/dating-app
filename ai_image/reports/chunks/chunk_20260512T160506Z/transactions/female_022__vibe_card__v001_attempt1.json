@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "seolleyeon_one_asset_transaction_v3",
+  "transactionId": "chunk_20260512T160506Z_female_022__vibe_card__v001_attempt1",
+  "chunkId": "chunk_20260512T160506Z",
+  "assetId": "female_022__vibe_card__v001",
+  "profileId": "female_022",
+  "gender": "female",
+  "numericId": "022",
+  "shotType": "vibe_card",
+  "attempt": 1,
+  "startedAt": "2026-05-12T22:07:36+00:00",
+  "finishedAt": "2026-05-12T22:12:44+00:00",
+  "generated": true,
+  "recovered": true,
+  "pendingResolved": true,
+  "fileQaRan": true,
+  "fileQaPassed": true,
+  "rawPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_022__vibe_card__v001__attempt01.png",
+  "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/022/vibe_card.png",
+  "sourceGeneratedImagePath": "C:/Users/samsung/.codex/generated_images/019e1e3b-4273-70a1-a55a-341ec2c51fd2/ig_07bb489783167648016a03a55fccec8191b621ce491dc31032.png",
+  "referencePath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/022/face_card.png",
+  "referenceAttached": true,
+  "referencePathSha256": "e7bcf73326272bc0dda38bd2c6658aca4f711ed0bb0d6cef0aee5fad2665af59",
+  "fileQa": {
+    "decision": "file_passed",
+    "width": 1024,
+    "height": 1536,
+    "format": "PNG",
+    "aspectRatio": 0.6666666666666666,
+    "sizeBytes": 2376667,
+    "reasons": []
+  },
+  "workerActions": [
+    "codex_builtin_imagegen_generated_once",
+    "recover_pending_imagegen_no_global_qa",
+    "file_qa_single_asset",
+    "receipt_written"
+  ],
+  "stdoutLog": "",
+  "stderrLog": "",
+  "error": null,
+  "status": "succeeded",
+  "source": "manual_one_asset_transaction_codex_builtin_imagegen",
+  "fileQaCounts": {
+    "checked": 1,
+    "approved": 0,
+    "needs_manual_review": 1,
+    "rejected": 0,
+    "missing": 0
+  }
+}

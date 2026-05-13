@@ -45,6 +45,11 @@ def _path_report(value: Any) -> dict[str, Any]:
 
 def pending_status_report(*, root: Path | str | None = None, pending: Path | str | None = None) -> dict[str, Any]:
     pending_file = Path(pending).resolve() if pending else pending_path(root)
+    per_asset_summary: dict[str, Any] = {}
+    if pending is None:
+        from .identity_parallel import identity_parallel_status
+
+        per_asset_summary = identity_parallel_status(root=root)
     payload = read_pending(pending_file)
     if not payload:
         return {
@@ -58,6 +63,7 @@ def pending_status_report(*, root: Path | str | None = None, pending: Path | str
             "assetId": "",
             "expectedRawPath": _path_report(""),
             "expectedFinalPath": _path_report(""),
+            "perAssetPending": per_asset_summary,
         }
     return {
         "exists": True,
@@ -73,6 +79,7 @@ def pending_status_report(*, root: Path | str | None = None, pending: Path | str
         "attempt": int(payload.get("attempt") or 0),
         "expectedRawPath": _path_report(payload.get("expectedRawPath")),
         "expectedFinalPath": _path_report(payload.get("expectedFinalPath")),
+        "perAssetPending": per_asset_summary,
     }
 
 

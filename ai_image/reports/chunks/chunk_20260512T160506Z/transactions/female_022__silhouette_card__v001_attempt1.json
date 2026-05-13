@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "seolleyeon_one_asset_transaction_v3",
+  "transactionId": "chunk_20260512T160506Z_female_022__silhouette_card__v001_attempt1",
+  "chunkId": "chunk_20260512T160506Z",
+  "assetId": "female_022__silhouette_card__v001",
+  "profileId": "female_022",
+  "gender": "female",
+  "numericId": "022",
+  "shotType": "silhouette_card",
+  "attempt": 1,
+  "startedAt": "2026-05-12T22:01:50+00:00",
+  "finishedAt": "2026-05-12T22:05:08+00:00",
+  "generated": true,
+  "recovered": true,
+  "pendingResolved": true,
+  "fileQaRan": true,
+  "fileQaPassed": true,
+  "rawPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_022__silhouette_card__v001__attempt01.png",
+  "finalPath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/022/silhouette_card.png",
+  "sourceGeneratedImagePath": "C:/Users/samsung/.codex/generated_images/019e1e30-cdad-7641-aa5f-61488d7c5b6d/ig_06c06bc45ac20d27016a03a3565a088191be3db79d7e9bee3d.png",
+  "referencePath": "C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/022/face_card.png",
+  "referenceAttached": true,
+  "referencePathSha256": "e7bcf73326272bc0dda38bd2c6658aca4f711ed0bb0d6cef0aee5fad2665af59",
+  "fileQa": {
+    "decision": "file_passed",
+    "width": 1024,
+    "height": 1536,
+    "format": "PNG",
+    "aspectRatio": 0.6666666666666666,
+    "sizeBytes": 2631190,
+    "raw": {
+      "ok": true,
+      "width": 1024,
+      "height": 1536,
+      "fileBytes": 2631190,
+      "format": "PNG",
+      "reasons": []
+    },
+    "final": {
+      "ok": true,
+      "width": 1024,
+      "height": 1536,
+      "fileBytes": 2631190,
+      "format": "PNG",
+      "reasons": []
+    },
+    "reasons": []
+  },
+  "workerActions": [
+    "checkpoint_verified",
+    "codex_builtin_imagegen_called_once",
+    "recovered_pending_imagegen_no_global_qa",
+    "single_asset_file_qa_ran",
+    "receipt_written"
+  ],
+  "stdoutLog": "",
+  "stderrLog": "",
+  "error": null,
+  "status": "succeeded",
+  "source": "codex_builtin_imagegen_one_asset_transaction"
+}

@@ -1,0 +1,8 @@
+Ran exactly one Seolleyeon one-asset Image Gen transaction for `female_021__vibe_card__v001`.
+
+Saved and verified:
+- Final: `ai_image/female/021/vibe_card.png`
+- Raw: `ai_image/raw/female_021__vibe_card__v001__attempt01.png`
+- Receipt: `ai_image/reports/chunks/chunk_20260512T160506Z/transactions/female_021__vibe_card__v001_attempt1.json`
+
+Validation evidence: receipt verification passed, file QA reports `1024x1536 PNG` with no file-level errors, `pending-imagegen.json` is resolved, bounded chunk status is runnable, and no recommender files changed. `generation_status.csv` remains `file_needs_review` because active visual QA/approval was not run.

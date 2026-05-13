@@ -1,0 +1,8 @@
+Ran exactly one Seolleyeon Image Gen call for `female_021__face_card__v001`, using the existing `pending-imagegen.json` checkpoint.
+
+Recovered and verified:
+- Final image: [face_card.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/female/021/face_card.png)
+- Raw image: [female_021__face_card__v001__attempt01.png](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/raw/female_021__face_card__v001__attempt01.png)
+- Receipt: [female_021__face_card__v001_attempt1.json](C:/Users/samsung/StudioProjects/semisemifinal/ai_image/reports/chunks/chunk_20260512T160506Z/transactions/female_021__face_card__v001_attempt1.json)
+
+Validation passed: transaction receipt is valid, `pending-imagegen.json` is resolved, file QA passed at `1024x1536`, and no recommender files were changed. I did not run a second Image Gen call.
