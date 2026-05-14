@@ -1,3 +1,4 @@
+import 'package:cupertino_native_better/cupertino_native_better.dart';
 import 'package:flutter/material.dart';
 
 import 'screens/navigation_demo_screen.dart';
@@ -10,6 +11,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Glass Bottom Navigation',
       debugShowCheckedModeBanner: false,
+      navigatorObservers: [CNTabBarRouteObserver()],
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFFB5FF00),

@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
+import 'package:cupertino_native_better/cupertino_native_better.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 enum GlassBottomNavTab { home, community, tutorials, gallery, profile }
@@ -135,6 +137,12 @@ class _GlassBottomNavigationBarState extends State<GlassBottomNavigationBar> {
         .toDouble();
   }
 
+  /// Whether to use native iOS Liquid Glass for the bar background.
+  /// True only on iOS 26+ where the native glass effect is available.
+  bool get _shouldUseLiquidGlass =>
+      defaultTargetPlatform == TargetPlatform.iOS &&
+      PlatformVersion.shouldUseNativeGlass;
+
   @override
   Widget build(BuildContext context) {
     final bottomRegion = GlassBottomNavigationBar._bottomRegion(context);
@@ -166,6 +174,51 @@ class _GlassBottomNavigationBarState extends State<GlassBottomNavigationBar> {
             final pillLeft =
                 pillCenterX - (GlassBottomNavigationBar._activePillWidth / 2);
 
+            // Shared content: active pill glow + positioned nav items.
+            // Identical for both the default and Liquid Glass paths.
+            final contentChildren = <Widget>[
+              AnimatedPositioned(
+                key: const ValueKey('glass_nav_active_pill'),
+                duration: _dragCenterX == null
+                    ? const Duration(milliseconds: 260)
+                    : Duration.zero,
+                curve: Curves.easeOutCubic,
+                left:
+                    pillLeft -
+                    GlassBottomNavigationBar._horizontalInset,
+                top:
+                    (GlassBottomNavigationBar._navRowHeight -
+                        GlassBottomNavigationBar._activePillHeight) /
+                    2,
+                width: GlassBottomNavigationBar._activePillWidth,
+                height: GlassBottomNavigationBar._activePillHeight,
+                child: const _ActiveGlow(),
+              ),
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                height: GlassBottomNavigationBar._navRowHeight,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    for (
+                      var index = 0;
+                      index < GlassBottomNavigationBar._tabs.length;
+                      index++
+                    )
+                      _PositionedNavItem(
+                        data: GlassBottomNavigationBar._tabs[index],
+                        index: index,
+                        selected: index == widget.currentIndex,
+                        scale: scale,
+                        onTap: widget.onTap,
+                      ),
+                  ],
+                ),
+              ),
+            ];
+
             return Align(
               alignment: Alignment.topCenter,
               child: Padding(
@@ -174,67 +227,59 @@ class _GlassBottomNavigationBarState extends State<GlassBottomNavigationBar> {
                 ),
                 child: SizedBox(
                   height: GlassBottomNavigationBar._navRowHeight,
-                  child: ClipRRect(
-                    key: const ValueKey('glass_nav_clip'),
-                    borderRadius: BorderRadius.circular(
-                      GlassBottomNavigationBar._capsuleRadius,
-                    ),
-                    child: BackdropFilter(
-                      filter: ui.ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                      child: Stack(
-                        fit: StackFit.expand,
-                        clipBehavior: Clip.hardEdge,
-                        children: [
-                          const _GlassBarBackground(),
-                          AnimatedPositioned(
-                            key: const ValueKey('glass_nav_active_pill'),
-                            duration: _dragCenterX == null
-                                ? const Duration(milliseconds: 260)
-                                : Duration.zero,
-                            curve: Curves.easeOutCubic,
-                            left:
-                                pillLeft -
-                                GlassBottomNavigationBar._horizontalInset,
-                            top:
-                                (GlassBottomNavigationBar._navRowHeight -
-                                    GlassBottomNavigationBar
-                                        ._activePillHeight) /
-                                2,
-                            width: GlassBottomNavigationBar._activePillWidth,
-                            height: GlassBottomNavigationBar._activePillHeight,
-                            child: const _ActiveGlow(),
-                          ),
-                          Positioned(
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            height: GlassBottomNavigationBar._navRowHeight,
-                            child: Stack(
-                              clipBehavior: Clip.none,
-                              children: [
-                                for (
-                                  var index = 0;
-                                  index < GlassBottomNavigationBar._tabs.length;
-                                  index++
-                                )
-                                  _PositionedNavItem(
-                                    data: GlassBottomNavigationBar._tabs[index],
-                                    index: index,
-                                    selected: index == widget.currentIndex,
-                                    scale: scale,
-                                    onTap: widget.onTap,
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  child: _shouldUseLiquidGlass
+                      ? _buildLiquidGlassBar(contentChildren)
+                      : _buildDefaultBar(contentChildren),
                 ),
               ),
             );
           },
+        ),
+      ),
+    );
+  }
+
+  /// Default (Android / iOS < 26): BackdropFilter + _GlassBarBackground.
+  /// This is the original rendering path — completely unchanged.
+  Widget _buildDefaultBar(List<Widget> contentChildren) {
+    return ClipRRect(
+      key: const ValueKey('glass_nav_clip'),
+      borderRadius: BorderRadius.circular(
+        GlassBottomNavigationBar._capsuleRadius,
+      ),
+      child: BackdropFilter(
+        filter: ui.ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+        child: Stack(
+          fit: StackFit.expand,
+          clipBehavior: Clip.hardEdge,
+          children: [
+            const _GlassBarBackground(),
+            ...contentChildren,
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// iOS 26+: Native Liquid Glass replaces BackdropFilter + _GlassBarBackground.
+  /// The child content (active pill glow, nav items) is identical.
+  Widget _buildLiquidGlassBar(List<Widget> contentChildren) {
+    return ClipRRect(
+      key: const ValueKey('glass_nav_clip'),
+      borderRadius: BorderRadius.circular(
+        GlassBottomNavigationBar._capsuleRadius,
+      ),
+      child: LiquidGlassContainer(
+        config: LiquidGlassConfig(
+          effect: CNGlassEffect.regular,
+          shape: CNGlassEffectShape.rect,
+          cornerRadius: GlassBottomNavigationBar._capsuleRadius,
+          interactive: false,
+        ),
+        child: Stack(
+          fit: StackFit.expand,
+          clipBehavior: Clip.hardEdge,
+          children: contentChildren,
         ),
       ),
     );
