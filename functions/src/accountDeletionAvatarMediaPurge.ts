@@ -41,12 +41,27 @@ export type DeletedAccountAvatarPurgeSummary = {
   scanned: number;
   authPresent: number;
   authMissing: number;
+  /** Owner ids that are not account identities (synthetic fixtures / smoke ids); never purged here. */
+  unclassifiedIdentity: number;
   alreadyCompleted: number;
   purged: number;
   errors: number;
   dryRun: boolean;
   candidates: DeletedAccountAvatarPurgeCandidate[];
+  unclassified: string[];
 };
+
+/**
+ * Account identities are Firebase Auth uids (28 url-safe chars) or numeric
+ * Kakao ids. Anything else in userPrivateMedia (e.g. `avatar_live_fixture_*`,
+ * `avatar_smoke_*`, `avatar_azure_stage_*`) was written by fixture/smoke
+ * tooling, never had an Auth account, and is test-data lifecycle - not an
+ * account deletion. Those ids are reported for the test-data cleanup plan and
+ * are never run through the account-deletion contract.
+ */
+export function isAccountIdentityShape(uid: string): boolean {
+  return /^[A-Za-z0-9_-]{28}$/.test(uid) || /^[0-9]{6,20}$/.test(uid);
+}
 
 export type DeletedAccountAvatarPurgeDeps = {
   /** userPrivateMedia document ids (owner uids), bounded by `limit`. */
@@ -83,16 +98,23 @@ export async function purgeAvatarPrivateMediaForDeletedAccounts(
     scanned: 0,
     authPresent: 0,
     authMissing: 0,
+    unclassifiedIdentity: 0,
     alreadyCompleted: 0,
     purged: 0,
     errors: 0,
     dryRun,
     candidates: [],
+    unclassified: [],
   };
   const uids = await deps.listPrivateMediaOwnerUids(limit);
   for (const uid of uids) {
     summary.scanned += 1;
     try {
+      if (!isAccountIdentityShape(uid)) {
+        summary.unclassifiedIdentity += 1;
+        summary.unclassified.push(uidHashForLog(uid));
+        continue;
+      }
       if (await deps.cleanupAlreadyCompleted(uid)) {
         summary.alreadyCompleted += 1;
         continue;

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  isAccountIdentityShape,
   purgeAvatarPrivateMediaForDeletedAccounts,
   type DeletedAccountAvatarPurgeDeps,
 } from "./accountDeletionAvatarMediaPurge";
@@ -9,6 +10,7 @@ import {
   accountDeletionDocsFromParts,
   createAvatarCleanupFirestoreExecutor,
   deleteStorageObjectWithGenerationMatch,
+  deriveReverseTargetViewerUids,
   executeAvatarCleanup,
   planAvatarCleanup,
   type CleanupExecutor,
@@ -65,52 +67,57 @@ function deps(fake: Fake): DeletedAccountAvatarPurgeDeps {
   };
 }
 
+const ALIVE = "A".repeat(28);
+const GONE = "G".repeat(28);
+const GONE_A = "a".repeat(28);
+const GONE_B = "b".repeat(28);
+
 test("2: owners whose Auth account is missing are purged; active owners are left alone", async () => {
-  const fake: Fake = { uids: ["alive", "gone"], auth: new Set(["alive"]), completed: new Set(), runs: [], plans: [] };
+  const fake: Fake = { uids: [ALIVE, GONE], auth: new Set([ALIVE]), completed: new Set(), runs: [], plans: [] };
   const summary = await purgeAvatarPrivateMediaForDeletedAccounts(deps(fake), { limit: 25 });
   assert.equal(summary.scanned, 2);
   assert.equal(summary.authPresent, 1);
   assert.equal(summary.authMissing, 1);
   assert.equal(summary.purged, 1);
-  assert.deepEqual(fake.runs, ["gone"]);
+  assert.deepEqual(fake.runs, [GONE]);
   assert.equal(summary.candidates[0].plannedOperations.deleteStorage, 1);
-  assert.ok(!JSON.stringify(summary).includes("gone"), "raw uid must not appear in the summary");
+  assert.ok(!JSON.stringify(summary).includes(GONE), "raw uid must not appear in the summary");
 });
 
 test("3: nothing listed (private doc missing) is a safe no-op", async () => {
   const fake: Fake = { uids: [], auth: new Set(), completed: new Set(), runs: [], plans: [] };
   const summary = await purgeAvatarPrivateMediaForDeletedAccounts(deps(fake));
   assert.deepEqual({ ...summary, candidates: [] }, {
-    scanned: 0, authPresent: 0, authMissing: 0, alreadyCompleted: 0, purged: 0, errors: 0, dryRun: false, candidates: [],
+    scanned: 0, authPresent: 0, authMissing: 0, unclassifiedIdentity: 0, alreadyCompleted: 0, purged: 0, errors: 0, dryRun: false, candidates: [], unclassified: [],
   });
 });
 
 test("dry run plans but never applies, and reports the planned operation shape", async () => {
-  const fake: Fake = { uids: ["gone"], auth: new Set(), completed: new Set(), runs: [], plans: [] };
+  const fake: Fake = { uids: [GONE], auth: new Set(), completed: new Set(), runs: [], plans: [] };
   const summary = await purgeAvatarPrivateMediaForDeletedAccounts(deps(fake), { dryRun: true });
   assert.equal(summary.dryRun, true);
   assert.equal(summary.authMissing, 1);
   assert.equal(summary.purged, 0);
   assert.deepEqual(fake.runs, []);
-  assert.deepEqual(fake.plans, ["gone"]);
+  assert.deepEqual(fake.plans, [GONE]);
   assert.deepEqual(summary.candidates[0].plannedOperations, { deleteStorage: 1, sanitizePrivateMedia: 1, writeAudit: 1 });
 });
 
 test("5: a failing owner is counted as an error, does not stop the batch, and is retried on the next run", async () => {
-  const fake: Fake = { uids: ["gone_a", "gone_b"], auth: new Set(), completed: new Set(), runs: [], plans: [], failFor: "gone_a" };
+  const fake: Fake = { uids: [GONE_A, GONE_B], auth: new Set(), completed: new Set(), runs: [], plans: [], failFor: GONE_A };
   const first = await purgeAvatarPrivateMediaForDeletedAccounts(deps(fake));
   assert.equal(first.errors, 1);
   assert.equal(first.purged, 1);
-  assert.deepEqual(fake.runs, ["gone_b"]);
+  assert.deepEqual(fake.runs, [GONE_B]);
   fake.failFor = undefined;
   const second = await purgeAvatarPrivateMediaForDeletedAccounts(deps(fake));
   assert.equal(second.alreadyCompleted, 1);
   assert.equal(second.purged, 1);
-  assert.deepEqual(fake.runs, ["gone_b", "gone_a"]);
+  assert.deepEqual(fake.runs, [GONE_B, GONE_A]);
 });
 
 test("8: rerun is idempotent - completed owners short-circuit before any Auth lookup or plan", async () => {
-  const fake: Fake = { uids: ["gone"], auth: new Set(), completed: new Set(["gone"]), runs: [], plans: [] };
+  const fake: Fake = { uids: [GONE], auth: new Set(), completed: new Set([GONE]), runs: [], plans: [] };
   const summary = await purgeAvatarPrivateMediaForDeletedAccounts(deps(fake));
   assert.equal(summary.alreadyCompleted, 1);
   assert.equal(summary.purged, 0);
@@ -118,9 +125,22 @@ test("8: rerun is idempotent - completed owners short-circuit before any Auth lo
 });
 
 test("limit is bounded to at most 100 per run and at least 1", async () => {
-  const fake: Fake = { uids: Array.from({ length: 150 }, (_, i) => `u${i}`), auth: new Set(), completed: new Set(), runs: [], plans: [] };
+  const fake: Fake = { uids: Array.from({ length: 150 }, (_, i) => `${"u".repeat(20)}${String(i).padStart(8, "0")}`), auth: new Set(), completed: new Set(), runs: [], plans: [] };
   const summary = await purgeAvatarPrivateMediaForDeletedAccounts(deps(fake), { limit: 500, dryRun: true });
   assert.equal(summary.scanned, 100);
+});
+
+test("synthetic fixture / smoke ids are reported as unclassified and never run through the account-deletion contract", async () => {
+  const fake: Fake = { uids: ["avatar_live_fixture_user_v3", "avatar_smoke_npfix_2", GONE], auth: new Set(), completed: new Set(), runs: [], plans: [] };
+  const summary = await purgeAvatarPrivateMediaForDeletedAccounts(deps(fake));
+  assert.equal(summary.unclassifiedIdentity, 2);
+  assert.equal(summary.unclassified.length, 2);
+  assert.equal(summary.purged, 1);
+  assert.deepEqual(fake.runs, [GONE]);
+  assert.ok(!JSON.stringify(summary).includes("avatar_live_fixture"), "raw ids are hashed");
+  assert.equal(isAccountIdentityShape("A00DcMaUFGY0vkDEPG0TgehkZeZ2"), true);
+  assert.equal(isAccountIdentityShape("3412345678"), true);
+  assert.equal(isAccountIdentityShape("avatar_azure_stage_20260823_fix"), false);
 });
 
 // ---------------------------------------------------------------------------
@@ -221,4 +241,16 @@ test("7: the account-deletion plan for a deleted owner keeps the audit record an
   await executeAvatarCleanup({ uid: UID, clientRequestId: "account_deletion_auth_missing_v1", reason: "account_deletion", executor });
   assert.ok(applied.includes("lockAccountForDeletion") && applied.includes("sanitizeUser"));
   assert.equal(db.has(`users/${UID}`), false, "no users stub may be created for a deleted identity");
+});
+
+test("reverse block/exclusion viewers derive from the owner's own symmetric target ids", () => {
+  const derived = deriveReverseTargetViewerUids({
+    uid: "owner",
+    blockTargetIds: ["viewer_a", "viewer_b", "viewer_a", " ", "owner"],
+    recommendationExclusionTargetIds: ["viewer_c"],
+  });
+  assert.deepEqual(derived, {
+    reverseBlockViewerUids: ["viewer_a", "viewer_b"],
+    reverseRecommendationExclusionViewerUids: ["viewer_c"],
+  });
 });

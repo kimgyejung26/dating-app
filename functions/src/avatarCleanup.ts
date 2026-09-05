@@ -1,6 +1,6 @@
 import { createHash } from "crypto";
 import { getAuth } from "firebase-admin/auth";
-import { FieldPath, FieldValue, type Firestore } from "firebase-admin/firestore";
+import { FieldValue, type Firestore } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
 import {
   HttpsError,
@@ -337,6 +337,31 @@ const RECOMMENDATION_EXCLUSION_TARGET_PATH =
 export function isBlocksTargetRefPath(path: string, targetUid: string): boolean {
   const match = path.match(BLOCKS_TARGET_PATH);
   return match !== null && match[2] === targetUid;
+}
+
+/**
+ * Reverse viewers of a uid's blocks and recommendation exclusions.
+ *
+ * Both contracts are written symmetrically in one atomic write
+ * (reportAndBlockUser and contact blocks: blocks/{A}/targets/{B} +
+ * blocks/{B}/targets/{A}; kakao-friend avoidance:
+ * recommendationExclusions/{A}/targets/{B} + /{B}/targets/{A}), so the set of
+ * viewers whose target subcollection names this uid equals the uid's own
+ * target ids. This replaces a collection-group `documentId() == uid` filter
+ * that Firestore rejects for bare ids (the account_deletion cleanup threw on
+ * every request since 2026-07-29).
+ */
+export function deriveReverseTargetViewerUids(params: {
+  uid: string;
+  blockTargetIds: string[];
+  recommendationExclusionTargetIds: string[];
+}): { reverseBlockViewerUids: string[]; reverseRecommendationExclusionViewerUids: string[] } {
+  const own = (ids: string[]) =>
+    Array.from(new Set(ids.map((id) => id.trim()).filter((id) => id && id !== params.uid)));
+  return {
+    reverseBlockViewerUids: own(params.blockTargetIds),
+    reverseRecommendationExclusionViewerUids: own(params.recommendationExclusionTargetIds),
+  };
 }
 
 export function isRecommendationExclusionTargetRefPath(
@@ -714,10 +739,10 @@ export async function loadAccountDeletionDocs(
       .doc(safeUid)
       .collection("targets")
       .get(),
-    firestore
-      .collectionGroup("targets")
-      .where(FieldPath.documentId(), "==", safeUid)
-      .get(),
+    // Reverse block / exclusion viewers are derived from the owner's own
+    // target ids (see deriveReverseTargetViewerUids); a collection-group
+    // documentId() filter on a bare uid is rejected by Firestore.
+    Promise.resolve({ docs: [] as Array<{ ref: { path: string } }> }),
     firestore
       .collection("kakaoFriendPairs")
       .where("memberUids", "array-contains", safeUid)
@@ -725,22 +750,15 @@ export async function loadAccountDeletionDocs(
     loadAccountDeletionSocialDocs(firestore, safeUid),
   ]);
 
-  const reverseBlockViewerUids = reverseBlockTargetsSnap.docs
-    .filter((doc) => isBlocksTargetRefPath(doc.ref.path, safeUid))
-    .map((doc) => {
-      const match = doc.ref.path.match(BLOCKS_TARGET_PATH);
-      return match?.[1] ?? "";
-    })
-    .filter((viewerUid) => viewerUid.length > 0);
-  const reverseRecommendationExclusionViewerUids = reverseBlockTargetsSnap.docs
-    .filter((doc) =>
-      isRecommendationExclusionTargetRefPath(doc.ref.path, safeUid),
-    )
-    .map((doc) => {
-      const match = doc.ref.path.match(RECOMMENDATION_EXCLUSION_TARGET_PATH);
-      return match?.[1] ?? "";
-    })
-    .filter((viewerUid) => viewerUid.length > 0);
+  void reverseBlockTargetsSnap;
+  const { reverseBlockViewerUids, reverseRecommendationExclusionViewerUids } =
+    deriveReverseTargetViewerUids({
+      uid: safeUid,
+      blockTargetIds: blockTargetsSnap.docs.map((doc) => doc.id),
+      recommendationExclusionTargetIds: recommendationExclusionTargetsSnap.docs.map(
+        (doc) => doc.id,
+      ),
+    });
 
   // Identity-contract PII (auth re-architecture §5). Candidate document ids
   // come from the user's own doc; each is deleted only when its `appUserId`
