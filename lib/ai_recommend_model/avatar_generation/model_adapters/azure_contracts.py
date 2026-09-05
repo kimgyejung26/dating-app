@@ -27,6 +27,8 @@ class AzureProviderError(RuntimeError):
         attempts: int = 0,
         provider_status: Optional[int] = None,
         provider_usage: Optional[Mapping[str, Any]] = None,
+        retry_after_seconds: Optional[float] = None,
+        failure_class: str = "provider",
     ) -> None:
         self.error_code = str(error_code)
         self.retryable = bool(retryable)
@@ -34,6 +36,12 @@ class AzureProviderError(RuntimeError):
         self.attempts = max(0, int(attempts))
         self.provider_status = provider_status
         self.provider_usage = dict(provider_usage or {})
+        self.retry_after_seconds = (
+            max(0.0, float(retry_after_seconds))
+            if retry_after_seconds is not None
+            else None
+        )
+        self.failure_class = str(failure_class or "provider")
         super().__init__(self.error_code)
 
 
@@ -48,9 +56,18 @@ class AzureTransportError(AzureProviderError):
         error_code: str = "azure_transport_error",
         *,
         request_sent: bool = False,
+        attempts: int = 0,
+        provider_usage: Optional[Mapping[str, Any]] = None,
     ) -> None:
         self.request_sent = bool(request_sent)
-        super().__init__(error_code, retryable=not self.request_sent)
+        super().__init__(
+            error_code,
+            retryable=not self.request_sent,
+            unknown_outcome=self.request_sent,
+            attempts=attempts,
+            provider_usage=provider_usage,
+            failure_class="ambiguous" if self.request_sent else "pre_send",
+        )
 
 
 class AzureUnknownOutcomeError(AzureProviderError):
@@ -60,6 +77,7 @@ class AzureUnknownOutcomeError(AzureProviderError):
             retryable=False,
             unknown_outcome=True,
             attempts=attempts,
+            failure_class="ambiguous",
         )
 
 

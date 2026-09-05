@@ -28,6 +28,8 @@ from avatar_generation.model_adapters.azure_gpt_image_2 import (  # noqa: E402
     AzureUnknownOutcomeError,
 )
 from avatar_generation.model_adapters.azure_rate_limit import AzureRequestRateLimiter  # noqa: E402
+import avatar_generation.model_adapters.azure_router as azure_router_module  # noqa: E402
+import avatar_generation.model_adapters.azure_gpt_image_2 as provider_module  # noqa: E402
 
 
 def _image_bytes(*, format: str = "JPEG", color: tuple[int, int, int] = (30, 60, 90)) -> bytes:
@@ -71,6 +73,13 @@ def _success_response() -> AzureProviderResponse:
         headers={},
         payload={"data": [{"b64_json": base64.b64encode(_image_bytes(format="PNG")).decode("ascii")}]},
     )
+
+
+def test_public_provider_factory_places_legacy_single_endpoint_behind_router(monkeypatch):
+    sentinel = object()
+    monkeypatch.setattr(azure_router_module, "build_azure_endpoint_router", lambda: sentinel)
+
+    assert provider_module.get_azure_gpt_image2_provider() is sentinel
 
 
 def test_provider_sends_storage_bytes_and_exact_general_prompt_without_prompt_suffixes():

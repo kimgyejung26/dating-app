@@ -1097,3 +1097,11 @@ def test_storage_rules_settle_public_readable_approved_avatar_model():
     assert "allow read: if isApprovedAvatarBucket();" in rules
     assert "allow write: if false;" in rules
     assert "match /users/{userId}/jobs/{jobId}/candidates/{candidateId}" in rules
+
+
+def test_azure_router_reservation_state_is_backend_only():
+    rules = (REPO_ROOT / "firestore.rules").read_text(encoding="utf-8")
+
+    assert "match /avatarProviderRouterState/{stateId}" in rules
+    router_block = rules.split("match /avatarProviderRouterState/{stateId}", 1)[1]
+    assert "allow read, write: if false;" in router_block[:180]

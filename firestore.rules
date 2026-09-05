@@ -1115,6 +1115,12 @@ request.resource.data.diff(resource.data).affectedKeys().hasOnly([
       allow read, write: if false;
     }
 
+    // Azure endpoint pacing/reservations. Contains only opaque endpoint ids,
+    // quota and timestamps; clients still have no read or write access.
+    match /avatarProviderRouterState/{stateId} {
+      allow read, write: if false;
+    }
+
     // -----------------------------------------------------------------------
     // Server-owned identity indexes (auth re-architecture, identity-contract §3)
     // -----------------------------------------------------------------------

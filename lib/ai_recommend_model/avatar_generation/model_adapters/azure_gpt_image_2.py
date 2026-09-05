@@ -182,9 +182,9 @@ class AzureGptImage2Provider:
                 if exc.request_sent:
                     raise AzureUnknownOutcomeError(attempts) from exc
                 if attempts >= self.config.max_attempts:
-                    raise AzureProviderError(
+                    raise AzureTransportError(
                         exc.error_code,
-                        retryable=True,
+                        request_sent=False,
                         attempts=attempts,
                         provider_usage=provider_usage(attempts=attempts, outcome="failure"),
                     ) from exc
@@ -217,6 +217,8 @@ class AzureGptImage2Provider:
                     attempts=attempts,
                     provider_status=last_status,
                     provider_usage=provider_usage(attempts=attempts, outcome="failure"),
+                    retry_after_seconds=retry_after,
+                    failure_class="capacity" if last_status == 429 else "server_response",
                 )
 
             raise AzureProviderError(
@@ -265,10 +267,12 @@ class AzureGptImage2Provider:
         self._sleep(delay)
 
 
-def get_azure_gpt_image2_provider() -> AzureGptImage2Provider:
-    return AzureGptImage2Provider(
-        config=AzureGptImage2Config.from_env(require_credentials=True),
-    )
+def get_azure_gpt_image2_provider() -> Any:
+    # The public factory always returns the reservation/router interface. A
+    # legacy single endpoint is simply a one-entry router configuration.
+    from .azure_router import build_azure_endpoint_router
+
+    return build_azure_endpoint_router()
 
 
 def _normalize_generated_image(payload: Mapping[str, Any]) -> bytes:

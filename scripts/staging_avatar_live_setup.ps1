@@ -8,6 +8,12 @@ param(
   [string]$FunctionsEnvFile = "functions/.env.seolleyeon-final",
   # Secret Manager 시크릿 "이름"만 받는다. 값은 절대 인자로 받지 않는다.
   [string]$AzureApiKeySecret = "seolleyeon-avatar-azure-openai-api-key",
+  # Conservative rollout defaults. Final values come from staging latency and
+  # scripts/avatar_azure_capacity_plan.py; endpoint count is not a ceiling.
+  [int]$WorkerConcurrency = 1,
+  [int]$WorkerMaxInstances = 1,
+  [int]$QueueMaxConcurrentDispatches = 1,
+  [int]$QueueMaxAttempts = 8,
   [switch]$PrepareOnly,
   [switch]$UpdateFunctionsEnv,
   [switch]$DeployUploadFunction,
@@ -16,6 +22,18 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+if ($WorkerConcurrency -lt 1 -or $WorkerConcurrency -gt 64) {
+  throw "WorkerConcurrency must be between 1 and 64."
+}
+if ($WorkerMaxInstances -lt 1 -or $WorkerMaxInstances -gt 100) {
+  throw "WorkerMaxInstances must be between 1 and 100."
+}
+if ($QueueMaxConcurrentDispatches -lt 1 -or $QueueMaxConcurrentDispatches -gt 64) {
+  throw "QueueMaxConcurrentDispatches must be between 1 and 64."
+}
+if ($QueueMaxAttempts -lt 2 -or $QueueMaxAttempts -gt 10) {
+  throw "QueueMaxAttempts must be between 2 and 10."
+}
 if (Get-Variable -Name PSNativeCommandUseErrorActionPreference -ErrorAction SilentlyContinue) {
   $PSNativeCommandUseErrorActionPreference = $false
 }
@@ -118,8 +136,8 @@ function Ensure-Queue {
       --location=$Region `
       --project=$Project `
       --max-dispatches-per-second=1 `
-      --max-concurrent-dispatches=1 `
-      --max-attempts=3 `
+      --max-concurrent-dispatches=$QueueMaxConcurrentDispatches `
+      --max-attempts=$QueueMaxAttempts `
       --min-backoff=30s `
       --max-backoff=600s `
       --max-doublings=5
@@ -396,9 +414,9 @@ if (-not $PrepareOnly) {
       --no-gpu-zonal-redundancy `
       --cpu=8 `
       --memory=32Gi `
-      --concurrency=1 `
+      --concurrency=$WorkerConcurrency `
       --min-instances=0 `
-      --max-instances=1 `
+      --max-instances=$WorkerMaxInstances `
       --timeout=1800s `
       --no-allow-unauthenticated `
       --service-account=$avatarWorkerSa `
@@ -442,12 +460,12 @@ if ($UpdateFunctionsEnv) {
       "TASK_INVOKER_SERVICE_ACCOUNT" = $taskInvokerSa
       "AVATAR_QUEUE_DISPATCH_DEADLINE_SECONDS" = "1800"
       "AVATAR_QUEUE_MAX_DISPATCHES_PER_SECOND" = "1"
-      "AVATAR_QUEUE_MAX_CONCURRENT_DISPATCHES" = "1"
-      "AVATAR_QUEUE_MAX_ATTEMPTS" = "3"
+      "AVATAR_QUEUE_MAX_CONCURRENT_DISPATCHES" = "$QueueMaxConcurrentDispatches"
+      "AVATAR_QUEUE_MAX_ATTEMPTS" = "$QueueMaxAttempts"
       "AVATAR_QUEUE_MIN_BACKOFF_SECONDS" = "30"
       "AVATAR_QUEUE_MAX_BACKOFF_SECONDS" = "600"
       "AVATAR_QUEUE_MAX_DOUBLINGS" = "5"
-      "AVATAR_QUEUE_GPU_MAX_CONCURRENT_JOBS" = "1"
+      "AVATAR_QUEUE_GPU_MAX_CONCURRENT_JOBS" = "$QueueMaxConcurrentDispatches"
       "CLIP_EMBEDDING_QUEUE_ENABLED" = "false"
     }
   }

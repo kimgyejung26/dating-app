@@ -178,6 +178,33 @@ def test_queue_config_allows_avatar_only_staging_without_clip_worker():
     )
 
 
+def test_queue_config_does_not_treat_five_endpoints_as_concurrency_ceiling():
+    config = load_script("avatar_queue_config_check", "avatar_queue_config_check.py")
+    env = {
+        "ENVIRONMENT": "production",
+        "JOB_QUEUE_MODE": "cloud_tasks",
+        "CLOUD_TASKS_PROJECT": "seolleyeon-final",
+        "GCP_LOCATION": "asia-northeast3",
+        "AVATAR_GENERATION_QUEUE_NAME": "avatar-generation",
+        "AVATAR_GENERATION_TASK_URL": "https://avatar-worker.example/tasks/avatar-generation",
+        "TASK_INVOKER_SERVICE_ACCOUNT": "task-invoker@seolleyeon-final.iam.gserviceaccount.com",
+        "CLIP_EMBEDDING_QUEUE_ENABLED": "false",
+        "AVATAR_QUEUE_MAX_CONCURRENT_DISPATCHES": "12",
+        "AVATAR_QUEUE_MAX_DISPATCHES_PER_SECOND": "1",
+        "AVATAR_QUEUE_DISPATCH_DEADLINE_SECONDS": "1800",
+        "AVATAR_QUEUE_MAX_ATTEMPTS": "8",
+        "AVATAR_QUEUE_MIN_BACKOFF_SECONDS": "30",
+        "AVATAR_QUEUE_MAX_BACKOFF_SECONDS": "600",
+        "AVATAR_QUEUE_MAX_DOUBLINGS": "4",
+        "AVATAR_QUEUE_GPU_MAX_CONCURRENT_JOBS": "12",
+    }
+
+    report = config.validate_queue_config(env)
+
+    assert report["ok"] is True
+    assert not any("maximum" in issue["message"].lower() for issue in report["issues"])
+
+
 def test_queue_config_rejects_placeholder_worker_urls():
     config = load_script("avatar_queue_config_check", "avatar_queue_config_check.py")
     env = {

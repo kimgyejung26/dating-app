@@ -41,6 +41,11 @@ const TERMINAL_JOB_STATUSES = new Set([
   "superseded",
 ]);
 
+const SUCCESS_JOB_STATUSES = new Set([
+  "preview_ready",
+  "completed",
+]);
+
 function isRecord(value: unknown): value is RecordData {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 }
@@ -69,9 +74,9 @@ function normalizedStatus(value: unknown): string {
 }
 
 /**
- * Only a transition into an irreversible terminal state may start the public
- * state sync. Worker heartbeats, progress writes, and the sync's own
- * bookkeeping must not re-enter the sync operation.
+ * A transition into terminal state starts public sync. The one allowed
+ * terminal-to-terminal transition is retryable_failed -> success after a
+ * Cloud Tasks redelivery. Worker heartbeats and bookkeeping do not re-enter.
  */
 export function shouldSyncAvatarGenerationTransition(params: {
   beforeData: RecordData | null | undefined;
@@ -85,7 +90,15 @@ export function shouldSyncAvatarGenerationTransition(params: {
   if (!params.beforeData) return true;
 
   const beforeStatus = normalizedStatus(params.beforeData.status);
-  if (TERMINAL_JOB_STATUSES.has(beforeStatus)) return false;
+  if (TERMINAL_JOB_STATUSES.has(beforeStatus)) {
+    const recoverableFailure =
+      beforeStatus === "retryable_failed" ||
+      (beforeStatus === "failed" && params.beforeData.retryable === true);
+    return (
+      recoverableFailure &&
+      SUCCESS_JOB_STATUSES.has(afterStatus)
+    );
+  }
   return beforeStatus !== afterStatus;
 }
 
@@ -386,9 +399,8 @@ export async function syncAvatarGenerationStateForJob(params: {
   });
 }
 
-/// 이 트리거는 non-terminal -> terminal 전이에서만 발화한다. 한 번 실패하면
-/// 같은 작업은 다시 발화하지 않으므로, 재배달 없이는 일시적 실패 한 번으로
-/// users/{uid}.avatar 가 avatarJobs 와 영구히 어긋난다.
+/// 이 트리거는 terminal 진입과 retryable_failed -> success 에서 발화한다.
+/// 트리거 자체의 일시적 실패는 Functions retry 로 재배달한다.
 export const AVATAR_STATE_SYNC_TRIGGER_OPTIONS = {
   document: "avatarJobs/{jobId}",
   retry: true,
