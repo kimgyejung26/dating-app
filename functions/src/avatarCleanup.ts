@@ -175,6 +175,42 @@ export type CleanupExecutor = {
   apply(operation: CleanupOperation): Promise<void>;
 };
 
+/** Minimal Storage file surface used by the generation-aware delete. */
+export type CleanupStorageFile = {
+  exists(): Promise<[boolean, ...unknown[]]>;
+  getMetadata(): Promise<[{ generation?: string | number }, ...unknown[]]>;
+  delete(options?: { ifGenerationMatch?: number; ignoreNotFound?: boolean }): Promise<unknown>;
+};
+
+/**
+ * Deletes exactly the object generation that was observed. A missing object is
+ * a no-op (already gone); a generation mismatch (412) is rethrown so the
+ * cleanup request stays retryable and Firestore metadata is never sanitized
+ * ahead of an object that was replaced concurrently.
+ */
+export async function deleteStorageObjectWithGenerationMatch(
+  file: CleanupStorageFile,
+): Promise<"deleted" | "missing"> {
+  const [exists] = await file.exists();
+  if (!exists) return "missing";
+  const [metadata] = await file.getMetadata();
+  const generation = Number(metadata.generation);
+  if (!Number.isFinite(generation) || generation <= 0) {
+    throw new Error("avatar_cleanup_object_generation_unavailable");
+  }
+  await file.delete({ ifGenerationMatch: generation });
+  return "deleted";
+}
+
+export type CleanupExecutorOptions = {
+  /**
+   * "require" (default, app withdrawal): users/{uid} is expected to exist.
+   * "skip_if_missing" (deleted-account purge): never create a users stub for an
+   * identity that no longer exists; user-document operations are skipped.
+   */
+  userDocPolicy?: "require" | "skip_if_missing";
+};
+
 function envValue(name: string, fallback: string): string {
   const value = process.env[name]?.trim();
   return value && value.length > 0 ? value : fallback;
@@ -775,11 +811,26 @@ export async function loadAccountDeletionDocs(
   });
 }
 
-function firestoreExecutor(
+export function createAvatarCleanupFirestoreExecutor(
   firestore: Firestore,
   uid: string,
   authUid?: string | null,
+  options: CleanupExecutorOptions = {},
 ): CleanupExecutor {
+  const userDocPolicy = options.userDocPolicy ?? "require";
+  let userDocExistsPromise: Promise<boolean> | null = null;
+  const userDocExists = (): Promise<boolean> => {
+    if (!userDocExistsPromise) {
+      userDocExistsPromise = firestore
+        .collection("users")
+        .doc(uid)
+        .get()
+        .then((snap) => snap.exists);
+    }
+    return userDocExistsPromise;
+  };
+  const skipUserDocOperation = async (): Promise<boolean> =>
+    userDocPolicy === "skip_if_missing" && !(await userDocExists());
   return {
     async load(loadUid: string, requestId: string): Promise<CleanupDocs> {
       const [userSnap, privateSnap, candidateQuery, jobQuery, requestSnap, accountDeletionDocs] =
@@ -831,10 +882,9 @@ function firestoreExecutor(
             );
           return;
         case "deleteStorage":
-          await getStorage()
-            .bucket(operation.ref.bucket)
-            .file(operation.ref.path)
-            .delete({ ignoreNotFound: true });
+          await deleteStorageObjectWithGenerationMatch(
+            getStorage().bucket(operation.ref.bucket).file(operation.ref.path),
+          );
           return;
         case "sanitizeCandidate":
           await firestore.collection("avatarCandidates").doc(operation.id).set(
@@ -902,6 +952,7 @@ function firestoreExecutor(
           await firestore.collection("clipEmbeddings").doc(uid).delete();
           return;
         case "sanitizeUser":
+          if (await skipUserDocOperation()) return;
           await firestore.collection("users").doc(uid).set(
             {
               profileImageMode: "avatar",
@@ -944,6 +995,7 @@ function firestoreExecutor(
             });
           return;
         case "lockAccountForDeletion":
+          if (await skipUserDocOperation()) return;
           await firestore
             .collection("users")
             .doc(uid)
@@ -1198,7 +1250,7 @@ export function createCleanupAvatarMediaFunction(
           uid,
           clientRequestId,
           reason,
-          executor: firestoreExecutor(firestore, uid, authUid),
+          executor: createAvatarCleanupFirestoreExecutor(firestore, uid, authUid),
         });
       } catch (error) {
         logger.error("Avatar media cleanup failed", {
