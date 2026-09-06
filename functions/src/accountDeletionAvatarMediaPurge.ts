@@ -1,6 +1,6 @@
 import { createHash } from "crypto";
 import { getAuth } from "firebase-admin/auth";
-import { type Firestore } from "firebase-admin/firestore";
+import { FieldPath, type Firestore } from "firebase-admin/firestore";
 import * as logger from "firebase-functions/logger";
 
 import {
@@ -45,6 +45,8 @@ export type DeletedAccountAvatarPurgeSummary = {
   unclassifiedIdentity: number;
   alreadyCompleted: number;
   purged: number;
+  /** Auth-missing owners found beyond this run's purge cap; picked up next run. */
+  deferred: number;
   errors: number;
   dryRun: boolean;
   candidates: DeletedAccountAvatarPurgeCandidate[];
@@ -63,9 +65,17 @@ export function isAccountIdentityShape(uid: string): boolean {
   return /^[A-Za-z0-9_-]{28}$/.test(uid) || /^[0-9]{6,20}$/.test(uid);
 }
 
+/** Upper bound on owner ids examined per run (cheap id-only reads). */
+export const DELETED_ACCOUNT_PURGE_SCAN_LIMIT = 5000;
+
 export type DeletedAccountAvatarPurgeDeps = {
-  /** userPrivateMedia document ids (owner uids), bounded by `limit`. */
-  listPrivateMediaOwnerUids(limit: number): Promise<string[]>;
+  /**
+   * userPrivateMedia document ids (owner uids) in stable document-id order,
+   * bounded by `scanLimit`. Every owner must be reachable by the scan: the
+   * purge cap (`limit`) bounds how many cleanups are applied per run, never
+   * how many owners are examined.
+   */
+  listPrivateMediaOwnerUids(scanLimit: number): Promise<string[]>;
   /** True when the Firebase Auth account still exists (active or disabled). */
   authUserExists(uid: string): Promise<boolean>;
   /** True when the idempotent cleanup request for this uid already completed. */
@@ -90,9 +100,13 @@ function countOperations(operations: CleanupOperation[]): Record<string, number>
 
 export async function purgeAvatarPrivateMediaForDeletedAccounts(
   deps: DeletedAccountAvatarPurgeDeps,
-  options: { limit?: number; dryRun?: boolean } = {},
+  options: { limit?: number; scanLimit?: number; dryRun?: boolean } = {},
 ): Promise<DeletedAccountAvatarPurgeSummary> {
   const limit = Math.max(1, Math.min(options.limit ?? 25, 100));
+  const scanLimit = Math.max(
+    limit,
+    Math.min(options.scanLimit ?? DELETED_ACCOUNT_PURGE_SCAN_LIMIT, DELETED_ACCOUNT_PURGE_SCAN_LIMIT),
+  );
   const dryRun = options.dryRun === true;
   const summary: DeletedAccountAvatarPurgeSummary = {
     scanned: 0,
@@ -101,12 +115,17 @@ export async function purgeAvatarPrivateMediaForDeletedAccounts(
     unclassifiedIdentity: 0,
     alreadyCompleted: 0,
     purged: 0,
+    deferred: 0,
     errors: 0,
     dryRun,
     candidates: [],
     unclassified: [],
   };
-  const uids = await deps.listPrivateMediaOwnerUids(limit);
+  // Every owner is examined (bounded by scanLimit); only the number of
+  // cleanups applied per run is capped by `limit`. Owners beyond the cap are
+  // reported as deferred and picked up by the next run, because completed
+  // cleanups short-circuit and the scan order is stable.
+  const uids = await deps.listPrivateMediaOwnerUids(scanLimit);
   for (const uid of uids) {
     summary.scanned += 1;
     try {
@@ -124,6 +143,10 @@ export async function purgeAvatarPrivateMediaForDeletedAccounts(
         continue;
       }
       summary.authMissing += 1;
+      if (summary.candidates.length >= limit) {
+        summary.deferred += 1;
+        continue;
+      }
       const plannedOperations = countOperations(await deps.planCleanup(uid));
       summary.candidates.push({ uidHash: uidHashForLog(uid), plannedOperations });
       if (dryRun) continue;
@@ -156,9 +179,26 @@ export function createDeletedAccountAvatarPurgeDeps(
       .digest("hex")
       .slice(0, 32);
   return {
-    async listPrivateMediaOwnerUids(limit) {
-      const snap = await firestore.collection("userPrivateMedia").limit(limit).get();
-      return snap.docs.map((doc) => doc.id);
+    async listPrivateMediaOwnerUids(scanLimit) {
+      // Id-only pagination in document-id order so every owner is reachable
+      // regardless of collection size; no document bodies are read here.
+      const pageSize = 500;
+      const uids: string[] = [];
+      let cursor: string | null = null;
+      while (uids.length < scanLimit) {
+        const take = Math.min(pageSize, scanLimit - uids.length);
+        let query = firestore
+          .collection("userPrivateMedia")
+          .orderBy(FieldPath.documentId())
+          .select()
+          .limit(take);
+        if (cursor) query = query.startAfter(cursor);
+        const snap = await query.get();
+        for (const doc of snap.docs) uids.push(doc.id);
+        if (snap.size < take) break;
+        cursor = snap.docs[snap.docs.length - 1].id;
+      }
+      return uids;
     },
     async authUserExists(uid) {
       try {

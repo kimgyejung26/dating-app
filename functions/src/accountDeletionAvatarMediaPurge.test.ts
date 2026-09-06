@@ -88,7 +88,7 @@ test("3: nothing listed (private doc missing) is a safe no-op", async () => {
   const fake: Fake = { uids: [], auth: new Set(), completed: new Set(), runs: [], plans: [] };
   const summary = await purgeAvatarPrivateMediaForDeletedAccounts(deps(fake));
   assert.deepEqual({ ...summary, candidates: [] }, {
-    scanned: 0, authPresent: 0, authMissing: 0, unclassifiedIdentity: 0, alreadyCompleted: 0, purged: 0, errors: 0, dryRun: false, candidates: [], unclassified: [],
+    scanned: 0, authPresent: 0, authMissing: 0, unclassifiedIdentity: 0, alreadyCompleted: 0, purged: 0, deferred: 0, errors: 0, dryRun: false, candidates: [], unclassified: [],
   });
 });
 
@@ -124,10 +124,33 @@ test("8: rerun is idempotent - completed owners short-circuit before any Auth lo
   assert.deepEqual(fake.plans, []);
 });
 
-test("limit is bounded to at most 100 per run and at least 1", async () => {
-  const fake: Fake = { uids: Array.from({ length: 150 }, (_, i) => `${"u".repeat(20)}${String(i).padStart(8, "0")}`), auth: new Set(), completed: new Set(), runs: [], plans: [] };
-  const summary = await purgeAvatarPrivateMediaForDeletedAccounts(deps(fake), { limit: 500, dryRun: true });
-  assert.equal(summary.scanned, 100);
+test("every owner is scanned regardless of the purge cap; the cap bounds cleanups per run and the rest converge on later runs", async () => {
+  // Production regression (2026-09-06 manual run): the scan itself was cut at
+  // `limit`, so owners past position 25 in userPrivateMedia were never examined.
+  const owners = Array.from({ length: 150 }, (_, i) => `${"u".repeat(20)}${String(i).padStart(8, "0")}`);
+  const gone = new Set([owners[10], owners[60], owners[120], owners[149]]);
+  const fake: Fake = { uids: owners, auth: new Set(owners.filter((u) => !gone.has(u))), completed: new Set(), runs: [], plans: [] };
+
+  const capped = await purgeAvatarPrivateMediaForDeletedAccounts(deps(fake), { limit: 2, dryRun: true });
+  assert.equal(capped.scanned, 150, "scan is not truncated at the purge cap");
+  assert.equal(capped.authMissing, 4, "owners beyond the cap are still classified");
+  assert.equal(capped.candidates.length, 2);
+  assert.equal(capped.deferred, 2);
+  assert.deepEqual(fake.plans, [owners[10], owners[60]], "planning happens only within the cap");
+
+  const first = await purgeAvatarPrivateMediaForDeletedAccounts(deps(fake), { limit: 2 });
+  assert.equal(first.purged, 2);
+  assert.equal(first.deferred, 2);
+  const second = await purgeAvatarPrivateMediaForDeletedAccounts(deps(fake), { limit: 2 });
+  assert.equal(second.alreadyCompleted, 2, "completed owners short-circuit");
+  assert.equal(second.purged, 2, "deferred owners are purged on the next run");
+  assert.equal(second.deferred, 0);
+  assert.deepEqual(fake.runs, [owners[10], owners[60], owners[120], owners[149]], "no duplicate cleanup");
+
+  const bounded = await purgeAvatarPrivateMediaForDeletedAccounts(deps(fake), { limit: 10, scanLimit: 30, dryRun: true });
+  assert.equal(bounded.scanned, 30, "scanLimit bounds the id scan");
+  const atLeastCap = await purgeAvatarPrivateMediaForDeletedAccounts(deps(fake), { limit: 50, scanLimit: 30, dryRun: true });
+  assert.equal(atLeastCap.scanned, 50, "the scan never covers fewer owners than the purge cap");
 });
 
 test("synthetic fixture / smoke ids are reported as unclassified and never run through the account-deletion contract", async () => {
