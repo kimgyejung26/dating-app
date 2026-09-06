@@ -19,6 +19,10 @@ import {
   type AccountDeletionSocialDocs,
   type SocialCleanupOperation,
 } from "./accountDeletionSocialCleanup";
+import {
+  resolveAccountDeletionOwner,
+  type AccountDeletionOwner,
+} from "./accountDeletionAuthorization";
 import { kakaoIdentityHash } from "./kakaoIdentityLink";
 import { normalizeYonseiEmail } from "./studentVerificationEmail";
 
@@ -130,7 +134,7 @@ type GcsRef = {
   path: string;
 };
 
-type CleanupDocs = {
+export type CleanupDocs = {
   userData: Record<string, unknown>;
   privateMediaData: Record<string, unknown>;
   candidateDocs: Array<{ id: string; data: Record<string, unknown> }>;
@@ -1249,37 +1253,81 @@ export function createAvatarCleanupFirestoreExecutor(
   };
 }
 
+export type CleanupExecutorFactory = (
+  firestore: Firestore,
+  uid: string,
+  authUid: string | null,
+  options: CleanupExecutorOptions,
+) => CleanupExecutor;
+
+export type CleanupAvatarMediaHandlerDeps = {
+  firestore: Firestore;
+  /** Feature authorization (student-verified users doc) for consent withdrawal. */
+  resolveUser: ResolveCleanupUser;
+  /** Owner-lifecycle authorization for account deletion (auth uid only). */
+  resolveOwner?: (
+    firestore: Firestore,
+    auth: CallableRequest<unknown>["auth"],
+  ) => Promise<AccountDeletionOwner>;
+  executorFactory?: CleanupExecutorFactory;
+};
+
+/**
+ * Callable body, separated from `onCall` so authorization can be unit tested.
+ *
+ * `account_deletion` is authorized by identity ownership alone: the owner is
+ * `request.auth.uid`, whether or not that identity finished student
+ * verification or has a `users/{uid}` document. `consent_withdrawal` remains a
+ * feature action on a verified account and keeps the feature resolver.
+ */
+export async function handleCleanupAvatarMediaRequest(
+  deps: CleanupAvatarMediaHandlerDeps,
+  request: Pick<CallableRequest<unknown>, "auth" | "data">,
+): Promise<AvatarCleanupResponse> {
+  const { clientRequestId, reason } = requireAvatarCleanupRequest(request.data);
+  const authUid =
+    typeof request.auth?.uid === "string" ? request.auth.uid : null;
+  const executorFactory =
+    deps.executorFactory ?? createAvatarCleanupFirestoreExecutor;
+  let uid: string;
+  let executorOptions: CleanupExecutorOptions = {};
+  if (reason === "account_deletion") {
+    const owner = await (deps.resolveOwner ?? resolveAccountDeletionOwner)(
+      deps.firestore,
+      request.auth,
+    );
+    uid = requirePathSegment(owner.uid, "uid");
+    executorOptions = {
+      userDocPolicy: owner.usersDocExists ? "require" : "skip_if_missing",
+    };
+  } else {
+    const user = await deps.resolveUser(request.auth);
+    uid = requirePathSegment(user.userId, "uid");
+  }
+  try {
+    return await executeAvatarCleanup({
+      uid,
+      clientRequestId,
+      reason,
+      executor: executorFactory(deps.firestore, uid, authUid, executorOptions),
+    });
+  } catch (error) {
+    logger.error("Avatar media cleanup failed", {
+      uidHash: uidHash(uid),
+      reason,
+      status: "failed",
+      ...safeErrorLogFields(error),
+    });
+    if (error instanceof HttpsError) throw error;
+    throw new HttpsError("internal", "avatar_cleanup_failed");
+  }
+}
+
 export function createCleanupAvatarMediaFunction(
   firestore: Firestore,
   resolveUser: ResolveCleanupUser,
 ) {
-  return onCall(
-    CLEANUP_AVATAR_MEDIA_CALLABLE_OPTIONS,
-    async (request) => {
-      const user = await resolveUser(request.auth);
-      const uid = requirePathSegment(user.userId, "uid");
-      const authUid =
-        typeof request.auth?.uid === "string" ? request.auth.uid : null;
-      const { clientRequestId, reason } = requireAvatarCleanupRequest(
-        request.data,
-      );
-      try {
-        return await executeAvatarCleanup({
-          uid,
-          clientRequestId,
-          reason,
-          executor: createAvatarCleanupFirestoreExecutor(firestore, uid, authUid),
-        });
-      } catch (error) {
-        logger.error("Avatar media cleanup failed", {
-          uidHash: uidHash(uid),
-          reason,
-          status: "failed",
-          ...safeErrorLogFields(error),
-        });
-        if (error instanceof HttpsError) throw error;
-        throw new HttpsError("internal", "avatar_cleanup_failed");
-      }
-    },
+  return onCall(CLEANUP_AVATAR_MEDIA_CALLABLE_OPTIONS, (request) =>
+    handleCleanupAvatarMediaRequest({ firestore, resolveUser }, request),
   );
 }
