@@ -70,6 +70,42 @@ test("multiple failing stages are all recorded and the avatar stage still runs l
   assert.deepEqual(error.failedStages, ["messages", "teams"]);
 });
 
+test("rerun after a partial failure retries every stage and an already-converged stage does no duplicate work", async () => {
+  // Stage runners are stateless; convergence lives in each stage's own
+  // idempotency (completed cleanup requests short-circuit, purged messages
+  // carry purgedAt). Model that with a stage whose work set drains.
+  const pendingAvatarOwners = new Set(["owner_a"]);
+  const deletes: string[] = [];
+  let messagesHealthy = false;
+  const stages = {
+    messages: async () => {
+      if (!messagesHealthy) throw new Error("index missing");
+      return { purged: 0 };
+    },
+    teams: async () => ({ purged: 0 }),
+    avatarMedia: async () => {
+      const purged = [...pendingAvatarOwners];
+      for (const owner of purged) {
+        deletes.push(owner);
+        pendingAvatarOwners.delete(owner);
+      }
+      return { purged: purged.length };
+    },
+  };
+  const first = await runAccountDeletionRetentionPurgeStages(stages);
+  assert.deepEqual(first.failedStages, ["messages"]);
+  assert.deepEqual(deletes, ["owner_a"], "avatar stage did its work despite the messages failure");
+
+  messagesHealthy = true;
+  const second = await runAccountDeletionRetentionPurgeStages(stages);
+  assert.deepEqual(second.failedStages, []);
+  assert.deepEqual(deletes, ["owner_a"], "rerun performs no duplicate delete for the converged stage");
+  assert.deepEqual(
+    second.outcomes.map((outcome) => outcome.status),
+    ["ok", "ok", "ok"],
+  );
+});
+
 test("an avatar media stage failure is isolated to that stage and surfaced", async () => {
   const summary = await runAccountDeletionRetentionPurgeStages({
     messages: async () => ({ purged: 0 }),
