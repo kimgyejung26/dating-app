@@ -149,6 +149,11 @@ export function buildPublicProfileFromUser(
   const photoUrl = resolvePublicPhotoUrl(userData);
   const avatar = readMap(userData.avatar);
   const approvedAvatarUrl = asString(avatar.approvedAvatarUrl);
+  const isReviewPartition = userData.dataPartition === "play_review";
+  const isReviewFixture =
+    isReviewPartition &&
+    userData.accountType === "google_play_fixture" &&
+    userData.reviewFixtureEnabled === true;
 
   return {
     uid,
@@ -169,6 +174,13 @@ export function buildPublicProfileFromUser(
     isStudentVerified: userData.isStudentVerified === true,
     initialSetupComplete: userData.initialSetupComplete === true,
     isProfileComplete: userData.initialSetupComplete === true,
+    dataPartition: isReviewPartition ? "play_review" : "production",
+    accountType: isReviewFixture
+      ? "google_play_fixture"
+      : isReviewPartition && userData.accountType === "google_play_review"
+        ? "google_play_review"
+        : "member",
+    reviewFixtureEnabled: isReviewFixture,
     // This boolean contains no friend information. It only prevents a profile
     // from entering 1:1 recommendation surfaces before privacy reconciliation.
     // Missing is not ready. Legacy accounts must complete the same verified

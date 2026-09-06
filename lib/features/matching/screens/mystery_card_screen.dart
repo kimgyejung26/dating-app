@@ -13,6 +13,7 @@ import '../../../router/route_names.dart';
 import '../../../services/ai_recommendation_service.dart';
 import '../../../services/ask_service.dart';
 import '../../../services/rec_event_service.dart';
+import '../../../services/play_review_access_service.dart';
 import '../../../services/storage_service.dart';
 import '../../../services/user_service.dart';
 import '../../../shared/constants/photo_blur_constants.dart';
@@ -573,6 +574,10 @@ class _LockerRecommendationContentState
   void _logEvent(AiRecommendedProfile profile, int index, String eventType) {
     final userId = _userId;
     if (userId == null) return;
+    // Review feed telemetry is written by getPlayReviewFeed to the isolated
+    // playReviewEvents collection. Never send synthetic impressions to the
+    // production recEvents/model-training stream.
+    if (userId == PlayReviewAccessService.reviewerUid) return;
     // 새로고침 구매 자체는 취향 신호가 아니므로 recEvents 에 남기지 않는다.
     // 노출된 카드의 impression/open 은 기존 흐름 그대로 기록한다.
     //

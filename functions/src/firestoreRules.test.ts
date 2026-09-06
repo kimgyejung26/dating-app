@@ -53,11 +53,11 @@ test("owner private collections and app feedback rules fail closed", () => {
   );
   assertContains(
     "issue reports must be authenticated owner-bound create only",
-    "match /app_issue_reports/{reportId} { allow create: if isSignedIn() && request.resource.data.reporterId is string && request.resource.data.reporterId == request.auth.uid"
+    "match /app_issue_reports/{reportId} { allow create: if isSignedIn() && !isPlayReviewSession() && request.resource.data.reporterId is string && request.resource.data.reporterId == request.auth.uid"
   );
   assertContains(
     "inquiries must be authenticated owner-bound create only",
-    "match /app_inquiries/{inquiryId} { allow create: if isSignedIn() && request.resource.data.inquirerId is string && request.resource.data.inquirerId == request.auth.uid"
+    "match /app_inquiries/{inquiryId} { allow create: if isSignedIn() && !isPlayReviewSession() && request.resource.data.inquirerId is string && request.resource.data.inquirerId == request.auth.uid"
   );
 });
 
@@ -101,7 +101,7 @@ test("operations metadata is server-only and support rooms protect their assignm
 test("operations accounts are excluded before direct-chat and mutual-match side effects", () => {
   const indexSource = readFileSync(resolve(__dirname, "../src/index.ts"), "utf8");
   assert.match(indexSource, /partnerData\.accountType === "operations"/);
-  assert.match(indexSource, /toUserSnap\.data\(\)\?\.accountType === "operations"/);
+  assert.match(indexSource, /toUserData\.accountType === "operations"/);
 });
 
 test("recommendation exclusions are server-written and owner-readable", () => {
@@ -190,7 +190,7 @@ test("matching and recommendation rules are participant or owner scoped", () => 
   );
   assertContains(
     "interactions must be participant-readable and from-user-bound create only",
-    "match /interactions/{interactionId} { allow read: if isInteractionParticipant(resource.data); allow create: if isCanonicalAppSession() && request.resource.data.fromUserId is string && request.resource.data.fromUserId == request.auth.uid"
+    "match /interactions/{interactionId} { allow read: if isInteractionParticipant(resource.data); allow create: if (isCanonicalAppSession() || isPlayReviewSession()) && request.resource.data.fromUserId is string && request.resource.data.fromUserId == request.auth.uid"
   );
   assertContains(
     "matches must be participant-readable and backend-created",
@@ -205,15 +205,15 @@ test("matching and recommendation rules are participant or owner scoped", () => 
 test("canonical app session gates the interactive surfaces (auth re-architecture)", () => {
   assertContains(
     "isCanonicalAppSession helper must accept appSession or legacy kakaoUserId claims only",
-    "function isCanonicalAppSession() { return request.auth != null && (request.auth.token.appSession == true || request.auth.token.kakaoUserId != null); }"
+    "function isCanonicalAppSession() { return request.auth != null && request.auth.token.playReviewer != true && (request.auth.token.appSession == true || request.auth.token.kakaoUserId != null); }"
   );
   assertContains(
     "publicProfiles get must require a canonical app session",
-    "match /publicProfiles/{uid} { allow get: if isCanonicalAppSession(); allow list: if false; allow create, update, delete: if false; }"
+    "match /publicProfiles/{uid} { allow get: if (isCanonicalAppSession() || isPlayReviewSession()) && samePartitionAsCaller(resource.data); allow list: if false; allow create, update, delete: if false; }"
   );
   assertContains(
     "interactions create must require a canonical app session",
-    "match /interactions/{interactionId} { allow read: if isInteractionParticipant(resource.data); allow create: if isCanonicalAppSession() &&"
+    "match /interactions/{interactionId} { allow read: if isInteractionParticipant(resource.data); allow create: if (isCanonicalAppSession() || isPlayReviewSession()) &&"
   );
   assertContains(
     "asks create must require a canonical app session",
@@ -228,6 +228,25 @@ test("canonical app session gates the interactive surfaces (auth re-architecture
   assertContains(
     "bamboo post create must require a canonical app session",
     "allow create: if isCanonicalAppSession() && request.resource.data.authorId == request.auth.uid && request.resource.data.postId is string"
+  );
+});
+
+test("Google Play review Bamboo Forest has a separate root and review-only gate", () => {
+  assertContains(
+    "production Bamboo remains unavailable to Play Review sessions",
+    "match /bamboo_posts/{postId} { allow get, list: if isSignedIn() && !isPlayReviewSession();"
+  );
+  assertContains(
+    "review Bamboo uses its own root collection",
+    "match /playReviewBambooPosts/{postId} { allow get, list: if isPlayReviewSession();"
+  );
+  assertContains(
+    "review post creation requires the review partition marker",
+    "request.resource.data.dataPartition == 'play_review';"
+  );
+  assertContains(
+    "review Bamboo ownership maps cannot be read by ordinary sessions",
+    "match /playReviewBambooPostAuthors/{postId} { allow get, list: if isPlayReviewSession() && resource.data.ownerUid == request.auth.uid;"
   );
 });
 
@@ -375,7 +394,7 @@ test("chat rooms keep participantIds immutable and message updates scoped", () =
 test("recEvents are append-only with a typed whitelist", () => {
   assertContains(
     "recEvent creates must pass isValidRecEventCreate",
-    "allow create: if isSelf(userId) && isValidRecEventCreate(userId);"
+    "allow create: if isSelf(userId) && !isPlayReviewSession() && isValidRecEventCreate(userId);"
   );
   assertContains(
     "recEvent updates and deletes are denied",
@@ -385,6 +404,38 @@ test("recEvents are append-only with a typed whitelist", () => {
     "recEvent types are limited to the app vocabulary",
     "function isAllowedRecEventType(eventType) { return eventType in [ 'impression', 'open', 'detail_open', 'view', 'like', 'nope', 'super_like', 'swipe_right', 'block', 'report' ]; }"
   );
+});
+
+test("Google Play review data is immutable and partition-isolated", () => {
+  for (const field of [
+    "'accountType'",
+    "'dataPartition'",
+    "'reviewAccess'",
+    "'reviewProfileReady'",
+    "'reviewFixtureEnabled'",
+  ]) {
+    assertContains(`review authority protects ${field}`, field);
+  }
+  assertContains(
+    "user updates must preserve every review authority field",
+    "allow update: if onboardingAvatarPhotoFieldsUnchanged() && reviewAuthorityFieldsUnchanged() &&",
+  );
+  assertContains(
+    "review interactions must resolve the target partition",
+    "interactionPartitionIsValid()",
+  );
+  assertContains(
+    "public profile reads must match the caller partition",
+    "samePartitionAsCaller(resource.data)",
+  );
+  for (const path of [
+    "match /playReviewRateLimits/{ipHash} { allow read, write: if false; }",
+    "match /playReviewConfig/{docId} { allow read, write: if false; }",
+    "match /playReviewSessions/{reviewerUid} { allow read, write: if false; }",
+    "match /playReviewEvents/{reviewerUid}/events/{eventId} { allow read, write: if false; }",
+  ]) {
+    assertContains("review control plane stays server-only", path);
+  }
 });
 
 test("team meeting request service uses callables for backend-owned writes", () => {

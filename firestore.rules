@@ -1,5 +1,18 @@
 rules_version = '2';
 
+// ===============================================================
+// Assumed Data Model (Google Play review additions)
+// ===============================================================
+// users/{uid}: private account. accountType/dataPartition/reviewAccess/
+//   reviewProfileReady/reviewFixtureEnabled are optional server-owned fields.
+// publicProfiles/{uid}: authenticated display-only profile. dataPartition is
+//   "production" or "play_review"; reviewFixtureEnabled is boolean.
+// interactions/{id}: fromUserId/toUserId/action/source strings, optional map
+//   metadata, timestamp createdAt, optional immutable dataPartition.
+// playReviewRateLimits/{ipHash}, playReviewConfig/current,
+// playReviewSessions/{uid}, playReviewEvents/{uid}/events/{id}: server-only.
+// ===============================================================
+
 service cloud.firestore {
   match /databases/{database}/documents {
     function isYonseiEmail(email) {
@@ -45,8 +58,71 @@ service cloud.firestore {
     // minted by completePrimaryStudentEmailAuth carry appSession.
     function isCanonicalAppSession() {
       return request.auth != null &&
+          request.auth.token.playReviewer != true &&
           (request.auth.token.appSession == true ||
             request.auth.token.kakaoUserId != null);
+    }
+
+    // Review traffic is an isolated data plane. Existing production documents
+    // predate dataPartition, so a missing value remains production.
+    function callerDataPartition() {
+      return request.auth != null &&
+          request.auth.uid == 'play-reviewer-v1' &&
+          request.auth.token.appSession == true &&
+          request.auth.token.playReviewer == true &&
+          request.auth.token.dataPartition == 'play_review'
+        ? 'play_review'
+        : 'production';
+    }
+
+    function documentDataPartition(data) {
+      return data.get('dataPartition', 'production');
+    }
+
+    function samePartitionAsCaller(data) {
+      return request.auth != null &&
+          documentDataPartition(data) == callerDataPartition();
+    }
+
+    function isPlayReviewSession() {
+      return request.auth != null &&
+          request.auth.uid == 'play-reviewer-v1' &&
+          request.auth.token.appSession == true &&
+          request.auth.token.playReviewer == true &&
+          request.auth.token.dataPartition == 'play_review';
+    }
+
+    function reviewAuthorityFieldsUnchanged() {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny([
+        'accountType',
+        'dataPartition',
+        'reviewAccess',
+        'reviewProfileReady',
+        'reviewFixtureEnabled'
+      ]);
+    }
+
+    function interactionPartitionIsValid() {
+      return request.resource.data.toUserId is string &&
+          samePartitionAsCaller(
+            get(/databases/$(database)/documents/users/$(request.resource.data.toUserId)).data
+          ) &&
+          (
+            (isPlayReviewSession() &&
+              request.resource.data.dataPartition == 'play_review') ||
+            (!isPlayReviewSession() &&
+              request.resource.data.get('dataPartition', 'production') == 'production')
+          );
+    }
+
+    // Anonymous questions must stay in the caller's data plane just like
+    // likes.  This admits reviewer-to-fixture traffic while preventing either
+    // a reviewer or an ordinary account from contacting the other partition.
+    function askRecipientPartitionIsValid() {
+      return request.resource.data.toUserId is string &&
+          samePartitionAsCaller(
+            get(/databases/$(database)/documents/users/$(request.resource.data.toUserId)).data
+          );
     }
 
     function isSelf(uid) {
@@ -134,6 +210,52 @@ service cloud.firestore {
     function bambooCommentCounterUpdateOk() {
       return intFieldUnchangedOrDeltaOne('likeCount') &&
         nonNegativeIntField('likeCount');
+    }
+
+    // Review Bamboo Forest is deliberately a different collection root. A
+    // production query over legacy bamboo_posts cannot be proven to exclude a
+    // dataPartition field it does not filter on, so using a partition column
+    // there would either leak review data or require migrating all legacy
+    // posts. These helpers bind review-only counter writes to that root.
+    function reviewBambooPostPath(postId) {
+      return /databases/$(database)/documents/playReviewBambooPosts/$(postId);
+    }
+
+    function reviewBambooCommentPath(postId, commentId) {
+      return /databases/$(database)/documents/playReviewBambooPosts/$(postId)/comments/$(commentId);
+    }
+
+    function reviewBambooParentExists(postId) {
+      return exists(reviewBambooPostPath(postId)) &&
+        get(reviewBambooPostPath(postId)).data.dataPartition == 'play_review';
+    }
+
+    function reviewBambooLikeCountBound(postId) {
+      return !bambooFieldChanged('likeCount') ||
+        (
+          bambooFieldDelta('likeCount') == 1 &&
+          !exists(/databases/$(database)/documents/playReviewBambooPosts/$(postId)/likes/$(request.auth.uid)) &&
+          existsAfter(/databases/$(database)/documents/playReviewBambooPosts/$(postId)/likes/$(request.auth.uid))
+        ) ||
+        (
+          bambooFieldDelta('likeCount') == -1 &&
+          exists(/databases/$(database)/documents/playReviewBambooPosts/$(postId)/likes/$(request.auth.uid)) &&
+          !existsAfter(/databases/$(database)/documents/playReviewBambooPosts/$(postId)/likes/$(request.auth.uid))
+        );
+    }
+
+    function reviewBambooCommentLikeCountBound(postId, commentId) {
+      return !bambooFieldChanged('likeCount') ||
+        (
+          bambooFieldDelta('likeCount') == 1 &&
+          !exists(/databases/$(database)/documents/playReviewBambooPosts/$(postId)/comments/$(commentId)/likes/$(request.auth.uid)) &&
+          existsAfter(/databases/$(database)/documents/playReviewBambooPosts/$(postId)/comments/$(commentId)/likes/$(request.auth.uid))
+        ) ||
+        (
+          bambooFieldDelta('likeCount') == -1 &&
+          exists(/databases/$(database)/documents/playReviewBambooPosts/$(postId)/comments/$(commentId)/likes/$(request.auth.uid)) &&
+          !existsAfter(/databases/$(database)/documents/playReviewBambooPosts/$(postId)/comments/$(commentId)/likes/$(request.auth.uid))
+        );
     }
 
     function isVerifiedOwner(kakaoUserId) {
@@ -940,7 +1062,8 @@ service cloud.firestore {
           );
 
 
-      allow update: if onboardingAvatarPhotoFieldsUnchanged() && (
+      allow update: if onboardingAvatarPhotoFieldsUnchanged() &&
+        reviewAuthorityFieldsUnchanged() && (
           (
             // Student verification write, performed by the email-link session
             // (public/index.html, or the in-app link handler). The mailbox must
@@ -1203,13 +1326,14 @@ request.resource.data.diff(resource.data).affectedKeys().hasOnly([
     }
 
     match /recEvents/{userId} {
-      allow read: if isSelf(userId);
-      allow create, update: if isSelf(userId);
+      allow read: if isSelf(userId) && !isPlayReviewSession();
+      allow create, update: if isSelf(userId) && !isPlayReviewSession();
       allow delete: if false;
 
       match /events/{eventId} {
-        allow read: if isSelf(userId);
-        allow create: if isSelf(userId) && isValidRecEventCreate(userId);
+        allow read: if isSelf(userId) && !isPlayReviewSession();
+        allow create: if isSelf(userId) && !isPlayReviewSession() &&
+          isValidRecEventCreate(userId);
         allow update, delete: if false;
       }
     }
@@ -1701,10 +1825,10 @@ request.resource.data.diff(resource.data).affectedKeys().hasOnly([
     // likeCount / commentCount / score7d 를 임의 값으로 바꿀 수 있었다
     // (인기 순위 조작).
     match /bamboo_posts/{postId} {
-      allow get, list: if isSignedIn();
+      allow get, list: if isSignedIn() && !isPlayReviewSession();
 
       allow create: if
-        isCanonicalAppSession() &&
+        (isCanonicalAppSession() || isPlayReviewSession()) &&
         request.resource.data.authorId == request.auth.uid &&
         request.resource.data.postId is string &&
         request.resource.data.authorId is string &&
@@ -1728,7 +1852,7 @@ request.resource.data.diff(resource.data).affectedKeys().hasOnly([
         )
         ||
         (
-          isSignedIn() &&
+          isSignedIn() && !isPlayReviewSession() &&
           request.resource.data.authorId == resource.data.authorId &&
           request.resource.data.content == resource.data.content &&
           request.resource.data.category == resource.data.category &&
@@ -1749,14 +1873,14 @@ request.resource.data.diff(resource.data).affectedKeys().hasOnly([
       // 이전: 익명 read, create 에 auth 조건 없음, delete 가 `if true` 여서
       // 남의 좋아요를 취소할 수 있었다.
       match /likes/{userId} {
-        allow get, list: if isSignedIn();
+        allow get, list: if isSignedIn() && !isPlayReviewSession();
 
         allow create: if
-          isSelf(userId) &&
+          isSelf(userId) && !isPlayReviewSession() &&
           request.resource.data.userId is string &&
           request.resource.data.userId == request.auth.uid;
 
-        allow delete: if isSelf(userId);
+        allow delete: if isSelf(userId) && !isPlayReviewSession();
         allow update: if false;
       }
 
@@ -1764,10 +1888,10 @@ request.resource.data.diff(resource.data).affectedKeys().hasOnly([
       // Comments / Replies
       // ---------------------------------------------------------------------
       match /comments/{commentId} {
-        allow get, list: if isSignedIn();
+        allow get, list: if isSignedIn() && !isPlayReviewSession();
 
         allow create: if
-          isSignedIn() &&
+          isSignedIn() && !isPlayReviewSession() &&
           request.resource.data.authorId == request.auth.uid &&
           request.resource.data.commentId is string &&
           request.resource.data.authorId is string &&
@@ -1786,7 +1910,7 @@ request.resource.data.diff(resource.data).affectedKeys().hasOnly([
           )
           ||
           (
-            isSignedIn() &&
+            isSignedIn() && !isPlayReviewSession() &&
             request.resource.data.authorId == resource.data.authorId &&
             request.resource.data.content == resource.data.content &&
             request.resource.data.parentCommentId == resource.data.parentCommentId &&
@@ -1802,14 +1926,14 @@ request.resource.data.diff(resource.data).affectedKeys().hasOnly([
         // Comment likes
         // -------------------------------------------------------------------
         match /likes/{userId} {
-          allow get, list: if isSignedIn();
+          allow get, list: if isSignedIn() && !isPlayReviewSession();
 
           allow create: if
-            isSelf(userId) &&
+            isSelf(userId) && !isPlayReviewSession() &&
             request.resource.data.userId is string &&
             request.resource.data.userId == request.auth.uid;
 
-          allow delete: if isSelf(userId);
+          allow delete: if isSelf(userId) && !isPlayReviewSession();
           allow update: if false;
         }
       }
@@ -1868,6 +1992,198 @@ request.resource.data.diff(resource.data).affectedKeys().hasOnly([
                                    request.resource.data.commentId))
           .data.authorId == request.auth.uid;
 
+      allow update, delete: if false;
+    }
+
+    // -----------------------------------------------------------------------
+    // Google Play review Bamboo Forest
+    // -----------------------------------------------------------------------
+    // Review community content has its own root collection. This is a strict
+    // data-plane boundary: Play Review sessions are denied from bamboo_posts
+    // above, while ordinary app sessions are denied from every path below.
+    // Server-seeded fixture documents can use reviewFixture; client-created
+    // review content uses the narrower schemas enforced here.
+    match /playReviewBambooPosts/{postId} {
+      allow get, list: if isPlayReviewSession();
+
+      allow create: if
+        isPlayReviewSession() &&
+        request.resource.data.keys().hasOnly([
+          'postId', 'authorId', 'content', 'category', 'tags',
+          'createdAt', 'updatedAt', 'likeCount', 'commentCount', 'score7d',
+          'isDeleted', 'dataPartition'
+        ]) &&
+        request.resource.data.postId is string &&
+        request.resource.data.postId == postId &&
+        request.resource.data.authorId == request.auth.uid &&
+        request.resource.data.authorId is string &&
+        request.resource.data.content is string &&
+        request.resource.data.content.size() > 0 &&
+        request.resource.data.content.size() <= 500 &&
+        request.resource.data.category is string &&
+        request.resource.data.category.size() > 0 &&
+        request.resource.data.category.size() <= 40 &&
+        request.resource.data.tags is list &&
+        request.resource.data.tags.size() <= 10 &&
+        request.resource.data.createdAt is timestamp &&
+        request.resource.data.updatedAt is timestamp &&
+        request.resource.data.likeCount == 0 &&
+        request.resource.data.commentCount == 0 &&
+        request.resource.data.score7d == 0 &&
+        request.resource.data.isDeleted == false &&
+        request.resource.data.dataPartition == 'play_review';
+
+      allow update: if
+        isPlayReviewSession() &&
+        resource.data.dataPartition == 'play_review' &&
+        request.resource.data.dataPartition == 'play_review' &&
+        (
+          (
+            resource.data.authorId == request.auth.uid &&
+            request.resource.data.isDeleted == true &&
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+              'isDeleted', 'updatedAt'
+            ])
+          ) ||
+          (
+            request.resource.data.authorId == resource.data.authorId &&
+            request.resource.data.content == resource.data.content &&
+            request.resource.data.category == resource.data.category &&
+            request.resource.data.tags == resource.data.tags &&
+            request.resource.data.isDeleted == resource.data.isDeleted &&
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+              'likeCount', 'commentCount', 'score7d', 'updatedAt'
+            ]) &&
+            bambooPostCounterUpdateOk() &&
+            reviewBambooLikeCountBound(postId) &&
+            bambooScore7dMovesWithCounters()
+          )
+        );
+
+      allow delete: if false;
+
+      match /likes/{userId} {
+        allow get, list: if isPlayReviewSession();
+        allow create: if
+          isPlayReviewSession() && isSelf(userId) &&
+          request.resource.data.keys().hasOnly([
+            'userId', 'createdAt', 'dataPartition'
+          ]) &&
+          request.resource.data.userId == request.auth.uid &&
+          request.resource.data.createdAt is timestamp &&
+          request.resource.data.dataPartition == 'play_review';
+        allow delete: if isPlayReviewSession() && isSelf(userId);
+        allow update: if false;
+      }
+
+      match /comments/{commentId} {
+        allow get, list: if isPlayReviewSession();
+        allow create: if
+          isPlayReviewSession() &&
+          reviewBambooParentExists(postId) &&
+          request.resource.data.keys().hasOnly([
+            'commentId', 'authorId', 'content', 'parentCommentId',
+            'createdAt', 'updatedAt', 'likeCount', 'isDeleted',
+            'dataPartition'
+          ]) &&
+          request.resource.data.commentId is string &&
+          request.resource.data.commentId == commentId &&
+          request.resource.data.authorId == request.auth.uid &&
+          request.resource.data.authorId is string &&
+          request.resource.data.content is string &&
+          request.resource.data.content.size() > 0 &&
+          request.resource.data.content.size() <= 500 &&
+          (
+            request.resource.data.parentCommentId == null ||
+            (
+              request.resource.data.parentCommentId is string &&
+              request.resource.data.parentCommentId.size() <= 128
+            )
+          ) &&
+          request.resource.data.createdAt is timestamp &&
+          request.resource.data.updatedAt is timestamp &&
+          request.resource.data.likeCount == 0 &&
+          request.resource.data.isDeleted == false &&
+          request.resource.data.dataPartition == 'play_review';
+
+        allow update: if
+          isPlayReviewSession() &&
+          resource.data.dataPartition == 'play_review' &&
+          request.resource.data.dataPartition == 'play_review' &&
+          (
+            (
+              resource.data.authorId == request.auth.uid &&
+              request.resource.data.isDeleted == true &&
+              request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+                'isDeleted', 'updatedAt'
+              ])
+            ) ||
+            (
+              request.resource.data.authorId == resource.data.authorId &&
+              request.resource.data.content == resource.data.content &&
+              request.resource.data.parentCommentId ==
+                resource.data.parentCommentId &&
+              request.resource.data.isDeleted == resource.data.isDeleted &&
+              request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+                'likeCount', 'updatedAt'
+              ]) &&
+              bambooCommentCounterUpdateOk() &&
+              reviewBambooCommentLikeCountBound(postId, commentId)
+            )
+          );
+
+        allow delete: if false;
+
+        match /likes/{userId} {
+          allow get, list: if isPlayReviewSession();
+          allow create: if
+            isPlayReviewSession() && isSelf(userId) &&
+            request.resource.data.keys().hasOnly([
+              'userId', 'createdAt', 'dataPartition'
+            ]) &&
+            request.resource.data.userId == request.auth.uid &&
+            request.resource.data.createdAt is timestamp &&
+            request.resource.data.dataPartition == 'play_review';
+          allow delete: if isPlayReviewSession() && isSelf(userId);
+          allow update: if false;
+        }
+      }
+    }
+
+    match /playReviewBambooPostAuthors/{postId} {
+      allow get, list: if
+        isPlayReviewSession() && resource.data.ownerUid == request.auth.uid;
+      allow create: if
+        isPlayReviewSession() &&
+        request.resource.data.keys().hasOnly([
+          'postId', 'ownerUid', 'createdAt', 'dataPartition'
+        ]) &&
+        request.resource.data.postId == postId &&
+        request.resource.data.ownerUid == request.auth.uid &&
+        request.resource.data.createdAt is timestamp &&
+        request.resource.data.dataPartition == 'play_review' &&
+        getAfter(reviewBambooPostPath(postId)).data.authorId == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    match /playReviewBambooCommentAuthors/{mappingId} {
+      allow get, list: if
+        isPlayReviewSession() && resource.data.ownerUid == request.auth.uid;
+      allow create: if
+        isPlayReviewSession() &&
+        request.resource.data.keys().hasOnly([
+          'postId', 'commentId', 'ownerUid', 'createdAt', 'dataPartition'
+        ]) &&
+        request.resource.data.postId is string &&
+        request.resource.data.commentId is string &&
+        mappingId ==
+          request.resource.data.postId + '__' + request.resource.data.commentId &&
+        request.resource.data.ownerUid == request.auth.uid &&
+        request.resource.data.createdAt is timestamp &&
+        request.resource.data.dataPartition == 'play_review' &&
+        getAfter(reviewBambooCommentPath(request.resource.data.postId,
+                                         request.resource.data.commentId))
+          .data.authorId == request.auth.uid;
       allow update, delete: if false;
     }
 
@@ -1946,7 +2262,7 @@ request.resource.data.diff(resource.data).affectedKeys().hasOnly([
     // 상태 변경과 삭제는 서버 전용이다.
     match /app_issue_reports/{reportId} {
       allow create: if
-        isSignedIn() &&
+        isSignedIn() && !isPlayReviewSession() &&
         request.resource.data.reporterId is string &&
         request.resource.data.reporterId == request.auth.uid &&
         request.resource.data.category is string &&
@@ -1970,7 +2286,7 @@ request.resource.data.diff(resource.data).affectedKeys().hasOnly([
     // 이전: read/update/delete 가 모두 `if true`.
     match /app_inquiries/{inquiryId} {
       allow create: if
-        isSignedIn() &&
+        isSignedIn() && !isPlayReviewSession() &&
         request.resource.data.inquirerId is string &&
         request.resource.data.inquirerId == request.auth.uid &&
         request.resource.data.category is string &&
@@ -2076,6 +2392,7 @@ request.resource.data.diff(resource.data).affectedKeys().hasOnly([
         request.resource.data.toUserId is string &&
         request.resource.data.toUserId.size() > 0 &&
         request.resource.data.toUserId != request.auth.uid &&
+        askRecipientPartitionIsValid() &&
         request.resource.data.text is string &&
         request.resource.data.text.size() > 0 &&
         request.resource.data.status == 'sent';
@@ -2101,16 +2418,17 @@ request.resource.data.diff(resource.data).affectedKeys().hasOnly([
     match /interactions/{interactionId} {
       allow read: if isInteractionParticipant(resource.data);
       allow create: if
-        isCanonicalAppSession() &&
+        (isCanonicalAppSession() || isPlayReviewSession()) &&
         request.resource.data.fromUserId is string &&
         request.resource.data.fromUserId == request.auth.uid &&
         request.resource.data.toUserId is string &&
         request.resource.data.toUserId.size() > 0 &&
         request.resource.data.action is string &&
         request.resource.data.source is string &&
+        interactionPartitionIsValid() &&
         request.resource.data.keys().hasOnly([
           'fromUserId', 'toUserId', 'action', 'source',
-          'metadata', 'createdAt'
+          'metadata', 'createdAt', 'dataPartition'
         ]);
       allow update, delete: if false;
     }
@@ -2167,9 +2485,26 @@ request.resource.data.diff(resource.data).affectedKeys().hasOnly([
     // Never store email, studentEmail, preferenceVector, tokens, or
     // moderation internals here.
     match /publicProfiles/{uid} {
-      allow get: if isCanonicalAppSession();
+      allow get: if (isCanonicalAppSession() || isPlayReviewSession()) &&
+        samePartitionAsCaller(resource.data);
       allow list: if false;
       allow create, update, delete: if false;
+    }
+
+    // Google Play review authentication, throttling, reset audit, and
+    // synthetic telemetry are exclusively owned by Cloud Functions/Admin SDK.
+    // Credentials are held in Secret Manager and never written to Firestore.
+    match /playReviewRateLimits/{ipHash} {
+      allow read, write: if false;
+    }
+    match /playReviewConfig/{docId} {
+      allow read, write: if false;
+    }
+    match /playReviewSessions/{reviewerUid} {
+      allow read, write: if false;
+    }
+    match /playReviewEvents/{reviewerUid}/events/{eventId} {
+      allow read, write: if false;
     }
 
     // Season meeting money/ops — Admin SDK / callables only.

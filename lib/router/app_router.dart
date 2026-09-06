@@ -8,6 +8,7 @@ import '../features/splash/splash_screen.dart';
 import '../features/auth/screens/adult_verification_gate_screen.dart';
 import '../features/auth/screens/kakao_friend_connection_screen.dart';
 import '../features/auth/screens/student_verification_screen.dart';
+import '../features/auth/screens/play_review_access_screen.dart';
 import '../features/onboarding/screens/terms_screen.dart';
 
 // Onboarding
@@ -139,6 +140,8 @@ class AppRouter {
       case RouteNames.kakaoAuth:
       case RouteNames.studentVerification:
         return _cupertino(const StudentVerificationScreen());
+      case RouteNames.playReviewAccess:
+        return _cupertino(const PlayReviewAccessScreen());
       case RouteNames.adultVerification:
         return _cupertino(const AdultVerificationGateScreen());
       case RouteNames.terms:

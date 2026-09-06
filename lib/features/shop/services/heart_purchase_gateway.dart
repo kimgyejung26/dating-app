@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:crypto/crypto.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../../services/auth_service.dart';
@@ -26,23 +27,37 @@ class HeartGrantResult {
 class HeartPurchaseGateway {
   HeartPurchaseGateway({
     FirebaseFunctions? functions,
+    FirebaseAuth? firebaseAuth,
     AuthService? authService,
     StorageService? storageService,
   }) : _functions =
            functions ??
            FirebaseFunctions.instanceFor(region: firebaseFunctionsRegion),
+       _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
        _authService = authService ?? AuthService(),
        _storageService = storageService ?? StorageService();
 
   final FirebaseFunctions _functions;
+  final FirebaseAuth _firebaseAuth;
   final AuthService _authService;
   final StorageService _storageService;
 
   /// Prepares the authenticated app account before opening Google Play's
   /// purchase sheet and returns a non-reversible account identifier.
   Future<String> prepareGooglePlayAccountId() async {
-    final kakaoUserId = await _prepareAuthenticatedUserId();
-    return sha256.convert(utf8.encode(kakaoUserId)).toString();
+    final cachedAppUserId = await _storageService.getKakaoUserId();
+    final authenticatedAppUserId = _firebaseAuth.currentUser?.uid.trim();
+    if (authenticatedAppUserId == null || authenticatedAppUserId.isEmpty) {
+      throw StateError('Google Play 결제를 저장할 로그인 세션을 찾지 못했어요.');
+    }
+    if (cachedAppUserId == null ||
+        cachedAppUserId.isEmpty ||
+        cachedAppUserId != authenticatedAppUserId) {
+      // The Play purchase sheet permanently echoes this identifier. Never bind
+      // a real payment to a stale SharedPreferences account.
+      throw StateError('로그인 계정 정보가 일치하지 않아요. 다시 로그인해주세요.');
+    }
+    return googlePlayAccountIdForUserId(authenticatedAppUserId);
   }
 
   /// Prepares the authenticated app account before opening Apple's purchase
@@ -131,6 +146,10 @@ class HeartPurchaseGateway {
     if (kDebugMode) debugPrint('[IAP] $message');
   }
 }
+
+/// Must stay compatible with the Functions-side `sha256Hex(user.userId)`.
+String googlePlayAccountIdForUserId(String userId) =>
+    sha256.convert(utf8.encode(userId)).toString();
 
 /// Must stay byte-for-byte compatible with the Firebase Functions helper.
 /// StoreKit requires applicationUserName/appAccountToken to be a UUID.

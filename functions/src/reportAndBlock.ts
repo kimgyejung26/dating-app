@@ -21,6 +21,7 @@ export const MAX_REPORT_DETAILS_LENGTH = 2000;
 
 type ResolvedCallableUser = {
   userId: string;
+  data?: Record<string, unknown>;
 };
 
 type ResolveCallableUser = (
@@ -39,6 +40,11 @@ export type ReportAndBlockPlan = {
   reportData: Record<string, unknown>;
   blockWrites: BlockWrite[];
 };
+
+function dataPartitionOf(data: Record<string, unknown> | undefined): string {
+  const value = data?.dataPartition;
+  return value === undefined || value === null ? "production" : asString(value);
+}
 
 const SAFE_PATH_SEGMENT = /^[A-Za-z0-9_-]{1,128}$/;
 
@@ -180,11 +186,38 @@ export function createReportAndBlockUserFunction(
         source: data.source,
       });
 
+      const reportedSnap = await firestore
+        .collection("users")
+        .doc(plan.reportedUid)
+        .get();
+      if (!reportedSnap.exists) {
+        throw new HttpsError("not-found", "신고할 사용자를 찾을 수 없어요.");
+      }
+      const reporterPartition = dataPartitionOf(user.data);
+      const reportedPartition = dataPartitionOf(
+        reportedSnap.data() as Record<string, unknown> | undefined,
+      );
+      if (
+        !["production", "play_review"].includes(reporterPartition) ||
+        reporterPartition !== reportedPartition
+      ) {
+        throw new HttpsError(
+          "permission-denied",
+          "Account partitions do not match.",
+        );
+      }
+
       const now = FieldValue.serverTimestamp();
       const reportRef = firestore.collection("reports").doc();
       const batch = firestore.batch();
 
-      batch.set(reportRef, { ...plan.reportData, createdAt: now });
+      batch.set(reportRef, {
+        ...plan.reportData,
+        status: reporterPartition === "play_review" ? "test_only" : "pending",
+        dataPartition: reporterPartition,
+        reviewFixture: reporterPartition === "play_review",
+        createdAt: now,
+      });
       for (const write of plan.blockWrites) {
         batch.set(
           firestore
@@ -192,7 +225,12 @@ export function createReportAndBlockUserFunction(
             .doc(write.ownerUid)
             .collection("targets")
             .doc(write.targetUid),
-          { ...write.data, createdAt: now },
+          {
+            ...write.data,
+            dataPartition: reporterPartition,
+            reviewFixture: reporterPartition === "play_review",
+            createdAt: now,
+          },
           { merge: true }
         );
       }

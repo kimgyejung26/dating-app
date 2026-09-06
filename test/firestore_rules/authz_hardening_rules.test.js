@@ -43,6 +43,8 @@ const {
 const VICTIM = "victim-kakao-1111";
 const ATTACKER = "attacker-kakao-9999";
 const VICTIM_EMAIL = "victim@yonsei.ac.kr";
+const REVIEWER = "play-reviewer-v1";
+const REVIEW_FIXTURE = "play-fixture-a-01";
 
 let testEnv;
 
@@ -81,6 +83,14 @@ beforeEach(async () => {
       isStudentVerified: true,
       onboarding: { nickname: "공격자" },
     });
+    await setDoc(doc(db, "users", REVIEWER), {
+      dataPartition: "play_review",
+      accountType: "google_play_review",
+    });
+    await setDoc(doc(db, "users", REVIEW_FIXTURE), {
+      dataPartition: "play_review",
+      accountType: "google_play_fixture",
+    });
     await setDoc(doc(db, "publicProfiles", VICTIM), {
       nickname: "victim-public",
       profileImageUrl: "",
@@ -114,6 +124,14 @@ const as = (uid) =>
     .authenticatedContext(uid, {
       appSession: true,
       primaryAuth: "yonsei_email",
+    })
+    .firestore();
+const asReview = () =>
+  testEnv
+    .authenticatedContext(REVIEWER, {
+      appSession: true,
+      playReviewer: true,
+      dataPartition: "play_review",
     })
     .firestore();
 
@@ -761,6 +779,33 @@ describe("asks / interactions / bamboo_posts", () => {
         fromUserId: ATTACKER,
         toUserId: VICTIM,
         text: "질문",
+        status: "sent",
+      })
+    );
+  });
+
+  it("심사자는 합성 fixture에게만 무물을 보낼 수 있다", async () => {
+    await assertSucceeds(
+      setDoc(doc(asReview(), "asks", "review-fixture-ask"), {
+        fromUserId: REVIEWER,
+        toUserId: REVIEW_FIXTURE,
+        text: "review question",
+        status: "sent",
+      })
+    );
+    await assertFails(
+      setDoc(doc(asReview(), "asks", "review-production-ask"), {
+        fromUserId: REVIEWER,
+        toUserId: VICTIM,
+        text: "must not cross partitions",
+        status: "sent",
+      })
+    );
+    await assertFails(
+      setDoc(doc(as(ATTACKER), "asks", "production-review-ask"), {
+        fromUserId: ATTACKER,
+        toUserId: REVIEW_FIXTURE,
+        text: "must not cross partitions",
         status: "sent",
       })
     );

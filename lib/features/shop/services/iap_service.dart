@@ -110,6 +110,37 @@ class IapService extends ChangeNotifier {
     await _restorePendingGooglePlayPurchases(showUserError: true);
   }
 
+  /// Retries a transient Google Play connection failure without requiring an
+  /// app restart. The Apple initialization path deliberately remains unchanged.
+  Future<void> retryGooglePlayConnection() async {
+    await initialize();
+    if (!supportsGooglePlayIap) return;
+
+    _isLoadingProducts = true;
+    _lastError = null;
+    notifyListeners();
+    try {
+      _isStoreAvailable = await _inAppPurchase.isAvailable();
+      if (!_isStoreAvailable) {
+        _recordError('현재 기기에서 Google Play 결제를 사용할 수 없어요.');
+        return;
+      }
+    } catch (error) {
+      _isStoreAvailable = false;
+      _recordError('Google Play 결제 연결을 확인하지 못했어요. 다시 시도해주세요.');
+      _debugLog('Google Play availability retry failed: $error');
+      return;
+    } finally {
+      _isLoadingProducts = false;
+      notifyListeners();
+    }
+
+    await loadProducts();
+    if (_products.isNotEmpty) {
+      await _restorePendingGooglePlayPurchases(showUserError: true);
+    }
+  }
+
   Future<void> _restorePendingGooglePlayPurchases({
     required bool showUserError,
   }) {

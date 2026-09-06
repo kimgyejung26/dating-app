@@ -374,6 +374,12 @@ class PushNotificationService with WidgetsBindingObserver {
 
       final userId = await _storage.getKakaoUserId();
       debugPrint('[PUSH] ${PrivacyLogUtils.idFingerprint(userId)}');
+      if (userId == 'play-reviewer-v1') {
+        // Review fixtures never receive device tokens. Synthetic chat and
+        // interaction traffic must stay entirely outside FCM delivery.
+        debugPrint('[PUSH] Play review session, skip token sync.');
+        return;
+      }
 
       final settings = await _messaging.getNotificationSettings();
       debugPrint('[PUSH] permission = ${settings.authorizationStatus}');

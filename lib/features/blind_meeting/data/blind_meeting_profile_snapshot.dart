@@ -94,7 +94,12 @@ class BlindMeetingProfileSnapshot {
         SmokingStatus.values,
         lifestyleMap['smoking'],
       ),
-      schoolVerified: data['isStudentVerified'] == true,
+      schoolVerified:
+          data['isStudentVerified'] == true ||
+          (data['accountType'] == 'google_play_review' &&
+              data['dataPartition'] == 'play_review' &&
+              data['reviewAccess'] == true &&
+              data['reviewProfileReady'] == true),
       // canonical 이 아닌 값은 생활권으로 인정하지 않는다 (fail-closed).
       campusLifeZones: CampusLifeZoneValues.readPersisted(
         onboardingMap['campusLifeZones'],

@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../models/terms_gate_failure.dart';
@@ -46,8 +47,39 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen>
   String? _statusMessage;
   StreamSubscription<Uri>? _linkSubscription;
   int _resumeKey = 0; // 앱 복귀 시 위젯 강제 재생성용
+  int _reviewTapCount = 0;
+  DateTime? _reviewTapWindowStartedAt;
+  String _versionLabel = '';
 
   static const String _yonseiDomain = '@yonsei.ac.kr';
+
+  Future<void> _loadVersionLabel() async {
+    try {
+      final info = await PackageInfo.fromPlatform();
+      if (!mounted) return;
+      setState(() => _versionLabel = 'v${info.version} (${info.buildNumber})');
+    } catch (_) {
+      // Version text is informational; login must remain usable if platform
+      // package metadata is temporarily unavailable.
+    }
+  }
+
+  void _handleVersionTap() {
+    final now = DateTime.now();
+    final started = _reviewTapWindowStartedAt;
+    if (started == null ||
+        now.difference(started) > const Duration(seconds: 10)) {
+      _reviewTapWindowStartedAt = now;
+      _reviewTapCount = 1;
+    } else {
+      _reviewTapCount += 1;
+    }
+    if (_reviewTapCount < 7) return;
+    _reviewTapCount = 0;
+    _reviewTapWindowStartedAt = null;
+    HapticFeedback.mediumImpact();
+    Navigator.of(context).pushNamed(RouteNames.playReviewAccess);
+  }
 
   String _buildYonseiEmail(String input) {
     final raw = input.trim().toLowerCase();
@@ -167,6 +199,7 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadVersionLabel();
       _prefillSavedEmail();
       _checkForEmailLink();
       _listenForEmailLink();
@@ -639,6 +672,27 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen>
                   if (_isVerifying) ...[
                     const SizedBox(height: 10),
                     const CupertinoActivityIndicator(),
+                  ],
+                  if (_versionLabel.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: _handleVersionTap,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 6,
+                        ),
+                        child: Text(
+                          _versionLabel,
+                          style: const TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 11,
+                            color: _AppColors.textSub,
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ],
               ),

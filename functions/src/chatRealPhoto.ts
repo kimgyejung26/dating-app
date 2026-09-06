@@ -132,6 +132,10 @@ function fallbackResponse(
 export function evaluateChatRealPhotoAccess(params: {
   roomExists: boolean;
   roomData: Record<string, unknown>;
+  /// A real photo is disclosed only after either participant has actually
+  /// sent a text message. This is supplied from the authoritative room
+  /// subcollection by the callable, rather than trusting any room metadata.
+  hasTextMessage?: boolean;
   requesterUid: string;
   targetUid: string;
   requesterUserData: Record<string, unknown>;
@@ -165,6 +169,9 @@ export function evaluateChatRealPhotoAccess(params: {
   }
   if (isInactiveUser(params.targetUserData)) {
     return fallbackResponse(params.targetUserData, "target_inactive");
+  }
+  if (params.hasTextMessage !== true) {
+    return fallbackResponse(params.targetUserData, "no_text_message");
   }
 
   const photoConsent = readMap(params.privateMediaData.photoConsent);
@@ -219,17 +226,23 @@ export function createGetChatRealProfilePhotoFunction(
       const requesterUserRef = firestore.collection("users").doc(requesterUid);
       const targetUserRef = firestore.collection("users").doc(targetUid);
       const privateMediaRef = firestore.collection("userPrivateMedia").doc(targetUid);
-      const [roomSnap, requesterUserSnap, targetUserSnap, privateMediaSnap] = await Promise.all([
+      const textMessageQuery = roomRef
+        .collection("messages")
+        .where("type", "==", "text")
+        .limit(1);
+      const [roomSnap, requesterUserSnap, targetUserSnap, privateMediaSnap, textMessageSnap] = await Promise.all([
         roomRef.get(),
         requesterUserRef.get(),
         targetUserRef.get(),
         privateMediaRef.get(),
+        textMessageQuery.get(),
       ]);
 
       const targetUserData = (targetUserSnap.data() ?? {}) as Record<string, unknown>;
       const decision = evaluateChatRealPhotoAccess({
         roomExists: roomSnap.exists,
         roomData: (roomSnap.data() ?? {}) as Record<string, unknown>,
+        hasTextMessage: !textMessageSnap.empty,
         requesterUid,
         targetUid,
         requesterUserData: (requesterUserSnap.data() ?? {}) as Record<string, unknown>,

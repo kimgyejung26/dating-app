@@ -1,17 +1,48 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
 import '../models/community/post_model.dart';
 import 'community_repository.dart';
 
 class FirestoreCommunityRepository implements CommunityRepository {
-  FirestoreCommunityRepository({FirebaseFirestore? firestore})
-    : _firestore = firestore ?? FirebaseFirestore.instance;
+  FirestoreCommunityRepository({
+    FirebaseFirestore? firestore,
+    FirebaseAuth? firebaseAuth,
+  }) : _firestore = firestore ?? FirebaseFirestore.instance,
+       _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
 
   final FirebaseFirestore _firestore;
+  final FirebaseAuth _firebaseAuth;
 
-  CollectionReference<Map<String, dynamic>> get _posts =>
-      _firestore.collection('bamboo_posts');
+  static const _reviewerUid = 'play-reviewer-v1';
+  static const _reviewPostsCollection = 'playReviewBambooPosts';
+  static const _reviewPostAuthorsCollection = 'playReviewBambooPostAuthors';
+  static const _reviewCommentAuthorsCollection =
+      'playReviewBambooCommentAuthors';
+
+  @visibleForTesting
+  static String postsCollectionForUserId(String? userId) =>
+      userId == _reviewerUid ? _reviewPostsCollection : 'bamboo_posts';
+
+  @visibleForTesting
+  static String postAuthorsCollectionForUserId(String? userId) =>
+      userId == _reviewerUid
+      ? _reviewPostAuthorsCollection
+      : 'bamboo_post_authors';
+
+  @visibleForTesting
+  static String commentAuthorsCollectionForUserId(String? userId) =>
+      userId == _reviewerUid
+      ? _reviewCommentAuthorsCollection
+      : 'bamboo_comment_authors';
+
+  bool get _isPlayReviewSession =>
+      _firebaseAuth.currentUser?.uid == _reviewerUid;
+
+  CollectionReference<Map<String, dynamic>> get _posts => _firestore.collection(
+    postsCollectionForUserId(_firebaseAuth.currentUser?.uid),
+  );
 
   // SEC-04. 대나무숲 글/댓글은 익명이어야 하는데 public 문서에 raw UID 가
   // authorId 로 들어 있고 publicProfiles/{uid} 는 로그인만 하면 읽힌다. 즉
@@ -20,10 +51,14 @@ class FirestoreCommunityRepository implements CommunityRepository {
   // 비공개 매핑에 함께 적어 둔다. 이 단계에서는 public authorId 를 아직
   // 지우지 않으므로 구버전 앱도 그대로 동작한다.
   CollectionReference<Map<String, dynamic>> get _postAuthors =>
-      _firestore.collection('bamboo_post_authors');
+      _firestore.collection(
+        postAuthorsCollectionForUserId(_firebaseAuth.currentUser?.uid),
+      );
 
   CollectionReference<Map<String, dynamic>> get _commentAuthors =>
-      _firestore.collection('bamboo_comment_authors');
+      _firestore.collection(
+        commentAuthorsCollectionForUserId(_firebaseAuth.currentUser?.uid),
+      );
 
   // 댓글은 글 하위에 있어 commentId 만으로는 유일하지 않다.
   static String commentAuthorDocId(String postId, String commentId) =>
@@ -73,11 +108,13 @@ class FirestoreCommunityRepository implements CommunityRepository {
       'commentCount': 0,
       'score7d': 0,
       'isDeleted': false,
+      if (_isPlayReviewSession) 'dataPartition': 'play_review',
     });
     batch.set(_postAuthors.doc(docRef.id), {
       'postId': docRef.id,
       'ownerUid': authorIdStr,
       'createdAt': FieldValue.serverTimestamp(),
+      if (_isPlayReviewSession) 'dataPartition': 'play_review',
     });
     await batch.commit();
 
@@ -238,6 +275,7 @@ class FirestoreCommunityRepository implements CommunityRepository {
         transaction.set(likeRef, {
           'userId': userId,
           'createdAt': FieldValue.serverTimestamp(),
+          if (_isPlayReviewSession) 'dataPartition': 'play_review',
         });
         transaction.update(postRef, {
           'likeCount': FieldValue.increment(1),
@@ -297,6 +335,7 @@ class FirestoreCommunityRepository implements CommunityRepository {
         'updatedAt': FieldValue.serverTimestamp(),
         'likeCount': 0,
         'isDeleted': false,
+        if (_isPlayReviewSession) 'dataPartition': 'play_review',
       });
 
       // 글과 같은 이유로 댓글도 소유권을 같은 커밋에 남긴다.
@@ -306,6 +345,7 @@ class FirestoreCommunityRepository implements CommunityRepository {
             'commentId': commentRef.id,
             'ownerUid': authorId.trim(),
             'createdAt': FieldValue.serverTimestamp(),
+            if (_isPlayReviewSession) 'dataPartition': 'play_review',
           });
 
       transaction.update(postRef, {
@@ -408,6 +448,7 @@ class FirestoreCommunityRepository implements CommunityRepository {
         transaction.set(likeRef, {
           'userId': userId,
           'createdAt': FieldValue.serverTimestamp(),
+          if (_isPlayReviewSession) 'dataPartition': 'play_review',
         });
         transaction.update(commentRef, {
           'likeCount': FieldValue.increment(1),

@@ -92,10 +92,11 @@ test("approved avatar resolver rejects Festival private-media buckets", () => {
   }
 });
 
-test("valid chat participants with consent can use chat-profile photo asset", () => {
+test("a text message plus valid chat participants and consent can use chat-profile photo asset", () => {
   const decision = evaluateChatRealPhotoAccess({
     roomExists: true,
     roomData: activeRoom,
+    hasTextMessage: true,
     requesterUid: "u1",
     targetUid: "u2",
     requesterUserData: {},
@@ -111,10 +112,30 @@ test("valid chat participants with consent can use chat-profile photo asset", ()
   }
 });
 
+test("participants without a text message receive only the approved avatar", () => {
+  const decision = evaluateChatRealPhotoAccess({
+    roomExists: true,
+    roomData: activeRoom,
+    hasTextMessage: false,
+    requesterUid: "u1",
+    targetUid: "u2",
+    requesterUserData: {},
+    targetUserData: approvedUser,
+    privateMediaData: consentedPrivateMedia,
+  });
+
+  assert.deepEqual(decision, {
+    kind: "fallback",
+    reason: "no_text_message",
+    approvedAvatarUrl: "https://cdn.example/avatar.png",
+  });
+});
+
 test("non-participants are denied", () => {
   const decision = evaluateChatRealPhotoAccess({
     roomExists: true,
     roomData: activeRoom,
+    hasTextMessage: true,
     requesterUid: "u3",
     targetUid: "u2",
     requesterUserData: {},
@@ -133,6 +154,7 @@ test("missing consent falls back to approved avatar", () => {
   const decision = evaluateChatRealPhotoAccess({
     roomExists: true,
     roomData: activeRoom,
+    hasTextMessage: true,
     requesterUid: "u1",
     targetUid: "u2",
     requesterUserData: {},
@@ -154,6 +176,7 @@ test("private source bucket asset is never accepted for chat real photo", () => 
   const decision = evaluateChatRealPhotoAccess({
     roomExists: true,
     roomData: activeRoom,
+    hasTextMessage: true,
     requesterUid: "u1",
     targetUid: "u2",
     requesterUserData: {},
@@ -179,6 +202,7 @@ test("blocked or inactive chats are denied", () => {
   const blockedDecision = evaluateChatRealPhotoAccess({
     roomExists: true,
     roomData: activeRoom,
+    hasTextMessage: true,
     requesterUid: "u1",
     targetUid: "u2",
     requesterUserData: { blockedUserIds: ["u2"] },
@@ -190,6 +214,7 @@ test("blocked or inactive chats are denied", () => {
   const inactiveDecision = evaluateChatRealPhotoAccess({
     roomExists: true,
     roomData: { status: "deleted", participantIds: ["u1", "u2"] },
+    hasTextMessage: true,
     requesterUid: "u1",
     targetUid: "u2",
     requesterUserData: {},

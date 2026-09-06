@@ -20,14 +20,22 @@ class ProfilePhotoAccessService {
 
     final roomId = _chatService.buildDirectRoomId(viewerUserId, targetUserId);
     final roomRef = _firestore.collection('chat_rooms').doc(roomId);
-    final roomSnap = await roomRef.get();
+    // A user who has not opened a 1:1 chat yet is deliberately not a
+    // participant of its deterministic room ID. The Firestore rule therefore
+    // rejects this read instead of returning a non-existent snapshot. That is
+    // the normal "photos still blurred" state, not an error for the profile
+    // screen to surface.
+    DocumentSnapshot<Map<String, dynamic>> roomSnap;
+    try {
+      roomSnap = await roomRef.get();
+    } on FirebaseException catch (error) {
+      if (error.code == 'permission-denied') {
+        return false;
+      }
+      rethrow;
+    }
     if (!roomSnap.exists) {
       return false;
-    }
-
-    final roomData = roomSnap.data() ?? const <String, dynamic>{};
-    if (roomData['photoBlurUnlocked'] == true) {
-      return true;
     }
 
     final textMessageSnap = await roomRef
@@ -40,10 +48,9 @@ class ProfilePhotoAccessService {
       return false;
     }
 
-    await roomRef.set({
-      'photoBlurUnlocked': true,
-      'photoBlurUnlockedAt': FieldValue.serverTimestamp(),
-    }, SetOptions(merge: true));
-    return true;
+    // Gallery disclosure begins only after either participant has sent a
+    // text message.  This read must not mutate the room: the sender writes
+    // the chat metadata atomically with the message itself.
+    return textMessageSnap.docs.isNotEmpty;
   }
 }

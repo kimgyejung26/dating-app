@@ -335,7 +335,7 @@ class _BlindMeetingResultScreenState extends State<BlindMeetingResultScreen> {
               const SizedBox(height: 16),
               BlindMeetingPrimaryButton(
                 key: const ValueKey('blind-meeting-open-group-chat'),
-                label: '채팅방으로 이동',
+                label: '3:3 채팅으로 이동',
                 icon: Icons.forum_outlined,
                 onPressed: session.groupChatId == null
                     ? null
@@ -349,6 +349,13 @@ class _BlindMeetingResultScreenState extends State<BlindMeetingResultScreen> {
                         ),
                       ),
               ),
+              if (session.groupChatId == null) ...[
+                const SizedBox(height: 8),
+                Text(
+                  '3:3 채팅방을 준비하고 있어요. 잠시 후 다시 눌러주세요.',
+                  style: BlindMeetingText.caption(palette.inkFaint),
+                ),
+              ],
               const SizedBox(height: 10),
               BlindMeetingSecondaryButton(
                 label: '약속 시간·장소 투표하기',

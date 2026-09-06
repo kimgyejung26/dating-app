@@ -39,6 +39,18 @@ describe("heart economy contract", () => {
     );
   });
 
+  it("treats 50H as its own one-time offer, independent of earlier purchases", () => {
+    assert.match(
+      indexSource,
+      /const isFirstPurchaseOffer\s*=\s*purchase\.productId === FIRST_PURCHASE_HEART_PRODUCT_ID/,
+    );
+    assert.match(
+      indexSource,
+      /\.\.\.\(isFirstPurchaseOffer \? \{ firstPurchaseOfferUsed: true \} : \{\}\)/,
+    );
+    assert.doesNotMatch(indexSource, /purchaseCount\s*(?:===|==|<=)\s*0/);
+  });
+
   it("grants the server-authoritative heart amount exactly once per transaction", () => {
     assert.match(indexSource, /const heartBalance = currentBalance \+ heartAmount/);
     assert.match(indexSource, /transaction\.create\(transactionRef/);
