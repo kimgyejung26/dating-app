@@ -70,12 +70,16 @@ class RecommendationEligibility {
   /// 후보 계정 자체가 노출 가능한 상태인지.
   static bool isCandidateDisplayable(Map<String, dynamic>? profile) {
     if (profile == null) return false;
+    final isReviewFixture =
+        profile['dataPartition'] == 'play_review' &&
+        profile['accountType'] == 'google_play_fixture' &&
+        profile['reviewFixtureEnabled'] == true;
     if (profile['accountType']?.toString().toLowerCase() == 'operations') {
       return false;
     }
     if (!isProfileVisibleForRecommendationToday(profile)) return false;
     if (!isAccountActive(profile)) return false;
-    if (profile['isStudentVerified'] != true) return false;
+    if (profile['isStudentVerified'] != true && !isReviewFixture) return false;
     if (!isProfileComplete(profile)) return false;
     return ProfileDisplayImageResolver.resolve(profile).isNotEmpty;
   }
@@ -160,6 +164,9 @@ class RecommendationEligibility {
   }) {
     if (candidateUid.isEmpty || candidateUid == viewerUid) return false;
     if (blockedUids.contains(candidateUid)) return false;
+    final viewerPartition = viewer?['dataPartition'] ?? 'production';
+    final candidatePartition = candidate?['dataPartition'] ?? 'production';
+    if (viewerPartition != candidatePartition) return false;
     if (!isCandidateDisplayable(candidate)) return false;
     return isOppositeGender(viewer: viewer, candidate: candidate);
   }

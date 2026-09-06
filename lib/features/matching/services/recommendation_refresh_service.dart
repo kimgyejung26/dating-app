@@ -6,6 +6,7 @@ import '../../../services/ai_recommendation_service.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/firebase_runtime.dart';
 import '../../../services/storage_service.dart';
+import '../../../services/play_review_access_service.dart';
 import '../../../shared/utils/privacy_log_utils.dart';
 
 /// 1대1 설레연 유료 추천 새로고침의 클라이언트 게이트웨이.
@@ -165,8 +166,11 @@ class RecommendationRefreshService {
 
     final dynamic response;
     try {
+      final functionName = kakaoUserId == PlayReviewAccessService.reviewerUid
+          ? 'purchasePlayReviewRecommendationRefresh'
+          : 'purchaseRecommendationRefresh';
       response = await _functions
-          .httpsCallable('purchaseRecommendationRefresh')
+          .httpsCallable(functionName)
           .call(<String, dynamic>{
             'expectedDateKey': expectedDateKey,
             if (expectedAlgo != null) 'expectedAlgo': expectedAlgo,

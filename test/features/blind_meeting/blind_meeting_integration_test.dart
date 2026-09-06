@@ -13,6 +13,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_core_platform_interface/test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:seolleyeon/features/chat/models/chat_room_data.dart';
 import 'package:seolleyeon/features/blind_meeting/data/blind_meeting_analytics.dart';
 import 'package:seolleyeon/features/blind_meeting/data/blind_meeting_profile_snapshot.dart';
 import 'package:seolleyeon/features/blind_meeting/data/blind_meeting_repository.dart';
@@ -352,11 +353,13 @@ void main() {
   late FakeBlindMeetingRepository repository;
   late RecordingAnalyticsSink sink;
   late BlindMeetingAnalytics analytics;
+  ChatRoomData? openedGroupChat;
 
   setUp(() {
     repository = FakeBlindMeetingRepository();
     sink = RecordingAnalyticsSink();
     analytics = BlindMeetingAnalytics(sink: sink);
+    openedGroupChat = null;
   });
 
   tearDown(() async {
@@ -407,6 +410,9 @@ void main() {
           repository: repository,
           analytics: analytics,
         );
+      case RouteNames.chatRoom:
+        openedGroupChat = settings.arguments as ChatRoomData;
+        page = const Scaffold(body: Text('group chat opened'));
       default:
         page = const Scaffold(body: Text('unknown'));
     }
@@ -520,7 +526,7 @@ void main() {
       find.byKey(const ValueKey('blind-meeting-open-group-chat')),
       findsOneWidget,
     );
-    expect(find.text('채팅방으로 이동'), findsOneWidget);
+    expect(find.text('3:3 채팅으로 이동'), findsOneWidget);
     expect(find.text('참가할게요'), findsNothing);
     expect(find.text('이번에는 참가하지 않을게요'), findsNothing);
     expect(find.textContaining('수락'), findsNothing);
@@ -769,9 +775,28 @@ void main() {
     await tester.tap(find.text('매칭 결과 보기'));
     await tester.pumpAndSettle();
     expect(find.byType(BlindMeetingResultScreen), findsOneWidget);
-    expect(find.text('채팅방으로 이동'), findsOneWidget);
+    expect(find.text('3:3 채팅으로 이동'), findsOneWidget);
     expect(find.text('참가할게요'), findsNothing);
     expect(find.text('이번에는 참가하지 않을게요'), findsNothing);
+  });
+
+  testWidgets('매칭 결과의 3:3 채팅 버튼은 해당 미팅의 서버 생성 방으로 이동한다', (tester) async {
+    repository.completeMatching();
+    await pumpApp(tester);
+    await tester.tap(find.text('매칭 결과 보기'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(
+      find.byKey(const ValueKey('blind-meeting-open-group-chat')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('group chat opened'), findsOneWidget);
+    expect(openedGroupChat, isNotNull);
+    expect(openedGroupChat!.chatRoomId, 'blind_$kMeetingId');
+    expect(openedGroupChat!.partnerId, isEmpty);
+    expect(openedGroupChat!.partnerName, '블라인드 취향 미팅');
+    expect(openedGroupChat!.partnerUniversity, '3:3 단체 채팅');
   });
 
   testWidgets('진행 중인 신청이 있으면 대기 상태를 복구한다', (tester) async {

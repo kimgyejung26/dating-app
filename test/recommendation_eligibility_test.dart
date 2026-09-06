@@ -52,6 +52,57 @@ void main() {
       );
     });
 
+    test('격리된 Play review fixture만 학생 인증 없이 노출된다', () {
+      final reviewFixture = candidate(
+        overrides: const {
+          'isStudentVerified': false,
+          'accountType': 'google_play_fixture',
+          'dataPartition': 'play_review',
+          'reviewFixtureEnabled': true,
+        },
+      );
+      expect(
+        RecommendationEligibility.isCandidateDisplayable(reviewFixture),
+        isTrue,
+      );
+      expect(
+        RecommendationEligibility.isRecommendableTo(
+          viewerUid: 'play-reviewer-v1',
+          viewer: candidate(
+            gender: 'male',
+            overrides: const {'dataPartition': 'play_review'},
+          ),
+          candidateUid: 'play-fixture-b-01',
+          candidate: reviewFixture,
+        ),
+        isTrue,
+      );
+    });
+
+    test('production과 Play review 프로필은 양방향으로 섞이지 않는다', () {
+      final production = candidate(gender: 'male');
+      final review = candidate(
+        overrides: const {
+          'accountType': 'google_play_fixture',
+          'dataPartition': 'play_review',
+          'reviewFixtureEnabled': true,
+        },
+      );
+      expect(recommendable(review, viewer: production), isFalse);
+      expect(
+        RecommendationEligibility.isRecommendableTo(
+          viewerUid: 'play-reviewer-v1',
+          viewer: candidate(
+            gender: 'male',
+            overrides: const {'dataPartition': 'play_review'},
+          ),
+          candidateUid: 'production-user',
+          candidate: candidate(),
+        ),
+        isFalse,
+      );
+    });
+
     test('정지·삭제된 계정은 제외된다', () {
       expect(
         recommendable(candidate(overrides: {'isSuspended': true})),

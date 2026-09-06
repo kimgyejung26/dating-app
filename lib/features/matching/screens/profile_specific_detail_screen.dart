@@ -181,7 +181,6 @@ class _AiMatchProfileScreenState extends State<AiMatchProfileScreen> {
     if (!mounted) return;
     setState(() => _currentUserId = uid);
     await _loadPhotoAccess();
-    await _loadChatRealPhotoIfAllowed();
     // detail_open recEvent
     if (uid != null && uid.isNotEmpty) {
       final targetId =
@@ -232,11 +231,19 @@ class _AiMatchProfileScreenState extends State<AiMatchProfileScreen> {
     setState(() {
       _isPhotoBlurUnlocked = isUnlocked;
     });
+    if (isUnlocked) {
+      await _loadChatRealPhotoIfAllowed();
+    }
   }
 
   Future<void> _loadChatRealPhotoIfAllowed() async {
-    final chatRoomId = widget.args?.chatRoomId ?? '';
     final targetUserId = _profile?.id ?? widget.args?.userId ?? '';
+    final viewerUserId = _currentUserId;
+    final chatRoomId =
+        widget.args?.chatRoomId ??
+        (viewerUserId == null || viewerUserId.isEmpty
+            ? ''
+            : _chatService.buildDirectRoomId(viewerUserId, targetUserId));
     if (widget.args?.isPreview == true ||
         chatRoomId.isEmpty ||
         targetUserId.isEmpty ||
@@ -326,18 +333,28 @@ class _AiMatchProfileScreenState extends State<AiMatchProfileScreen> {
       );
 
       // 2) recEvents — AI 학습 로그
-      await _recEventService.logEvent(
-        userId: uid,
-        targetType: 'user_profile',
-        targetId: targetId,
-        candidateUserId: targetId,
-        eventType: 'like',
-        surface: 'profile_card',
-        cardVariant: 'real_profile',
-        exposureId: widget.args?.aiProfile?.exposureId,
-        dateKey: widget.args?.aiProfile?.dateKey,
-        context: _buildRecContext(button: 'like'),
-      );
+      // Review sessions cannot write to the production learning stream. A
+      // telemetry failure must not turn a successfully stored like into a
+      // user-visible failure.
+      await _recEventService
+          .logEvent(
+            userId: uid,
+            targetType: 'user_profile',
+            targetId: targetId,
+            candidateUserId: targetId,
+            eventType: 'like',
+            surface: 'profile_card',
+            cardVariant: 'real_profile',
+            exposureId: widget.args?.aiProfile?.exposureId,
+            dateKey: widget.args?.aiProfile?.dateKey,
+            context: _buildRecContext(button: 'like'),
+          )
+          .catchError(
+            (error) => debugPrint(
+              '[RecEvent] like telemetry failed: '
+              '${PrivacyLogUtils.errorSummary(error)}',
+            ),
+          );
 
       if (!mounted) return;
       HapticFeedback.heavyImpact();
@@ -386,18 +403,27 @@ class _AiMatchProfileScreenState extends State<AiMatchProfileScreen> {
         source: 'profile_specific_detail_screen',
       );
 
-      await _recEventService.logEvent(
-        userId: uid,
-        targetType: 'user_profile',
-        targetId: targetId,
-        candidateUserId: targetId,
-        eventType: 'nope',
-        surface: 'profile_card',
-        cardVariant: 'real_profile',
-        exposureId: widget.args?.aiProfile?.exposureId,
-        dateKey: widget.args?.aiProfile?.dateKey,
-        context: _buildRecContext(button: 'nope'),
-      );
+      // A pass has the same optional telemetry path as a like. Keep the
+      // persisted interaction independent from a review-session denial.
+      await _recEventService
+          .logEvent(
+            userId: uid,
+            targetType: 'user_profile',
+            targetId: targetId,
+            candidateUserId: targetId,
+            eventType: 'nope',
+            surface: 'profile_card',
+            cardVariant: 'real_profile',
+            exposureId: widget.args?.aiProfile?.exposureId,
+            dateKey: widget.args?.aiProfile?.dateKey,
+            context: _buildRecContext(button: 'nope'),
+          )
+          .catchError(
+            (error) => debugPrint(
+              '[RecEvent] pass telemetry failed: '
+              '${PrivacyLogUtils.errorSummary(error)}',
+            ),
+          );
 
       if (!mounted) return;
       _showToast('이번 인연은 넘길게요');
@@ -1251,16 +1277,12 @@ class _AiMatchProfileScreenState extends State<AiMatchProfileScreen> {
                     child: _ProfileCard(
                       profile: profile,
                       heroImageIndex: _heroImageIndex,
-                      shouldBlurPhotos:
-                          widget.args?.isPreview == true ||
-                          !_isPhotoBlurUnlocked,
-                      photoBlurBadgeText:
-                          (widget.args?.isPreview == true ||
-                              !_isPhotoBlurUnlocked)
-                          ? widget.args?.isPreview == true
-                                ? '미리보기 사진은 살짝 가려둘게요 :)'
-                                : '메시지를 보내면 사진이 선명하게 보여요 :)'
-                          : null,
+                      // Before a chat message, only the approved avatar is
+                      // rendered.  It is never blurred.  Once either person
+                      // sends a text message, the real-photo gallery becomes
+                      // available through the signed chat-photo path.
+                      shouldBlurPhotos: false,
+                      showGallery: _isPhotoBlurUnlocked,
                       onHeroImageChanged: (index) {
                         setState(() {
                           _heroImageIndex = index;
@@ -1347,6 +1369,7 @@ class ProfileDetailShowcaseScreen extends StatelessWidget {
             profile: _profile,
             heroImageIndex: 0,
             shouldBlurPhotos: false,
+            showGallery: true,
             onHeroImageChanged: (_) {},
           ),
         ),
@@ -1360,14 +1383,14 @@ class _ProfileCard extends StatelessWidget {
   final int heroImageIndex;
   final ValueChanged<int> onHeroImageChanged;
   final bool shouldBlurPhotos;
-  final String? photoBlurBadgeText;
+  final bool showGallery;
 
   const _ProfileCard({
     required this.profile,
     required this.heroImageIndex,
     required this.onHeroImageChanged,
     required this.shouldBlurPhotos,
-    this.photoBlurBadgeText,
+    required this.showGallery,
   });
 
   @override
@@ -1397,7 +1420,6 @@ class _ProfileCard extends StatelessWidget {
             currentIndex: heroImageIndex,
             onPageChanged: onHeroImageChanged,
             shouldBlurPhotos: shouldBlurPhotos,
-            blurBadgeText: photoBlurBadgeText,
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 12, 24, 40),
@@ -1594,7 +1616,7 @@ class _ProfileCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 18),
                 ],
-                if (profile.imageUrls.isNotEmpty) ...[
+                if (showGallery && profile.imageUrls.isNotEmpty) ...[
                   const _SectionTitle(text: '나의 모습!'),
                   const SizedBox(height: 10),
                   _SectionCard(
@@ -1618,14 +1640,12 @@ class _HeroImage extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onPageChanged;
   final bool shouldBlurPhotos;
-  final String? blurBadgeText;
 
   const _HeroImage({
     required this.imageUrls,
     required this.currentIndex,
     required this.onPageChanged,
     required this.shouldBlurPhotos,
-    this.blurBadgeText,
   });
 
   @override
@@ -1661,7 +1681,6 @@ class _HeroImage extends StatelessWidget {
                 fit: BoxFit.cover,
                 blurEnabled: shouldBlurPhotos,
                 blurSigma: kLockedProfilePhotoBlurSigma,
-                blurBadgeText: blurBadgeText,
                 backgroundColor: _AppColors.gray100,
                 placeholderIconColor: _AppColors.gray300,
                 placeholderIconSize: 72,

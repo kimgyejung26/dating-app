@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+import 'play_review_access_service.dart';
 
 /// 프로필 카드 인터랙션 (view / like / nope / super_like / message) 기록 서비스
 ///
@@ -52,7 +55,15 @@ class InteractionService {
       source: source,
     );
 
-    return await _findExistingMatch(userA: fromUserId, userB: toUserId);
+    // The interaction write is the like itself. Match lookup is only an
+    // optional UX enhancement: the Cloud Function trigger is authoritative
+    // for creating the match, and a stale/temporarily unreadable matches
+    // query must not turn a successfully stored like into an error toast.
+    try {
+      return await _findExistingMatch(userA: fromUserId, userB: toUserId);
+    } catch (_) {
+      return null;
+    }
   }
 
   /// Super Like 기록 + 매치 체크
@@ -109,6 +120,10 @@ class InteractionService {
     required String source,
     Map<String, dynamic>? metadata,
   }) async {
+    final isReview =
+        FirebaseAuth.instance.currentUser?.uid ==
+            PlayReviewAccessService.reviewerUid &&
+        fromUserId == PlayReviewAccessService.reviewerUid;
     await _interactionsRef.add({
       'fromUserId': fromUserId,
       'toUserId': toUserId,
@@ -116,6 +131,7 @@ class InteractionService {
       'source': source,
       'metadata': metadata,
       'createdAt': FieldValue.serverTimestamp(),
+      if (isReview) 'dataPartition': PlayReviewAccessService.dataPartition,
     });
   }
 

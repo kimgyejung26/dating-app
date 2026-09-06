@@ -88,6 +88,18 @@ AccountSetupState resolveAccountSetupState({
         : AccountSetupState.unauthenticated;
   }
 
+  // Google Play reviewers authenticate through a dedicated custom-token
+  // account that deliberately has no fake Yonsei email, PortOne identity, or
+  // Kakao authorization. Both the server-owned account type and partition
+  // markers must be present; a normal user cannot write these fields.
+  final isPlayReviewProfile =
+      userDoc != null &&
+      userDoc['accountType'] == 'google_play_review' &&
+      userDoc['dataPartition'] == 'play_review' &&
+      userDoc['reviewAccess'] == true &&
+      userDoc['reviewProfileReady'] == true;
+  if (isPlayReviewProfile) return AccountSetupState.complete;
+
   // A canonical session without a readable user document is treated as an
   // incomplete primary auth: the email completion callable is the only place
   // that creates the shell, so fail closed toward re-verification.

@@ -186,7 +186,16 @@ class AuthProvider with ChangeNotifier {
         return;
       }
 
+      final isPlayReviewer =
+          profile['accountType'] == 'google_play_review' &&
+          profile['dataPartition'] == 'play_review' &&
+          profile['reviewAccess'] == true &&
+          profile['reviewProfileReady'] == true;
+      // This is an in-memory navigation capability, not a claim that the
+      // reviewer owns a Yonsei mailbox. Firestore keeps isStudentVerified
+      // false and the setup resolver checks the review markers independently.
       _isStudentVerified = profile['isStudentVerified'] == true;
+      if (isPlayReviewer) _isStudentVerified = true;
       final rawEmail = profile['studentEmail'];
       _studentEmail = rawEmail is String && rawEmail.trim().isNotEmpty
           ? rawEmail.trim().toLowerCase()
@@ -873,6 +882,10 @@ class AuthProvider with ChangeNotifier {
     }
     notifyListeners();
   }
+
+  /// Re-hydrates provider state after the dedicated Play review custom-token
+  /// sign-in. The setup resolver verifies the immutable review profile again.
+  Future<void> refreshAfterExternalSignIn() => _checkAuthStatus();
 
   Future<void> markTutorialSeen() async {
     final appUserId = _appUserId;

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
@@ -8,6 +9,8 @@ import 'package:uuid/uuid.dart';
 import '../shared/utils/privacy_log_utils.dart';
 import '../shared/utils/recommendation_eligibility.dart';
 import 'campus_life_zone_repair_service.dart';
+import 'firebase_runtime.dart';
+import 'play_review_access_service.dart';
 
 // =============================================================================
 // 공통 AI 추천 프로필 모델
@@ -75,6 +78,9 @@ class RecommendationFeedResult {
 // =============================================================================
 class AiRecommendationService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFunctions _functions = FirebaseFunctions.instanceFor(
+    region: firebaseFunctionsRegion,
+  );
   final CampusLifeZoneRepairService _campusLifeZoneRepairService =
       CampusLifeZoneRepairService();
 
@@ -555,6 +561,40 @@ class AiRecommendationService {
       if (firebaseUid == null || firebaseUid.isEmpty || firebaseUid != uid) {
         return const RecommendationFeedResult(
           status: RecommendationFeedStatus.signedOut,
+        );
+      }
+
+      if (uid == PlayReviewAccessService.reviewerUid) {
+        final response = await _functions
+            .httpsCallable('getPlayReviewFeed')
+            .call(const <String, dynamic>{});
+        final payload = response.data is Map
+            ? Map<String, dynamic>.from(response.data as Map)
+            : const <String, dynamic>{};
+        final items = payload['items'] is List
+            ? List<dynamic>.from(payload['items'] as List)
+            : const <dynamic>[];
+        final dateKey = payload['dateKey']?.toString() ?? '';
+        if (payload['ok'] != true || dateKey.isEmpty || items.isEmpty) {
+          return const RecommendationFeedResult(
+            status: RecommendationFeedStatus.notGenerated,
+          );
+        }
+        final profiles = await _hydrateProfiles(
+          rawItems: items,
+          algo: 'play_review',
+          dateKey: dateKey,
+          limit: limit,
+          viewerUid: uid,
+          documentPolicyState: 'off',
+        );
+        return RecommendationFeedResult(
+          status: profiles.isEmpty
+              ? RecommendationFeedStatus.noEligibleCandidates
+              : RecommendationFeedStatus.ready,
+          profiles: profiles,
+          dateKey: dateKey,
+          source: 'play_review',
         );
       }
 

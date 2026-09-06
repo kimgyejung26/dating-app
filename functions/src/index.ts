@@ -108,6 +108,13 @@ import {
   appleAppAccountTokenForUserId,
   verifyApplePurchase,
 } from "./applePurchaseVerification";
+import {
+  type GooglePlayProductPurchase,
+  googlePlayPurchaseIdentifiersMatch,
+  googlePlayPurchaseLedgerKey,
+  googlePlayPurchaseTokenHash,
+  validateGooglePlayProductPurchase,
+} from "./googlePlayPurchaseSecurity";
 export { isSafePublicAvatarUrl as isSafePublicMediaUrl } from "./publicMediaUrlPolicy";
 import {
   createRespondTeamMeetingRequestFunction,
@@ -157,6 +164,13 @@ import {
 } from "./kakaoFriendPairs";
 import { createDepartmentRecommendationPrivacyTrigger } from "./departmentRecommendationPrivacy";
 import {
+  assertSameDataPartition,
+  canPlayReviewUserOpenDirectChatWithFixture,
+  createPlayReviewAccessCallables,
+  dataPartitionOf,
+  resolvePlayReviewUser,
+} from "./playReviewAccess";
+import {
   acceptFriendInviteByToken,
   createFriendInviteRecord,
   createTeamInviteRecord,
@@ -195,6 +209,13 @@ setGlobalOptions({
   region: "asia-northeast3",
   maxInstances: 10,
 });
+
+const playReviewAccess = createPlayReviewAccessCallables(db, getAuth());
+export const playReviewSignIn = playReviewAccess.signIn;
+export const preparePlayReviewSession = playReviewAccess.prepareSession;
+export const getPlayReviewFeed = playReviewAccess.getFeed;
+export const purchasePlayReviewRecommendationRefresh =
+  playReviewAccess.purchaseRefresh;
 
 // =============================================================================
 // 공통 헬퍼
@@ -1299,6 +1320,26 @@ async function resolveAuthedAppUser(
   };
 }
 
+/**
+ * Review access is opt-in per callable. Never weaken resolveAuthedAppUser:
+ * purchase, identity, onboarding, Kakao, and operations functions must keep
+ * requiring a genuinely verified Yonsei account.
+ */
+async function resolveReviewCapableAppUser(
+  auth: { uid?: string; token?: Record<string, unknown> } | null | undefined
+): Promise<ResolvedAppUser> {
+  if (auth?.token?.playReviewer === true) {
+    const review = await resolvePlayReviewUser(db, auth);
+    return {
+      userId: review.userId,
+      email: "",
+      data: review.data,
+      profileSnapshot: buildFriendProfileSnapshot(review.userId, review.data),
+    };
+  }
+  return resolveAuthedAppUser(auth);
+}
+
 // Support operations use a Firebase Auth custom claim plus an immutable
 // server-managed admin/{uid} record.  Keeping these callables beside the
 // existing auth resolver means support cases retain the same Kakao/email-link
@@ -1500,14 +1541,6 @@ class ProductionApplePurchaseVerifier implements PurchaseVerifier {
   async complete(): Promise<void> {}
 }
 
-type GooglePlayProductPurchase = {
-  purchaseState?: number;
-  consumptionState?: number;
-  productId?: string;
-  quantity?: number;
-  obfuscatedExternalAccountId?: string;
-};
-
 /**
  * Google Play Developer API로 serverVerificationData(purchaseToken)를 확인한다.
  * Cloud Functions의 서비스 계정에는 Play Console의 주문/구독 관리 권한을 부여해야
@@ -1530,22 +1563,24 @@ class GooglePlayPurchaseVerifier implements PurchaseVerifier {
           `${encodeURIComponent(input.productId)}/tokens/` +
           encodeURIComponent(input.verificationData),
       });
-      if (response.data.purchaseState !== 0) {
+      const validation = validateGooglePlayProductPurchase({
+        purchase: response.data,
+        expectedProductId: input.productId,
+        expectedAccountId,
+      });
+      if (!validation.ok && validation.reason === "not_purchased") {
         throw new HttpsError(
           "failed-precondition",
           "Google Play에서 완료된 구매를 확인하지 못했어요."
         );
       }
-      if (
-        response.data.productId !== input.productId ||
-        (response.data.quantity ?? 1) !== 1
-      ) {
+      if (!validation.ok && validation.reason === "product_mismatch") {
         throw new HttpsError(
           "failed-precondition",
           "Google Play 상품 정보가 요청과 일치하지 않아요."
         );
       }
-      if (response.data.obfuscatedExternalAccountId !== expectedAccountId) {
+      if (!validation.ok) {
         throw new HttpsError(
           "permission-denied",
           "Google Play 구매 계정이 현재 앱 계정과 일치하지 않아요."
@@ -1553,12 +1588,12 @@ class GooglePlayPurchaseVerifier implements PurchaseVerifier {
       }
 
       return {
-        receiptFingerprint: createHash("sha256")
-          .update(input.verificationData)
-          .digest("hex"),
+        receiptFingerprint: googlePlayPurchaseTokenHash(
+          input.verificationData
+        ),
         environment: "google_play",
         provider: "google_play",
-        needsGooglePlayConsumption: response.data.consumptionState !== 1,
+        needsGooglePlayConsumption: validation.needsConsumption,
       };
     } catch (error) {
       if (error instanceof HttpsError) throw error;
@@ -1657,6 +1692,15 @@ function readIapRequest(request: {
   if (!platform) {
     throw new HttpsError("invalid-argument", "유효하지 않은 결제 플랫폼이에요.");
   }
+  if (
+    platform === "android" &&
+    !googlePlayPurchaseIdentifiersMatch(transactionId, verificationData)
+  ) {
+    throw new HttpsError(
+      "invalid-argument",
+      "Google Play 구매 식별자가 일치하지 않아요."
+    );
+  }
 
   return {
     productId,
@@ -1688,14 +1732,15 @@ export const grantPurchasedHearts = onCall(withAppCheck(), async (request) => {
   const heartAmount = productAmounts[purchase.productId];
 
   // iOS의 기존 key는 그대로 유지해 배포 전 transaction도 재처리하지 않는다.
-  // Android에는 purchaseToken과 충돌하지 않는 provider prefix를 포함한다.
-  const transactionKey = createHash("sha256")
-    .update(
-      purchase.platform === "android"
-        ? `google_play:${purchase.transactionId}`
-        : purchase.transactionId
-    )
-    .digest("hex");
+  // Android의 멱등성 key는 클라이언트가 별도로 보낸 transactionId가
+  // 아니라 Google Play에서 검증한 purchaseToken 자체로 만든다. 정상
+  // 기존 Android 거래도 transactionId == purchaseToken이었으므로 문서 key는
+  // 바뀌지 않지만, 변조 클라이언트가 transactionId만 바꿔 재지급받는 길은
+  // 차단된다.
+  const transactionKey =
+    purchase.platform === "android"
+      ? googlePlayPurchaseLedgerKey(purchase.verificationData)
+      : createHash("sha256").update(purchase.transactionId).digest("hex");
   const transactionRef = db.collection("iapTransactions").doc(transactionKey);
   const userRef = db.collection("users").doc(user.userId);
 
@@ -1880,7 +1925,7 @@ export const spendHearts = onCall(withAppCheck(), async (request) => {
 
 /** 첫 1:1 채팅방을 열 때만 10H를 차감한다. 기존 방 재진입은 무료다. */
 export const unlockDirectChat = onCall(withAppCheck(), async (request) => {
-  const user = await resolveAuthedAppUser(request.auth);
+  const user = await resolveReviewCapableAppUser(request.auth);
   const data = getCallableData(request);
   const partnerId = asNonEmptyString(data.partnerId);
   if (!partnerId || partnerId === user.userId || partnerId.length > 128) {
@@ -1896,11 +1941,19 @@ export const unlockDirectChat = onCall(withAppCheck(), async (request) => {
     throw new HttpsError("not-found", "채팅 상대를 찾을 수 없어요.");
   }
   const partnerData = (partnerSnap.data() ?? {}) as Record<string, unknown>;
+  const dataPartition = assertSameDataPartition(user.data, partnerData);
+  const reviewFixtureDirectChat = canPlayReviewUserOpenDirectChatWithFixture(
+    user.data,
+    partnerData,
+  );
   if (
     user.data.accountType === "operations" ||
     partnerData.accountType === "operations" ||
     partnerData.isWithdrawn === true ||
-    partnerData.loginDisabled === true ||
+    // Review fixtures cannot sign in, but the one review account must be able
+    // to demonstrate a 1:1 chat with them. This is deliberately narrower
+    // than a data-partition check so no ordinary disabled account is exempt.
+    (partnerData.loginDisabled === true && !reviewFixtureDirectChat) ||
     forwardBlock.exists ||
     reverseBlock.exists
   ) {
@@ -1962,6 +2015,7 @@ export const unlockDirectChat = onCall(withAppCheck(), async (request) => {
       },
       unlockedBy: user.userId,
       heartCost: amount,
+      dataPartition,
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
       lastMessage: "",
@@ -2172,7 +2226,7 @@ export const respondTeamMeetingRequest = createRespondTeamMeetingRequestFunction
 
 export const reportAndBlockUser = createReportAndBlockUserFunction(
   db,
-  resolveCallableUserFirebaseOnly
+  (request) => resolveReviewCapableAppUser(request.auth)
 );
 
 // LEGACY_KAKAO_AUTH_BACKEND_STILL_REQUIRED_FOR_OLD_CLIENTS
@@ -3776,6 +3830,27 @@ export const onRecEventCreated = onDocumentCreated(
 
     if (!userId || !targetUserId) return;
 
+    const [viewerSnap, targetSnap] = await Promise.all([
+      db.collection("users").doc(userId).get(),
+      db.collection("users").doc(targetUserId).get(),
+    ]);
+    const viewerPartition = dataPartitionOf(
+      (viewerSnap.data() ?? {}) as Record<string, unknown>,
+    );
+    const targetPartition = dataPartitionOf(
+      (targetSnap.data() ?? {}) as Record<string, unknown>,
+    );
+    // Review telemetry belongs to playReviewEvents and never reaches model
+    // input or the production recommendation-match trigger.
+    if (
+      !viewerSnap.exists ||
+      !targetSnap.exists ||
+      viewerPartition !== "production" ||
+      targetPartition !== "production"
+    ) {
+      return;
+    }
+
     if (eventType === "like" || eventType === "swipe_right") {
       await checkAndCreateRecMatch(userId, targetUserId, eventType);
     }
@@ -3807,9 +3882,30 @@ export const onInteractionCreated = onDocumentCreated(
       db.collection("users").doc(fromUserId).get(),
       db.collection("users").doc(toUserId).get(),
     ]);
+    if (!fromUserSnap.exists || !toUserSnap.exists) return;
+    const fromUserData = (fromUserSnap.data() ?? {}) as Record<string, unknown>;
+    const toUserData = (toUserSnap.data() ?? {}) as Record<string, unknown>;
+    const fromPartition = dataPartitionOf(fromUserData);
+    const toPartition = dataPartitionOf(toUserData);
     if (
-      fromUserSnap.data()?.accountType === "operations" ||
-      toUserSnap.data()?.accountType === "operations"
+      fromPartition === "invalid" ||
+      toPartition === "invalid" ||
+      fromPartition !== toPartition ||
+      (fromPartition === "play_review" &&
+        data.dataPartition !== "play_review") ||
+      (fromPartition === "production" &&
+        data.dataPartition === "play_review")
+    ) {
+      logger.warn("Interaction partition mismatch blocked", {
+        interactionId: event.params.interactionId,
+        fromPartition,
+        toPartition,
+      });
+      return;
+    }
+    if (
+      fromUserData.accountType === "operations" ||
+      toUserData.accountType === "operations"
     ) {
       return;
     }
@@ -3817,7 +3913,7 @@ export const onInteractionCreated = onDocumentCreated(
     // -----------------------------------------------------------------------
     // 프로필 좋아요 알림: 상대방에게 인앱 알림(idempotent) + 푸시
     // -----------------------------------------------------------------------
-    if (fromUserId !== toUserId) {
+    if (fromUserId !== toUserId && fromPartition === "production") {
       const interactionId = event.params.interactionId;
       const notificationId = `like_${interactionId}`;
 
@@ -3915,6 +4011,7 @@ export const onInteractionCreated = onDocumentCreated(
       matchedAt: FieldValue.serverTimestamp(),
       status: "active",
       chatRoomId: roomId,
+      dataPartition: fromPartition,
     });
 
     batch.set(
@@ -3930,6 +4027,7 @@ export const onInteractionCreated = onDocumentCreated(
         updatedAt: FieldValue.serverTimestamp(),
         lastMessage: "매칭이 성사되었어요! 먼저 인사해보세요 💕",
         lastMessageAt: FieldValue.serverTimestamp(),
+        dataPartition: fromPartition,
       },
       { merge: true }
     );
@@ -3942,6 +4040,7 @@ export const onInteractionCreated = onDocumentCreated(
       type: "system",
       createdAt: FieldValue.serverTimestamp(),
       readBy: [],
+      dataPartition: fromPartition,
     });
 
     await batch.commit();
@@ -3974,6 +4073,12 @@ export const onChatMessageCreated = onDocumentCreated(
     if (!roomSnap.exists) return;
 
     const room = (roomSnap.data() ?? {}) as Record<string, unknown>;
+    if (dataPartitionOf(room) === "play_review") {
+      // Synthetic fixtures intentionally have no devices. More importantly,
+      // review chat must never notify a production account if a bad document
+      // somehow reaches this trigger.
+      return;
+    }
     const participantIdsRaw = room.participantIds;
     const participantIds = Array.isArray(participantIdsRaw)
       ? participantIdsRaw.map((v) => asString(v)).filter((v) => v.length > 0)

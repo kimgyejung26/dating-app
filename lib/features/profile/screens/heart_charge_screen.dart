@@ -42,7 +42,17 @@ class _HeartChargeScreenState extends State<HeartChargeScreen> {
   Future<void> _preparePurchases() async {
     await _loadUser();
     await _iapService.initialize();
-    await _iapService.restorePendingPurchases();
+    if (_iapService.supportsGooglePlayIap) {
+      if (_iapService.isStoreAvailable) {
+        // Initialization may have happened before login. Query again now that
+        // the canonical account is available, without reloading the catalog.
+        await _iapService.restorePendingPurchases();
+      } else {
+        await _iapService.retryGooglePlayConnection();
+      }
+    } else {
+      await _iapService.restorePendingPurchases();
+    }
   }
 
   Future<void> _loadUser() async {
@@ -114,7 +124,15 @@ class _HeartChargeScreenState extends State<HeartChargeScreen> {
           .snapshots(),
       builder: (context, snapshot) {
         final data = snapshot.data?.data();
-        final firstPurchaseEligible = data?['firstPurchaseOfferUsed'] != true;
+        // Android fails closed while account eligibility is unresolved. Buying
+        // another heart package never consumes this offer; only the dedicated
+        // firstPurchaseOfferUsed flag does. The existing iOS behavior remains
+        // unchanged.
+        final firstPurchaseEligible = _iapService.supportsGooglePlayIap
+            ? snapshot.hasData &&
+                  data != null &&
+                  data['firstPurchaseOfferUsed'] != true
+            : data?['firstPurchaseOfferUsed'] != true;
         return _buildProductBody(firstPurchaseEligible: firstPurchaseEligible);
       },
     );
@@ -130,6 +148,12 @@ class _HeartChargeScreenState extends State<HeartChargeScreen> {
       return const Center(child: CupertinoActivityIndicator());
     }
     if (!_iapService.isStoreAvailable) {
+      if (_iapService.supportsGooglePlayIap) {
+        return _GooglePlayRetry(
+          message: '현재 Google Play 결제를 사용할 수 없어요.',
+          onRetry: _iapService.retryGooglePlayConnection,
+        );
+      }
       return _CenteredMessage('현재 ${_iapService.storeName} 결제를 사용할 수 없어요.');
     }
     if (_iapService.products.isEmpty) {
@@ -180,6 +204,15 @@ class _HeartChargeScreenState extends State<HeartChargeScreen> {
         return _ProductCard(
           details: details,
           heartPackage: package,
+          // Android must show the localized price returned by Play Console.
+          // Preserve the existing iOS display behavior exactly.
+          displayPrice: _iapService.supportsGooglePlayIap
+              ? details.price
+              : NumberFormat.currency(
+                  locale: 'ko_KR',
+                  symbol: '₩',
+                  decimalDigits: 0,
+                ).format(package.priceWon),
           isBusy: _iapService.isPurchaseInProgress,
           isActive: _iapService.activeProductId == details.id,
           onPressed: () => _onBuy(details),
@@ -382,6 +415,7 @@ class _PurchaseNotice extends StatelessWidget {
 class _ProductCard extends StatelessWidget {
   final ProductDetails details;
   final HeartProduct heartPackage;
+  final String displayPrice;
   final bool isBusy;
   final bool isActive;
   final VoidCallback onPressed;
@@ -389,6 +423,7 @@ class _ProductCard extends StatelessWidget {
   const _ProductCard({
     required this.details,
     required this.heartPackage,
+    required this.displayPrice,
     required this.isBusy,
     required this.isActive,
     required this.onPressed,
@@ -462,11 +497,7 @@ class _ProductCard extends StatelessWidget {
             child: isActive
                 ? const CupertinoActivityIndicator(color: CupertinoColors.white)
                 : Text(
-                    NumberFormat.currency(
-                      locale: 'ko_KR',
-                      symbol: '₩',
-                      decimalDigits: 0,
-                    ).format(heartPackage.priceWon),
+                    displayPrice,
                     style: const TextStyle(
                       color: CupertinoColors.white,
                       fontSize: 14,
@@ -475,6 +506,33 @@ class _ProductCard extends StatelessWidget {
                   ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _GooglePlayRetry extends StatelessWidget {
+  final String message;
+  final Future<void> Function() onRetry;
+
+  const _GooglePlayRetry({required this.message, required this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(message, textAlign: TextAlign.center),
+            const SizedBox(height: 12),
+            CupertinoButton(
+              onPressed: () => unawaited(onRetry()),
+              child: const Text('다시 시도'),
+            ),
+          ],
+        ),
       ),
     );
   }

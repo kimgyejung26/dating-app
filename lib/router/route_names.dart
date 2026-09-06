@@ -12,6 +12,7 @@ class RouteNames {
   static const String terms = '/terms';
   static const String adultVerification = '/adult-verification';
   static const String studentVerification = '/student-verification';
+  static const String playReviewAccess = '/play-review-access';
 
   /// Post-auth Kakao friend connection (아는 사람 추천 차단). Not a login.
   static const String kakaoFriendConnect = '/kakao-friend-connect';

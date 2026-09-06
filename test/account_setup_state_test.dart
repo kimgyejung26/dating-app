@@ -89,6 +89,44 @@ void main() {
         AccountSetupState.emailVerificationPending,
       );
     });
+
+    test('complete Play review authority bypasses identity setup gates', () {
+      expect(
+        resolveAccountSetupState(
+          hasFirebaseSession: true,
+          userDoc: const {
+            'accountType': 'google_play_review',
+            'dataPartition': 'play_review',
+            'reviewAccess': true,
+            'reviewProfileReady': true,
+            'isStudentVerified': false,
+            'adultVerified': false,
+            'realNameVerified': false,
+          },
+        ),
+        AccountSetupState.complete,
+      );
+    });
+
+    test('partial Play review markers never bypass student verification', () {
+      final base = <String, dynamic>{
+        'accountType': 'google_play_review',
+        'dataPartition': 'play_review',
+        'reviewAccess': true,
+        'reviewProfileReady': true,
+      };
+      for (final key in base.keys.toList()) {
+        final incomplete = Map<String, dynamic>.from(base)..remove(key);
+        expect(
+          resolveAccountSetupState(
+            hasFirebaseSession: true,
+            userDoc: incomplete,
+          ),
+          AccountSetupState.emailVerificationPending,
+          reason: 'missing $key must fail closed',
+        );
+      }
+    });
   });
 
   group('adult verification gate', () {
