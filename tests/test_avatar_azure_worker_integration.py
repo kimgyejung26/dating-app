@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import io
 import sys
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import pytest
@@ -16,6 +17,11 @@ if str(AI_MODEL_DIR) not in sys.path:
 from avatar_generation.avatar_prompt_contract import (  # noqa: E402
     AVATAR_GENERAL_PROMPT_V0_TEMP,
 )
+from avatar_generation.candidate_artifacts import (  # noqa: E402
+    generation_id_for,
+    persist_candidate_artifact,
+    source_identity_hash_for,
+)
 from avatar_generation.model_adapters.azure_contracts import (  # noqa: E402
     AzureGenerationAudit,
     AzureGenerationResult,
@@ -28,6 +34,7 @@ import avatar_generation.qa as qa_module  # noqa: E402
 import avatar_generation.worker as worker_module  # noqa: E402
 from avatar_generation.worker import (  # noqa: E402
     AvatarGenerationError,
+    AvatarGenerationRetryableError,
     DEFAULT_AVATAR_TEMP_BUCKET,
     DEFAULT_SOURCE_PHOTO_BUCKET,
     process_avatar_generation_payload,
@@ -121,9 +128,7 @@ def test_canonical_azure_worker_uses_storage_bytes_and_skips_legacy_generation_c
         "_analyze_source_visual_risk",
         "_prepare_reference_preprocess_for_generation",
         "_extract_trait_card_for_generation",
-        "build_avatar_prompt",
         "prepare_privacy_reference_image",
-        "get_flux2_klein_generator",
     ):
         monkeypatch.setattr(worker_module, name, forbidden)
 
@@ -153,6 +158,86 @@ def test_canonical_azure_worker_uses_storage_bytes_and_skips_legacy_generation_c
     assert generation_params["legacyFlux"] is False
     assert generation_params["legacyReferencePreprocessing"] is False
     assert generation_params["legacyTraitExtraction"] is False
+
+
+def test_canonical_azure_initial_success_makes_exactly_two_provider_calls(monkeypatch):
+    payload = _payload(job_id="azure_job_initial_two")
+    payload.update(
+        {
+            "modelId": AZURE_GPT_IMAGE_2_MODEL_ID,
+            "candidateCount": 2,
+        }
+    )
+    fs = _fake_firestore(payload)
+    st = _fake_storage()
+    provider = FakeAzureProvider()
+    source_bytes = st.buckets[DEFAULT_SOURCE_PHOTO_BUCKET].blobs[
+        "users/u1/source/src_001.jpg"
+    ].data
+    monkeypatch.setenv("ENVIRONMENT", "local")
+    monkeypatch.setattr(worker_module, "get_azure_gpt_image2_provider", lambda: provider)
+
+    result = process_avatar_generation_payload(
+        payload,
+        firestore_client=fs,
+        storage_client=st,
+        qa_runner=_passing_qa,
+        mode=AZURE_GPT_IMAGE_2_MODEL_ID,
+    )
+
+    assert result.status == "preview_ready"
+    assert len(provider.calls) == 2
+    assert all(call["source_image_bytes"] == source_bytes for call in provider.calls)
+
+
+def test_canonical_azure_extra_round_stops_at_four_using_same_source(monkeypatch):
+    payload = _payload(job_id="azure_job_extra_two")
+    payload.update(
+        {
+            "modelId": AZURE_GPT_IMAGE_2_MODEL_ID,
+            "candidateCount": 2,
+        }
+    )
+    fs = _fake_firestore(payload)
+    st = _fake_storage()
+    provider = FakeAzureProvider()
+    source_bytes = st.buckets[DEFAULT_SOURCE_PHOTO_BUCKET].blobs[
+        "users/u1/source/src_001.jpg"
+    ].data
+    qa_calls = []
+
+    def only_one_initial_candidate_is_safe(source_ref, candidate_ref, metadata):
+        qa_calls.append(metadata["candidateId"])
+        if len(qa_calls) == 2:
+            return AvatarQAResult(
+                adultQa="fail",
+                privacyQa="fail",
+                brandQa="fail",
+                previewAllowed=False,
+                requiresHumanReview=False,
+                rejectReasons=["simulation_rejected"],
+                qaVersion="azure_contract_test_reject",
+            )
+        return _passing_qa(source_ref, candidate_ref, metadata)
+
+    monkeypatch.setenv("ENVIRONMENT", "local")
+    monkeypatch.setattr(worker_module, "get_azure_gpt_image2_provider", lambda: provider)
+
+    result = process_avatar_generation_payload(
+        payload,
+        firestore_client=fs,
+        storage_client=st,
+        qa_runner=only_one_initial_candidate_is_safe,
+        mode=AZURE_GPT_IMAGE_2_MODEL_ID,
+    )
+
+    assert result.status == "preview_ready"
+    assert len(provider.calls) == 4
+    assert all(call["source_image_bytes"] == source_bytes for call in provider.calls)
+    plan = fs.data["avatarJobs"][payload["jobId"]]["generationPlan"]
+    assert plan["initialCount"] == 2
+    assert plan["extraCount"] == 2
+    assert plan["totalGenerated"] == 4
 
 
 def test_azure_canonical_qa_compares_storage_source_directly_without_reference_placeholder(monkeypatch):
@@ -281,6 +366,231 @@ def test_retryable_azure_failure_releases_claim_for_cloud_tasks_redelivery(monke
     assert len(provider.calls) == 2
 
 
+def test_storage_artifact_survives_crash_before_candidate_doc_and_skips_second_paid_call(
+    monkeypatch,
+):
+    payload = _payload(job_id="azure_job_artifact_recovery")
+    payload.update({"modelId": AZURE_GPT_IMAGE_2_MODEL_ID, "candidateCount": 1})
+    fs = _fake_firestore(payload)
+    st = _fake_storage()
+    provider = FakeAzureProvider()
+    monkeypatch.setenv("ENVIRONMENT", "local")
+    monkeypatch.setattr(worker_module, "get_azure_gpt_image2_provider", lambda: provider)
+
+    original_set_doc = worker_module._set_doc
+    crashed = False
+
+    def crash_before_candidate_doc(ref, data, *, merge=True):
+        nonlocal crashed
+        if getattr(ref, "collection", "") == "avatarCandidates" and not crashed:
+            crashed = True
+            raise RuntimeError("simulated process crash after Storage write")
+        return original_set_doc(ref, data, merge=merge)
+
+    monkeypatch.setattr(worker_module, "_set_doc", crash_before_candidate_doc)
+    with pytest.raises(Exception):
+        process_avatar_generation_payload(
+            payload,
+            firestore_client=fs,
+            storage_client=st,
+            qa_runner=_passing_qa,
+            mode=AZURE_GPT_IMAGE_2_MODEL_ID,
+        )
+
+    assert len(provider.calls) == 1
+    candidate_path = (
+        "users/u1/jobs/azure_job_artifact_recovery/candidates/"
+        "cand_azure_job_artifact_recovery_01.png"
+    )
+    blob = st.buckets[DEFAULT_AVATAR_TEMP_BUCKET].blobs[candidate_path]
+    assert blob.exists()
+    assert blob.metadata["artifactSchema"] == "azure_candidate_artifact_v2"
+
+    monkeypatch.setattr(worker_module, "_set_doc", original_set_doc)
+    result = process_avatar_generation_payload(
+        payload,
+        firestore_client=fs,
+        storage_client=st,
+        qa_runner=_passing_qa,
+        mode=AZURE_GPT_IMAGE_2_MODEL_ID,
+    )
+
+    assert result.status == "preview_ready"
+    assert len(provider.calls) == 1
+    candidate = next(iter(fs.data["avatarCandidates"].values()))
+    assert candidate["artifactRecovery"]["source"] == "deterministic_storage_object"
+
+
+def test_incomplete_existing_paid_artifact_prefers_needs_review_over_regeneration(monkeypatch):
+    payload = _payload(job_id="azure_job_artifact_review")
+    payload.update({"modelId": AZURE_GPT_IMAGE_2_MODEL_ID, "candidateCount": 1})
+    fs = _fake_firestore(payload)
+    st = _fake_storage()
+    provider = FakeAzureProvider()
+    candidate_path = (
+        "users/u1/jobs/azure_job_artifact_review/candidates/"
+        "cand_azure_job_artifact_review_01.png"
+    )
+    st.buckets[DEFAULT_AVATAR_TEMP_BUCKET].blob(candidate_path).data = _generated_png_bytes()
+    monkeypatch.setenv("ENVIRONMENT", "local")
+    monkeypatch.setattr(worker_module, "get_azure_gpt_image2_provider", lambda: provider)
+
+    with pytest.raises(Exception):
+        process_avatar_generation_payload(
+            payload,
+            firestore_client=fs,
+            storage_client=st,
+            qa_runner=_passing_qa,
+            mode=AZURE_GPT_IMAGE_2_MODEL_ID,
+        )
+
+    assert provider.calls == []
+    job = fs.data["avatarJobs"][payload["jobId"]]
+    assert job["status"] == "needs_review"
+    assert job["errorCode"] == "azure_candidate_artifact_manifest_incomplete"
+    assert job["generationClaim"]["state"] == "reconciliation_required"
+
+
+def test_storage_read_failure_before_provider_call_fails_closed(monkeypatch):
+    class UnreadableArtifactBlob:
+        def exists(self):
+            raise ConnectionError("storage unavailable")
+
+    payload = _payload(job_id="azure_job_storage_read_failure")
+    payload.update({"modelId": AZURE_GPT_IMAGE_2_MODEL_ID, "candidateCount": 1})
+    fs = _fake_firestore(payload)
+    st = _fake_storage()
+    provider = FakeAzureProvider()
+    candidate_path = (
+        "users/u1/jobs/azure_job_storage_read_failure/candidates/"
+        "cand_azure_job_storage_read_failure_01.png"
+    )
+    st.buckets[DEFAULT_AVATAR_TEMP_BUCKET].blobs[candidate_path] = (
+        UnreadableArtifactBlob()
+    )
+    monkeypatch.setenv("ENVIRONMENT", "local")
+    monkeypatch.setattr(worker_module, "get_azure_gpt_image2_provider", lambda: provider)
+
+    with pytest.raises(
+        AvatarGenerationRetryableError,
+        match="azure_candidate_artifact_storage_unavailable",
+    ):
+        process_avatar_generation_payload(
+            payload,
+            firestore_client=fs,
+            storage_client=st,
+            qa_runner=_passing_qa,
+            mode=AZURE_GPT_IMAGE_2_MODEL_ID,
+        )
+
+    assert provider.calls == []
+
+
+def test_stale_provider_inflight_with_complete_storage_artifact_resumes_qa_without_azure(
+    monkeypatch,
+):
+    payload = _payload(job_id="azure_job_stale_complete")
+    payload.update({"modelId": AZURE_GPT_IMAGE_2_MODEL_ID, "candidateCount": 1})
+    fs = _fake_firestore(payload)
+    st = _fake_storage()
+    provider = FakeAzureProvider()
+    fs.data["avatarJobs"][payload["jobId"]].update(
+        {
+            "status": "provider_inflight",
+            "generationBackend": AZURE_GPT_IMAGE_2_MODEL_ID,
+            "generationClaim": {
+                "state": "active",
+                "backend": AZURE_GPT_IMAGE_2_MODEL_ID,
+                "idempotencyKey": payload["idempotencyKey"],
+                "phase": "initial",
+                "expectedCandidateIndexes": [0],
+                "claimedAt": datetime.now(timezone.utc) - timedelta(hours=2),
+            },
+        }
+    )
+    candidate_id = "cand_azure_job_stale_complete_01"
+    image_ref = (
+        f"gs://{DEFAULT_AVATAR_TEMP_BUCKET}/users/u1/jobs/{payload['jobId']}/"
+        f"candidates/{candidate_id}.png"
+    )
+    persist_candidate_artifact(
+        st,
+        image_ref=image_ref,
+        image_bytes=_generated_png_bytes(),
+        generation_id=generation_id_for(
+            job_id=payload["jobId"], idempotency_key=payload["idempotencyKey"]
+        ),
+        candidate_index=0,
+        candidate_id=candidate_id,
+        source_identity_hash=source_identity_hash_for(
+            source_photo_ids=payload["sourcePhotoIds"],
+            source_photo_refs=payload["sourcePhotoRefs"],
+            source_photo_object_generations=payload.get(
+                "sourcePhotoObjectGenerations", []
+            ),
+        ),
+        seed=worker_module.deterministic_seed(payload["jobId"], 0),
+        generation_params={
+            "provider": "azure",
+            "generationBackend": AZURE_GPT_IMAGE_2_MODEL_ID,
+            "candidateSeed": worker_module.deterministic_seed(payload["jobId"], 0),
+        },
+    )
+    monkeypatch.setenv("ENVIRONMENT", "local")
+    monkeypatch.setenv("AZURE_PROVIDER_INFLIGHT_STALE_SECONDS", "300")
+    monkeypatch.setattr(worker_module, "get_azure_gpt_image2_provider", lambda: provider)
+
+    result = process_avatar_generation_payload(
+        payload,
+        firestore_client=fs,
+        storage_client=st,
+        qa_runner=_passing_qa,
+        mode=AZURE_GPT_IMAGE_2_MODEL_ID,
+    )
+
+    assert result.status == "preview_ready"
+    assert provider.calls == []
+    assert fs.data["avatarJobs"][payload["jobId"]]["generationClaim"]["state"] == "completed"
+
+
+def test_stale_provider_inflight_without_storage_artifact_never_regenerates(monkeypatch):
+    payload = _payload(job_id="azure_job_stale_missing")
+    payload.update({"modelId": AZURE_GPT_IMAGE_2_MODEL_ID, "candidateCount": 1})
+    fs = _fake_firestore(payload)
+    provider = FakeAzureProvider()
+    fs.data["avatarJobs"][payload["jobId"]].update(
+        {
+            "status": "provider_inflight",
+            "generationBackend": AZURE_GPT_IMAGE_2_MODEL_ID,
+            "generationClaim": {
+                "state": "active",
+                "backend": AZURE_GPT_IMAGE_2_MODEL_ID,
+                "idempotencyKey": payload["idempotencyKey"],
+                "phase": "initial",
+                "expectedCandidateIndexes": [0],
+                "claimedAt": datetime.now(timezone.utc) - timedelta(hours=2),
+            },
+        }
+    )
+    monkeypatch.setenv("ENVIRONMENT", "local")
+    monkeypatch.setenv("AZURE_PROVIDER_INFLIGHT_STALE_SECONDS", "300")
+    monkeypatch.setattr(worker_module, "get_azure_gpt_image2_provider", lambda: provider)
+
+    result = process_avatar_generation_payload(
+        payload,
+        firestore_client=fs,
+        storage_client=_fake_storage(),
+        qa_runner=_passing_qa,
+        mode=AZURE_GPT_IMAGE_2_MODEL_ID,
+    )
+
+    assert result.status == "needs_review"
+    assert provider.calls == []
+    job = fs.data["avatarJobs"][payload["jobId"]]
+    assert job["errorCode"] == "azure_stale_provider_artifact_missing"
+    assert job["generationClaim"]["state"] == "reconciliation_required"
+
+
 def test_azure_worker_rejects_non_jpeg_source_bytes_before_provider(monkeypatch):
     payload = _payload(job_id="azure_job_non_jpeg_source")
     payload.update(
@@ -385,7 +695,7 @@ def test_legacy_local_dry_run_does_not_emit_azure_provider_usage(monkeypatch):
 
     job = fs.data["avatarJobs"][payload["jobId"]]
     assert "providerUsage" not in job
-    assert job["generationBackend"] == "black-forest-labs/FLUX.2-klein-4B"
+    assert job["generationBackend"] == "dry_run_fixture"
 
 
 def test_existing_avatar_media_normalized_jpeg_is_the_direct_azure_source(monkeypatch):

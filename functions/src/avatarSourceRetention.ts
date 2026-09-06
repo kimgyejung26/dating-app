@@ -39,6 +39,20 @@ export type AvatarSourceRetentionClaim = {
   refs: GcsRef[];
 };
 
+/** Deletes one retained private object. Injected in tests; production uses Storage. */
+export type DeleteRetainedObject = (ref: GcsRef) => Promise<void>;
+
+async function deleteRetainedObjectFromStorage(ref: GcsRef): Promise<void> {
+  await getStorage().bucket(ref.bucket).file(ref.path).delete({ ignoreNotFound: true });
+}
+
+export type AvatarSourceRetentionRecoverySummary = {
+  scanned: number;
+  due: number;
+  claimed: number;
+  skipped: number;
+};
+
 export type AvatarSourceRetentionDecision =
   | { action: "skip"; reason: string }
   | {
@@ -641,14 +655,16 @@ export async function executeAvatarSourceRetention(params: {
   uid: string;
   jobId: string;
   trigger: "avatar_job" | "clip_embedding";
+  deleteObject?: DeleteRetainedObject;
 }): Promise<"claimed" | "skipped"> {
+  const deleteObject = params.deleteObject ?? deleteRetainedObjectFromStorage;
   const claim = await claimPendingSourceDeletion(params);
   if (!claim) return "skipped";
   const valid = await preDeleteRevalidateClaim({ firestore: params.firestore, claim });
   if (!valid) return "skipped";
   try {
     for (const ref of claim.refs) {
-      await getStorage().bucket(ref.bucket).file(ref.path).delete({ ignoreNotFound: true });
+      await deleteObject(ref);
     }
     await markSourceDeleted({ firestore: params.firestore, claim });
     logger.info(
@@ -669,32 +685,49 @@ export async function executeAvatarSourceRetention(params: {
   }
 }
 
+/**
+ * Recovery loop for pending source deletions. Only state documents already in
+ * a retry-eligible status are considered; every candidate is re-planned and
+ * re-validated through the same authority as the trigger path, so historical,
+ * non-current, approval-protected or already-deleted records are never
+ * mutated here. Deleted accounts are out of scope: their private media is the
+ * account-deletion purge's responsibility, not this generation-lifecycle loop.
+ */
 export async function recoverAvatarSourceRetentionDeletions(params: {
   firestore: Firestore;
   limit?: number;
-}): Promise<number> {
+  deleteObject?: DeleteRetainedObject;
+}): Promise<AvatarSourceRetentionRecoverySummary> {
   const now = Timestamp.now();
   const snap = await params.firestore
     .collection(SOURCE_RETENTION_STATE_COLLECTION)
     .where("status", "in", ["deleting", "retryable_failed", "stale"])
     .limit(params.limit ?? 25)
     .get();
-  let claimed = 0;
+  const summary: AvatarSourceRetentionRecoverySummary = {
+    scanned: snap.docs.length,
+    due: 0,
+    claimed: 0,
+    skipped: 0,
+  };
   for (const doc of snap.docs) {
     const data = readMap(doc.data());
     if (!dueForRetry(data, now)) continue;
     const uid = asString(data.uid);
     const jobId = asString(data.jobId);
     if (!uid || !jobId) continue;
+    summary.due += 1;
     const result = await executeAvatarSourceRetention({
       firestore: params.firestore,
       uid,
       jobId,
       trigger: "avatar_job",
+      deleteObject: params.deleteObject,
     });
-    if (result === "claimed") claimed += 1;
+    if (result === "claimed") summary.claimed += 1;
+    else summary.skipped += 1;
   }
-  return claimed;
+  return summary;
 }
 
 async function currentJobIdForUid(
@@ -759,9 +792,13 @@ export function createClipEmbeddingSourceRetentionTrigger(firestore: Firestore) 
 
 export function createAvatarSourceRetentionRecoveryTrigger(firestore: Firestore) {
   return onSchedule("every 15 minutes", async () => {
-    const recovered = await recoverAvatarSourceRetentionDeletions({ firestore });
-    if (recovered > 0) {
-      logger.info("Avatar source retention recovery claimed deletions", { recovered });
-    }
+    const startedAt = Date.now();
+    const summary = await recoverAvatarSourceRetentionDeletions({ firestore });
+    // Always log the run shape (counts only, no identifiers) so an operator can
+    // verify the first controlled run against its dry run.
+    logger.info("Avatar source retention recovery run", {
+      ...summary,
+      durationMs: Date.now() - startedAt,
+    });
   });
 }

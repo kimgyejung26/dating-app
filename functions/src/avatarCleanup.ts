@@ -1,6 +1,6 @@
 import { createHash } from "crypto";
 import { getAuth } from "firebase-admin/auth";
-import { FieldPath, FieldValue, type Firestore } from "firebase-admin/firestore";
+import { FieldValue, type Firestore } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
 import {
   HttpsError,
@@ -19,6 +19,10 @@ import {
   type AccountDeletionSocialDocs,
   type SocialCleanupOperation,
 } from "./accountDeletionSocialCleanup";
+import {
+  resolveAccountDeletionOwner,
+  type AccountDeletionOwner,
+} from "./accountDeletionAuthorization";
 import { kakaoIdentityHash } from "./kakaoIdentityLink";
 import { normalizeYonseiEmail } from "./studentVerificationEmail";
 
@@ -130,7 +134,7 @@ type GcsRef = {
   path: string;
 };
 
-type CleanupDocs = {
+export type CleanupDocs = {
   userData: Record<string, unknown>;
   privateMediaData: Record<string, unknown>;
   candidateDocs: Array<{ id: string; data: Record<string, unknown> }>;
@@ -173,6 +177,42 @@ export type CleanupOperation =
 export type CleanupExecutor = {
   load(uid: string, requestId: string): Promise<CleanupDocs>;
   apply(operation: CleanupOperation): Promise<void>;
+};
+
+/** Minimal Storage file surface used by the generation-aware delete. */
+export type CleanupStorageFile = {
+  exists(): Promise<[boolean, ...unknown[]]>;
+  getMetadata(): Promise<[{ generation?: string | number }, ...unknown[]]>;
+  delete(options?: { ifGenerationMatch?: number; ignoreNotFound?: boolean }): Promise<unknown>;
+};
+
+/**
+ * Deletes exactly the object generation that was observed. A missing object is
+ * a no-op (already gone); a generation mismatch (412) is rethrown so the
+ * cleanup request stays retryable and Firestore metadata is never sanitized
+ * ahead of an object that was replaced concurrently.
+ */
+export async function deleteStorageObjectWithGenerationMatch(
+  file: CleanupStorageFile,
+): Promise<"deleted" | "missing"> {
+  const [exists] = await file.exists();
+  if (!exists) return "missing";
+  const [metadata] = await file.getMetadata();
+  const generation = Number(metadata.generation);
+  if (!Number.isFinite(generation) || generation <= 0) {
+    throw new Error("avatar_cleanup_object_generation_unavailable");
+  }
+  await file.delete({ ifGenerationMatch: generation });
+  return "deleted";
+}
+
+export type CleanupExecutorOptions = {
+  /**
+   * "require" (default, app withdrawal): users/{uid} is expected to exist.
+   * "skip_if_missing" (deleted-account purge): never create a users stub for an
+   * identity that no longer exists; user-document operations are skipped.
+   */
+  userDocPolicy?: "require" | "skip_if_missing";
 };
 
 function envValue(name: string, fallback: string): string {
@@ -301,6 +341,31 @@ const RECOMMENDATION_EXCLUSION_TARGET_PATH =
 export function isBlocksTargetRefPath(path: string, targetUid: string): boolean {
   const match = path.match(BLOCKS_TARGET_PATH);
   return match !== null && match[2] === targetUid;
+}
+
+/**
+ * Reverse viewers of a uid's blocks and recommendation exclusions.
+ *
+ * Both contracts are written symmetrically in one atomic write
+ * (reportAndBlockUser and contact blocks: blocks/{A}/targets/{B} +
+ * blocks/{B}/targets/{A}; kakao-friend avoidance:
+ * recommendationExclusions/{A}/targets/{B} + /{B}/targets/{A}), so the set of
+ * viewers whose target subcollection names this uid equals the uid's own
+ * target ids. This replaces a collection-group `documentId() == uid` filter
+ * that Firestore rejects for bare ids (the account_deletion cleanup threw on
+ * every request since 2026-07-29).
+ */
+export function deriveReverseTargetViewerUids(params: {
+  uid: string;
+  blockTargetIds: string[];
+  recommendationExclusionTargetIds: string[];
+}): { reverseBlockViewerUids: string[]; reverseRecommendationExclusionViewerUids: string[] } {
+  const own = (ids: string[]) =>
+    Array.from(new Set(ids.map((id) => id.trim()).filter((id) => id && id !== params.uid)));
+  return {
+    reverseBlockViewerUids: own(params.blockTargetIds),
+    reverseRecommendationExclusionViewerUids: own(params.recommendationExclusionTargetIds),
+  };
 }
 
 export function isRecommendationExclusionTargetRefPath(
@@ -678,10 +743,10 @@ export async function loadAccountDeletionDocs(
       .doc(safeUid)
       .collection("targets")
       .get(),
-    firestore
-      .collectionGroup("targets")
-      .where(FieldPath.documentId(), "==", safeUid)
-      .get(),
+    // Reverse block / exclusion viewers are derived from the owner's own
+    // target ids (see deriveReverseTargetViewerUids); a collection-group
+    // documentId() filter on a bare uid is rejected by Firestore.
+    Promise.resolve({ docs: [] as Array<{ ref: { path: string } }> }),
     firestore
       .collection("kakaoFriendPairs")
       .where("memberUids", "array-contains", safeUid)
@@ -689,22 +754,15 @@ export async function loadAccountDeletionDocs(
     loadAccountDeletionSocialDocs(firestore, safeUid),
   ]);
 
-  const reverseBlockViewerUids = reverseBlockTargetsSnap.docs
-    .filter((doc) => isBlocksTargetRefPath(doc.ref.path, safeUid))
-    .map((doc) => {
-      const match = doc.ref.path.match(BLOCKS_TARGET_PATH);
-      return match?.[1] ?? "";
-    })
-    .filter((viewerUid) => viewerUid.length > 0);
-  const reverseRecommendationExclusionViewerUids = reverseBlockTargetsSnap.docs
-    .filter((doc) =>
-      isRecommendationExclusionTargetRefPath(doc.ref.path, safeUid),
-    )
-    .map((doc) => {
-      const match = doc.ref.path.match(RECOMMENDATION_EXCLUSION_TARGET_PATH);
-      return match?.[1] ?? "";
-    })
-    .filter((viewerUid) => viewerUid.length > 0);
+  void reverseBlockTargetsSnap;
+  const { reverseBlockViewerUids, reverseRecommendationExclusionViewerUids } =
+    deriveReverseTargetViewerUids({
+      uid: safeUid,
+      blockTargetIds: blockTargetsSnap.docs.map((doc) => doc.id),
+      recommendationExclusionTargetIds: recommendationExclusionTargetsSnap.docs.map(
+        (doc) => doc.id,
+      ),
+    });
 
   // Identity-contract PII (auth re-architecture §5). Candidate document ids
   // come from the user's own doc; each is deleted only when its `appUserId`
@@ -775,11 +833,26 @@ export async function loadAccountDeletionDocs(
   });
 }
 
-function firestoreExecutor(
+export function createAvatarCleanupFirestoreExecutor(
   firestore: Firestore,
   uid: string,
   authUid?: string | null,
+  options: CleanupExecutorOptions = {},
 ): CleanupExecutor {
+  const userDocPolicy = options.userDocPolicy ?? "require";
+  let userDocExistsPromise: Promise<boolean> | null = null;
+  const userDocExists = (): Promise<boolean> => {
+    if (!userDocExistsPromise) {
+      userDocExistsPromise = firestore
+        .collection("users")
+        .doc(uid)
+        .get()
+        .then((snap) => snap.exists);
+    }
+    return userDocExistsPromise;
+  };
+  const skipUserDocOperation = async (): Promise<boolean> =>
+    userDocPolicy === "skip_if_missing" && !(await userDocExists());
   return {
     async load(loadUid: string, requestId: string): Promise<CleanupDocs> {
       const [userSnap, privateSnap, candidateQuery, jobQuery, requestSnap, accountDeletionDocs] =
@@ -831,10 +904,9 @@ function firestoreExecutor(
             );
           return;
         case "deleteStorage":
-          await getStorage()
-            .bucket(operation.ref.bucket)
-            .file(operation.ref.path)
-            .delete({ ignoreNotFound: true });
+          await deleteStorageObjectWithGenerationMatch(
+            getStorage().bucket(operation.ref.bucket).file(operation.ref.path),
+          );
           return;
         case "sanitizeCandidate":
           await firestore.collection("avatarCandidates").doc(operation.id).set(
@@ -902,6 +974,7 @@ function firestoreExecutor(
           await firestore.collection("clipEmbeddings").doc(uid).delete();
           return;
         case "sanitizeUser":
+          if (await skipUserDocOperation()) return;
           await firestore.collection("users").doc(uid).set(
             {
               profileImageMode: "avatar",
@@ -944,6 +1017,7 @@ function firestoreExecutor(
             });
           return;
         case "lockAccountForDeletion":
+          if (await skipUserDocOperation()) return;
           await firestore
             .collection("users")
             .doc(uid)
@@ -1179,37 +1253,81 @@ function firestoreExecutor(
   };
 }
 
+export type CleanupExecutorFactory = (
+  firestore: Firestore,
+  uid: string,
+  authUid: string | null,
+  options: CleanupExecutorOptions,
+) => CleanupExecutor;
+
+export type CleanupAvatarMediaHandlerDeps = {
+  firestore: Firestore;
+  /** Feature authorization (student-verified users doc) for consent withdrawal. */
+  resolveUser: ResolveCleanupUser;
+  /** Owner-lifecycle authorization for account deletion (auth uid only). */
+  resolveOwner?: (
+    firestore: Firestore,
+    auth: CallableRequest<unknown>["auth"],
+  ) => Promise<AccountDeletionOwner>;
+  executorFactory?: CleanupExecutorFactory;
+};
+
+/**
+ * Callable body, separated from `onCall` so authorization can be unit tested.
+ *
+ * `account_deletion` is authorized by identity ownership alone: the owner is
+ * `request.auth.uid`, whether or not that identity finished student
+ * verification or has a `users/{uid}` document. `consent_withdrawal` remains a
+ * feature action on a verified account and keeps the feature resolver.
+ */
+export async function handleCleanupAvatarMediaRequest(
+  deps: CleanupAvatarMediaHandlerDeps,
+  request: Pick<CallableRequest<unknown>, "auth" | "data">,
+): Promise<AvatarCleanupResponse> {
+  const { clientRequestId, reason } = requireAvatarCleanupRequest(request.data);
+  const authUid =
+    typeof request.auth?.uid === "string" ? request.auth.uid : null;
+  const executorFactory =
+    deps.executorFactory ?? createAvatarCleanupFirestoreExecutor;
+  let uid: string;
+  let executorOptions: CleanupExecutorOptions = {};
+  if (reason === "account_deletion") {
+    const owner = await (deps.resolveOwner ?? resolveAccountDeletionOwner)(
+      deps.firestore,
+      request.auth,
+    );
+    uid = requirePathSegment(owner.uid, "uid");
+    executorOptions = {
+      userDocPolicy: owner.usersDocExists ? "require" : "skip_if_missing",
+    };
+  } else {
+    const user = await deps.resolveUser(request.auth);
+    uid = requirePathSegment(user.userId, "uid");
+  }
+  try {
+    return await executeAvatarCleanup({
+      uid,
+      clientRequestId,
+      reason,
+      executor: executorFactory(deps.firestore, uid, authUid, executorOptions),
+    });
+  } catch (error) {
+    logger.error("Avatar media cleanup failed", {
+      uidHash: uidHash(uid),
+      reason,
+      status: "failed",
+      ...safeErrorLogFields(error),
+    });
+    if (error instanceof HttpsError) throw error;
+    throw new HttpsError("internal", "avatar_cleanup_failed");
+  }
+}
+
 export function createCleanupAvatarMediaFunction(
   firestore: Firestore,
   resolveUser: ResolveCleanupUser,
 ) {
-  return onCall(
-    CLEANUP_AVATAR_MEDIA_CALLABLE_OPTIONS,
-    async (request) => {
-      const user = await resolveUser(request.auth);
-      const uid = requirePathSegment(user.userId, "uid");
-      const authUid =
-        typeof request.auth?.uid === "string" ? request.auth.uid : null;
-      const { clientRequestId, reason } = requireAvatarCleanupRequest(
-        request.data,
-      );
-      try {
-        return await executeAvatarCleanup({
-          uid,
-          clientRequestId,
-          reason,
-          executor: firestoreExecutor(firestore, uid, authUid),
-        });
-      } catch (error) {
-        logger.error("Avatar media cleanup failed", {
-          uidHash: uidHash(uid),
-          reason,
-          status: "failed",
-          ...safeErrorLogFields(error),
-        });
-        if (error instanceof HttpsError) throw error;
-        throw new HttpsError("internal", "avatar_cleanup_failed");
-      }
-    },
+  return onCall(CLEANUP_AVATAR_MEDIA_CALLABLE_OPTIONS, (request) =>
+    handleCleanupAvatarMediaRequest({ firestore, resolveUser }, request),
   );
 }

@@ -28,6 +28,8 @@ from avatar_generation.model_adapters.azure_gpt_image_2 import (  # noqa: E402
     AzureUnknownOutcomeError,
 )
 from avatar_generation.model_adapters.azure_rate_limit import AzureRequestRateLimiter  # noqa: E402
+import avatar_generation.model_adapters.azure_router as azure_router_module  # noqa: E402
+import avatar_generation.model_adapters.azure_gpt_image_2 as provider_module  # noqa: E402
 
 
 def _image_bytes(*, format: str = "JPEG", color: tuple[int, int, int] = (30, 60, 90)) -> bytes:
@@ -71,6 +73,13 @@ def _success_response() -> AzureProviderResponse:
         headers={},
         payload={"data": [{"b64_json": base64.b64encode(_image_bytes(format="PNG")).decode("ascii")}]},
     )
+
+
+def test_public_provider_factory_places_legacy_single_endpoint_behind_router(monkeypatch):
+    sentinel = object()
+    monkeypatch.setattr(azure_router_module, "build_azure_endpoint_router", lambda: sentinel)
+
+    assert provider_module.get_azure_gpt_image2_provider() is sentinel
 
 
 def test_provider_sends_storage_bytes_and_exact_general_prompt_without_prompt_suffixes():
@@ -135,10 +144,9 @@ def test_provider_requires_the_existing_normalized_jpeg_source_contract():
     assert transport.requests == []
 
 
-def test_provider_retries_only_bounded_429_and_5xx_responses():
+def test_provider_retries_only_definitely_rejected_429_response():
     retry_429 = AzureProviderResponse(status_code=429, headers={"Retry-After": "0"}, payload={})
-    retry_500 = AzureProviderResponse(status_code=500, headers={}, payload={})
-    transport = RecordingTransport([retry_429, retry_500, _success_response()])
+    transport = RecordingTransport([retry_429, _success_response()])
     provider = AzureGptImage2Provider(config=_config(max_attempts=3), transport=transport)
 
     result = provider.generate(
@@ -148,8 +156,50 @@ def test_provider_retries_only_bounded_429_and_5xx_responses():
         idempotency_key="job-1:candidate-1",
     )
 
-    assert result.audit.attempts == 3
-    assert len(transport.requests) == 3
+    assert result.audit.attempts == 2
+    assert len(transport.requests) == 2
+
+
+def test_provider_does_not_retry_or_fail_over_after_5xx_application_failure():
+    transport = RecordingTransport(
+        [AzureProviderResponse(status_code=500, headers={}, payload={}), _success_response()]
+    )
+    provider = AzureGptImage2Provider(config=_config(max_attempts=3), transport=transport)
+
+    with pytest.raises(Exception) as caught:
+        provider.generate(
+            source_image_bytes=_image_bytes(),
+            source_content_type="image/jpeg",
+            prompt=AVATAR_GENERAL_PROMPT_V0_TEMP,
+            idempotency_key="job-1:candidate-server-error",
+        )
+
+    assert caught.value.error_code == "azure_server_error"
+    assert caught.value.unknown_outcome is True
+    assert caught.value.retryable is False
+    assert len(transport.requests) == 1
+
+
+@pytest.mark.parametrize(
+    ("headers", "expected"),
+    [
+        ({"Retry-After": "12"}, 12.0),
+        ({"Retry-After": "-1"}, None),
+        ({"Retry-After": "invalid"}, None),
+        ({}, None),
+        ({"Retry-After": "999999"}, 3600.0),
+        (
+            {
+                "Date": "Sun, 06 Sep 2026 00:00:00 GMT",
+                "Retry-After": "Sun, 06 Sep 2026 00:00:17 GMT",
+            },
+            17.0,
+        ),
+        ({"Retry-After": "Sun, 06 Sep 2026 00:00:17 GMT"}, None),
+    ],
+)
+def test_retry_after_parsing_is_bounded_and_server_time_authoritative(headers, expected):
+    assert provider_module._retry_after_seconds(headers) == expected
 
 
 def test_provider_honors_retry_after_even_when_backoff_cap_is_lower():

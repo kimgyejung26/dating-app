@@ -196,7 +196,7 @@ def _validate_retry_controls(
         "AVATAR_QUEUE_MAX_CONCURRENT_DISPATCHES",
         production=production,
         minimum=1,
-        maximum=8,
+        maximum=64,
     )
     gpu_max = _require_int(
         issues,
@@ -204,7 +204,7 @@ def _validate_retry_controls(
         "AVATAR_QUEUE_GPU_MAX_CONCURRENT_JOBS",
         production=production,
         minimum=1,
-        maximum=4,
+        maximum=64,
     )
     deadline = _require_int(
         issues,
@@ -220,7 +220,7 @@ def _validate_retry_controls(
         "AVATAR_QUEUE_MAX_ATTEMPTS",
         production=production,
         minimum=2,
-        maximum=5,
+        maximum=10,
     )
     min_backoff = _require_int(
         issues,
@@ -271,7 +271,7 @@ def _validate_retry_controls(
             _issue(
                 "warning",
                 "AVATAR_QUEUE_DISPATCH_DEADLINE_SECONDS",
-                "Avatar FLUX jobs usually need a deadline near 900 seconds.",
+                "Avatar generation jobs usually need a deadline near 900 seconds.",
             )
         )
     if max_attempts is not None and max_attempts > 3:
@@ -279,7 +279,7 @@ def _validate_retry_controls(
             _issue(
                 "warning",
                 "AVATAR_QUEUE_MAX_ATTEMPTS",
-                "High retry counts can multiply GPU cost; prefer dead-letter triage after 3 attempts.",
+                "High retry counts require deterministic artifact reconciliation and cost monitoring.",
             )
         )
     if min_backoff is not None and max_backoff is not None and min_backoff > max_backoff:

@@ -5,6 +5,8 @@ import {
   planAvatarGenerationStateSync,
   shouldSyncAvatarGenerationTransition,
   syncAvatarGenerationStateForJob,
+  AVATAR_STATE_SYNC_TRIGGER_OPTIONS,
+  mapTerminalJobStatus,
 } from "./avatarGenerationStateSync";
 
 const uid = "u1";
@@ -260,6 +262,46 @@ test("terminal state is applied only when the job enters terminal state", () => 
   );
 });
 
+test("retryable failure may transition to preview ready after Cloud Tasks redelivery", () => {
+  assert.equal(
+    shouldSyncAvatarGenerationTransition({
+      beforeData: { status: "retryable_failed", retryable: true },
+      afterData: { status: "preview_ready", retryable: false },
+    }),
+    true,
+  );
+  assert.equal(
+    shouldSyncAvatarGenerationTransition({
+      beforeData: { status: "failed", retryable: true },
+      afterData: { status: "preview_ready", retryable: false },
+    }),
+    true,
+  );
+  assert.equal(
+    shouldSyncAvatarGenerationTransition({
+      beforeData: { status: "failed", retryable: false },
+      afterData: { status: "preview_ready", retryable: false },
+    }),
+    false,
+  );
+
+  const plan = planAvatarGenerationStateSync({
+    jobId,
+    jobData: avatarJob({ status: "preview_ready", retryable: false }),
+    privateData: privateMedia(),
+    userData: queuedAvatar({
+      status: "failed",
+      errorCode: "avatar_generation_retryable_failed",
+      reasonCode: "avatar_generation_retryable_failed",
+    }),
+  });
+
+  assert.equal(plan.action, "update_user_avatar");
+  assert.equal(plan.avatarStatus, "preview_ready");
+  assert.equal(plan.avatarErrorCode, null);
+  assert.equal(plan.clearAvatarError, true);
+});
+
 test("a terminal job that already matches user state is a semantic no-op", () => {
   const plan = planAvatarGenerationStateSync({
     jobId,
@@ -333,4 +375,49 @@ test("state sync updates users without writing back to the watched avatar job", 
 
   assert.equal(result, "updated");
   assert.deepEqual(writes, [{ type: "update", path: "users/u1" }]);
+});
+
+test("state sync trigger is redelivered so one transient failure cannot desync", () => {
+  // 트리거 자체의 일시적 실패는 재배달되어야 users/{uid}.avatar 가
+  // avatarJobs 와 영구히 어긋나지 않는다.
+  assert.equal(AVATAR_STATE_SYNC_TRIGGER_OPTIONS.retry, true);
+  assert.equal(
+    AVATAR_STATE_SYNC_TRIGGER_OPTIONS.document,
+    "avatarJobs/{jobId}",
+  );
+});
+
+test("state sync skips when the user document is missing", () => {
+  // tx.update 는 존재하지 않는 문서에서 NOT_FOUND 로 던지고, 재시도해도
+  // 계속 실패한다. 계획 단계에서 걸러야 한다.
+  const plan = planAvatarGenerationStateSync({
+    jobId: "avatar_job_missing_user",
+    jobData: {
+      uid: "uid_1",
+      jobId: "avatar_job_missing_user",
+      status: "preview_ready",
+      sourcePhotoIds: ["src_1"],
+      avatarSourceSelectionVersion: 1,
+    },
+    privateData: {
+      currentAvatarJobId: "avatar_job_missing_user",
+      currentAvatarSourcePhotoId: "src_1",
+      avatarSourceSelectionVersion: 1,
+    },
+    userData: {},
+    userExists: false,
+  });
+  assert.equal(plan.action, "skip");
+});
+
+test("provider post-send unknown syncs as reconciliation, not QA review", () => {
+  const unknown = mapTerminalJobStatus(
+    "needs_review",
+    "azure_unknown_post_send_outcome",
+  );
+  assert.equal(unknown?.avatarStatus, "reconciliation_required");
+  assert.equal(unknown?.avatarErrorCode, "avatar_provider_outcome_unknown");
+
+  const qaReview = mapTerminalJobStatus("needs_review", "qa_requires_review");
+  assert.equal(qaReview?.avatarStatus, "needs_review");
 });

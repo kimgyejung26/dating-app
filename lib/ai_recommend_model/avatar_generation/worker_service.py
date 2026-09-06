@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 import os
 from typing import Any, Dict
 
@@ -22,6 +23,7 @@ from avatar_generation.model_adapters.azure_contracts import (
 )
 from avatar_generation.worker import (
     AvatarGenerationError,
+    AvatarGenerationRetryableError,
     AvatarQAReadinessError,
     is_production_environment,
     model_cache_metrics,
@@ -209,6 +211,20 @@ def create_app() -> Any:
                 result = process_avatar_generation_batch_payload(payload)
             else:
                 result = process_avatar_generation_payload(payload)
+            if getattr(result, "status", "") in {
+                "running",
+                "provider_inflight",
+                "generated",
+                "persisted",
+                "qa_pending",
+            }:
+                # A concurrent/previous delivery still owns the claim. Do not
+                # acknowledge the Cloud Task: a later delivery must inspect a
+                # stale claim and reconcile deterministic Storage artifacts.
+                response = jsonify(result.to_dict())
+                response.status_code = 503
+                response.headers["Retry-After"] = "30"
+                return response
             return jsonify(result.to_dict())
         except AvatarWorkerAuthError as exc:
             return jsonify({"status": "error", "error": str(exc)}), 401
@@ -222,6 +238,20 @@ def create_app() -> Any:
                     "qaPreflight": exc.readiness.to_document(),
                 }
             ), 503
+        except AvatarGenerationRetryableError as exc:
+            response = jsonify(
+                {
+                    "status": "error",
+                    "error": exc.error_code,
+                    "errorCode": exc.error_code,
+                    "retryable": True,
+                }
+            )
+            response.status_code = 503
+            response.headers["Retry-After"] = str(
+                max(1, math.ceil(exc.retry_after_seconds or 30.0))
+            )
+            return response
         except AvatarGenerationError as exc:
             return jsonify({"status": "error", "error": str(exc)}), 400
         except Exception:

@@ -178,6 +178,33 @@ def test_queue_config_allows_avatar_only_staging_without_clip_worker():
     )
 
 
+def test_queue_config_does_not_treat_five_endpoints_as_concurrency_ceiling():
+    config = load_script("avatar_queue_config_check", "avatar_queue_config_check.py")
+    env = {
+        "ENVIRONMENT": "production",
+        "JOB_QUEUE_MODE": "cloud_tasks",
+        "CLOUD_TASKS_PROJECT": "seolleyeon-final",
+        "GCP_LOCATION": "asia-northeast3",
+        "AVATAR_GENERATION_QUEUE_NAME": "avatar-generation",
+        "AVATAR_GENERATION_TASK_URL": "https://avatar-worker.example/tasks/avatar-generation",
+        "TASK_INVOKER_SERVICE_ACCOUNT": "task-invoker@seolleyeon-final.iam.gserviceaccount.com",
+        "CLIP_EMBEDDING_QUEUE_ENABLED": "false",
+        "AVATAR_QUEUE_MAX_CONCURRENT_DISPATCHES": "12",
+        "AVATAR_QUEUE_MAX_DISPATCHES_PER_SECOND": "1",
+        "AVATAR_QUEUE_DISPATCH_DEADLINE_SECONDS": "1800",
+        "AVATAR_QUEUE_MAX_ATTEMPTS": "8",
+        "AVATAR_QUEUE_MIN_BACKOFF_SECONDS": "30",
+        "AVATAR_QUEUE_MAX_BACKOFF_SECONDS": "600",
+        "AVATAR_QUEUE_MAX_DOUBLINGS": "4",
+        "AVATAR_QUEUE_GPU_MAX_CONCURRENT_JOBS": "12",
+    }
+
+    report = config.validate_queue_config(env)
+
+    assert report["ok"] is True
+    assert not any("maximum" in issue["message"].lower() for issue in report["issues"])
+
+
 def test_queue_config_rejects_placeholder_worker_urls():
     config = load_script("avatar_queue_config_check", "avatar_queue_config_check.py")
     env = {
@@ -388,51 +415,6 @@ def test_worker_drain_once_apply_posts_with_token_and_redacts_response():
     assert "X-Goog-Signature" not in rendered
 
 
-def test_worker_staging_smoke_live_real_gpu_uses_warmup(tmp_path, monkeypatch):
-    scripts_dir = str(REPO_ROOT / "scripts")
-    if scripts_dir not in sys.path:
-        sys.path.insert(0, scripts_dir)
-    smoke = load_script("avatar_worker_staging_smoke", "avatar_worker_staging_smoke.py")
-    report_path = tmp_path / "worker_smoke.json"
-    calls = []
-
-    monkeypatch.setattr(smoke, "_gcloud_id_token", lambda audience: "id-token")
-
-    def fake_get_json(url, headers):
-        calls.append(("GET", url, dict(headers)))
-        return {"status": "ok", "authMode": "cloud_run_iam"}
-
-    def fake_post_json(url, payload, headers, *, timeout_seconds=120):
-        calls.append(("POST", url, dict(payload), dict(headers), timeout_seconds))
-        return {"status": "ok", "modelCacheMisses": 1}
-
-    monkeypatch.setattr(smoke, "_get_json", fake_get_json)
-    monkeypatch.setattr(smoke, "_post_json", fake_post_json)
-
-    exit_code = smoke.main(
-        [
-            "--real_gpu",
-            "--worker_url",
-            "https://avatar-worker.example",
-            "--id_token_from_gcloud",
-            "--audience",
-            "https://avatar-worker.example",
-            "--output_report_json",
-            str(report_path),
-        ]
-    )
-
-    assert exit_code == 0
-    assert calls[0][0:2] == ("GET", "https://avatar-worker.example/readyz")
-    assert calls[1][0:3] == ("POST", "https://avatar-worker.example/warmup", {})
-    assert not any("/tasks/avatar-generation" in call[1] for call in calls)
-    report = json.loads(report_path.read_text(encoding="utf-8"))
-    assert report["result"] == {
-        "status": "warmup_completed",
-        "taskPayloadPosted": False,
-    }
-
-
 def test_live_verify_redacts_uid_and_checks_preview_ready_evidence():
     verify = load_script("staging_avatar_live_verify", "staging_avatar_live_verify.py")
 
@@ -572,7 +554,7 @@ def _preflight_report(preflight, *, stage):
         avatar_only=True,
         expected_account="seolleyeon.official@gmail.com",
         hf_token_env_var="AVATAR_WORKER_HF_TOKEN",
-        upload_function_name="uploadAvatarSourcePhoto",
+        upload_function_name="beginAvatarGenerationFromOnboardingPhotos",
         stage=stage,
     )
 
@@ -592,7 +574,11 @@ def test_staging_preflight_prepare_allows_secret_worker_and_env_as_warnings(monk
 
 def test_staging_preflight_deploy_requires_hf_secret_but_not_worker_env(monkeypatch):
     preflight = load_script("staging_avatar_live_preflight", "staging_avatar_live_preflight.py")
-    _install_preflight_fakes(monkeypatch, preflight)
+    _install_preflight_fakes(
+        monkeypatch,
+        preflight,
+        secrets=("seolleyeon-avatar-azure-openai-api-key",),
+    )
 
     report = _preflight_report(preflight, stage="deploy")
 
@@ -608,7 +594,7 @@ def test_staging_preflight_live_requires_worker_and_functions_env(monkeypatch):
     _install_preflight_fakes(
         monkeypatch,
         preflight,
-        secrets=("avatar-worker-hf-token",),
+        secrets=("avatar-worker-hf-token", "seolleyeon-avatar-azure-openai-api-key"),
         env_keys=(
             "JOB_QUEUE_MODE",
             "CLOUD_TASKS_PROJECT",
@@ -637,7 +623,7 @@ def test_staging_preflight_live_passes_with_avatar_only_infra_ready(monkeypatch)
     _install_preflight_fakes(
         monkeypatch,
         preflight,
-        secrets=("avatar-worker-hf-token",),
+        secrets=("avatar-worker-hf-token", "seolleyeon-avatar-azure-openai-api-key"),
         run_services=("seolleyeon-avatar-worker",),
         env_keys=(
             "JOB_QUEUE_MODE",
@@ -671,7 +657,7 @@ def test_staging_preflight_live_requires_worker_env_keys(monkeypatch):
     _install_preflight_fakes(
         monkeypatch,
         preflight,
-        secrets=("avatar-worker-hf-token",),
+        secrets=("avatar-worker-hf-token", "seolleyeon-avatar-azure-openai-api-key"),
         run_services=("seolleyeon-avatar-worker",),
         env_keys=(
             "JOB_QUEUE_MODE",
@@ -782,81 +768,19 @@ def test_debug_avatar_job_status_redacts_private_refs_and_summarizes_state():
     assert "Signature=secret" not in rendered
 
 
-def test_retry_failed_avatar_jobs_targets_only_negative_prompt_worker_error():
-    retry = load_script("retry_failed_avatar_jobs", "retry_failed_avatar_jobs.py")
-    jobs = {
-        "avatar_job_negative_prompt_1": {
-            "status": "failed",
-            "errorCode": "avatar_generation_worker_error",
-            "errorMessage": "Flux2KleinPipeline.__call__() got an unexpected keyword argument 'negative_prompt'",
-            "sourcePhotoRefs": ["gs://seolleyeon-final-private-source-photos/users/u/source/src.jpg"],
-        },
-        "avatar_job_other_worker_error": {
-            "status": "failed",
-            "errorCode": "avatar_generation_worker_error",
-            "errorMessage": "CUDA out of memory",
-        },
-        "avatar_job_preview_ready": {
-            "status": "preview_ready",
-            "errorCode": "avatar_generation_worker_error",
-            "errorMessage": "Flux2KleinPipeline.__call__() got an unexpected keyword argument 'negative_prompt'",
-        },
+def test_staging_preflight_blocks_when_azure_secret_binding_is_absent(monkeypatch):
+    # Azure 키는 Secret Manager 참조로만 주입된다. 시크릿이 없으면 워커는
+    # 첫 생성에서 실패하므로 배포/라이브 단계에서 blocker 여야 한다.
+    preflight = load_script("staging_avatar_live_preflight", "staging_avatar_live_preflight.py")
+    _install_preflight_fakes(monkeypatch, preflight, secrets=("avatar-worker-hf-token",))
+
+    report = _preflight_report(preflight, stage="deploy")
+
+    assert report["ok"] is False
+    issue_map = {
+        (issue["kind"], issue["value"]): issue["severity"] for issue in report["issues"]
     }
-
-    report = retry.build_retry_report(jobs, apply=False)
-    rendered = json.dumps(report, ensure_ascii=False)
-
-    assert report["matchedCount"] == 1
-    assert report["skippedCount"] == 2
-    assert report["applied"] is False
-    assert "avatar_job_negative_prompt_1" not in rendered
-    assert "gs://" not in rendered
-    assert "seolleyeon-final-private-source-photos" not in rendered
-
-
-@pytest.mark.parametrize("project", ["", "default", "seolleyeon", "production-project"])
-def test_retry_failed_avatar_jobs_rejects_forbidden_projects(project):
-    retry = load_script("retry_failed_avatar_jobs_guard", "retry_failed_avatar_jobs.py")
-
-    with pytest.raises(ValueError, match="refusing project"):
-        retry.validate_execution(project, apply=False)
-
-
-def test_retry_failed_avatar_jobs_apply_requires_exact_confirmation():
-    retry = load_script("retry_failed_avatar_jobs_confirmation", "retry_failed_avatar_jobs.py")
-
-    with pytest.raises(ValueError, match="confirmation token"):
-        retry.validate_execution("seolleyeon-final", apply=True)
-    with pytest.raises(ValueError, match="confirmation token"):
-        retry.validate_execution(
-            "seolleyeon-final",
-            apply=True,
-            confirmation_token="wrong",
-        )
-    assert retry.validate_execution(
-        "seolleyeon-final",
-        apply=True,
-        confirmation_token="APPLY_AVATAR_NEGATIVE_PROMPT_RETRY:seolleyeon-final:v1",
-    ) == "seolleyeon-final"
-
-def test_retry_failed_avatar_jobs_update_requeues_and_preserves_last_error():
-    retry = load_script("retry_failed_avatar_jobs_update", "retry_failed_avatar_jobs.py")
-    job = {
-        "status": "failed",
-        "errorCode": "avatar_generation_worker_error",
-        "errorMessage": "failed for gs://seolleyeon-final-private-source-photos/users/u/source/src.jpg: unexpected keyword argument 'negative_prompt'",
-        "processing": {"attempt": 1},
-        "retry": {"negativePromptWorkerErrorResetCount": 2},
-    }
-
-    update = retry.retry_update_for_job(job, server_timestamp="SERVER_TIMESTAMP")
-    rendered = json.dumps(update, ensure_ascii=False)
-
-    assert update["status"] == "queued"
-    assert update["errorCode"] == ""
-    assert update["errorMessage"] == ""
-    assert update["processing"]["lastErrorCode"] == "avatar_generation_worker_error"
-    assert update["processing"]["lastResetReason"] == "flux_negative_prompt_kwarg_regression"
-    assert update["retry"]["negativePromptWorkerErrorResetCount"] == 3
-    assert "gs://" not in rendered
-    assert "seolleyeon-final-private-source-photos" not in rendered
+    assert (
+        issue_map[("secret_missing", "seolleyeon-avatar-azure-openai-api-key")]
+        == "blocker"
+    )
