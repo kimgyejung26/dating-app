@@ -83,12 +83,24 @@ export function buildDeletedMessageAnonymizePatch(params: {
   };
 }
 
+/**
+ * Purge patch. Besides scrubbing the body, it REMOVES `purgeAfter`: the
+ * scheduled purge selects `purgeAfter <= now` (oldest first, limit 300), and a
+ * purged message that kept its `purgeAfter` would stay in that candidate set
+ * forever. Once ~300 purged rows accumulate they shadow every newer eligible
+ * message (starvation, reproduced in accountDeletionChatLifecycle.test.ts).
+ * Dropping the field takes the row out of the range predicate with no index
+ * change; `authorDeleted`/`legalHold` stay as-is for the anonymized body, and
+ * `purgedAt`/`purgedReason` remain as the audit marker that also short-circuits
+ * `shouldPurgeDeletedAuthorMessage`.
+ */
 export function buildDeletedMessagePurgePatch(): Record<string, unknown> {
   return {
     text: "[삭제된 메시지]",
     content: "[삭제된 메시지]",
     purgedAt: FieldValue.serverTimestamp(),
     purgedReason: "retention_elapsed",
+    purgeAfter: FieldValue.delete(),
   };
 }
 
@@ -164,32 +176,62 @@ export async function anonymizeChatMessagesForDeletedUser(
   return { scanned, anonymized };
 }
 
+/** Patch that only takes an already-purged row out of the candidate set. */
+export function buildPurgedMessageReleasePatch(): Record<string, unknown> {
+  return { purgeAfter: FieldValue.delete() };
+}
+
+/**
+ * Purges eligible deleted-author messages.
+ *
+ * Candidate-set invariant: a row that was purged must not stay selectable by
+ * the `purgeAfter <= now` query. New purges drop `purgeAfter` (see
+ * buildDeletedMessagePurgePatch). Rows purged before that change still carry
+ * `purgeAfter`; when a page returns such rows they are "released" (only
+ * `purgeAfter` is removed, the body is never rewritten) and, because released
+ * rows leave the query, the run continues to the next page within a bounded
+ * number of pages so newer eligible messages are still reached in this run.
+ */
 export async function purgeExpiredDeletedAuthorMessages(
   firestore: Firestore,
-  options: { limit?: number; now?: Date; dryRun?: boolean } = {}
-): Promise<{ scanned: number; purged: number; skipped: number }> {
+  options: { limit?: number; now?: Date; dryRun?: boolean; maxPages?: number } = {}
+): Promise<{ scanned: number; purged: number; skipped: number; released: number }> {
   const limit = options.limit ?? 300;
   const now = options.now ?? new Date();
-  const snap = await firestore
-    .collectionGroup("messages")
-    .where("authorDeleted", "==", true)
-    .where("legalHold", "==", false)
-    .where("purgeAfter", "<=", now)
-    .limit(limit)
-    .get();
-
+  const maxPages = Math.max(1, options.maxPages ?? 5);
+  let scanned = 0;
   let purged = 0;
-  const candidates = snap.docs.filter((doc) =>
-    shouldPurgeDeletedAuthorMessage({
-      authorDeleted: doc.data()?.authorDeleted,
-      legalHold: doc.data()?.legalHold,
-      purgeAfter: doc.data()?.purgeAfter ?? null,
-      purgedAt: doc.data()?.purgedAt,
-      now,
-    })
-  );
+  let released = 0;
 
-  if (!options.dryRun) {
+  for (let page = 0; page < maxPages; page += 1) {
+    const snap = await firestore
+      .collectionGroup("messages")
+      .where("authorDeleted", "==", true)
+      .where("legalHold", "==", false)
+      .where("purgeAfter", "<=", now)
+      .limit(limit)
+      .get();
+    scanned += snap.size;
+
+    const candidates = snap.docs.filter((doc) =>
+      shouldPurgeDeletedAuthorMessage({
+        authorDeleted: doc.data()?.authorDeleted,
+        legalHold: doc.data()?.legalHold,
+        purgeAfter: doc.data()?.purgeAfter ?? null,
+        purgedAt: doc.data()?.purgedAt,
+        now,
+      })
+    );
+    const stale = snap.docs.filter(
+      (doc) => !!doc.data()?.purgedAt && doc.data()?.purgeAfter != null
+    );
+
+    if (options.dryRun) {
+      purged += candidates.length;
+      released += stale.length;
+      break;
+    }
+
     for (let i = 0; i < candidates.length; i += 400) {
       const chunk = candidates.slice(i, i + 400);
       const batch = firestore.batch();
@@ -200,13 +242,26 @@ export async function purgeExpiredDeletedAuthorMessages(
       await batch.commit();
       purged += chunk.length;
     }
-  } else {
-    purged = candidates.length;
+    for (let i = 0; i < stale.length; i += 400) {
+      const chunk = stale.slice(i, i + 400);
+      const batch = firestore.batch();
+      const patch = buildPurgedMessageReleasePatch();
+      for (const doc of chunk) {
+        batch.set(doc.ref, patch, { merge: true });
+      }
+      await batch.commit();
+      released += chunk.length;
+    }
+
+    // Only a full page that contained stale rows can hide newer candidates
+    // behind it; everything else means the candidate set is exhausted.
+    if (snap.size < limit || stale.length === 0) break;
   }
 
   return {
-    scanned: snap.size,
+    scanned,
     purged,
-    skipped: snap.size - purged,
+    skipped: scanned - purged,
+    released,
   };
 }
