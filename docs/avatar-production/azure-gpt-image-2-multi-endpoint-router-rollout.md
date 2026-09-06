@@ -218,13 +218,23 @@ generation audit contracts.
 Command shapes for the separately approved change:
 
 ```powershell
-# Revision/env/secret binding change — draft only.
+# Staging no-traffic revision — draft only.
 gcloud run deploy seolleyeon-avatar-worker `
-  --project PROJECT_ID --region WORKER_REGION --image IMAGE `
+  --project STAGING_PROJECT_ID --region WORKER_REGION --image IMAGE `
   --concurrency CALCULATED_CONTAINER_CONCURRENCY `
   --max-instances CALCULATED_MAX_INSTANCES `
   --no-traffic `
-  --set-env-vars "AZURE_OPENAI_ENDPOINT_IDS=ep1,ep2,ep3,ep4,ep5,..." `
+  --set-env-vars "ENVIRONMENT=staging,AVATAR_QA_ALLOW_STAGING_HEURISTIC_PREVIEW=true,AVATAR_DISABLE_NEW_GENERATION=false,AZURE_OPENAI_ENDPOINT_IDS=ep1,ep2,ep3,ep4,ep5,..." `
+  --set-secrets "AZURE_OPENAI_EP1_API_KEY=SECRET_EP1:latest,..."
+
+# Production no-traffic revision — a later, separately approved phase only.
+# Never copy the staging heuristic flag into this command.
+gcloud run deploy seolleyeon-avatar-worker `
+  --project PRODUCTION_PROJECT_ID --region WORKER_REGION --image IMAGE `
+  --concurrency MEASURED_CONTAINER_CONCURRENCY `
+  --max-instances MEASURED_MAX_INSTANCES `
+  --no-traffic `
+  --set-env-vars "ENVIRONMENT=production,AVATAR_QA_ALLOW_STAGING_HEURISTIC_PREVIEW=false,AVATAR_DISABLE_NEW_GENERATION=false,AZURE_OPENAI_ENDPOINT_IDS=ep1,ep2,ep3,ep4,ep5,..." `
   --set-secrets "AZURE_OPENAI_EP1_API_KEY=SECRET_EP1:latest,..."
 
 # Queue rate update — does not resume a paused queue; draft only.
