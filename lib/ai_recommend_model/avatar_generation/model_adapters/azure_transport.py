@@ -10,6 +10,7 @@ from .azure_contracts import (
     AzureProviderResponse,
     AzureTransportError,
 )
+from .azure_failure_classification import classify_azure_transport_failure
 
 
 class AzureHttpImageTransport:
@@ -62,12 +63,15 @@ class AzureHttpImageTransport:
                     )
                 },
             )
-        except self._httpx.TimeoutException as exc:
-            raise AzureTransportError("azure_request_timeout", request_sent=True) from exc
-        except self._httpx.NetworkError as exc:
-            raise AzureTransportError("azure_connect_error", request_sent=False) from exc
         except Exception as exc:
-            raise AzureTransportError("azure_transport_error", request_sent=False) from exc
+            failure = classify_azure_transport_failure(
+                exc,
+                httpx_module=self._httpx,
+            )
+            raise AzureTransportError(
+                failure.error_code,
+                request_sent=failure.request_sent,
+            ) from exc
 
         payload: dict[str, Any]
         try:

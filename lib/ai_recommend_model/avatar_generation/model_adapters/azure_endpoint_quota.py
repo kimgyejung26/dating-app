@@ -4,9 +4,9 @@ runtime generation, calibration, zero-cost simulation 이 모두 이 모듈을 �
 RPM 을 해석한다. 이전에는 두 경로가 서로 다른 env 체인을 읽어 한쪽 설정이
 다른 쪽에서 조용히 무시됐다(2026-09-05 확인).
 
-endpoint 마다 (endpointId, rpmLimit) 를 선언한다. 지금은 단일 endpoint 만
-배포돼 있지만, 값을 코드에 박지 않고 설정으로 선언하므로 multi-endpoint
-라우터가 생겨도 같은 authority 를 그대로 쓸 수 있다.
+endpoint 마다 (endpointId, rpmLimit) 를 선언한다. multi-endpoint router와
+calibration/simulation이 이 값을 함께 사용하므로 quota 변경은 설정만으로
+반영된다.
 
 선언 방법:
     AZURE_OPENAI_ENDPOINT_QUOTAS="kr-1=2,jp-1=6"

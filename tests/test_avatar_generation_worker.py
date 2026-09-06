@@ -1854,6 +1854,59 @@ def test_worker_service_local_insecure_bypass_must_be_explicit(monkeypatch):
     worker_service._require_worker_auth()
 
 
+def test_worker_service_does_not_ack_an_inflight_duplicate_task(monkeypatch):
+    import avatar_generation.worker_service as worker_service
+
+    if worker_service.app is None:
+        pytest.skip("Flask is unavailable")
+    monkeypatch.setenv("ENVIRONMENT", "local")
+    monkeypatch.setenv("ALLOW_INSECURE_WORKER_LOCAL", "true")
+
+    class InflightResult:
+        status = "provider_inflight"
+
+        def to_dict(self):
+            return {"status": self.status, "jobId": "opaque"}
+
+    monkeypatch.setattr(
+        worker_service,
+        "process_avatar_generation_payload",
+        lambda _payload: InflightResult(),
+    )
+    response = worker_service.app.test_client().post(
+        "/tasks/avatar-generation",
+        json=_payload(),
+    )
+
+    assert response.status_code == 503
+    assert response.headers["Retry-After"] == "30"
+
+
+def test_worker_service_returns_retryable_provider_deferral_as_503(monkeypatch):
+    import avatar_generation.worker_service as worker_service
+
+    if worker_service.app is None:
+        pytest.skip("Flask is unavailable")
+    monkeypatch.setenv("ENVIRONMENT", "local")
+    monkeypatch.setenv("ALLOW_INSECURE_WORKER_LOCAL", "true")
+
+    def retryable(_payload):
+        raise worker_service.AvatarGenerationRetryableError(
+            "azure_capacity_deferred",
+            retry_after_seconds=18.2,
+        )
+
+    monkeypatch.setattr(worker_service, "process_avatar_generation_payload", retryable)
+    response = worker_service.app.test_client().post(
+        "/tasks/avatar-generation",
+        json=_payload(),
+    )
+
+    assert response.status_code == 503
+    assert response.headers["Retry-After"] == "19"
+    assert response.get_json()["errorCode"] == "azure_capacity_deferred"
+
+
 def test_worker_service_production_cloud_run_iam_posture_allows_request(monkeypatch):
     import avatar_generation.worker_service as worker_service
 

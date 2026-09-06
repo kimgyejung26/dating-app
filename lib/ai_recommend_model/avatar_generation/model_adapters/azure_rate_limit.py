@@ -7,14 +7,11 @@ from typing import Callable, Deque, Optional
 
 
 class AzureRequestRateLimiter:
-    """Enforce a paced rolling request-start quota for one worker process.
+    """Process-local pacing helper retained for adapter-level tests/fallbacks.
 
-    Cloud Run is configured with one worker instance and one request at a time,
-    so a process-local paced schedule is the safety boundary for the currently
-    discovered Azure quota. Starts are separated by ``window / maximum`` so a
-    2 RPM quota cannot burst two requests at time zero. A slot is reserved
-    immediately before each provider attempt, including retries, because every
-    attempt consumes quota.
+    Production routing uses the Firestore transaction reservation layer; this
+    class is not a cross-instance quota authority. Starts are separated by
+    ``window / maximum`` and a slot is reserved before sleeping.
     """
 
     def __init__(

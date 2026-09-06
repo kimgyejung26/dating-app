@@ -43,6 +43,13 @@ from avatar_generation.admission_policy import (
     usage_from_cost_aggregate,
 )
 from avatar_generation.batching import claim_avatar_job_batch
+from avatar_generation.candidate_artifacts import (
+    CandidateArtifactNeedsReview,
+    generation_id_for,
+    persist_candidate_artifact,
+    recover_candidate_artifact,
+    source_identity_hash_for,
+)
 from avatar_generation.environment import (
     configured_environment_names,
     is_local_or_dev_environment as _shared_is_local_or_dev_environment,
@@ -63,8 +70,10 @@ from avatar_generation.model_adapters.azure_contracts import (
     AzureUnknownOutcomeError,
     provider_usage,
 )
+from avatar_generation.model_adapters.azure_deadline_planning import (
+    deadline_budget_from_env,
+)
 from avatar_generation.model_adapters.azure_gpt_image_2 import (
-    AzureGptImage2Provider,
     get_azure_gpt_image2_provider as _build_azure_gpt_image2_provider,
 )
 from avatar_generation.fidelity_corridor import CorridorCandidate
@@ -164,11 +173,23 @@ NORMALIZED_STAGE_COST_KEYS = (
 
 logger = logging.getLogger(__name__)
 _TRAIT_ADAPTER_CACHE: Dict[Tuple[Any, ...], Florence2TraitExtractionAdapter] = {}
-_AZURE_PROVIDER_CACHE: Optional[AzureGptImage2Provider] = None
+_AZURE_PROVIDER_CACHE: Optional[Any] = None
 
 
 class AvatarGenerationError(RuntimeError):
     pass
+
+
+class AvatarGenerationRetryableError(AvatarGenerationError):
+    def __init__(
+        self,
+        error_code: str,
+        *,
+        retry_after_seconds: Optional[float] = None,
+    ) -> None:
+        self.error_code = str(error_code)
+        self.retry_after_seconds = retry_after_seconds
+        super().__init__(self.error_code)
 
 
 class AvatarQAReadinessError(AvatarGenerationError):
@@ -197,7 +218,7 @@ class AvatarWorkerDeadline:
         )
         max_job = _int_env(
             "AVATAR_WORKER_MAX_JOB_SECONDS",
-            300,
+            900,
             minimum=30,
             maximum=3600,
         )
@@ -277,6 +298,10 @@ class CandidateArtifact:
     image_bytes: bytes
     seed: int
     generation_params: Dict[str, Any]
+    generation_id: str = ""
+    candidate_index: int = 0
+    storage_persisted: bool = False
+    recovery_source: str = "provider"
 
 
 @dataclass(frozen=True)
@@ -897,6 +922,25 @@ def _generation_budget(worker_deadline: AvatarWorkerDeadline, *, generated_count
     )
 
 
+def _ensure_azure_round_deadline_budget(
+    worker_deadline: AvatarWorkerDeadline,
+    *,
+    candidate_count: int,
+    stage: str,
+) -> None:
+    budget = deadline_budget_from_env()
+    required = budget.remaining_round_seconds(candidate_count)
+    available = (
+        worker_deadline.remaining_seconds()
+        - worker_deadline.soft_stop_margin_seconds
+    )
+    if available <= required:
+        raise AvatarGenerationRetryableError(
+            f"avatar_worker_deadline_deferred_{stage}",
+            retry_after_seconds=30.0,
+        )
+
+
 def _qa_critical_models_unavailable(candidate_summaries: Sequence[Mapping[str, Any]]) -> bool:
     unavailable = {"unavailable", "critical_unavailable", "uncalibrated"}
     for summary in candidate_summaries:
@@ -1252,6 +1296,97 @@ def _azure_generation_claim_active(job_doc: Optional[Mapping[str, Any]]) -> bool
     return isinstance(claim, Mapping) and claim.get("state") == "active"
 
 
+def _timestamp_epoch_seconds(value: Any) -> Optional[float]:
+    if isinstance(value, datetime):
+        aware = value if value.tzinfo is not None else value.replace(tzinfo=timezone.utc)
+        return aware.timestamp()
+    converter = getattr(value, "timestamp", None)
+    if callable(converter):
+        try:
+            return float(converter())
+        except (TypeError, ValueError, OverflowError):
+            return None
+    return None
+
+
+def _azure_generation_claim_stale(
+    job_doc: Optional[Mapping[str, Any]],
+    *,
+    now_epoch_seconds: Optional[float] = None,
+) -> bool:
+    if not _azure_generation_claim_active(job_doc):
+        return False
+    claim = job_doc.get("generationClaim") if isinstance(job_doc, Mapping) else None
+    if not isinstance(claim, Mapping):
+        return False
+    claimed_at = _timestamp_epoch_seconds(claim.get("claimedAt"))
+    if claimed_at is None:
+        return False
+    try:
+        stale_after = float(os.environ.get("AZURE_PROVIDER_INFLIGHT_STALE_SECONDS", "2100"))
+    except (TypeError, ValueError):
+        stale_after = 2100.0
+    stale_after = max(300.0, min(21600.0, stale_after))
+    now = time.time() if now_epoch_seconds is None else float(now_epoch_seconds)
+    return now - claimed_at >= stale_after
+
+
+def _expected_stale_claim_indexes(job_doc: Mapping[str, Any]) -> Optional[List[int]]:
+    claim = job_doc.get("generationClaim")
+    if not isinstance(claim, Mapping):
+        return None
+    raw = claim.get("expectedCandidateIndexes")
+    if not isinstance(raw, Sequence) or isinstance(raw, (str, bytes)):
+        return None
+    indexes: List[int] = []
+    for value in raw:
+        try:
+            index = int(value)
+        except (TypeError, ValueError):
+            return None
+        if index < 0 or index >= DEFAULT_MAX_CANDIDATES or index in indexes:
+            return None
+        indexes.append(index)
+    return indexes or None
+
+
+def _stale_claim_artifacts_recoverable(
+    storage_client: Any,
+    payload: AvatarGenerationPayload,
+    job_doc: Mapping[str, Any],
+) -> bool:
+    expected_indexes = _expected_stale_claim_indexes(job_doc)
+    if expected_indexes is None:
+        return False
+    generation_id = generation_id_for(
+        job_id=payload.job_id,
+        idempotency_key=payload.idempotency_key or payload.job_id,
+    )
+    source_identity_hash = source_identity_hash_for(
+        source_photo_ids=payload.source_photo_ids,
+        source_photo_refs=payload.source_photo_refs,
+        source_photo_object_generations=payload.source_photo_object_generations,
+    )
+    for index in expected_indexes:
+        candidate_id = candidate_id_for(payload.job_id, index)
+        image_ref = build_temp_candidate_ref(
+            uid=payload.uid,
+            job_id=payload.job_id,
+            candidate_id=candidate_id,
+        )
+        recovered = recover_candidate_artifact(
+            storage_client,
+            image_ref=image_ref,
+            expected_generation_id=generation_id,
+            expected_candidate_index=index,
+            expected_candidate_id=candidate_id,
+            expected_source_identity_hash=source_identity_hash,
+        )
+        if recovered is None:
+            return False
+    return True
+
+
 def _result_for_active_azure_generation(
     payload: AvatarGenerationPayload,
     job_doc: Mapping[str, Any],
@@ -1273,9 +1408,44 @@ def _result_for_active_azure_generation(
     )
 
 
+def _mark_stale_provider_claim_needs_review(
+    firestore_client: Any,
+    payload: AvatarGenerationPayload,
+    *,
+    error_code: str,
+) -> AvatarGenerationResult:
+    _update_job_status(
+        firestore_client,
+        payload.job_id,
+        {
+            "status": "needs_review",
+            "errorCode": error_code,
+            "errorMessage": "Stored provider artifact requires reconciliation.",
+            "retryable": False,
+            "generationClaim": {
+                "state": "reconciliation_required",
+                "backend": AZURE_GPT_IMAGE_2_MODEL_ID,
+                "idempotencyKey": payload.idempotency_key,
+                "lastErrorCode": error_code,
+            },
+        },
+    )
+    return AvatarGenerationResult(
+        job_id=payload.job_id,
+        uid=payload.uid,
+        status="needs_review",
+        candidate_ids=[],
+        preview_ready_count=0,
+        rejected_count=0,
+        needs_review_count=0,
+    )
+
+
 def _claim_azure_generation_run(
     firestore_client: Any,
     payload: AvatarGenerationPayload,
+    *,
+    allow_stale_recovery: bool = False,
 ) -> bool:
     ref = _doc_ref(firestore_client, "avatarJobs", payload.job_id)
     claim = {
@@ -1288,7 +1458,8 @@ def _claim_azure_generation_run(
     def claim_transaction(transaction: Any) -> bool:
         current = _doc_to_dict(ref.get(transaction=transaction)) or {}
         if _azure_generation_claim_active(current):
-            return False
+            if not allow_stale_recovery or not _azure_generation_claim_stale(current):
+                return False
         transaction.set(
             ref,
             {
@@ -1304,7 +1475,8 @@ def _claim_azure_generation_run(
     if not callable(transaction_factory):
         current = _doc_to_dict(ref.get()) or {}
         if _azure_generation_claim_active(current):
-            return False
+            if not allow_stale_recovery or not _azure_generation_claim_stale(current):
+                return False
         _set_doc(
             ref,
             {
@@ -1447,7 +1619,7 @@ def build_fixture_avatar_image(source_image: Image.Image, *, seed: int, index: i
     return image
 
 
-def get_azure_gpt_image2_provider() -> AzureGptImage2Provider:
+def get_azure_gpt_image2_provider() -> Any:
     global _AZURE_PROVIDER_CACHE
     if _AZURE_PROVIDER_CACHE is None:
         _AZURE_PROVIDER_CACHE = _build_azure_gpt_image2_provider()
@@ -1521,26 +1693,62 @@ def generate_candidate_artifacts(
     source_image_bytes: Optional[bytes] = None,
     source_content_type: str = "image/jpeg",
     deadline_monotonic: Optional[float] = None,
-    azure_provider: Optional[AzureGptImage2Provider] = None,
+    azure_provider: Optional[Any] = None,
     provider_usage_doc: Optional[Dict[str, Any]] = None,
+    artifact_storage_client: Any = None,
 ) -> List[CandidateArtifact]:
     artifacts: List[CandidateArtifact] = []
     del privacy_reference_image, reference_preprocess_metadata, source_analysis
     if mode == CANONICAL_AZURE_WORKER_MODE:
         _assert_azure_source_bytes_are_normalized_jpeg(source_image_bytes, source_content_type)
-    provider = (
-        azure_provider or get_azure_gpt_image2_provider()
-        if mode == CANONICAL_AZURE_WORKER_MODE
-        else None
-    )
+    provider = azure_provider if mode == CANONICAL_AZURE_WORKER_MODE else None
     round_count = int(candidate_count or payload.candidate_count)
-    total_count = max(payload.candidate_count, candidate_start_index + round_count)
+    generation_id = generation_id_for(
+        job_id=payload.job_id,
+        idempotency_key=payload.idempotency_key or payload.job_id,
+    )
+    source_identity_hash = source_identity_hash_for(
+        source_photo_ids=payload.source_photo_ids,
+        source_photo_refs=payload.source_photo_refs,
+        source_photo_object_generations=payload.source_photo_object_generations,
+    )
     for index in range(candidate_start_index, candidate_start_index + round_count):
         candidate_id = candidate_id_for(payload.job_id, index)
         seed = deterministic_seed(payload.job_id, index)
+        image_ref = build_temp_candidate_ref(
+            uid=payload.uid,
+            job_id=payload.job_id,
+            candidate_id=candidate_id,
+        )
         generation_audit: Dict[str, Any]
         if mode == CANONICAL_AZURE_WORKER_MODE:
-            if provider is None or source_image_bytes is None:
+            if artifact_storage_client is not None:
+                recovered = recover_candidate_artifact(
+                    artifact_storage_client,
+                    image_ref=image_ref,
+                    expected_generation_id=generation_id,
+                    expected_candidate_index=index,
+                    expected_candidate_id=candidate_id,
+                    expected_source_identity_hash=source_identity_hash,
+                )
+                if recovered is not None:
+                    artifacts.append(
+                        CandidateArtifact(
+                            candidate_id=candidate_id,
+                            image_ref=image_ref,
+                            image_bytes=recovered.image_bytes,
+                            seed=recovered.seed,
+                            generation_params=recovered.generation_params,
+                            generation_id=recovered.generation_id,
+                            candidate_index=recovered.candidate_index,
+                            storage_persisted=True,
+                            recovery_source=recovered.recovery_source,
+                        )
+                    )
+                    continue
+            if provider is None:
+                provider = get_azure_gpt_image2_provider()
+            if source_image_bytes is None:
                 raise AvatarGenerationError("Azure generation requires stored source bytes.")
             provider_key = (
                 f"{payload.idempotency_key or payload.job_id}:candidate:{candidate_id}:"
@@ -1569,6 +1777,11 @@ def generate_candidate_artifacts(
                 provider_usage(
                     attempts=generated.audit.attempts,
                     outcome=generated.audit.outcome,
+                    routing_attempts=generated.audit.routing_attempt_count,
+                    request_attempted=generated.audit.provider_request_attempted_count,
+                    definite_rejected=generated.audit.provider_definite_rejected_count,
+                    ambiguous=generated.audit.provider_ambiguous_count,
+                    succeeded=generated.audit.provider_succeeded_count,
                 ),
             )
             candidate_image_bytes = generated.image_bytes
@@ -1581,20 +1794,36 @@ def generate_candidate_artifacts(
                 **_candidate_generation_execution_audit(payload, mode=mode, seed=seed),
                 "candidateSeed": seed,
             }
-        image_ref = build_temp_candidate_ref(
-            uid=payload.uid,
-            job_id=payload.job_id,
+        artifact = CandidateArtifact(
             candidate_id=candidate_id,
+            image_ref=image_ref,
+            image_bytes=candidate_image_bytes,
+            seed=seed,
+            generation_params=generation_audit,
+            generation_id=generation_id,
+            candidate_index=index,
         )
-        artifacts.append(
-            CandidateArtifact(
-                candidate_id=candidate_id,
+        if mode == CANONICAL_AZURE_WORKER_MODE and artifact_storage_client is not None:
+            persisted = persist_candidate_artifact(
+                artifact_storage_client,
                 image_ref=image_ref,
                 image_bytes=candidate_image_bytes,
+                generation_id=generation_id,
+                candidate_index=index,
+                candidate_id=candidate_id,
+                source_identity_hash=source_identity_hash,
                 seed=seed,
                 generation_params=generation_audit,
             )
-        )
+            artifact = replace(
+                artifact,
+                image_bytes=persisted.image_bytes,
+                seed=persisted.seed,
+                generation_params=persisted.generation_params,
+                storage_persisted=True,
+                recovery_source=persisted.recovery_source,
+            )
+        artifacts.append(artifact)
     del seconds_by_stage  # no local model to load; Azure latency is in providerUsage
     return artifacts
 
@@ -1606,13 +1835,26 @@ def _merge_provider_usage(
     if target is None or not isinstance(update, Mapping):
         return
     for key, value in update.items():
-        if key in {"requestCount", "attemptCount", "successCount", "failureCount", "unknownOutcomeCount"}:
+        if key in {
+            "requestCount",
+            "attemptCount",
+            "routingAttemptCount",
+            "providerRequestAttempted",
+            "providerDefiniteRejected",
+            "providerAmbiguous",
+            "providerSucceeded",
+            "successCount",
+            "failureCount",
+            "unknownOutcomeCount",
+        }:
             target[key] = int(target.get(key) or 0) + int(value or 0)
         else:
             target[key] = value
 
 
 def _upload_candidate(storage_client: Any, artifact: CandidateArtifact) -> None:
+    if artifact.storage_persisted:
+        return
     ref = parse_gcs_uri(artifact.image_ref)
     if ref.bucket != avatar_temp_bucket():
         raise AvatarGenerationError("Generated candidate imageRef is not in avatar temp bucket.")
@@ -1724,6 +1966,12 @@ def _candidate_doc(
         "modelVersion": AZURE_GPT_IMAGE_2_VERSION,
         "seed": artifact.seed,
         "generationParams": artifact.generation_params,
+        "generationId": artifact.generation_id,
+        "candidateIndex": artifact.candidate_index,
+        "artifactRecovery": {
+            "source": artifact.recovery_source,
+            "storagePersisted": artifact.storage_persisted,
+        },
         "status": status,
         "qa": dict(qa_doc or {}),
         "createdAt": SERVER_TIMESTAMP,
@@ -3109,8 +3357,28 @@ def process_avatar_generation_payload(
 
     job_doc = _load_job_doc(fs, payload.job_id)
     _assert_job_can_run(job_doc, payload)
+    stale_claim_recovery = False
     if run_mode == CANONICAL_AZURE_WORKER_MODE and _azure_generation_claim_active(job_doc):
-        return _result_for_active_azure_generation(payload, job_doc or {})
+        if not _azure_generation_claim_stale(job_doc):
+            return _result_for_active_azure_generation(payload, job_doc or {})
+        try:
+            stale_claim_recovery = _stale_claim_artifacts_recoverable(
+                st,
+                payload,
+                job_doc or {},
+            )
+        except CandidateArtifactNeedsReview as exc:
+            return _mark_stale_provider_claim_needs_review(
+                fs,
+                payload,
+                error_code=exc.error_code,
+            )
+        if not stale_claim_recovery:
+            return _mark_stale_provider_claim_needs_review(
+                fs,
+                payload,
+                error_code="azure_stale_provider_artifact_missing",
+            )
     private_doc = _load_private_media_doc(fs, payload.uid)
     if payload.source_selection_mode:
         _assert_avatar_generation_consent(private_doc)
@@ -3179,7 +3447,11 @@ def process_avatar_generation_payload(
     )
     if current_mismatch:
         return _mark_avatar_job_superseded(fs, payload, current_mismatch)
-    if run_mode == CANONICAL_AZURE_WORKER_MODE and not _claim_azure_generation_run(fs, payload):
+    if run_mode == CANONICAL_AZURE_WORKER_MODE and not _claim_azure_generation_run(
+        fs,
+        payload,
+        allow_stale_recovery=stale_claim_recovery,
+    ):
         latest_job_doc = _load_job_doc(fs, payload.job_id) or job_doc or {}
         return _result_for_active_azure_generation(payload, latest_job_doc)
     _emit_metric(
@@ -3316,6 +3588,7 @@ def process_avatar_generation_payload(
                     needs_review_count=0,
                 )
 
+        worker_deadline.ensure_can_continue("generate_initial", min_remaining_seconds=30)
         if run_mode == CANONICAL_AZURE_WORKER_MODE:
             # The stored normalized JPEG is the generation source. No
             # generation-purpose image derivative is created or persisted.
@@ -3426,17 +3699,6 @@ def process_avatar_generation_payload(
                 },
             )
 
-        worker_deadline.ensure_can_continue("generate_initial", min_remaining_seconds=30)
-        if run_mode == CANONICAL_AZURE_WORKER_MODE:
-            _update_job_status(
-                fs,
-                payload.job_id,
-                {
-                    "status": "provider_inflight",
-                    "generationBackend": AZURE_GPT_IMAGE_2_MODEL_ID,
-                    "provenance": _azure_provenance_document(),
-                },
-            )
         stage_started_at = time.perf_counter()
         policy = AdaptiveGenerationPolicy.from_env()
         initial_plan = plan_generation_round(
@@ -3459,6 +3721,36 @@ def process_avatar_generation_payload(
                 job_started_at=job_started_at,
                 extra_update={"generationPlan": {"initial": initial_plan.to_dict()}},
             )
+        if run_mode == CANONICAL_AZURE_WORKER_MODE:
+            _ensure_azure_round_deadline_budget(
+                worker_deadline,
+                candidate_count=initial_count,
+                stage="initial",
+            )
+            _update_job_status(
+                fs,
+                payload.job_id,
+                {
+                    "status": "provider_inflight",
+                    "generationBackend": AZURE_GPT_IMAGE_2_MODEL_ID,
+                    "provenance": _azure_provenance_document(),
+                },
+            )
+        if run_mode == CANONICAL_AZURE_WORKER_MODE:
+            _update_job_status(
+                fs,
+                payload.job_id,
+                {
+                    "generationClaim": {
+                        "state": "active",
+                        "backend": AZURE_GPT_IMAGE_2_MODEL_ID,
+                        "idempotencyKey": payload.idempotency_key,
+                        "phase": "initial",
+                        "expectedCandidateIndexes": list(range(initial_count)),
+                        "claimedAt": SERVER_TIMESTAMP,
+                    },
+                },
+            )
         model_load_before = seconds_by_stage["model_load_seconds"]
         artifacts = generate_candidate_artifacts(
             payload,
@@ -3474,6 +3766,7 @@ def process_avatar_generation_payload(
             source_content_type=source_content_type,
             deadline_monotonic=worker_deadline.deadline_monotonic(),
             provider_usage_doc=provider_usage_doc,
+            artifact_storage_client=st if run_mode == CANONICAL_AZURE_WORKER_MODE else None,
         )
         elapsed = _elapsed_seconds(stage_started_at)
         model_load_delta = max(0.0, seconds_by_stage["model_load_seconds"] - model_load_before)
@@ -3492,7 +3785,21 @@ def process_avatar_generation_payload(
                 ),
             },
         )
-        _update_job_status(fs, payload.job_id, {"status": "qa_pending"})
+        _update_job_status(
+            fs,
+            payload.job_id,
+            {
+                "status": "qa_pending",
+                "generationClaim": {
+                    "state": "active",
+                    "backend": AZURE_GPT_IMAGE_2_MODEL_ID,
+                    "idempotencyKey": payload.idempotency_key,
+                    "phase": "qa",
+                    "expectedCandidateIndexes": list(range(initial_count)),
+                    "claimedAt": SERVER_TIMESTAMP,
+                },
+            },
+        )
 
         candidate_ids: List[str] = []
         candidate_summaries: List[Dict[str, Any]] = []
@@ -3601,7 +3908,35 @@ def process_avatar_generation_payload(
             and extra_count > 0
             and not qa_models_unavailable
         ):
-            worker_deadline.ensure_can_continue("generate_extra", min_remaining_seconds=30)
+            if run_mode == CANONICAL_AZURE_WORKER_MODE:
+                _ensure_azure_round_deadline_budget(
+                    worker_deadline,
+                    candidate_count=extra_count,
+                    stage="extra",
+                )
+            else:
+                worker_deadline.ensure_can_continue(
+                    "generate_extra", min_remaining_seconds=30
+                )
+            if run_mode == CANONICAL_AZURE_WORKER_MODE:
+                extra_start_index = len(candidate_summaries)
+                _update_job_status(
+                    fs,
+                    payload.job_id,
+                    {
+                        "status": "provider_inflight",
+                        "generationClaim": {
+                            "state": "active",
+                            "backend": AZURE_GPT_IMAGE_2_MODEL_ID,
+                            "idempotencyKey": payload.idempotency_key,
+                            "phase": "extra",
+                            "expectedCandidateIndexes": list(
+                                range(extra_start_index, extra_start_index + extra_count)
+                            ),
+                            "claimedAt": SERVER_TIMESTAMP,
+                        },
+                    },
+                )
             stage_generate_extra_started_at = time.perf_counter()
             model_load_before = seconds_by_stage["model_load_seconds"]
             extra_artifacts = generate_candidate_artifacts(
@@ -3618,6 +3953,7 @@ def process_avatar_generation_payload(
                 source_content_type=source_content_type,
                 deadline_monotonic=worker_deadline.deadline_monotonic(),
                 provider_usage_doc=provider_usage_doc,
+                artifact_storage_client=st if run_mode == CANONICAL_AZURE_WORKER_MODE else None,
             )
             elapsed = _elapsed_seconds(stage_generate_extra_started_at)
             model_load_delta = max(0.0, seconds_by_stage["model_load_seconds"] - model_load_before)
@@ -3632,6 +3968,24 @@ def process_avatar_generation_payload(
                     "plan": extra_plan.to_dict(),
                 }
             )
+            if run_mode == CANONICAL_AZURE_WORKER_MODE:
+                _update_job_status(
+                    fs,
+                    payload.job_id,
+                    {
+                        "status": "qa_pending",
+                        "generationClaim": {
+                            "state": "active",
+                            "backend": AZURE_GPT_IMAGE_2_MODEL_ID,
+                            "idempotencyKey": payload.idempotency_key,
+                            "phase": "qa_extra",
+                            "expectedCandidateIndexes": list(
+                                range(extra_start_index, extra_start_index + extra_count)
+                            ),
+                            "claimedAt": SERVER_TIMESTAMP,
+                        },
+                    },
+                )
 
             for artifact in extra_artifacts:
                 worker_deadline.ensure_can_continue("upload_and_qa_extra", min_remaining_seconds=10)
@@ -3819,6 +4173,11 @@ def process_avatar_generation_payload(
                 "errorMessage": "",
                 "generationPlan": generation_plan,
                 "previewRerank": rerank_doc,
+                "generationClaim": {
+                    "state": "completed",
+                    "backend": AZURE_GPT_IMAGE_2_MODEL_ID,
+                    "idempotencyKey": payload.idempotency_key,
+                },
              }
         elif preview_ready > 0 or needs_review > 0:
             rerank_status = str(rerank_doc.get("status") or "")
@@ -3838,6 +4197,11 @@ def process_avatar_generation_payload(
                 "errorMessage": "No avatar candidates are safe for preview yet.",
                 "generationPlan": generation_plan,
                 "previewRerank": rerank_doc,
+                "generationClaim": {
+                    "state": "completed",
+                    "backend": AZURE_GPT_IMAGE_2_MODEL_ID,
+                    "idempotencyKey": payload.idempotency_key,
+                },
              }
         else:
             final_status = "no_previewable_candidates"
@@ -3848,6 +4212,11 @@ def process_avatar_generation_payload(
                 "errorMessage": "All generated avatar candidates were rejected by QA.",
                 "generationPlan": generation_plan,
                 "previewRerank": rerank_doc,
+                "generationClaim": {
+                    "state": "completed",
+                    "backend": AZURE_GPT_IMAGE_2_MODEL_ID,
+                    "idempotencyKey": payload.idempotency_key,
+                },
              }
         final_update["fidelityCorridorShadowRanking"] = shadow_ranking_doc
         seconds_by_stage["total"] = _elapsed_seconds(job_started_at)
@@ -3913,8 +4282,13 @@ def process_avatar_generation_payload(
              },
         )
         is_unknown_provider_outcome = isinstance(exc, AzureUnknownOutcomeError)
+        is_artifact_recovery_review = isinstance(exc, CandidateArtifactNeedsReview)
         error_update: Dict[str, Any] = {
-            "status": "needs_review" if is_unknown_provider_outcome else "failed",
+            "status": (
+                "needs_review"
+                if is_unknown_provider_outcome or is_artifact_recovery_review
+                else "failed"
+            ),
             "errorCode": _worker_error_code(exc),
             "errorMessage": redact_error_message(exc),
         }
@@ -3924,12 +4298,23 @@ def process_avatar_generation_payload(
             error_update["generationBackend"] = AZURE_GPT_IMAGE_2_MODEL_ID
         if run_mode == CANONICAL_AZURE_WORKER_MODE:
             error_update["generationClaim"] = {
-                "state": "active" if is_unknown_provider_outcome else "failed",
+                "state": (
+                    "active"
+                    if is_unknown_provider_outcome
+                    else "reconciliation_required"
+                    if is_artifact_recovery_review
+                    else "failed"
+                ),
                 "backend": AZURE_GPT_IMAGE_2_MODEL_ID,
                 "idempotencyKey": payload.idempotency_key,
                 "lastErrorCode": _worker_error_code(exc),
             }
         _update_job_status(fs, payload.job_id, error_update)
+        if isinstance(exc, AzureProviderError) and exc.retryable and not exc.unknown_outcome:
+            raise AvatarGenerationRetryableError(
+                exc.error_code,
+                retry_after_seconds=exc.retry_after_seconds,
+            ) from exc
         if isinstance(exc, AvatarGenerationError):
             raise
         raise AvatarGenerationError("Avatar generation worker failed.") from exc

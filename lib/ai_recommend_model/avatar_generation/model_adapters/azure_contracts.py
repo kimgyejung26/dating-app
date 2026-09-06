@@ -27,6 +27,8 @@ class AzureProviderError(RuntimeError):
         attempts: int = 0,
         provider_status: Optional[int] = None,
         provider_usage: Optional[Mapping[str, Any]] = None,
+        retry_after_seconds: Optional[float] = None,
+        failure_class: str = "provider",
     ) -> None:
         self.error_code = str(error_code)
         self.retryable = bool(retryable)
@@ -34,6 +36,12 @@ class AzureProviderError(RuntimeError):
         self.attempts = max(0, int(attempts))
         self.provider_status = provider_status
         self.provider_usage = dict(provider_usage or {})
+        self.retry_after_seconds = (
+            max(0.0, float(retry_after_seconds))
+            if retry_after_seconds is not None
+            else None
+        )
+        self.failure_class = str(failure_class or "provider")
         super().__init__(self.error_code)
 
 
@@ -48,18 +56,35 @@ class AzureTransportError(AzureProviderError):
         error_code: str = "azure_transport_error",
         *,
         request_sent: bool = False,
+        attempts: int = 0,
+        provider_usage: Optional[Mapping[str, Any]] = None,
     ) -> None:
         self.request_sent = bool(request_sent)
-        super().__init__(error_code, retryable=not self.request_sent)
+        super().__init__(
+            error_code,
+            retryable=not self.request_sent,
+            unknown_outcome=self.request_sent,
+            attempts=attempts,
+            provider_usage=provider_usage,
+            failure_class="ambiguous" if self.request_sent else "pre_send",
+        )
 
 
 class AzureUnknownOutcomeError(AzureProviderError):
-    def __init__(self, attempts: int = 1) -> None:
+    def __init__(
+        self,
+        attempts: int = 1,
+        *,
+        usage: Optional[Mapping[str, Any]] = None,
+    ) -> None:
         super().__init__(
             "azure_unknown_post_send_outcome",
             retryable=False,
             unknown_outcome=True,
             attempts=attempts,
+            provider_usage=usage
+            or provider_usage(attempts=attempts, outcome="unknown"),
+            failure_class="ambiguous",
         )
 
 
@@ -198,6 +223,11 @@ class AzureGenerationAudit:
     source_input_mode: str = "storage_normalized_original_direct"
     upload_normalization: str = "existing_avatar_media_ingestion"
     pre_generation_transform: str = "none"
+    routing_attempt_count: int = 1
+    provider_request_attempted_count: int = 1
+    provider_definite_rejected_count: int = 0
+    provider_ambiguous_count: int = 0
+    provider_succeeded_count: int = 1
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -212,6 +242,11 @@ class AzureGenerationAudit:
             "legacyReferencePreprocessing": False,
             "legacyFlux": False,
             "attempts": self.attempts,
+            "routingAttemptCount": self.routing_attempt_count,
+            "providerRequestAttempted": self.provider_request_attempted_count,
+            "providerDefiniteRejected": self.provider_definite_rejected_count,
+            "providerAmbiguous": self.provider_ambiguous_count,
+            "providerSucceeded": self.provider_succeeded_count,
             "latencySeconds": round(max(0.0, self.latency_seconds), 3),
             "providerStatus": self.provider_status,
             "outcome": self.outcome,
@@ -231,13 +266,27 @@ class AzureImageTransport(Protocol):
         ...
 
 
-def provider_usage(*, attempts: int, outcome: str) -> dict[str, int | str]:
+def provider_usage(
+    *,
+    attempts: int,
+    outcome: str,
+    routing_attempts: Optional[int] = None,
+    request_attempted: Optional[int] = None,
+    definite_rejected: int = 0,
+    ambiguous: Optional[int] = None,
+    succeeded: Optional[int] = None,
+) -> dict[str, int | str]:
     normalized = str(outcome or "failure")
     return {
         "provider": "azure",
         "generationBackend": AZURE_GPT_IMAGE_2_MODEL_ID,
         "requestCount": max(0, int(attempts)),
         "attemptCount": max(0, int(attempts)),
+        "routingAttemptCount": max(0, int(routing_attempts if routing_attempts is not None else attempts)),
+        "providerRequestAttempted": max(0, int(request_attempted if request_attempted is not None else attempts)),
+        "providerDefiniteRejected": max(0, int(definite_rejected)),
+        "providerAmbiguous": max(0, int(ambiguous if ambiguous is not None else (1 if normalized == "unknown" else 0))),
+        "providerSucceeded": max(0, int(succeeded if succeeded is not None else (1 if normalized == "success" else 0))),
         "successCount": 1 if normalized == "success" else 0,
         "failureCount": 1 if normalized == "failure" else 0,
         "unknownOutcomeCount": 1 if normalized == "unknown" else 0,
