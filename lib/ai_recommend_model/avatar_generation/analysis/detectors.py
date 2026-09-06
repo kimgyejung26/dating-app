@@ -30,6 +30,21 @@ def _has_tasks_face_landmarker(mp: object) -> bool:
 
 
 def _load_tasks_face_landmarker_api(mp: object) -> tuple[object, object] | None:
+    # Prefer the API exposed by the caller's imported module.  Besides keeping
+    # this boundary injectable, this prevents stale mediapipe.tasks entries in
+    # sys.modules from overriding a freshly supplied module during reloads.
+    tasks = getattr(mp, "tasks", None)
+    vision = getattr(tasks, "vision", None)
+    if (
+        tasks is not None
+        and vision is not None
+        and hasattr(tasks, "BaseOptions")
+        and hasattr(vision, "FaceLandmarker")
+        and hasattr(vision, "FaceLandmarkerOptions")
+        and hasattr(vision, "RunningMode")
+    ):
+        return tasks, vision
+
     try:
         from mediapipe.tasks import python as mp_tasks  # type: ignore[import-not-found]
         from mediapipe.tasks.python import vision  # type: ignore[import-not-found]
@@ -43,18 +58,6 @@ def _load_tasks_face_landmarker_api(mp: object) -> tuple[object, object] | None:
             return mp_tasks, vision
     except Exception:
         pass
-
-    tasks = getattr(mp, "tasks", None)
-    vision = getattr(tasks, "vision", None)
-    if (
-        tasks is not None
-        and vision is not None
-        and hasattr(tasks, "BaseOptions")
-        and hasattr(vision, "FaceLandmarker")
-        and hasattr(vision, "FaceLandmarkerOptions")
-        and hasattr(vision, "RunningMode")
-    ):
-        return tasks, vision
     return None
 
 
