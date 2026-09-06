@@ -20,6 +20,7 @@ from avatar_generation.avatar_prompt_contract import (  # noqa: E402
 from avatar_generation.candidate_artifacts import (  # noqa: E402
     generation_id_for,
     persist_candidate_artifact,
+    source_identity_hash_for,
 )
 from avatar_generation.model_adapters.azure_contracts import (  # noqa: E402
     AzureGenerationAudit,
@@ -33,6 +34,7 @@ import avatar_generation.qa as qa_module  # noqa: E402
 import avatar_generation.worker as worker_module  # noqa: E402
 from avatar_generation.worker import (  # noqa: E402
     AvatarGenerationError,
+    AvatarGenerationRetryableError,
     DEFAULT_AVATAR_TEMP_BUCKET,
     DEFAULT_SOURCE_PHOTO_BUCKET,
     process_avatar_generation_payload,
@@ -402,7 +404,7 @@ def test_storage_artifact_survives_crash_before_candidate_doc_and_skips_second_p
     )
     blob = st.buckets[DEFAULT_AVATAR_TEMP_BUCKET].blobs[candidate_path]
     assert blob.exists()
-    assert blob.metadata["artifactSchema"] == "azure_candidate_artifact_v1"
+    assert blob.metadata["artifactSchema"] == "azure_candidate_artifact_v2"
 
     monkeypatch.setattr(worker_module, "_set_doc", original_set_doc)
     result = process_avatar_generation_payload(
@@ -449,6 +451,41 @@ def test_incomplete_existing_paid_artifact_prefers_needs_review_over_regeneratio
     assert job["generationClaim"]["state"] == "reconciliation_required"
 
 
+def test_storage_read_failure_before_provider_call_fails_closed(monkeypatch):
+    class UnreadableArtifactBlob:
+        def exists(self):
+            raise ConnectionError("storage unavailable")
+
+    payload = _payload(job_id="azure_job_storage_read_failure")
+    payload.update({"modelId": AZURE_GPT_IMAGE_2_MODEL_ID, "candidateCount": 1})
+    fs = _fake_firestore(payload)
+    st = _fake_storage()
+    provider = FakeAzureProvider()
+    candidate_path = (
+        "users/u1/jobs/azure_job_storage_read_failure/candidates/"
+        "cand_azure_job_storage_read_failure_01.png"
+    )
+    st.buckets[DEFAULT_AVATAR_TEMP_BUCKET].blobs[candidate_path] = (
+        UnreadableArtifactBlob()
+    )
+    monkeypatch.setenv("ENVIRONMENT", "local")
+    monkeypatch.setattr(worker_module, "get_azure_gpt_image2_provider", lambda: provider)
+
+    with pytest.raises(
+        AvatarGenerationRetryableError,
+        match="azure_candidate_artifact_storage_unavailable",
+    ):
+        process_avatar_generation_payload(
+            payload,
+            firestore_client=fs,
+            storage_client=st,
+            qa_runner=_passing_qa,
+            mode=AZURE_GPT_IMAGE_2_MODEL_ID,
+        )
+
+    assert provider.calls == []
+
+
 def test_stale_provider_inflight_with_complete_storage_artifact_resumes_qa_without_azure(
     monkeypatch,
 ):
@@ -485,6 +522,13 @@ def test_stale_provider_inflight_with_complete_storage_artifact_resumes_qa_witho
         ),
         candidate_index=0,
         candidate_id=candidate_id,
+        source_identity_hash=source_identity_hash_for(
+            source_photo_ids=payload["sourcePhotoIds"],
+            source_photo_refs=payload["sourcePhotoRefs"],
+            source_photo_object_generations=payload.get(
+                "sourcePhotoObjectGenerations", []
+            ),
+        ),
         seed=worker_module.deterministic_seed(payload["jobId"], 0),
         generation_params={
             "provider": "azure",

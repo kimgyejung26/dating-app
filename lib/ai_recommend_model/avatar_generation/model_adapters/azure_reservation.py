@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import hashlib
 import json
 from typing import Any, Mapping, Optional, Protocol
@@ -36,6 +36,7 @@ class ReservationDecision:
     reservation: Optional[EndpointReservation]
     reason: str
     retry_after_seconds: float = 0.0
+    transaction_attempts: int = 1
 
 
 class AzureReservationStore(Protocol):
@@ -43,8 +44,7 @@ class AzureReservationStore(Protocol):
         self,
         *,
         endpoint_rpms: Mapping[str, float],
-        now_epoch_seconds: float,
-        deadline_epoch_seconds: Optional[float],
+        remaining_deadline_seconds: Optional[float],
         request_timeout_seconds: float,
         policy: ReservationPolicy,
         excluded_endpoint_ids: frozenset[str] = frozenset(),
@@ -55,7 +55,6 @@ class AzureReservationStore(Protocol):
         self,
         *,
         endpoint_id: str,
-        now_epoch_seconds: float,
         retry_after_seconds: float,
     ) -> None:
         ...
@@ -96,7 +95,7 @@ def reserve_router_slot(
     *,
     endpoint_rpms: Mapping[str, float],
     now_epoch_seconds: float,
-    deadline_epoch_seconds: Optional[float],
+    remaining_deadline_seconds: Optional[float],
     request_timeout_seconds: float,
     policy: ReservationPolicy,
     excluded_endpoint_ids: frozenset[str] = frozenset(),
@@ -142,10 +141,9 @@ def reserve_router_slot(
             "bounded_wait_exceeded",
             retry_after_seconds=wait_seconds,
         )
-    if (
-        deadline_epoch_seconds is not None
-        and reserved_at + float(request_timeout_seconds) + policy.deadline_guard_seconds
-        >= float(deadline_epoch_seconds)
+    if remaining_deadline_seconds is not None and (
+        wait_seconds + float(request_timeout_seconds) + policy.deadline_guard_seconds
+        >= float(remaining_deadline_seconds)
     ):
         return dict(state), ReservationDecision(
             None,
@@ -209,31 +207,46 @@ class FirestoreAzureReservationStore:
                 pass
         return callback(transaction)
 
+    @staticmethod
+    def _server_read_epoch_seconds(snapshot: Any) -> float:
+        read_time = getattr(snapshot, "read_time", None)
+        timestamp = getattr(read_time, "timestamp", None)
+        if not callable(timestamp):
+            raise RuntimeError("firestore server read time unavailable")
+        value = _number(timestamp(), float("nan"))
+        if value != value:
+            raise RuntimeError("firestore server read time invalid")
+        return value
+
     def reserve(
         self,
         *,
         endpoint_rpms: Mapping[str, float],
-        now_epoch_seconds: float,
-        deadline_epoch_seconds: Optional[float],
+        remaining_deadline_seconds: Optional[float],
         request_timeout_seconds: float,
         policy: ReservationPolicy,
         excluded_endpoint_ids: frozenset[str] = frozenset(),
     ) -> ReservationDecision:
+        transaction_attempts = 0
+
         def reserve_in_transaction(transaction: Any) -> ReservationDecision:
+            nonlocal transaction_attempts
+            transaction_attempts += 1
             snapshot = self._ref.get(transaction=transaction)
+            server_now = self._server_read_epoch_seconds(snapshot)
             state = snapshot.to_dict() if getattr(snapshot, "exists", False) else {}
             updated, decision = reserve_router_slot(
                 state or {},
                 endpoint_rpms=endpoint_rpms,
-                now_epoch_seconds=now_epoch_seconds,
-                deadline_epoch_seconds=deadline_epoch_seconds,
+                now_epoch_seconds=server_now,
+                remaining_deadline_seconds=remaining_deadline_seconds,
                 request_timeout_seconds=request_timeout_seconds,
                 policy=policy,
                 excluded_endpoint_ids=excluded_endpoint_ids,
             )
             if decision.reservation is not None:
                 transaction.set(self._ref, updated, merge=True)
-            return decision
+            return replace(decision, transaction_attempts=transaction_attempts)
 
         try:
             return self._run_transaction(reserve_in_transaction)
@@ -249,17 +262,17 @@ class FirestoreAzureReservationStore:
         self,
         *,
         endpoint_id: str,
-        now_epoch_seconds: float,
         retry_after_seconds: float,
     ) -> None:
         def update_in_transaction(transaction: Any) -> None:
             snapshot = self._ref.get(transaction=transaction)
+            server_now = self._server_read_epoch_seconds(snapshot)
             state = snapshot.to_dict() if getattr(snapshot, "exists", False) else {}
             state = dict(state or {})
             raw_endpoints = state.get("endpoints")
             endpoints = dict(raw_endpoints) if isinstance(raw_endpoints, Mapping) else {}
             endpoint_state = dict(endpoints.get(endpoint_id) or {})
-            blocked_until = float(now_epoch_seconds) + max(0.0, float(retry_after_seconds))
+            blocked_until = server_now + max(0.0, float(retry_after_seconds))
             endpoint_state["capacityBlockedUntilEpochSeconds"] = max(
                 _number(endpoint_state.get("capacityBlockedUntilEpochSeconds"), 0.0),
                 blocked_until,
@@ -269,7 +282,7 @@ class FirestoreAzureReservationStore:
                 {
                     "schemaVersion": ROUTER_STATE_SCHEMA,
                     "endpoints": endpoints,
-                    "updatedAtEpochSeconds": float(now_epoch_seconds),
+                    "updatedAtEpochSeconds": server_now,
                 }
             )
             transaction.set(self._ref, state, merge=True)

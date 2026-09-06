@@ -48,6 +48,7 @@ from avatar_generation.candidate_artifacts import (
     generation_id_for,
     persist_candidate_artifact,
     recover_candidate_artifact,
+    source_identity_hash_for,
 )
 from avatar_generation.environment import (
     configured_environment_names,
@@ -68,6 +69,9 @@ from avatar_generation.model_adapters.azure_contracts import (
     AzureProviderError,
     AzureUnknownOutcomeError,
     provider_usage,
+)
+from avatar_generation.model_adapters.azure_deadline_planning import (
+    deadline_budget_from_env,
 )
 from avatar_generation.model_adapters.azure_gpt_image_2 import (
     get_azure_gpt_image2_provider as _build_azure_gpt_image2_provider,
@@ -214,7 +218,7 @@ class AvatarWorkerDeadline:
         )
         max_job = _int_env(
             "AVATAR_WORKER_MAX_JOB_SECONDS",
-            300,
+            900,
             minimum=30,
             maximum=3600,
         )
@@ -918,6 +922,25 @@ def _generation_budget(worker_deadline: AvatarWorkerDeadline, *, generated_count
     )
 
 
+def _ensure_azure_round_deadline_budget(
+    worker_deadline: AvatarWorkerDeadline,
+    *,
+    candidate_count: int,
+    stage: str,
+) -> None:
+    budget = deadline_budget_from_env()
+    required = budget.remaining_round_seconds(candidate_count)
+    available = (
+        worker_deadline.remaining_seconds()
+        - worker_deadline.soft_stop_margin_seconds
+    )
+    if available <= required:
+        raise AvatarGenerationRetryableError(
+            f"avatar_worker_deadline_deferred_{stage}",
+            retry_after_seconds=30.0,
+        )
+
+
 def _qa_critical_models_unavailable(candidate_summaries: Sequence[Mapping[str, Any]]) -> bool:
     unavailable = {"unavailable", "critical_unavailable", "uncalibrated"}
     for summary in candidate_summaries:
@@ -1339,6 +1362,11 @@ def _stale_claim_artifacts_recoverable(
         job_id=payload.job_id,
         idempotency_key=payload.idempotency_key or payload.job_id,
     )
+    source_identity_hash = source_identity_hash_for(
+        source_photo_ids=payload.source_photo_ids,
+        source_photo_refs=payload.source_photo_refs,
+        source_photo_object_generations=payload.source_photo_object_generations,
+    )
     for index in expected_indexes:
         candidate_id = candidate_id_for(payload.job_id, index)
         image_ref = build_temp_candidate_ref(
@@ -1352,6 +1380,7 @@ def _stale_claim_artifacts_recoverable(
             expected_generation_id=generation_id,
             expected_candidate_index=index,
             expected_candidate_id=candidate_id,
+            expected_source_identity_hash=source_identity_hash,
         )
         if recovered is None:
             return False
@@ -1678,6 +1707,11 @@ def generate_candidate_artifacts(
         job_id=payload.job_id,
         idempotency_key=payload.idempotency_key or payload.job_id,
     )
+    source_identity_hash = source_identity_hash_for(
+        source_photo_ids=payload.source_photo_ids,
+        source_photo_refs=payload.source_photo_refs,
+        source_photo_object_generations=payload.source_photo_object_generations,
+    )
     for index in range(candidate_start_index, candidate_start_index + round_count):
         candidate_id = candidate_id_for(payload.job_id, index)
         seed = deterministic_seed(payload.job_id, index)
@@ -1695,6 +1729,7 @@ def generate_candidate_artifacts(
                     expected_generation_id=generation_id,
                     expected_candidate_index=index,
                     expected_candidate_id=candidate_id,
+                    expected_source_identity_hash=source_identity_hash,
                 )
                 if recovered is not None:
                     artifacts.append(
@@ -1742,6 +1777,11 @@ def generate_candidate_artifacts(
                 provider_usage(
                     attempts=generated.audit.attempts,
                     outcome=generated.audit.outcome,
+                    routing_attempts=generated.audit.routing_attempt_count,
+                    request_attempted=generated.audit.provider_request_attempted_count,
+                    definite_rejected=generated.audit.provider_definite_rejected_count,
+                    ambiguous=generated.audit.provider_ambiguous_count,
+                    succeeded=generated.audit.provider_succeeded_count,
                 ),
             )
             candidate_image_bytes = generated.image_bytes
@@ -1771,6 +1811,7 @@ def generate_candidate_artifacts(
                 generation_id=generation_id,
                 candidate_index=index,
                 candidate_id=candidate_id,
+                source_identity_hash=source_identity_hash,
                 seed=seed,
                 generation_params=generation_audit,
             )
@@ -1794,7 +1835,18 @@ def _merge_provider_usage(
     if target is None or not isinstance(update, Mapping):
         return
     for key, value in update.items():
-        if key in {"requestCount", "attemptCount", "successCount", "failureCount", "unknownOutcomeCount"}:
+        if key in {
+            "requestCount",
+            "attemptCount",
+            "routingAttemptCount",
+            "providerRequestAttempted",
+            "providerDefiniteRejected",
+            "providerAmbiguous",
+            "providerSucceeded",
+            "successCount",
+            "failureCount",
+            "unknownOutcomeCount",
+        }:
             target[key] = int(target.get(key) or 0) + int(value or 0)
         else:
             target[key] = value
@@ -3536,6 +3588,7 @@ def process_avatar_generation_payload(
                     needs_review_count=0,
                 )
 
+        worker_deadline.ensure_can_continue("generate_initial", min_remaining_seconds=30)
         if run_mode == CANONICAL_AZURE_WORKER_MODE:
             # The stored normalized JPEG is the generation source. No
             # generation-purpose image derivative is created or persisted.
@@ -3646,17 +3699,6 @@ def process_avatar_generation_payload(
                 },
             )
 
-        worker_deadline.ensure_can_continue("generate_initial", min_remaining_seconds=30)
-        if run_mode == CANONICAL_AZURE_WORKER_MODE:
-            _update_job_status(
-                fs,
-                payload.job_id,
-                {
-                    "status": "provider_inflight",
-                    "generationBackend": AZURE_GPT_IMAGE_2_MODEL_ID,
-                    "provenance": _azure_provenance_document(),
-                },
-            )
         stage_started_at = time.perf_counter()
         policy = AdaptiveGenerationPolicy.from_env()
         initial_plan = plan_generation_round(
@@ -3678,6 +3720,21 @@ def process_avatar_generation_payload(
                 seconds_by_stage=seconds_by_stage,
                 job_started_at=job_started_at,
                 extra_update={"generationPlan": {"initial": initial_plan.to_dict()}},
+            )
+        if run_mode == CANONICAL_AZURE_WORKER_MODE:
+            _ensure_azure_round_deadline_budget(
+                worker_deadline,
+                candidate_count=initial_count,
+                stage="initial",
+            )
+            _update_job_status(
+                fs,
+                payload.job_id,
+                {
+                    "status": "provider_inflight",
+                    "generationBackend": AZURE_GPT_IMAGE_2_MODEL_ID,
+                    "provenance": _azure_provenance_document(),
+                },
             )
         if run_mode == CANONICAL_AZURE_WORKER_MODE:
             _update_job_status(
@@ -3851,7 +3908,16 @@ def process_avatar_generation_payload(
             and extra_count > 0
             and not qa_models_unavailable
         ):
-            worker_deadline.ensure_can_continue("generate_extra", min_remaining_seconds=30)
+            if run_mode == CANONICAL_AZURE_WORKER_MODE:
+                _ensure_azure_round_deadline_budget(
+                    worker_deadline,
+                    candidate_count=extra_count,
+                    stage="extra",
+                )
+            else:
+                worker_deadline.ensure_can_continue(
+                    "generate_extra", min_remaining_seconds=30
+                )
             if run_mode == CANONICAL_AZURE_WORKER_MODE:
                 extra_start_index = len(candidate_summaries)
                 _update_job_status(

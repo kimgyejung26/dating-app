@@ -71,12 +71,19 @@ class AzureTransportError(AzureProviderError):
 
 
 class AzureUnknownOutcomeError(AzureProviderError):
-    def __init__(self, attempts: int = 1) -> None:
+    def __init__(
+        self,
+        attempts: int = 1,
+        *,
+        usage: Optional[Mapping[str, Any]] = None,
+    ) -> None:
         super().__init__(
             "azure_unknown_post_send_outcome",
             retryable=False,
             unknown_outcome=True,
             attempts=attempts,
+            provider_usage=usage
+            or provider_usage(attempts=attempts, outcome="unknown"),
             failure_class="ambiguous",
         )
 
@@ -216,6 +223,11 @@ class AzureGenerationAudit:
     source_input_mode: str = "storage_normalized_original_direct"
     upload_normalization: str = "existing_avatar_media_ingestion"
     pre_generation_transform: str = "none"
+    routing_attempt_count: int = 1
+    provider_request_attempted_count: int = 1
+    provider_definite_rejected_count: int = 0
+    provider_ambiguous_count: int = 0
+    provider_succeeded_count: int = 1
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -230,6 +242,11 @@ class AzureGenerationAudit:
             "legacyReferencePreprocessing": False,
             "legacyFlux": False,
             "attempts": self.attempts,
+            "routingAttemptCount": self.routing_attempt_count,
+            "providerRequestAttempted": self.provider_request_attempted_count,
+            "providerDefiniteRejected": self.provider_definite_rejected_count,
+            "providerAmbiguous": self.provider_ambiguous_count,
+            "providerSucceeded": self.provider_succeeded_count,
             "latencySeconds": round(max(0.0, self.latency_seconds), 3),
             "providerStatus": self.provider_status,
             "outcome": self.outcome,
@@ -249,13 +266,27 @@ class AzureImageTransport(Protocol):
         ...
 
 
-def provider_usage(*, attempts: int, outcome: str) -> dict[str, int | str]:
+def provider_usage(
+    *,
+    attempts: int,
+    outcome: str,
+    routing_attempts: Optional[int] = None,
+    request_attempted: Optional[int] = None,
+    definite_rejected: int = 0,
+    ambiguous: Optional[int] = None,
+    succeeded: Optional[int] = None,
+) -> dict[str, int | str]:
     normalized = str(outcome or "failure")
     return {
         "provider": "azure",
         "generationBackend": AZURE_GPT_IMAGE_2_MODEL_ID,
         "requestCount": max(0, int(attempts)),
         "attemptCount": max(0, int(attempts)),
+        "routingAttemptCount": max(0, int(routing_attempts if routing_attempts is not None else attempts)),
+        "providerRequestAttempted": max(0, int(request_attempted if request_attempted is not None else attempts)),
+        "providerDefiniteRejected": max(0, int(definite_rejected)),
+        "providerAmbiguous": max(0, int(ambiguous if ambiguous is not None else (1 if normalized == "unknown" else 0))),
+        "providerSucceeded": max(0, int(succeeded if succeeded is not None else (1 if normalized == "success" else 0))),
         "successCount": 1 if normalized == "success" else 0,
         "failureCount": 1 if normalized == "failure" else 0,
         "unknownOutcomeCount": 1 if normalized == "unknown" else 0,

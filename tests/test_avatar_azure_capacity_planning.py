@@ -20,18 +20,16 @@ def test_littles_law_uses_latency_and_nominal_rpm_not_endpoint_count():
         provider_p50_seconds=60.0,
         provider_p95_seconds=60.0,
         calls_per_job=4,
-        container_request_concurrency=1,
         headroom_factor=1.0,
     )
 
     assert plan.nominal_provider_rpm == 10.0
     assert plan.minimum_provider_call_concurrency_p50 == 10
     assert plan.minimum_provider_call_concurrency_p95 == 10
-    assert plan.recommended_inflight_job_requests == 10
-    assert plan.recommended_cloud_run_max_instances == 10
-    assert plan.recommended_cloud_tasks_max_concurrent_dispatches == 10
+    assert plan.recommended_inflight_job_requests is None
+    assert plan.recommended_cloud_run_max_instances is None
+    assert plan.recommended_cloud_tasks_max_concurrent_dispatches is None
     assert plan.nominal_job_rpm == 2.5
-    assert plan.recommended_cloud_run_max_instances != len(plan.endpoint_rpm_limits)
 
 
 def test_container_concurrency_changes_instance_count_but_not_required_provider_calls():
@@ -40,15 +38,16 @@ def test_container_concurrency_changes_instance_count_but_not_required_provider_
         provider_p50_seconds=45.0,
         provider_p95_seconds=75.0,
         calls_per_job=4,
-        container_request_concurrency=2,
+        measured_job_p95_seconds=240.0,
+        safe_container_request_concurrency=2,
         headroom_factor=1.2,
     )
 
     assert plan.minimum_provider_call_concurrency_p95 == 13
     assert plan.recommended_provider_call_concurrency == 15
-    assert plan.recommended_inflight_job_requests == 15
-    assert plan.recommended_cloud_run_max_instances == 8
-    assert plan.recommended_cloud_tasks_max_concurrent_dispatches == 15
+    assert plan.recommended_inflight_job_requests == 12
+    assert plan.recommended_cloud_run_max_instances == 6
+    assert plan.recommended_cloud_tasks_max_concurrent_dispatches == 12
 
 
 def test_slower_p95_increases_recommendation_without_code_constants():
@@ -57,14 +56,16 @@ def test_slower_p95_increases_recommendation_without_code_constants():
         provider_p50_seconds=30,
         provider_p95_seconds=45,
         calls_per_job=2,
-        container_request_concurrency=1,
+        measured_job_p95_seconds=180,
+        safe_container_request_concurrency=1,
     )
     slow = calculate_capacity_plan(
         endpoint_rpm_limits=[6, 2],
         provider_p50_seconds=30,
         provider_p95_seconds=120,
         calls_per_job=2,
-        container_request_concurrency=1,
+        measured_job_p95_seconds=360,
+        safe_container_request_concurrency=1,
     )
 
     assert slow.recommended_cloud_run_max_instances > fast.recommended_cloud_run_max_instances

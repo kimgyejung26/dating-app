@@ -12,7 +12,8 @@ One logical candidate generation follows this order:
    deployments, API versions, and injected keys remain process-local.
 2. In one transaction on
    `avatarProviderRouterState/gpt-image-2`, calculate the endpoint with the earliest
-   `max(now, nextAvailableAt, capacityBlockedUntil)`. If the start is close enough
+   `max(now, nextAvailableAt, capacityBlockedUntil)`. `now` is the transaction
+   snapshot's Firestore server `read_time`, never a container wall clock. If the start is close enough
    and the provider timeout still fits the request deadline, atomically advance its
    `nextAvailableAt` by `60 / rpmLimit + safetyGuardSeconds` and return the
    reservation.
@@ -30,9 +31,14 @@ One logical candidate generation follows this order:
 7. A definitive pre-send connection failure may reserve another endpoint. A 429
    records `capacityBlockedUntil`, consumes its already-reserved slot, and may try a
    different endpoint. It is capacity feedback, not a health failure.
+   This router contract treats an HTTP 429 response as a definite rejection: no
+   generation was accepted. That assumption must be revalidated in the approved
+   low-volume staging canary before production traffic.
 8. Read/write timeout, read/write error, remote protocol/reset after send, and any
    unclassified transport error are ambiguous. They become
    `azure_unknown_post_send_outcome`; there is no retry or cross-endpoint failover.
+   A 5xx response is also fail-closed as a potentially accepted application failure;
+   it is not retried or failed over.
 
 The transaction document stores only schema/version, opaque endpoint IDs, RPM,
 reservation sequence, and timestamps. It never stores endpoint URLs or credentials.
@@ -48,7 +54,8 @@ The deterministic candidate object remains:
 `users/{uid}/jobs/{jobId}/candidates/{candidateId}.png`
 
 `generationId` is a deterministic digest of job identity and the job idempotency
-contract; `candidateIndex` is recorded in object metadata. On Azure success, the
+contract; `candidateIndex` and an opaque hash of the locked source identity are
+recorded in object metadata. On Azure success, the
 worker writes the PNG immediately, before moving to another candidate. The create
 includes an atomic recovery manifest containing schema, generation ID, candidate
 index/ID, seed, SHA-256, and sanitized generation parameters.
@@ -85,6 +92,16 @@ Non-secret configuration:
 - `AZURE_OPENAI_DEADLINE_GUARD_SECONDS` (default `10`)
 - `AZURE_OPENAI_ROUTER_MAX_ATTEMPTS` (five-endpoint default `5`, bounded to `10`)
 - `AZURE_PROVIDER_INFLIGHT_STALE_SECONDS` (default `2100`)
+- `AVATAR_ARTIFACT_BUDGET_SECONDS_PER_CANDIDATE` (default `10`)
+- `AVATAR_QA_BUDGET_SECONDS_PER_CANDIDATE` (default `30`)
+- `AVATAR_FIRESTORE_BUDGET_SECONDS_PER_CANDIDATE` (default `5`)
+- `AVATAR_FINALIZATION_BUDGET_SECONDS` (default `30`)
+- `AVATAR_COLD_START_BUDGET_SECONDS` (default `60`)
+
+With the defaults, the conservative budget is 410 seconds for the two-call path
+and 720 seconds for the four-call path. The worker defaults its request/job limit
+to 900 seconds and rechecks the remaining round budget before both initial and
+extra rounds. An unsafe round defers before consuming a reservation.
 
 The Cloud Tasks retry horizon must extend beyond the stale-claim threshold. With
 30/60/120/240/480/600-second backoff and eight total attempts, the eighth attempt
@@ -116,11 +133,14 @@ Five endpoints are not a Cloud Run instance ceiling. For target provider through
 
 `minimum concurrent provider calls = ceil((R / 60) * W)`
 
-Each avatar job currently performs up to four provider calls sequentially, so one
-in-flight job contributes at most one provider call. Therefore:
+Each avatar job currently performs up to four provider calls sequentially, but it
+also occupies a request while waiting for reservations, persisting artifacts,
+running QA, and finalizing. Therefore provider concurrency is not an automatic
+Cloud Run or Cloud Tasks setting:
 
 - nominal job throughput = `sum(endpoint RPM) / callsPerJob`;
-- required in-flight job requests = recommended provider-call concurrency;
+- required in-flight job requests =
+  `ceil((nominal job RPM / 60) * measured end-to-end job p95 * headroom)`;
 - Cloud Run max instances =
   `ceil(in-flight requests / measured-safe container request concurrency)`;
 - Cloud Tasks `maxConcurrentDispatches` should be at least the in-flight request
@@ -134,14 +154,16 @@ python scripts/avatar_azure_capacity_plan.py `
   --provider-p50-seconds 60 `
   --provider-p95-seconds 60 `
   --calls-per-job 4 `
-  --container-request-concurrency 1 `
+  --job-p95-seconds 300 `
+  --safe-container-request-concurrency 1 `
   --headroom-factor 1.2
 ```
 
 For this example the Little's Law minimum is 10 concurrent provider calls and the
-20% headroom recommendation is 12. With container concurrency 1, that means 12 max
-instances and 12 concurrent Cloud Tasks—not 5. The values are examples, not rollout
-defaults.
+20% headroom checkpoint is 12. Task concurrency is calculated independently from
+the measured 300-second job p95: `ceil(2.5 / 60 * 300 * 1.2) = 15`; only after a
+safe per-instance request concurrency of 1 is measured does that imply 15 max
+instances. These are calculator examples, never rollout defaults or a fixed ceiling.
 
 ## Staging measurements required
 
@@ -161,9 +183,12 @@ Collect enough low-volume, explicitly approved samples to report:
 - artifact-recovery hits, manifest-invalid review cases, and any duplicate paid-call
   evidence.
 
-Router events are `reservation_wait`, `stale_reservation`, `capacity_deferred`,
-`pre_send_failure`, `capacity_feedback`, `ambiguous_failure`,
-`server_response_failure`, and `provider_call_succeeded`. Endpoint identity remains
+Router events are `reservation_acquired`, `reservation_wait`, `stale_reservation`,
+`capacity_deferred`, `provider_call_started`, `pre_send_failure`,
+`capacity_feedback`, `ambiguous_failure`, and `provider_call_succeeded`. They expose
+reservation wait/slot age and transaction-attempt counts. Provider usage separately
+records routing attempts, request attempts, definite rejections, ambiguous outcomes,
+and successes. Endpoint identity remains
 inside provider infrastructure logs; it is absent from public/user and candidate
 generation audit contracts.
 

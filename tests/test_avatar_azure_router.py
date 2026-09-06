@@ -157,7 +157,6 @@ def test_near_reserved_slot_waits_inside_worker_after_atomic_reservation():
         reservation_store=store,
         providers={"ep1": provider},
         policy=ReservationPolicy(max_bounded_wait_seconds=20.0),
-        clock_fn=clock.time,
         monotonic_fn=clock.monotonic,
         sleep_fn=clock.sleep,
     )
@@ -185,7 +184,6 @@ def test_late_wakeup_discards_stale_slot_and_re_reserves_before_send():
         endpoint_configs=[_endpoint("ep1"), _endpoint("ep2")],
         reservation_store=store,
         providers=providers,
-        clock_fn=clock.time,
         monotonic_fn=clock.monotonic,
         sleep_fn=clock.sleep,
     )
@@ -205,7 +203,6 @@ def test_far_capacity_defers_without_provider_call_or_busy_loop():
         endpoint_configs=[_endpoint("ep1")],
         reservation_store=store,
         providers={"ep1": provider},
-        clock_fn=clock.time,
         monotonic_fn=clock.monotonic,
         sleep_fn=clock.sleep,
     )
@@ -217,6 +214,32 @@ def test_far_capacity_defers_without_provider_call_or_busy_loop():
     assert caught.value.retryable is True
     assert provider.calls == []
     assert len(store.reservations) == 1
+
+
+def test_worker_crash_during_reserved_sleep_loses_slot_without_refund_or_send():
+    clock = FakeClock()
+    store = FakeStore(
+        [ReservationDecision(_reservation("ep1", reserved_at=110.0, expires_at=115.0), "reserved")]
+    )
+    provider = FakeProvider([_result()])
+
+    def crash(_seconds):
+        raise RuntimeError("worker terminated")
+
+    router = AzureEndpointRouter(
+        endpoint_configs=[_endpoint("ep1")],
+        reservation_store=store,
+        providers={"ep1": provider},
+        monotonic_fn=clock.monotonic,
+        sleep_fn=crash,
+    )
+
+    with pytest.raises(RuntimeError, match="worker terminated"):
+        _call(router)
+
+    assert len(store.reservations) == 1
+    assert store.capacity_feedback == []
+    assert provider.calls == []
 
 
 def test_ambiguous_failure_never_fails_over_to_another_endpoint():
@@ -232,7 +255,6 @@ def test_ambiguous_failure_never_fails_over_to_another_endpoint():
         endpoint_configs=[_endpoint("ep1"), _endpoint("ep2")],
         reservation_store=store,
         providers=providers,
-        clock_fn=clock.time,
         monotonic_fn=clock.monotonic,
         sleep_fn=clock.sleep,
     )
@@ -262,7 +284,6 @@ def test_pre_send_connect_failure_can_fail_over_safely():
         reservation_store=store,
         providers=providers,
         max_provider_attempts=2,
-        clock_fn=clock.time,
         monotonic_fn=clock.monotonic,
         sleep_fn=clock.sleep,
     )
@@ -270,6 +291,11 @@ def test_pre_send_connect_failure_can_fail_over_safely():
     result = _call(router)
 
     assert result.audit.attempts == 2
+    assert result.audit.routing_attempt_count == 2
+    assert result.audit.provider_request_attempted_count == 2
+    assert result.audit.provider_definite_rejected_count == 0
+    assert result.audit.provider_ambiguous_count == 0
+    assert result.audit.provider_succeeded_count == 1
     assert len(providers["ep1"].calls) == 1
     assert len(providers["ep2"].calls) == 1
     assert "endpoint" not in repr(result.audit.to_dict()).lower()
@@ -306,17 +332,56 @@ def test_429_is_capacity_feedback_not_health_failure_and_can_fail_over():
         providers=providers,
         max_provider_attempts=2,
         event_sink=events.append,
-        clock_fn=clock.time,
         monotonic_fn=clock.monotonic,
         sleep_fn=clock.sleep,
     )
 
-    _call(router)
+    result = _call(router)
 
     assert store.capacity_feedback[0]["endpoint_id"] == "ep1"
     assert store.capacity_feedback[0]["retry_after_seconds"] == 7.0
     assert any(event["event"] == "capacity_feedback" for event in events)
     assert all(event["event"] != "endpoint_health_failure" for event in events)
+    assert result.audit.routing_attempt_count == 2
+    assert result.audit.provider_definite_rejected_count == 1
+    assert result.audit.provider_succeeded_count == 1
+
+
+def test_5xx_application_failure_never_cross_endpoint_fails_over():
+    clock = FakeClock()
+    store = FakeStore(
+        [ReservationDecision(_reservation("ep1", reserved_at=100.0, expires_at=105.0), "reserved")]
+    )
+    providers = {
+        "ep1": FakeProvider(
+            [
+                AzureProviderError(
+                    "azure_server_error",
+                    retryable=False,
+                    unknown_outcome=True,
+                    attempts=1,
+                    provider_status=500,
+                    failure_class="application",
+                )
+            ]
+        ),
+        "ep2": FakeProvider([_result()]),
+    }
+    router = AzureEndpointRouter(
+        endpoint_configs=[_endpoint("ep1"), _endpoint("ep2")],
+        reservation_store=store,
+        providers=providers,
+        max_provider_attempts=2,
+        monotonic_fn=clock.monotonic,
+        sleep_fn=clock.sleep,
+    )
+
+    with pytest.raises(AzureUnknownOutcomeError) as caught:
+        _call(router)
+
+    assert caught.value.provider_usage["providerAmbiguous"] == 1
+    assert providers["ep2"].calls == []
+    assert len(store.reservations) == 1
 
 
 def test_router_construction_performs_no_active_health_probe_or_transaction():

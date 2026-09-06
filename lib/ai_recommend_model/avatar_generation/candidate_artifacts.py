@@ -12,7 +12,7 @@ from PIL import Image
 from avatar_generation.model_adapters.azure_contracts import AzureProviderError
 
 
-ARTIFACT_SCHEMA = "azure_candidate_artifact_v1"
+ARTIFACT_SCHEMA = "azure_candidate_artifact_v2"
 _METADATA_PARAMS = "generationParamsB64"
 
 
@@ -34,6 +34,24 @@ class RecoveredCandidateArtifact:
 def generation_id_for(*, job_id: str, idempotency_key: str) -> str:
     material = f"{job_id}\x00{idempotency_key}".encode("utf-8")
     return "gen_" + hashlib.sha256(material).hexdigest()[:24]
+
+
+def source_identity_hash_for(
+    *,
+    source_photo_ids: list[str],
+    source_photo_refs: list[str],
+    source_photo_object_generations: list[str],
+) -> str:
+    material = json.dumps(
+        {
+            "sourcePhotoIds": list(source_photo_ids),
+            "sourcePhotoRefs": list(source_photo_refs),
+            "sourcePhotoObjectGenerations": list(source_photo_object_generations),
+        },
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return "src_" + hashlib.sha256(material).hexdigest()[:24]
 
 
 def _parse_gcs_uri(uri: str) -> tuple[str, str]:
@@ -90,17 +108,29 @@ def persist_candidate_artifact(
     generation_id: str,
     candidate_index: int,
     candidate_id: str,
+    source_identity_hash: str,
     seed: int,
     generation_params: Mapping[str, Any],
 ) -> RecoveredCandidateArtifact:
     _validate_png(image_bytes)
-    existing = recover_candidate_artifact(
-        storage_client,
-        image_ref=image_ref,
-        expected_generation_id=generation_id,
-        expected_candidate_index=candidate_index,
-        expected_candidate_id=candidate_id,
-    )
+    try:
+        existing = recover_candidate_artifact(
+            storage_client,
+            image_ref=image_ref,
+            expected_generation_id=generation_id,
+            expected_candidate_index=candidate_index,
+            expected_candidate_id=candidate_id,
+            expected_source_identity_hash=source_identity_hash,
+        )
+    except CandidateArtifactNeedsReview:
+        raise
+    except AzureProviderError as exc:
+        # This function is entered only after Azure returned image bytes. A
+        # pre-create existence check that cannot complete must never turn into
+        # a retryable provider regeneration.
+        raise CandidateArtifactNeedsReview(
+            "azure_candidate_artifact_precondition_unknown_after_provider_success"
+        ) from exc
     if existing is not None:
         return existing
 
@@ -111,6 +141,7 @@ def persist_candidate_artifact(
         "generationId": generation_id,
         "candidateIndex": str(int(candidate_index)),
         "candidateId": candidate_id,
+        "sourceIdentityHash": source_identity_hash,
         "seed": str(int(seed)),
         "sha256": digest,
         _METADATA_PARAMS: _encoded_params(generation_params),
@@ -123,18 +154,28 @@ def persist_candidate_artifact(
             predefined_acl=None,
             if_generation_match=0,
         )
-    except Exception:
+    except Exception as upload_error:
         # A concurrent recovery may have won the create-only race. Accept only
-        # an object whose complete deterministic manifest validates.
-        recovered = recover_candidate_artifact(
-            storage_client,
-            image_ref=image_ref,
-            expected_generation_id=generation_id,
-            expected_candidate_index=candidate_index,
-            expected_candidate_id=candidate_id,
-        )
+        # an object whose complete deterministic manifest validates. Once the
+        # provider has succeeded, an upload error is itself ambiguous: if the
+        # object cannot be proven valid, never purchase another generation.
+        try:
+            recovered = recover_candidate_artifact(
+                storage_client,
+                image_ref=image_ref,
+                expected_generation_id=generation_id,
+                expected_candidate_index=candidate_index,
+                expected_candidate_id=candidate_id,
+                expected_source_identity_hash=source_identity_hash,
+            )
+        except Exception as recovery_error:
+            raise CandidateArtifactNeedsReview(
+                "azure_candidate_artifact_write_outcome_unknown"
+            ) from recovery_error
         if recovered is None:
-            raise
+            raise CandidateArtifactNeedsReview(
+                "azure_candidate_artifact_missing_after_provider_success"
+            ) from upload_error
         return recovered
     if hasattr(blob, "patch"):
         blob.patch()
@@ -155,6 +196,7 @@ def recover_candidate_artifact(
     expected_generation_id: str,
     expected_candidate_index: int,
     expected_candidate_id: str,
+    expected_source_identity_hash: str,
 ) -> Optional[RecoveredCandidateArtifact]:
     blob = _blob(storage_client, image_ref)
     try:
@@ -181,6 +223,8 @@ def recover_candidate_artifact(
         str(metadata.get("generationId") or "") != expected_generation_id
         or str(metadata.get("candidateId") or "") != expected_candidate_id
         or str(metadata.get("candidateIndex") or "") != str(int(expected_candidate_index))
+        or str(metadata.get("sourceIdentityHash") or "")
+        != expected_source_identity_hash
     ):
         raise CandidateArtifactNeedsReview(
             "azure_candidate_artifact_identity_mismatch"
@@ -209,6 +253,7 @@ __all__ = [
     "CandidateArtifactNeedsReview",
     "RecoveredCandidateArtifact",
     "generation_id_for",
+    "source_identity_hash_for",
     "persist_candidate_artifact",
     "recover_candidate_artifact",
 ]

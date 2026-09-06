@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import base64
+from email.utils import parsedate_to_datetime
 import io
+import math
 import random
 import threading
 import time
@@ -207,18 +209,31 @@ class AzureGptImage2Provider:
                 )
 
             retry_after = _retry_after_seconds(response.headers)
-            if last_status == 429 or 500 <= last_status <= 599:
+            if last_status == 429:
                 if attempts < self.config.max_attempts:
                     self._wait_before_retry(attempts, deadline_monotonic, retry_after=retry_after)
                     continue
                 raise AzureProviderError(
-                    "azure_rate_limited" if last_status == 429 else "azure_server_error",
+                    "azure_rate_limited",
                     retryable=True,
                     attempts=attempts,
                     provider_status=last_status,
                     provider_usage=provider_usage(attempts=attempts, outcome="failure"),
                     retry_after_seconds=retry_after,
-                    failure_class="capacity" if last_status == 429 else "server_response",
+                    failure_class="capacity",
+                )
+
+            if 500 <= last_status <= 599:
+                # A server response does not prove that image generation never
+                # started. Never retry/fail over a potentially paid call.
+                raise AzureProviderError(
+                    "azure_server_error",
+                    retryable=False,
+                    unknown_outcome=True,
+                    attempts=attempts,
+                    provider_status=last_status,
+                    provider_usage=provider_usage(attempts=attempts, outcome="unknown"),
+                    failure_class="application",
                 )
 
             raise AzureProviderError(
@@ -315,14 +330,36 @@ def _error_code_for_status(status_code: int, payload: Mapping[str, Any]) -> str:
 
 
 def _retry_after_seconds(headers: Mapping[str, str]) -> Optional[float]:
+    retry_after: Optional[str] = None
+    response_date: Optional[str] = None
     for key, value in headers.items():
-        if str(key).lower() != "retry-after":
-            continue
-        try:
-            return max(0.0, float(str(value).strip()))
-        except (TypeError, ValueError):
+        normalized = str(key).lower()
+        if normalized == "retry-after":
+            retry_after = str(value).strip()
+        elif normalized == "date":
+            response_date = str(value).strip()
+    if not retry_after:
+        return None
+    try:
+        seconds = float(retry_after)
+        if seconds < 0.0 or not math.isfinite(seconds):
             return None
-    return None
+        return min(3600.0, seconds)
+    except (TypeError, ValueError):
+        pass
+    if not response_date:
+        return None
+    try:
+        target = parsedate_to_datetime(retry_after)
+        origin = parsedate_to_datetime(response_date)
+        if target.tzinfo is None or origin.tzinfo is None:
+            return None
+        seconds = (target - origin).total_seconds()
+        if seconds < 0.0 or not math.isfinite(seconds):
+            return None
+        return min(3600.0, seconds)
+    except (TypeError, ValueError, OverflowError):
+        return None
 
 
 __all__ = [

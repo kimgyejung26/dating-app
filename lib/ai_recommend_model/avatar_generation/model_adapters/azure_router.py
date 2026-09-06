@@ -41,7 +41,6 @@ class AzureEndpointRouter:
         policy: ReservationPolicy = ReservationPolicy(),
         max_provider_attempts: int = 5,
         max_stale_reservations: int = 2,
-        clock_fn: Callable[[], float] = time.time,
         monotonic_fn: Callable[[], float] = time.monotonic,
         sleep_fn: Callable[[float], None] = time.sleep,
         event_sink: Optional[Callable[[dict[str, Any]], None]] = None,
@@ -58,7 +57,6 @@ class AzureEndpointRouter:
         self._policy = policy
         self._max_attempts = max(1, int(max_provider_attempts))
         self._max_stale = max(0, int(max_stale_reservations))
-        self._clock = clock_fn
         self._monotonic = monotonic_fn
         self._sleep = sleep_fn
         self._event_sink = event_sink or self._log_event
@@ -71,10 +69,10 @@ class AzureEndpointRouter:
     def _emit(self, event: str, **fields: Any) -> None:
         self._event_sink({"event": event, **fields})
 
-    def _deadline_epoch(self, deadline_monotonic: Optional[float]) -> Optional[float]:
+    def _remaining_deadline(self, deadline_monotonic: Optional[float]) -> Optional[float]:
         if deadline_monotonic is None:
             return None
-        return self._clock() + max(0.0, deadline_monotonic - self._monotonic())
+        return max(0.0, deadline_monotonic - self._monotonic())
 
     def generate(
         self,
@@ -92,21 +90,21 @@ class AzureEndpointRouter:
         }
         excluded: set[str] = set()
         provider_attempts = 0
+        definite_rejected = 0
+        ambiguous = 0
         stale_reservations = 0
         started = self._monotonic()
 
         while provider_attempts < self._max_attempts:
             if len(excluded) >= len(self._configs):
                 excluded.clear()
-            now = self._clock()
             request_timeout = max(
                 config.provider_config.request_timeout_seconds
                 for config in self._configs.values()
             )
             decision = self._store.reserve(
                 endpoint_rpms=endpoint_rpms,
-                now_epoch_seconds=now,
-                deadline_epoch_seconds=self._deadline_epoch(deadline_monotonic),
+                remaining_deadline_seconds=self._remaining_deadline(deadline_monotonic),
                 request_timeout_seconds=request_timeout,
                 policy=self._policy,
                 excluded_endpoint_ids=frozenset(excluded),
@@ -117,6 +115,7 @@ class AzureEndpointRouter:
                     "capacity_deferred",
                     reason=decision.reason,
                     retryAfterSeconds=round(decision.retry_after_seconds, 3),
+                    transactionAttempts=decision.transaction_attempts,
                 )
                 raise AzureProviderError(
                     "azure_capacity_deferred",
@@ -131,8 +130,25 @@ class AzureEndpointRouter:
                     endpointId=reservation.endpoint_id,
                     waitSeconds=round(reservation.wait_seconds, 3),
                 )
+            reservation_acquired_monotonic = self._monotonic()
+            self._emit(
+                "reservation_acquired",
+                endpointId=reservation.endpoint_id,
+                waitSeconds=round(reservation.wait_seconds, 3),
+                transactionAttempts=decision.transaction_attempts,
+            )
+            if reservation.wait_seconds > 0.0:
                 self._sleep(reservation.wait_seconds)
-            if self._clock() > reservation.expires_at_epoch_seconds:
+            reservation_grace = max(
+                0.0,
+                reservation.expires_at_epoch_seconds
+                - reservation.reserved_at_epoch_seconds,
+            )
+            if self._monotonic() > (
+                reservation_acquired_monotonic
+                + reservation.wait_seconds
+                + reservation_grace
+            ):
                 stale_reservations += 1
                 self._emit("stale_reservation", endpointId=reservation.endpoint_id)
                 if stale_reservations > self._max_stale:
@@ -145,6 +161,20 @@ class AzureEndpointRouter:
 
             endpoint_id = reservation.endpoint_id
             provider_attempts += 1
+            self._emit(
+                "provider_call_started",
+                endpointId=endpoint_id,
+                routingAttempt=provider_attempts,
+                reservationSlotAgeSeconds=round(
+                    max(
+                        0.0,
+                        self._monotonic()
+                        - reservation_acquired_monotonic
+                        - reservation.wait_seconds,
+                    ),
+                    3,
+                ),
+            )
             try:
                 result = self._providers[endpoint_id].generate(
                     source_image_bytes=source_image_bytes,
@@ -166,15 +196,42 @@ class AzureEndpointRouter:
                         result.audit,
                         attempts=provider_attempts,
                         latency_seconds=max(0.0, self._monotonic() - started),
+                        routing_attempt_count=provider_attempts,
+                        provider_request_attempted_count=provider_attempts,
+                        provider_definite_rejected_count=definite_rejected,
+                        provider_ambiguous_count=ambiguous,
+                        provider_succeeded_count=1,
                     ),
                 )
-            except AzureUnknownOutcomeError:
+            except AzureUnknownOutcomeError as exc:
+                ambiguous += 1
                 self._emit("ambiguous_failure", endpointId=endpoint_id)
-                raise
+                raise AzureUnknownOutcomeError(
+                    provider_attempts,
+                    usage=provider_usage(
+                        attempts=provider_attempts,
+                        outcome="unknown",
+                        routing_attempts=provider_attempts,
+                        request_attempted=provider_attempts,
+                        definite_rejected=definite_rejected,
+                        ambiguous=ambiguous,
+                        succeeded=0,
+                    ),
+                ) from exc
             except AzureTransportError as exc:
                 if exc.request_sent:
                     self._emit("ambiguous_failure", endpointId=endpoint_id)
-                    raise AzureUnknownOutcomeError(provider_attempts) from exc
+                    ambiguous += 1
+                    raise AzureUnknownOutcomeError(
+                        provider_attempts,
+                        usage=provider_usage(
+                            attempts=provider_attempts,
+                            outcome="unknown",
+                            definite_rejected=definite_rejected,
+                            ambiguous=ambiguous,
+                            succeeded=0,
+                        ),
+                    ) from exc
                 excluded.add(endpoint_id)
                 self._emit("pre_send_failure", endpointId=endpoint_id)
                 if provider_attempts >= self._max_attempts:
@@ -185,17 +242,30 @@ class AzureEndpointRouter:
                         provider_usage=provider_usage(
                             attempts=provider_attempts,
                             outcome="failure",
+                            definite_rejected=definite_rejected,
+                            ambiguous=ambiguous,
+                            succeeded=0,
                         ),
                     ) from exc
             except AzureProviderError as exc:
                 if exc.unknown_outcome or exc.failure_class == "ambiguous":
+                    ambiguous += 1
                     self._emit("ambiguous_failure", endpointId=endpoint_id)
-                    raise AzureUnknownOutcomeError(provider_attempts) from exc
+                    raise AzureUnknownOutcomeError(
+                        provider_attempts,
+                        usage=provider_usage(
+                            attempts=provider_attempts,
+                            outcome="unknown",
+                            definite_rejected=definite_rejected,
+                            ambiguous=ambiguous,
+                            succeeded=0,
+                        ),
+                    ) from exc
                 if exc.provider_status == 429 or exc.failure_class == "capacity":
+                    definite_rejected += 1
                     retry_after = exc.retry_after_seconds or 0.0
                     self._store.record_capacity_feedback(
                         endpoint_id=endpoint_id,
-                        now_epoch_seconds=self._clock(),
                         retry_after_seconds=retry_after,
                     )
                     excluded.add(endpoint_id)
@@ -213,16 +283,14 @@ class AzureEndpointRouter:
                             provider_usage=provider_usage(
                                 attempts=provider_attempts,
                                 outcome="failure",
+                                definite_rejected=definite_rejected,
+                                ambiguous=ambiguous,
+                                succeeded=0,
                             ),
                             retry_after_seconds=retry_after,
                             failure_class="capacity",
                         ) from exc
                     continue
-                if exc.failure_class == "server_response":
-                    excluded.add(endpoint_id)
-                    self._emit("server_response_failure", endpointId=endpoint_id)
-                    if provider_attempts < self._max_attempts:
-                        continue
                 raise
 
         raise AzureProviderError(

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 import math
-from typing import Any, Sequence
+from typing import Any, Optional, Sequence
 
 
 @dataclass(frozen=True)
@@ -17,10 +17,11 @@ class AzureCapacityPlan:
     minimum_provider_call_concurrency_p95: int
     headroom_factor: float
     recommended_provider_call_concurrency: int
-    container_request_concurrency: int
-    recommended_inflight_job_requests: int
-    recommended_cloud_run_max_instances: int
-    recommended_cloud_tasks_max_concurrent_dispatches: int
+    measured_job_p95_seconds: Optional[float]
+    safe_container_request_concurrency: Optional[int]
+    recommended_inflight_job_requests: Optional[int]
+    recommended_cloud_run_max_instances: Optional[int]
+    recommended_cloud_tasks_max_concurrent_dispatches: Optional[int]
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -36,7 +37,8 @@ def calculate_capacity_plan(
     provider_p50_seconds: float,
     provider_p95_seconds: float,
     calls_per_job: int = 4,
-    container_request_concurrency: int = 1,
+    measured_job_p95_seconds: Optional[float] = None,
+    safe_container_request_concurrency: Optional[int] = None,
     headroom_factor: float = 1.2,
 ) -> AzureCapacityPlan:
     rpm_limits = tuple(float(value) for value in endpoint_rpm_limits)
@@ -46,8 +48,12 @@ def calculate_capacity_plan(
         raise ValueError("provider latency values must be positive")
     if provider_p95_seconds < provider_p50_seconds:
         raise ValueError("provider_p95_seconds must be >= provider_p50_seconds")
-    if int(calls_per_job) < 1 or int(container_request_concurrency) < 1:
-        raise ValueError("calls_per_job and container concurrency must be positive")
+    if int(calls_per_job) < 1:
+        raise ValueError("calls_per_job must be positive")
+    if measured_job_p95_seconds is not None and measured_job_p95_seconds <= 0:
+        raise ValueError("measured_job_p95_seconds must be positive")
+    if safe_container_request_concurrency is not None and int(safe_container_request_concurrency) < 1:
+        raise ValueError("safe_container_request_concurrency must be positive")
     if float(headroom_factor) < 1.0:
         raise ValueError("headroom_factor must be >= 1")
 
@@ -68,11 +74,28 @@ def calculate_capacity_plan(
             * float(headroom_factor)
         ),
     )
-    # Each avatar request executes provider calls sequentially, so every
-    # concurrent provider call requires one in-flight job request.
-    inflight_jobs = recommended_calls
-    per_instance = int(container_request_concurrency)
-    max_instances = math.ceil(inflight_jobs / per_instance)
+    # Provider-call concurrency is not a Cloud Run/Cloud Tasks setting. Job
+    # requests also occupy capacity while reserving, persisting, running QA,
+    # and finalizing. We only recommend task/instance values when staging has
+    # supplied measured end-to-end job p95 plus a separately validated safe
+    # per-instance request concurrency.
+    inflight_jobs: Optional[int] = None
+    max_instances: Optional[int] = None
+    task_dispatches: Optional[int] = None
+    if measured_job_p95_seconds is not None:
+        inflight_jobs = max(
+            1,
+            math.ceil(
+                (nominal_rpm / int(calls_per_job) / 60.0)
+                * float(measured_job_p95_seconds)
+                * float(headroom_factor)
+            ),
+        )
+        task_dispatches = inflight_jobs
+        if safe_container_request_concurrency is not None:
+            max_instances = math.ceil(
+                inflight_jobs / int(safe_container_request_concurrency)
+            )
     return AzureCapacityPlan(
         endpoint_rpm_limits=rpm_limits,
         nominal_provider_rpm=nominal_rpm,
@@ -84,10 +107,19 @@ def calculate_capacity_plan(
         minimum_provider_call_concurrency_p95=p95_concurrency,
         headroom_factor=float(headroom_factor),
         recommended_provider_call_concurrency=recommended_calls,
-        container_request_concurrency=per_instance,
+        measured_job_p95_seconds=(
+            float(measured_job_p95_seconds)
+            if measured_job_p95_seconds is not None
+            else None
+        ),
+        safe_container_request_concurrency=(
+            int(safe_container_request_concurrency)
+            if safe_container_request_concurrency is not None
+            else None
+        ),
         recommended_inflight_job_requests=inflight_jobs,
         recommended_cloud_run_max_instances=max_instances,
-        recommended_cloud_tasks_max_concurrent_dispatches=inflight_jobs,
+        recommended_cloud_tasks_max_concurrent_dispatches=task_dispatches,
     )
 
 
