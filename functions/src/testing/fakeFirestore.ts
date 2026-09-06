@@ -2,9 +2,10 @@
  * In-memory Firestore double for unit tests.
  *
  * Supports the subset the avatar admission/recovery code uses:
- * collection().doc().get/set/update, where("field","==",v).get(),
- * runTransaction with tx.get/set/update, FieldValue.delete() and
- * FieldValue.serverTimestamp() sentinels, and dotted-path updates.
+ * collection().doc().get/set/update/delete, where("field","=="|"in",v)
+ * [.limit(n)].get(), runTransaction with tx.get/set/update, FieldValue.delete()
+ * and FieldValue.serverTimestamp() sentinels, dotted-path updates, and
+ * Timestamp values that survive reads (instanceof checks keep working).
  *
  * Test-only. Not bundled into any deployed function.
  */
@@ -30,6 +31,7 @@ function isServerTimestampSentinel(value: unknown): boolean {
 
 function materialize(value: unknown): unknown {
   if (isServerTimestampSentinel(value)) return Timestamp.now();
+  if (value instanceof Timestamp) return value;
   if (Array.isArray(value)) return value.map(materialize);
   if (isRecord(value)) {
     const out: Doc = {};
@@ -58,8 +60,19 @@ function setDotted(target: Doc, path: string, value: unknown): void {
   }
 }
 
+function deepClone<T>(value: T): T {
+  if (value instanceof Timestamp || value instanceof FieldValue) return value;
+  if (Array.isArray(value)) return value.map((entry) => deepClone(entry)) as unknown as T;
+  if (isRecord(value)) {
+    const out: Doc = {};
+    for (const [key, entry] of Object.entries(value)) out[key] = deepClone(entry);
+    return out as T;
+  }
+  return value;
+}
+
 export function mergeInto(existing: Doc, update: Doc): Doc {
-  const out: Doc = JSON.parse(JSON.stringify(existing));
+  const out: Doc = deepClone(existing);
   for (const [key, value] of Object.entries(update)) {
     if (key.includes(".")) {
       setDotted(out, key, value);
@@ -79,7 +92,7 @@ export function mergeInto(existing: Doc, update: Doc): Doc {
 }
 
 function clone(value: Doc): Doc {
-  return JSON.parse(JSON.stringify(value));
+  return deepClone(value);
 }
 
 export class FakeFirestore {
@@ -121,22 +134,36 @@ export class FakeFirestore {
             }
             self.db.set(path, mergeInto(self.db.get(path) ?? {}, data));
           },
+          async delete() {
+            self.writes.push({ op: "delete", path });
+            self.db.delete(path);
+          },
         };
       },
       where(field: string, operator: string, value: unknown) {
-        return {
+        const matches = (data: Doc): boolean => {
+          if (operator === "==") return data[field] === value;
+          if (operator === "in") return Array.isArray(value) && value.includes(data[field]);
+          throw new Error(`FakeFirestore: unsupported operator ${operator}`);
+        };
+        const query = (max: number | null) => ({
+          limit(n: number) {
+            return query(n);
+          },
           async get() {
-            const docs = Array.from(self.db.entries())
+            let docs = Array.from(self.db.entries())
               .filter(([path]) => path.startsWith(`${name}/`))
-              .filter(([, data]) => operator === "==" && data[field] === value)
+              .filter(([, data]) => matches(data))
               .map(([path, data]) => ({
                 id: path.slice(name.length + 1),
                 data: () => clone(data),
                 ref: self.collection(name).doc(path.slice(name.length + 1)),
               }));
-            return { docs, empty: docs.length === 0 };
+            if (max !== null) docs = docs.slice(0, max);
+            return { docs, empty: docs.length === 0, size: docs.length };
           },
-        };
+        });
+        return query(null);
       },
     };
   }
