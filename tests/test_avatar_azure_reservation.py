@@ -217,6 +217,61 @@ def test_firestore_transaction_twelve_concurrent_reservations_never_share_a_slot
     assert "key" not in repr(client.state).lower()
 
 
+def test_firestore_transaction_five_endpoints_twelve_concurrent_reservations_are_paced_per_endpoint():
+    client = _AtomicClient()
+    store = FirestoreAzureReservationStore(client)
+    endpoint_rpms = {f"ep{index}": 2.0 for index in range(1, 6)}
+    start_gate = threading.Barrier(parties=12)
+    reservations = []
+    errors = []
+
+    def reserve_one():
+        try:
+            start_gate.wait(timeout=10.0)
+            decision = store.reserve(
+                endpoint_rpms=endpoint_rpms,
+                remaining_deadline_seconds=900.0,
+                request_timeout_seconds=90.0,
+                policy=_policy(max_bounded_wait_seconds=400.0),
+            )
+            reservations.append(decision.reservation)
+        except Exception as exc:  # pragma: no cover - assertion reports it
+            errors.append(exc)
+
+    threads = [threading.Thread(target=reserve_one) for _ in range(12)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+
+    assert not errors
+    assert len(reservations) == 12
+    assert all(reservation is not None for reservation in reservations)
+
+    ordered = sorted(reservations, key=lambda item: item.sequence)
+    assert [item.sequence for item in ordered] == list(range(1, 13))
+    assert {item.endpoint_id for item in ordered[:5]} == set(endpoint_rpms)
+
+    slots = [(item.endpoint_id, item.reserved_at_epoch_seconds) for item in ordered]
+    assert len(slots) == len(set(slots))
+    for endpoint_id in endpoint_rpms:
+        endpoint_starts = [
+            item.reserved_at_epoch_seconds
+            for item in ordered
+            if item.endpoint_id == endpoint_id
+        ]
+        assert all(
+            later - earlier >= 30.25
+            for earlier, later in zip(endpoint_starts, endpoint_starts[1:])
+        )
+
+    assert client.state["sequence"] == 12
+    assert set(client.state["endpoints"]) == set(endpoint_rpms)
+    router_state = repr(client.state).lower()
+    for forbidden in ("url", "key", "uid", "email", "phone", "photo"):
+        assert forbidden not in router_state
+
+
 def test_transaction_callback_retry_reports_attempts_and_commits_one_slot():
     class NoCommitTransaction(_Transaction):
         def set(self, _ref, _value, merge=True):
