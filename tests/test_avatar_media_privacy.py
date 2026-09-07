@@ -844,6 +844,35 @@ def test_private_media_allows_chat_profile_photo_copy_with_consent():
     assert summary.private_media_invalid_count == 0
 
 
+def test_private_media_qa_accepts_all_canonical_private_bucket_aliases():
+    from scripts.qa_media_privacy import _private_media_doc_is_invalid
+
+    document = {
+        "photoConsent": {
+            "avatarGeneration": True,
+            "clipRecommendation": True,
+            "profileDisplayOriginalPhoto": False,
+            "chatPartnerRealPhotoDisclosure": True,
+        },
+        "sourcePhotos": [
+            {
+                "photoId": "src_001",
+                "gcsUri": "gcs://seolleyeon-final-private-source-photos/users/u1/source/src_001.jpg",
+                "status": "active",
+                "purpose": {"clipRecommendation": True, "avatarGeneration": True},
+            }
+        ],
+        "chatRealPhoto": {
+            "enabled": True,
+            "storageBucket": "seolleyeon-chat-profile-photos",
+            "storagePath": "users/u1/chat-profile/src_001.jpg",
+            "gcsUri": "gcs://seolleyeon-chat-profile-photos/users/u1/chat-profile/src_001.jpg",
+        },
+    }
+
+    assert _private_media_doc_is_invalid("u1", document) is False
+
+
 def test_qa_fixture_detects_clip_metadata_and_public_rec_vectors():
     from scripts.qa_media_privacy import run_fixture_checks
 

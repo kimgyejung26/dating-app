@@ -53,7 +53,7 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
       builder: (context) => CupertinoAlertDialog(
         title: const Text('마지막 확인'),
         content: const Text(
-          '탈퇴 후에는 현재 계정으로 로그인할 수 없습니다. 신고·제재·분쟁 대응을 위해 익명화된 채팅·감사 기록 일부만 정책 기간 동안 보관될 수 있습니다.',
+          '탈퇴 후에는 현재 계정으로 로그인할 수 없습니다. 신고·제재·분쟁 대응을 위해 익명화된 채팅 본문과 감사 기록 일부만 정책 기간 동안 보관될 수 있습니다.',
         ),
         actions: [
           CupertinoDialogAction(
@@ -180,7 +180,7 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    '신고, 제재, 분쟁 대응에 필요한 최소 정보는 30일 동안 보관될 수 있습니다.',
+                    '작성자 정보와 미디어 링크를 제거한 채팅 본문은 기본 90일 동안, 계정 삭제로 비게 된 행사 팀 기록은 최대 30일 동안 보관될 수 있습니다. 법적 보존 사유가 있으면 해당 기간이 달라질 수 있습니다.',
                     style: TextStyle(
                       fontFamily: 'NanumSquareRound',
                       fontSize: 13,

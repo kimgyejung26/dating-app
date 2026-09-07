@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>설레연 계정 및 데이터 삭제 요청</title>
+  <meta
+    name="description"
+    content="설레연 앱 안에서 또는 앱에 접근할 수 없을 때 계정과 데이터 삭제를 요청하는 방법"
+  />
+  <style>
+    :root {
+      --bg: #fff9fc;
+      --surface: #ffffff;
+      --surface-soft: #fff3f7;
+      --text: #1f2937;
+      --muted: #667085;
+      --line: #ecdfe7;
+      --accent: #ef3976;
+      --accent-dark: #c9215d;
+      --notice: #f4f8fb;
+      --shadow: 0 10px 30px rgba(24, 39, 75, 0.08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, rgba(239, 57, 118, 0.08), transparent 28%),
+        linear-gradient(180deg, var(--bg) 0%, #fffdfd 100%);
+      font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", system-ui, sans-serif;
+      line-height: 1.75;
+      word-break: keep-all;
+    }
+    a { color: var(--accent-dark); }
+    a:focus-visible { outline: 3px solid rgba(239, 57, 118, 0.35); outline-offset: 3px; }
+    .page { width: min(100%, 860px); margin: 0 auto; padding: 24px 16px 64px; }
+    .hero, .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+    }
+    .hero { padding: 28px 24px; }
+    .eyebrow { color: var(--accent); font-weight: 800; }
+    h1 { margin: 10px 0 12px; font-size: clamp(1.9rem, 7vw, 2.7rem); line-height: 1.2; }
+    h2 { margin: 0 0 12px; font-size: 1.3rem; line-height: 1.4; }
+    p { margin: 0 0 12px; }
+    .muted { color: var(--muted); }
+    .cards { display: grid; gap: 16px; margin-top: 18px; }
+    .card { padding: 22px; }
+    .steps, .data-list { margin: 0; padding-left: 1.35rem; }
+    .steps li, .data-list li { margin: 8px 0; }
+    .callout {
+      margin-top: 16px;
+      padding: 16px;
+      border-left: 4px solid var(--accent);
+      border-radius: 12px;
+      background: var(--surface-soft);
+    }
+    .retention { background: var(--notice); }
+    .button-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 11px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .button.primary { border-color: var(--accent); background: var(--accent); color: #fff; }
+    .footer { padding: 24px 6px 0; color: var(--muted); font-size: 0.92rem; }
+    .footer nav { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 10px; }
+    @media (max-width: 520px) {
+      .page { padding: 14px 12px 48px; }
+      .hero, .card { border-radius: 17px; }
+      .hero, .card { padding: 19px 17px; }
+      .button { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="eyebrow">설레연 • 계정 및 데이터 삭제</div>
+      <h1>계정 삭제 요청 방법</h1>
+      <p>설레연 계정과 연결된 데이터를 삭제하려면 아래 방법 중 하나를 이용해 주세요. 앱을 설치하지 않았거나 앱에 로그인할 수 없는 경우에도 요청할 수 있습니다.</p>
+    </header>
+    <div class="cards">
+      <section class="card" aria-labelledby="in-app-title">
+        <h2 id="in-app-title">앱에서 직접 삭제</h2>
+        <ol class="steps">
+          <li>설레연 앱에 로그인합니다.</li>
+          <li><strong>프로필 → 설정 → 계정 관리</strong>로 이동합니다.</li>
+          <li><strong>회원 탈퇴</strong>를 선택하고 두 번의 확인 절차를 완료합니다.</li>
+        </ol>
+        <p class="callout">앱의 삭제 기능은 로그인된 사용자를 서버에서 확인한 뒤 계정 삭제를 처리합니다. URL에 사용자 ID를 넣어 삭제하는 방식은 사용하지 않습니다.</p>
+      </section>
+      <section class="card" aria-labelledby="email-title">
+        <h2 id="email-title">앱에 접근할 수 없는 경우</h2>
+        <p><a href="mailto:support@seolleyeon.com?subject=%EC%84%A4%EB%A0%88%EC%97%B0%20%EA%B3%84%EC%A0%95%20%EC%82%AD%EC%A0%9C%20%EC%9A%94%EC%B2%AD">support@seolleyeon.com</a>으로 계정 삭제를 요청해 주세요. 이메일 제목에 “설레연 계정 삭제 요청”이라고 적으면 확인이 빠릅니다.</p>
+        <ol class="steps">
+          <li>최초 요청에는 비밀번호, 인증번호, 신분증 전체 이미지 같은 민감정보를 보내지 마세요.</li>
+          <li>운영팀이 회신으로 계정 소유 확인에 필요한 최소 절차를 안내합니다.</li>
+          <li>본인 확인이 완료되면 앱 내 탈퇴와 같은 삭제 정책에 따라 처리 결과를 안내합니다.</li>
+        </ol>
+        <div class="button-row">
+          <a class="button primary" href="mailto:support@seolleyeon.com?subject=%EC%84%A4%EB%A0%88%EC%97%B0%20%EA%B3%84%EC%A0%95%20%EC%82%AD%EC%A0%9C%20%EC%9A%94%EC%B2%AD">삭제 요청 이메일 보내기</a>
+        </div>
+      </section>
+      <section class="card" aria-labelledby="deleted-title">
+        <h2 id="deleted-title">삭제되는 데이터</h2>
+        <p>본인 확인과 삭제 처리가 완료되면 계정 인증 정보와 공개·비공개 프로필을 삭제하고, 다음 데이터를 삭제하거나 계정과의 연결을 제거합니다.</p>
+        <ul class="data-list">
+          <li>프로필 사진, 아바타 원본·후보·임시 미디어와 관련 임베딩</li>
+          <li>기기 토큰, 알림, 본인확인·학교 이메일·카카오 계정 연결 정보</li>
+          <li>추천 행동 기록, 친구 관계, 매칭 및 초대 데이터</li>
+          <li>공동 대화·커뮤니티·행사 기록에 포함된 작성자 정보와 공개 식별 정보</li>
+        </ul>
+        <p class="muted">다른 이용자와 함께 생성한 기록은 상대방의 권리와 서비스 안전을 위해 기록 자체가 즉시 사라지지 않을 수 있으며, 이 경우 삭제 이용자를 식별할 수 있는 정보는 제거하거나 익명화합니다.</p>
+      </section>
+      <section class="card retention" aria-labelledby="retention-title">
+        <h2 id="retention-title">일정 기간 보존될 수 있는 데이터</h2>
+        <ul class="data-list">
+          <li>삭제 이용자가 보낸 채팅 본문은 분쟁·안전 대응을 위해 작성자 식별정보와 미디어 링크를 즉시 제거한 뒤 기본 90일 동안 보존될 수 있습니다. 보존 기간이 지나고 법적 보존 사유가 없으면 본문과 민감 메타데이터를 파기합니다.</li>
+          <li>계정 삭제로 비게 된 행사 팀 기록은 최대 30일의 정리 대기 기간 후 파기될 수 있습니다.</li>
+          <li>신고·제재·분쟁 대응 기록과 삭제 처리 감사 기록은 관계 법령, 법적 보존 요청 또는 서비스 안전 정책에 따라 필요한 기간 동안 제한적으로 보존될 수 있습니다.</li>
+        </ul>
+        <p>그 밖의 계정 개인정보는 회원 탈퇴 후 지체 없이 파기하는 것을 원칙으로 합니다. 자세한 기준은 <a href="/privacy">개인정보처리방침</a>을 확인해 주세요.</p>
+      </section>
+      <section class="card" aria-labelledby="links-title">
+        <h2 id="links-title">정책 및 문의</h2>
+        <p>삭제 범위나 처리 상태에 관한 문의도 <a href="mailto:support@seolleyeon.com">support@seolleyeon.com</a>으로 접수할 수 있습니다.</p>
+        <div class="button-row">
+          <a class="button" href="/privacy">개인정보처리방침</a>
+          <a class="button" href="/terms">이용약관</a>
+          <a class="button" href="/">설레연 홈</a>
+        </div>
+      </section>
+    </div>
+    <footer class="footer">
+      <nav aria-label="관련 문서">
+        <a href="/privacy">개인정보처리방침</a>
+        <a href="/terms">이용약관</a>
+      </nav>
+      <p>고객 문의: <a href="mailto:support@seolleyeon.com">support@seolleyeon.com</a></p>
+    </footer>
+  </main>
+</body>
+</html>

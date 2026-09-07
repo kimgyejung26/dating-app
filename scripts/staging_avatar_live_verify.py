@@ -18,6 +18,7 @@ from typing import Any, Mapping, Optional, Sequence
 
 DEFAULT_PROJECT = "seolleyeon-final"
 DEFAULT_LOCATION = "asia-northeast3"
+DEFAULT_ARTIFACT_REGISTRY_LOCATION = "asia-southeast1"
 DEFAULT_WORKER_LOCATION = "asia-southeast1"
 DEFAULT_ACCOUNT = "seolleyeon.official@gmail.com"
 DEFAULT_SERVICE = "seolleyeon-avatar-worker"
@@ -167,6 +168,7 @@ def build_report(args: argparse.Namespace) -> dict[str, Any]:
             "--stage=live",
             f"--project={args.project}",
             f"--location={args.location}",
+            f"--artifact_registry_location={args.artifact_registry_location}",
             f"--worker_location={args.worker_location}",
             f"--expected_account={args.expected_account}",
         ],
@@ -247,6 +249,7 @@ def build_report(args: argparse.Namespace) -> dict[str, Any]:
     return {
         "project": args.project,
         "location": args.location,
+        "artifactRegistryLocation": args.artifact_registry_location,
         "workerLocation": args.worker_location,
         "ok": not blocking,
         "blocking": blocking,
@@ -332,6 +335,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     )
     parser.add_argument("--project", default=DEFAULT_PROJECT)
     parser.add_argument("--location", default=DEFAULT_LOCATION)
+    parser.add_argument(
+        "--artifact_registry_location",
+        default=DEFAULT_ARTIFACT_REGISTRY_LOCATION,
+    )
     parser.add_argument("--worker_location", default=DEFAULT_WORKER_LOCATION)
     parser.add_argument("--expected_account", default=DEFAULT_ACCOUNT)
     parser.add_argument("--worker_service", default=DEFAULT_SERVICE)

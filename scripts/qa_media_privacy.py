@@ -32,6 +32,8 @@ except ModuleNotFoundError:  # pragma: no cover - package import path
 
 from seolleyeon_rec_common_v3 import (  # noqa: E402
     PRIVATE_SOURCE_PHOTO_BUCKET,
+    PRIVATE_SOURCE_PHOTO_BUCKETS,
+    CHAT_PROFILE_PHOTO_BUCKETS,
     _is_private_or_signed_image_ref,
     load_avatar_display_status_from_docs,
     load_users_with_private_source_photos_from_docs,
@@ -315,9 +317,12 @@ def _private_media_doc_is_invalid(uid: str, doc: Mapping[str, Any]) -> bool:
         if status not in allowed_statuses:
             return True
         gcs_uri = str(entry.get("gcsUri") or "")
-        expected_prefix = f"gs://{PRIVATE_SOURCE_PHOTO_BUCKET}/users/{uid}/source/"
-        alternate_prefix = f"gcs://{PRIVATE_SOURCE_PHOTO_BUCKET}/users/{uid}/source/"
-        if not (gcs_uri.startswith(expected_prefix) or gcs_uri.startswith(alternate_prefix)):
+        source_prefixes = tuple(
+            f"{scheme}://{bucket}/users/{uid}/source/"
+            for scheme in ("gs", "gcs")
+            for bucket in PRIVATE_SOURCE_PHOTO_BUCKETS
+        )
+        if not gcs_uri.startswith(source_prefixes):
             return True
         if any(key in entry for key in ("downloadUrl", "downloadURL", "signedUrl", "previewUrl")):
             return True
@@ -335,13 +340,18 @@ def _private_media_doc_is_invalid(uid: str, doc: Mapping[str, Any]) -> bool:
         if enabled and consent.get("chatPartnerRealPhotoDisclosure") is not True:
             return True
         if enabled:
-            if chat_real_photo.get("storageBucket") != CHAT_PROFILE_PHOTO_BUCKET:
+            if chat_real_photo.get("storageBucket") not in CHAT_PROFILE_PHOTO_BUCKETS:
                 return True
             storage_path = str(chat_real_photo.get("storagePath") or "")
             if not storage_path.startswith(f"users/{uid}/chat-profile/"):
                 return True
             gcs_uri = str(chat_real_photo.get("gcsUri") or "")
-            if gcs_uri and not gcs_uri.startswith(f"gs://{CHAT_PROFILE_PHOTO_BUCKET}/users/{uid}/chat-profile/"):
+            chat_prefixes = tuple(
+                f"{scheme}://{bucket}/users/{uid}/chat-profile/"
+                for scheme in ("gs", "gcs")
+                for bucket in CHAT_PROFILE_PHOTO_BUCKETS
+            )
+            if gcs_uri and not gcs_uri.startswith(chat_prefixes):
                 return True
             if any(key in chat_real_photo for key in ("downloadUrl", "downloadURL", "signedUrl", "previewUrl")):
                 return True

@@ -20,7 +20,8 @@ from typing import Any, Callable, Mapping, Optional, Sequence
 
 
 SCHEMA_VERSION = "avatar_rollback_drill_v1"
-ALLOWED_PROJECTS = {"seolleyeon-final", "seolleyeon-festival"}
+# Authoritative production avatar topology. The Festival bridge is retired.
+ALLOWED_PROJECTS = {"seolleyeon-final"}
 FORBIDDEN_PROJECTS = {"", "default", "seolleyeon"}
 FORBIDDEN_COMMAND_TERMS = {
     "consent-withdrawal",
@@ -145,7 +146,7 @@ def build_rollback_report(
 def _validate_project(project: str) -> str:
     normalized = str(project or "").strip()
     if normalized in FORBIDDEN_PROJECTS or normalized not in ALLOWED_PROJECTS:
-        raise ValueError("refusing project; pass explicit seolleyeon-final or seolleyeon-festival")
+        raise ValueError("refusing project; pass an approved production avatar project (seolleyeon-final)")
     return normalized
 
 
@@ -160,10 +161,11 @@ def _load_config(path: Path) -> dict[str, Any]:
     data = json.loads(path.read_text(encoding="utf-8"))
     if data.get("schemaVersion") != SCHEMA_VERSION:
         raise ValueError(f"unsupported rollback schemaVersion: {data.get('schemaVersion')}")
-    if set(data.get("allowedProjects", [])) != ALLOWED_PROJECTS:
-        raise ValueError("rollback config must allow exactly seolleyeon-final and seolleyeon-festival")
-    if set(data.get("projects", {})) != ALLOWED_PROJECTS:
-        raise ValueError("rollback config must define exactly seolleyeon-final and seolleyeon-festival")
+    declared = set(data.get("allowedProjects", []))
+    if not declared or (declared & FORBIDDEN_PROJECTS) or not (declared <= ALLOWED_PROJECTS):
+        raise ValueError("rollback config allowedProjects must be within the approved production topology")
+    if set(data.get("projects", {})) != declared:
+        raise ValueError("rollback config projects must match allowedProjects")
     return data
 
 
@@ -521,7 +523,7 @@ def _assert_report_sanitized(encoded: str) -> None:
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
     parser = argparse.ArgumentParser(description="Plan, verify, or apply a bounded avatar rollback drill.")
-    parser.add_argument("--project", required=True, help="Only seolleyeon-final or seolleyeon-festival.")
+    parser.add_argument("--project", required=True, help="Only the approved production avatar project (seolleyeon-final).")
     parser.add_argument("--config", type=Path, default=Path("config/avatar-ops/avatar-rollback.json"))
     parser.add_argument("--mode", choices=("plan", "verify", "apply"), default="plan")
     parser.add_argument("--apply", action="store_true", help="Required with --mode apply.")
@@ -549,5 +551,3 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
 if __name__ == "__main__":  # pragma: no cover
     raise SystemExit(main())
-
-

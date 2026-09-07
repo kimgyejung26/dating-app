@@ -19,6 +19,17 @@ class OnboardingSaveHelper {
     await _userService.completeOnboarding(uid);
   }
 
+  /// 온보딩 완료 기록. 아바타 선택 화면이 승인 뒤에만 호출한다.
+  ///
+  /// 이상형 단계의 저장/건너뛰기는 더 이상 완료를 기록하지 않는다. 그렇게 하면
+  /// 아바타 승인 전에 `initialSetupComplete` 가 서서 재진입 resolver 가 마지막
+  /// 단계를 건너뛴다.
+  static Future<void> completeOnboarding() async {
+    final uid = await _getUserId();
+    if (uid == null || uid.isEmpty) return;
+    await _completeOnboarding(uid);
+  }
+
   /// Step 1: 기본 정보
   static Future<void> saveBasicInfo({
     required String nickname,
@@ -259,9 +270,8 @@ class OnboardingSaveHelper {
     }
   }
 
-  static Future<void> saveIdealPersonalityAndComplete(
-    List<String> keywords,
-  ) async {
+  /// 이상형 마지막 입력(성격) 저장. 완료 기록은 아바타 선택 화면이 한다.
+  static Future<void> saveIdealPersonalityFinal(List<String> keywords) async {
     final uid = await _getUserId();
     if (uid == null) return;
     await _saveIdealInfoFromDraft(uid);
@@ -270,7 +280,6 @@ class OnboardingSaveHelper {
       fieldName: 'preferredPersonalities',
       value: keywords,
     );
-    await _completeOnboarding(uid);
   }
 
   /// Step 10: 이상형 라이프스타일
@@ -294,30 +303,12 @@ class OnboardingSaveHelper {
     );
   }
 
-  /// Step 10: 이상형 라이프스타일 + 온보딩 완료
-  static Future<void> saveIdealLifestyleAndComplete({
-    required String? drinking,
-    required String? smoking,
-    required String? exercise,
-    required String? religion,
-  }) async {
-    final uid = await _getUserId();
-    if (uid == null) return;
-    await saveIdealLifestyle(
-      drinking: drinking,
-      smoking: smoking,
-      exercise: exercise,
-      religion: religion,
-    );
-    await _completeOnboarding(uid);
-  }
-
-  /// 이상형 건너뛰기
+  /// 이상형 건너뛰기. `idealType.skipped = true` 만 기록하고 온보딩 완료는
+  /// 아바타 선택 화면에 맡긴다(resolver 는 skipped 를 완료로 인정한다).
   static Future<void> skipIdealType() async {
     final uid = await _getUserId();
     if (uid == null) return;
     await _userService.skipIdealType(uid);
-    await _completeOnboarding(uid);
   }
 
   /// 이상형 단일 필드 저장 (ideal_age, ideal_height, ideal_mbti, ideal_department 등)

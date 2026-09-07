@@ -41,7 +41,7 @@ void main() {
       expect(options, contains("ProfileOption('friend', '가볍게 알아가고 싶어요')"));
       expect(edit, isNot(contains(RegExp(r"'\+\d+%'"))));
       expect(edit, isNot(contains('사진 가이드 참고하기')));
-      expect(edit, isNot(contains('자기소개 꿀팁')));
+      expect(edit, contains('자기소개 꿀팁'));
       expect(edit, contains('showAddIcon: index != 0'));
       expect(RegExp(r'MbtiChoiceGrid\(').allMatches(edit).length, 2);
     },

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:seolleyeon/features/onboarding/screens/photo_upload_screen.dart';
-import 'package:seolleyeon/features/onboarding/widgets/avatar_candidate_selection_dialog.dart';
 import 'package:seolleyeon/features/onboarding/widgets/avatar_generation_models.dart';
 import 'package:seolleyeon/features/onboarding/widgets/avatar_generation_messages.dart';
 import 'package:seolleyeon/services/avatar_generation_client.dart';
@@ -42,22 +41,8 @@ class _CountingAvatarClient extends AvatarGenerationClient {
   }
 
   @override
-  Future<AvatarCandidatesResult> getCandidates(String jobId) async {
-    return _previewReady(jobId);
-  }
-
-  @override
-  Future<AvatarCandidatesResult> pollUntilPreviewReady({
-    required String jobId,
-    Duration pollInterval = const Duration(seconds: 2),
-    Duration timeout = const Duration(seconds: 150),
-    bool Function()? shouldContinue,
-    int maxConsecutiveErrors =
-        AvatarGenerationClient.defaultMaxConsecutivePollErrors,
-  }) async {
-    polledJobIds.add(jobId);
-    return _previewReady(jobId);
-  }
+  Future<AvatarCandidatesResult> getCandidates(String jobId) async =>
+      throw StateError('photo screen must not poll candidates');
 
   @override
   Future<AvatarApprovalResult> approveCandidate(String candidateId) async {
@@ -66,20 +51,6 @@ class _CountingAvatarClient extends AvatarGenerationClient {
       approvedAvatarUrl: 'https://cdn.example/avatar.png',
       selectedCandidateId: candidateId,
       duplicate: false,
-    );
-  }
-
-  AvatarCandidatesResult _previewReady(String jobId) {
-    return AvatarCandidatesResult(
-      jobId: jobId,
-      status: AvatarJobStatus.previewReady,
-      candidates: List<AvatarCandidate>.generate(
-        4,
-        (index) => AvatarCandidate(
-          candidateId: 'cand_$index',
-          previewUrl: 'https://example.invalid/avatar_$index.png',
-        ),
-      ),
     );
   }
 }
@@ -262,6 +233,7 @@ void main() {
     testWidgets('다음을 누르면 검증된 사진 세트로 서버 선택 생성이 한 번 시작된다', (tester) async {
       await _useMobileSurface(tester);
       final client = _CountingAvatarClient();
+      var advanced = false;
 
       await tester.pumpWidget(
         _harness(
@@ -272,7 +244,7 @@ void main() {
           ],
           initialPickedFiles: [_fakePickedFile('p1.jpg'), null],
           initialSourceRefs: _verifiedRefs,
-          onNext: (_) {},
+          onNext: (_) => advanced = true,
         ),
       );
       await tester.pump();
@@ -284,9 +256,10 @@ void main() {
       _drainExpectedImageLoadException(tester);
 
       // canonical: source-set admission 한 번, legacy 단일 사진 업로드 0회.
+      // 대기·후보 선택 없이 곧바로 다음 단계로 넘어간다.
       expect(client.beginCalls, 1);
-      expect(client.polledJobIds, ['avatar_job_fresh_000000001']);
-      expect(find.byType(AvatarCandidateSelectionDialog), findsOneWidget);
+      expect(advanced, isTrue);
+      expect(find.text('아바타 생성중...'), findsNothing);
     });
 
     testWidgets('다음 버튼 연타에도 source-set admission 은 한 번만 발생한다', (tester) async {

@@ -46,12 +46,14 @@ def test_config_is_versioned_and_limited_to_explicit_staging_projects():
     data = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
 
     assert data["schemaVersion"] == "avatar_rollback_drill_v1"
-    assert set(data["allowedProjects"]) == {"seolleyeon-final", "seolleyeon-festival"}
+    assert set(data["allowedProjects"]) == {"seolleyeon-final"}
+    assert set(data["projects"]) == {"seolleyeon-final"}
     assert "seolleyeon" not in data["projects"]
+    assert "seolleyeon-festival" not in data["projects"]
     assert "source object delete" in data["forbiddenOperations"]
 
 
-@pytest.mark.parametrize("project", ["", "default", "seolleyeon", "other-project"])
+@pytest.mark.parametrize("project", ["", "default", "seolleyeon", "seolleyeon-festival", "other-project"])
 def test_project_guards_reject_empty_source_and_unapproved_projects(project):
     drill = load_drill()
 
@@ -94,7 +96,7 @@ def test_verify_runs_only_read_and_dry_run_steps_and_preserves_source_aggregate(
     runner = FakeRunner()
 
     report = drill.build_rollback_report(
-        project="seolleyeon-festival",
+        project="seolleyeon-final",
         config_path=CONFIG_PATH,
         mode="verify",
         runner=runner,
@@ -132,7 +134,7 @@ def test_verify_runs_only_read_and_dry_run_steps_and_preserves_source_aggregate(
             "expired_candidates",
             "--dry_run",
             "--firestore_project",
-            "seolleyeon-festival",
+            "seolleyeon-final",
         ]
     ]
 

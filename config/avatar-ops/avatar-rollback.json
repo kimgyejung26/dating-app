@@ -2,8 +2,7 @@
     "schemaVersion":  "avatar_rollback_drill_v1",
     "description":  "Bounded avatar rollback drill plan for selected staging projects. Default planning is non-mutating.",
     "allowedProjects":  [
-                            "seolleyeon-final",
-                            "seolleyeon-festival"
+                            "seolleyeon-final"
                         ],
     "forbiddenProjects":  [
                               "",
@@ -21,17 +20,7 @@
                                               "optionalPriorTargets":  {
                                                                            "workerRevision":  "explicit prior Cloud Run revision name only"
                                                                        }
-                                          },
-                     "seolleyeon-festival":  {
-                                                 "queueName":  "avatar-generation",
-                                                 "queueLocation":  "asia-northeast3",
-                                                 "workerService":  "seolleyeon-avatar-worker",
-                                                 "workerRegion":  "asia-southeast1",
-                                                 "privateSourceBucketSuffix":  "private-source-photos",
-                                                 "optionalPriorTargets":  {
-                                                                              "workerRevision":  "explicit prior Cloud Run revision name only"
-                                                                          }
-                                             }
+                                          }
                  },
     "orderedSteps":  [
                          "disable_generation_cost_kill_switch",

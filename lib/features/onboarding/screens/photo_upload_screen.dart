@@ -4,6 +4,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 import '../../../router/route_names.dart';
 import '../../../services/auth_service.dart';
@@ -16,11 +17,10 @@ import '../../../services/user_service.dart';
 import '../../../shared/utils/avatar_lock_policy.dart';
 import '../../../shared/utils/privacy_log_utils.dart';
 import '../../../shared/widgets/profile_photo_mosaic.dart';
+import '../services/avatar_generation_session_controller.dart';
 import '../services/avatar_resume_policy.dart';
 import '../services/avatar_upload_submission_guard.dart';
-import '../widgets/avatar_candidate_selection_dialog.dart';
 import '../widgets/avatar_generation_error_banner.dart';
-import '../widgets/avatar_generating_overlay.dart';
 import '../widgets/avatar_generation_messages.dart';
 import '../widgets/avatar_generation_models.dart';
 
@@ -35,20 +35,31 @@ class _AppColors {
   static const Color progressBg = Color(0xFFE6DBDF);
 }
 
+/// 온보딩 사진 등록 화면.
+///
+/// "다음" 은 source-set admission(`beginFromOnboardingPhotos`) 만 하고 jobId 를
+/// [AvatarGenerationSessionController] 에 넘긴 뒤 즉시 다음 단계로 넘어간다.
+/// 생성 대기·후보 선택·승인은 이 화면에서 하지 않는다. 마지막(아바타 선택)
+/// 화면이 컨트롤러 상태로 처리한다. admission 자체 실패와 재진입 시 서버가
+/// 알려준 실패 상태만 이 화면에서 다룬다.
 class PhotoUploadScreen extends StatefulWidget {
   final int currentStep;
   final int totalSteps;
   final VoidCallback? onBack;
   final Function(List<String> photos)? onNext;
 
-  /// 아바타 생성/승인 흐름을 담당하는 클라이언트. 기본값은 백엔드 콜러블을
+  /// 아바타 생성 admission 을 담당하는 클라이언트. 기본값은 백엔드 콜러블을
   /// 호출하는 [BackendAvatarGenerationClient]이며, 위젯 테스트/디자인 QA에서만
   /// [MockAvatarGenerationClient]를 주입해 사용합니다.
   final AvatarGenerationClient? avatarGenerationClient;
   final OnboardingPhotoUploadService? onboardingPhotoUploadService;
 
-  /// Test-only initial slot values for exercising the avatar polling and
-  /// approval flow without invoking the image picker or Firebase upload.
+  /// 테스트 주입용 세션 컨트롤러. 없으면 앱 루트 Provider 에서 찾고, 그것도
+  /// 없으면(단독 위젯 테스트) 컨트롤러 없이 진행한다.
+  final AvatarGenerationSessionController? avatarSessionController;
+
+  /// Test-only initial slot values for exercising the admission flow without
+  /// invoking the image picker or Firebase upload.
   final List<String?>? initialPhotosForTesting;
 
   /// Test-only picked-file seeds matching [initialPhotosForTesting] slots,
@@ -68,6 +79,7 @@ class PhotoUploadScreen extends StatefulWidget {
     this.onNext,
     this.avatarGenerationClient,
     this.onboardingPhotoUploadService,
+    this.avatarSessionController,
     this.initialPhotosForTesting,
     this.initialPickedFilesForTesting,
     this.initialSourceRefsForTesting,
@@ -80,10 +92,6 @@ class PhotoUploadScreen extends StatefulWidget {
 
 class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
   static const int _requiredPhotoCount = 2;
-  static const Duration _avatarPollInterval = Duration(seconds: 2);
-  static const Duration _avatarPollTimeout = Duration(seconds: 300);
-  // 서버가 여전히 활성 상태라면 클라이언트 데드라인을 이만큼 연장한다.
-  static const int _maxAvatarPollExtensions = 2;
 
   final ImagePicker _imagePicker = ImagePicker();
 
@@ -103,24 +111,19 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
   UserService? _userService;
 
   late final AvatarGenerationClient _avatarClient;
+  AvatarGenerationSessionController? _sessionController;
+  bool _sessionControllerResolved = false;
   AvatarOnboardingFlowState _avatarFlowState = AvatarOnboardingFlowState.idle;
-  List<AvatarCandidate> _candidates = const [];
   String? _avatarGenerationError;
-  String? _avatarApprovalError;
-  bool _isCandidateDialogOpen = false;
-  bool _avatarFlowCancelled = false;
   bool _chatPartnerRealPhotoDisclosure = false;
   bool _avatarLocked = false;
   bool _avatarSourceLocked = false;
   String _lockedApprovedAvatarUrl = '';
   String? _activeAvatarJobId;
-  String? _activeAvatarSourcePhotoId;
-  int? _activeSourceSelectionVersion;
   bool _avatarRetryAllowed = true;
   // needs_review / 최종 실패에서 "사진을 바꾸고 다시 만들기"를 허용하는가.
   // 재시도와 다른 축이며, provider 결과 미확인 상태에서는 둘 다 false 다.
   bool _avatarAllowsNewGeneration = false;
-  int _avatarPollExtensions = 0;
 
   int get _photoCount => _photos.where((p) => p != null).length;
 
@@ -131,10 +134,9 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
   // 슬롯 문자열 검사로 판정하면 일반 사진 URL이 승인으로 오인된다.
   bool get _hasApprovedAvatarForProceed => _avatarLocked;
 
-  bool get _isAvatarFlowActive =>
-      _avatarFlowState != AvatarOnboardingFlowState.idle &&
-      _avatarFlowState != AvatarOnboardingFlowState.approved &&
-      _avatarFlowState != AvatarOnboardingFlowState.failed;
+  /// admission 콜러블이 진행 중이다. 이 동안만 "다음" 을 막는다.
+  bool get _isSubmitting =>
+      _avatarFlowState == AvatarOnboardingFlowState.uploadingSourcePhoto;
 
   bool get _hasStartedAvatarSourceLock =>
       _avatarSourceLocked ||
@@ -143,13 +145,8 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
   bool get _isSourceMutationBlocked =>
       _avatarLocked ||
       _hasStartedAvatarSourceLock ||
-      _isAvatarFlowActive ||
+      _isSubmitting ||
       _isUploading.any((value) => value);
-
-  bool get _isGenerating =>
-      _avatarFlowState == AvatarOnboardingFlowState.uploadingSourcePhoto ||
-      _avatarFlowState == AvatarOnboardingFlowState.avatarQueued ||
-      _avatarFlowState == AvatarOnboardingFlowState.generatingAvatar;
 
   AuthService get _auth => _authService ??= AuthService();
 
@@ -160,6 +157,20 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
   StorageService get _storage => _storageService ??= StorageService();
 
   UserService get _users => _userService ??= UserService();
+
+  /// 세션 컨트롤러. 위젯 주입 → Provider → 없음 순으로 한 번만 해석한다.
+  AvatarGenerationSessionController? get _session {
+    if (_sessionControllerResolved) return _sessionController;
+    _sessionControllerResolved = true;
+    final injected = widget.avatarSessionController;
+    if (injected != null) return _sessionController = injected;
+    try {
+      return _sessionController = context
+          .read<AvatarGenerationSessionController>();
+    } on ProviderNotFoundException {
+      return _sessionController = null;
+    }
+  }
 
   @override
   void initState() {
@@ -213,12 +224,6 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
     }
   }
 
-  @override
-  void dispose() {
-    _avatarFlowCancelled = true;
-    super.dispose();
-  }
-
   Future<void> _loadExistingPhotos() async {
     final kakaoUserId = await _storage.getKakaoUserId();
     if (kakaoUserId == null || kakaoUserId.isEmpty) return;
@@ -230,9 +235,6 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
     final lockState = avatarLockStateFromUserProfile(profile);
     final sourceLocked = avatarSourceLockedFromUserProfile(profile);
     final sourceJobId = avatarSourceJobIdFromUserProfile(profile);
-    final sourceSelectionVersion = avatarSourceSelectionVersionFromUserProfile(
-      profile,
-    );
     final onboarding = data['onboarding'];
     final avatarUrlsRaw = onboarding is Map ? onboarding['avatarUrls'] : null;
     final avatarUrls =
@@ -248,7 +250,6 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
       _lockedApprovedAvatarUrl = lockState.approvedAvatarUrl;
       if (_avatarSourceLocked && sourceJobId != null) {
         _activeAvatarJobId = sourceJobId;
-        _activeSourceSelectionVersion = sourceSelectionVersion;
       }
       for (int i = 0; i < _photos.length; i++) {
         _photos[i] = null;
@@ -270,7 +271,7 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
   ///
   /// 화면 로컬 사진 개수로 복구를 판단하면, 생성 중 재시작 시 합성 슬롯 1개만
   /// 남아 "다음"이 비활성화되고 소스 잠금 때문에 사진도 추가할 수 없는 교착이
-  /// 생긴다. 진행 중인 작업이 있으면 곧바로 생성 화면으로 되돌린다.
+  /// 생긴다. 진행 중인 작업이 있으면 잠금만 걸고 "다음" 은 그대로 통과시킨다.
   Future<void> _resumeFromServerStatus() async {
     final snapshot = await _avatarClient.getCurrentGenerationStatus();
     if (!mounted) return;
@@ -299,9 +300,10 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
           _avatarSourceLocked = true;
           _avatarGenerationError = null;
           _avatarRetryAllowed = true;
+          _avatarFlowState = AvatarOnboardingFlowState.idle;
         });
-        _avatarPollExtensions = 0;
-        await _startAvatarGeneration();
+        // 세션 컨트롤러가 진행을 지켜본다(배너/마지막 화면).
+        unawaited(_session?.adoptJob(plan.jobId));
         return;
       case AvatarResumeAction.showRetryable:
       case AvatarResumeAction.showNeedsReview:
@@ -320,47 +322,84 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
     }
   }
 
-  /// 재시도 버튼 진입점. 한 프레임 안에 두 번 눌려도 폴링 루프가 두 개
-  /// 생기지 않도록 "다음" 버튼과 동일한 재진입 가드를 공유한다.
+  /// 재시도 버튼 진입점. 한 프레임 안에 두 번 눌려도 서버 호출이 두 번 나가지
+  /// 않도록 "다음" 버튼과 동일한 재진입 가드를 공유한다.
   ///
   /// 재시도 가능 여부의 권위는 서버다. 서버가 허용한 실패는 서버 재시도
-  /// 콜러블(같은 logical generation 재디스패치)을 거치고, 진행 중이면 폴링만
-  /// 잇는다. 서버가 거부하면 재시도 없이 그 이유를 보여준다.
+  /// 콜러블(같은 logical generation 재디스패치)을 거치고, 서버가 거부하면
+  /// 재시도 없이 그 이유를 보여준다. 재시도 뒤에는 잠금 상태로 이 화면에 머물고
+  /// 사용자가 "다음" 으로 이어간다.
   Future<void> _handleAvatarRetry() async {
     // 상태 가드: 재시도가 이미 소진/거부된 뒤 같은 프레임의 stale 버튼 탭을 막는다.
     if (!_avatarRetryAllowed) return;
-    if (_isAvatarFlowActive || _isHandlingNext) return;
+    if (_isSubmitting || _isHandlingNext) return;
     _isHandlingNext = true;
     try {
-      _avatarPollExtensions = 0;
       final jobId = _findPrimaryAvatarJobId();
-      if (jobId != null) {
-        final snapshot = await _avatarClient.getCurrentGenerationStatus();
+      final snapshot = await _avatarClient.getCurrentGenerationStatus();
+      if (!mounted) return;
+      final plan = planAvatarResume(snapshot);
+      if (plan.action == AvatarResumeAction.showRetryable &&
+          plan.retryAllowed) {
+        final retried = await _avatarClient.retryCurrentGeneration(
+          clientRequestId: AvatarSourcePhotoService.createClientRequestId(),
+        );
         if (!mounted) return;
-        final plan = planAvatarResume(snapshot);
-        if (plan.action == AvatarResumeAction.showRetryable &&
-            plan.retryAllowed) {
-          final retried = await _avatarClient.retryCurrentGeneration(
-            clientRequestId: AvatarSourcePhotoService.createClientRequestId(),
-          );
-          if (!mounted) return;
-          if (retried != null && retried.jobId.isNotEmpty) {
-            setState(() => _activeAvatarJobId = retried.jobId);
-          }
-        } else if (plan.action == AvatarResumeAction.showTerminal ||
-            plan.action == AvatarResumeAction.showNeedsReview ||
-            plan.action == AvatarResumeAction.showReconciliation) {
-          _avatarRetryAllowed = false;
-          _avatarAllowsNewGeneration = plan.allowsNewGeneration;
-          _failAvatarGeneration(
-            plan.message,
-            phase: 'avatar_retry_refused_by_server',
-            jobId: jobId,
-          );
-          return;
+        final retriedJobId = retried?.jobId ?? '';
+        setState(() {
+          if (retriedJobId.isNotEmpty) _activeAvatarJobId = retriedJobId;
+          _avatarSourceLocked = true;
+          _avatarGenerationError = null;
+          _avatarAllowsNewGeneration = false;
+          _avatarFlowState = AvatarOnboardingFlowState.idle;
+        });
+        final adoptedJobId = _findPrimaryAvatarJobId();
+        if (adoptedJobId != null) {
+          unawaited(_session?.adoptJob(adoptedJobId));
         }
+        _logAvatarFlow('avatar_retry_dispatched', jobId: adoptedJobId);
+        return;
       }
-      await _startAvatarGeneration();
+      if (plan.action == AvatarResumeAction.resumeGenerating ||
+          plan.action == AvatarResumeAction.resumePreview) {
+        // 서버는 이미 진행 중이다. 실패 배너를 걷고 잠금 상태로 둔다.
+        setState(() {
+          if (plan.jobId.isNotEmpty) _activeAvatarJobId = plan.jobId;
+          _avatarSourceLocked = true;
+          _avatarGenerationError = null;
+          _avatarFlowState = AvatarOnboardingFlowState.idle;
+        });
+        if (plan.jobId.isNotEmpty) unawaited(_session?.adoptJob(plan.jobId));
+        return;
+      }
+      if (plan.action == AvatarResumeAction.showTerminal ||
+          plan.action == AvatarResumeAction.showNeedsReview ||
+          plan.action == AvatarResumeAction.showReconciliation ||
+          plan.action == AvatarResumeAction.showRetryable) {
+        _avatarRetryAllowed = plan.retryAllowed;
+        _avatarAllowsNewGeneration = plan.allowsNewGeneration;
+        _failAvatarGeneration(
+          plan.message,
+          phase: 'avatar_retry_refused_by_server',
+          jobId: jobId,
+        );
+        return;
+      }
+      if (plan.action == AvatarResumeAction.resumeApproved) {
+        setState(() {
+          _avatarLocked = true;
+          _avatarGenerationError = null;
+          _avatarFlowState = AvatarOnboardingFlowState.approved;
+        });
+        return;
+      }
+      // 서버 상태를 읽지 못했거나 작업이 없다. 안내만 남긴다.
+      _avatarRetryAllowed = plan.action == AvatarResumeAction.unavailable;
+      _failAvatarGeneration(
+        avatarGenerationDelayedMessage,
+        phase: 'avatar_retry_status_unavailable',
+        jobId: jobId,
+      );
     } finally {
       _isHandlingNext = false;
     }
@@ -373,7 +412,7 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
     // 상태 가드: 첫 탭이 이미 generation 을 종료했다면 리빌드 전의 두 번째
     // 탭은 아무것도 하지 않는다. 서버 호출은 정확히 한 번이다.
     if (!_avatarAllowsNewGeneration) return;
-    if (_isAvatarFlowActive || _isHandlingNext) return;
+    if (_isSubmitting || _isHandlingNext) return;
     _isHandlingNext = true;
     try {
       final released = await _avatarClient.replaceCurrentGeneration(
@@ -386,8 +425,6 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
       }
       setState(() {
         _activeAvatarJobId = null;
-        _activeAvatarSourcePhotoId = null;
-        _activeSourceSelectionVersion = null;
         _avatarSourceLocked = false;
         _avatarGenerationError = null;
         _avatarRetryAllowed = true;
@@ -401,6 +438,7 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
           }
         }
       });
+      _session?.reset();
       _logAvatarFlow('avatar_generation_replaced');
     } finally {
       _isHandlingNext = false;
@@ -423,7 +461,6 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
       if (mounted) {
         setState(() {
           _isUploading[index] = true;
-          _avatarFlowCancelled = true;
         });
       }
 
@@ -462,7 +499,6 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
         _photos[index] = result.photoUrl;
         _pickedFiles[index] = pickedFile;
         _serverSourceRefs[index] = result.sourceRef;
-        _avatarFlowCancelled = false;
         _avatarGenerationError = null;
       });
     } catch (e) {
@@ -497,9 +533,6 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
       final removedJobId = AvatarSourcePhotoService.queuedJobId(_photos[index]);
       if (removedJobId != null && removedJobId == _activeAvatarJobId) {
         _activeAvatarJobId = null;
-        _activeAvatarSourcePhotoId = null;
-        _activeSourceSelectionVersion = null;
-        _avatarFlowCancelled = true;
       }
       _photos[index] = null;
       _pickedFiles[index] = null;
@@ -528,12 +561,14 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
   }
 
   Future<void> _handleNext() async {
-    if (_isAvatarFlowActive || _isHandlingNext) {
+    if (_isSubmitting || _isHandlingNext) {
       return;
     }
     _isHandlingNext = true;
     try {
-      if (!_hasApprovedAvatarForProceed && _photoCount < _minRequiredPhotos) {
+      if (!_hasApprovedAvatarForProceed &&
+          !_hasStartedAvatarSourceLock &&
+          _photoCount < _minRequiredPhotos) {
         HapticFeedback.heavyImpact();
         _showErrorSnack('사진을 최소 2장 이상 등록해주세요.');
         return;
@@ -547,11 +582,44 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
 
       HapticFeedback.mediumImpact();
       if (_avatarLocked) {
-        // 이미 승인된 아바타가 있는 재방문 사용자만 생성 없이 진행한다.
+        // 이미 승인된 아바타가 있는 재방문 사용자는 생성 없이 진행한다.
         await _goToSelfIntroduction();
         return;
       }
-      await _startAvatarGeneration();
+
+      final existingJobId = _findPrimaryAvatarJobId();
+      if (existingJobId != null) {
+        // 서버가 이미 생성을 받아들였다(재진입/뒤로가기). 다시 admission 하지
+        // 않고 세션 컨트롤러에 맡긴 채 다음 단계로 넘어간다.
+        unawaited(_session?.adoptJob(existingJobId));
+        await _goToSelfIntroduction();
+        return;
+      }
+      if (_hasStartedAvatarSourceLock) {
+        // 잠겨 있는데 jobId 를 모른다. 서버 상태로 복구를 시도한다.
+        await _resumeFromServerStatus();
+        if (!mounted) return;
+        final resumedJobId = _findPrimaryAvatarJobId();
+        if (resumedJobId != null) {
+          unawaited(_session?.adoptJob(resumedJobId));
+          await _goToSelfIntroduction();
+          return;
+        }
+        if (_avatarFlowState != AvatarOnboardingFlowState.failed) {
+          _failAvatarGeneration(
+            sourceLockedAvatarFailureMessage,
+            phase: 'avatar_source_locked_missing_job',
+          );
+        }
+        return;
+      }
+
+      final jobId = await _beginAvatarGenerationFromUploadedPhotos();
+      if (jobId == null || !mounted) return;
+      // 대기하지 않는다. 생성 진행은 세션 컨트롤러가 지켜보고, 후보 선택은
+      // 온보딩 마지막 화면에서 한다.
+      unawaited(_session?.adoptJob(jobId));
+      await _goToSelfIntroduction();
     } finally {
       _isHandlingNext = false;
     }
@@ -577,165 +645,6 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
     return jobId == null || jobId.isEmpty ? null : jobId;
   }
 
-  Future<void> _startAvatarGeneration() async {
-    String? jobId = _findPrimaryAvatarJobId();
-    if (jobId == null) {
-      if (_hasStartedAvatarSourceLock) {
-        _failAvatarGeneration(
-          sourceLockedAvatarFailureMessage,
-          phase: 'avatar_source_locked_missing_job',
-        );
-        return;
-      }
-      jobId = await _beginAvatarGenerationFromUploadedPhotos();
-      if (jobId == null) {
-        return;
-      }
-    }
-
-    if (!mounted) return;
-    setState(() {
-      _avatarFlowCancelled = false;
-      _avatarGenerationError = null;
-      _avatarApprovalError = null;
-      _avatarRetryAllowed = true;
-      _avatarAllowsNewGeneration = false;
-      _candidates = const [];
-      _avatarFlowState = AvatarOnboardingFlowState.generatingAvatar;
-    });
-    _logAvatarFlow(
-      'avatar_poll_start',
-      jobId: jobId,
-      photoId: _activeAvatarSourcePhotoId,
-      sourceSelectionVersion: _activeSourceSelectionVersion,
-    );
-
-    try {
-      final result = await _avatarClient.pollUntilPreviewReady(
-        jobId: jobId,
-        pollInterval: _avatarPollInterval,
-        timeout: _avatarPollTimeout,
-        shouldContinue: () => mounted && !_avatarFlowCancelled,
-      );
-      _logAvatarFlow(
-        'avatar_poll_completed',
-        jobId: jobId,
-        status: result.status,
-        candidateCount: result.candidates.length,
-      );
-
-      if (!mounted || _avatarFlowCancelled) return;
-
-      if (result.status == AvatarJobStatus.noPreviewableCandidates) {
-        _avatarAllowsNewGeneration = true;
-        _failAvatarGeneration(
-          avatarGenerationFailureMessage(
-            status: result.status,
-            errorCode: result.errorCode,
-          ),
-          phase: 'avatar_poll_no_previewable_candidates',
-          jobId: jobId,
-        );
-        return;
-      }
-
-      if (result.status == AvatarJobStatus.failed) {
-        if (result.errorCode == 'avatar_no_eligible_source_photo') {
-          _releaseRejectedSourceSelection();
-        } else {
-          _avatarAllowsNewGeneration = true;
-        }
-        _failAvatarGeneration(
-          avatarGenerationFailureMessage(
-            status: result.status,
-            errorCode: result.errorCode,
-          ),
-          phase: 'avatar_poll_failed_status',
-          jobId: jobId,
-        );
-        return;
-      }
-
-      if (result.status == AvatarJobStatus.needsReview) {
-        // 생성은 성공했지만 자동 안전 검사를 통과하지 못했다. 같은 generation
-        // 재시도는 없고, 사용자가 사진을 바꿔 새 generation 을 시작할 수 있다.
-        _avatarRetryAllowed = false;
-        _avatarAllowsNewGeneration = true;
-        _failAvatarGeneration(
-          avatarNeedsReviewMessage,
-          phase: 'avatar_poll_needs_review',
-          jobId: jobId,
-        );
-        return;
-      }
-
-      if (result.status == AvatarJobStatus.superseded ||
-          result.status == AvatarJobStatus.cancelled) {
-        _failAvatarGeneration(
-          avatarGenerationFailureMessage(
-            status: result.status,
-            errorCode: result.errorCode,
-          ),
-          phase: 'avatar_poll_terminal_${result.status.name}',
-          jobId: jobId,
-        );
-        return;
-      }
-
-      if (result.candidates.isEmpty) {
-        _failAvatarGeneration(
-          avatarGenericEmptyCandidateMessage,
-          phase: 'avatar_poll_empty_candidates',
-          jobId: jobId,
-        );
-        return;
-      }
-
-      setState(() {
-        _candidates = result.candidates;
-        _avatarFlowState = AvatarOnboardingFlowState.previewReady;
-      });
-
-      await _openCandidateDialog();
-    } on AvatarPollingCancelled {
-      // 위젯이 dispose되거나 사용자가 명시적으로 흐름을 중단한 경우.
-    } on TimeoutException {
-      if (!mounted) return;
-      // 서버 작업이 계속 진행 중인데 클라이언트 타이머 하나로 최종 실패를
-      // 만들면 안 된다. 서버 상태를 다시 확인해 활성 상태면 폴링을 연장한다.
-      final snapshot = await _avatarClient.getCurrentGenerationStatus();
-      if (!mounted || _avatarFlowCancelled) return;
-      final plan = planAvatarResume(snapshot);
-      final serverStillActive =
-          plan.action == AvatarResumeAction.resumeGenerating ||
-          plan.action == AvatarResumeAction.resumePreview;
-      if (serverStillActive &&
-          _avatarPollExtensions < _maxAvatarPollExtensions) {
-        _avatarPollExtensions += 1;
-        _logAvatarFlow(
-          'avatar_poll_extended',
-          jobId: jobId,
-          rawStatus: '$_avatarPollExtensions',
-        );
-        await _startAvatarGeneration();
-        return;
-      }
-      _failAvatarGeneration(
-        avatarGenerationDelayedMessage,
-        phase: 'avatar_poll_timeout',
-        jobId: jobId,
-      );
-    } catch (e) {
-      if (!mounted) return;
-      _failAvatarGeneration(
-        avatarGenerationFailedMessage,
-        phase: 'avatar_poll_exception',
-        jobId: jobId,
-        error: e,
-      );
-    }
-  }
-
   Future<String?> _beginAvatarGenerationFromUploadedPhotos() async {
     final verifiedSources =
         _serverSourceRefs.whereType<OnboardingPhotoSourceRef>().toList()
@@ -759,7 +668,6 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
     if (!mounted) return null;
     setState(() {
       _avatarFlowState = AvatarOnboardingFlowState.uploadingSourcePhoto;
-      _avatarFlowCancelled = false;
       _avatarGenerationError = null;
     });
     _logAvatarFlow('avatar_source_set_admission_start');
@@ -774,11 +682,10 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
       if (!mounted) return null;
       setState(() {
         _activeAvatarJobId = result.jobId;
-        _activeAvatarSourcePhotoId = result.photoId.isEmpty
-            ? null
-            : result.photoId;
-        _activeSourceSelectionVersion = result.sourceSelectionVersion;
         _avatarSourceLocked = true;
+        _avatarRetryAllowed = true;
+        _avatarAllowsNewGeneration = false;
+        _avatarFlowState = AvatarOnboardingFlowState.idle;
       });
       _logAvatarFlow(
         'avatar_source_set_admission_success',
@@ -800,10 +707,15 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
       }
       return null;
     } on AvatarSourceLockedException {
+      // 다른 기기/이전 세션이 이미 admission 했다. 서버 lock 을 그대로 받아
+      // 활성 job 으로 이어간다.
       await _loadExistingPhotos();
       if (!mounted) return null;
       final resumedJobId = _findPrimaryAvatarJobId();
-      if (resumedJobId != null) return resumedJobId;
+      if (resumedJobId != null) {
+        setState(() => _avatarFlowState = AvatarOnboardingFlowState.idle);
+        return resumedJobId;
+      }
       _failAvatarGeneration(
         sourceLockedAvatarFailureMessage,
         phase: 'avatar_source_set_locked_missing_job',
@@ -850,103 +762,6 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
     return avatarGenerationFailedMessage;
   }
 
-  Future<void> _openCandidateDialog() async {
-    if (!mounted) return;
-    if (_isCandidateDialogOpen) return;
-    _isCandidateDialogOpen = true;
-    try {
-      await showGeneralDialog<void>(
-        context: context,
-        barrierDismissible: false,
-        barrierColor: Colors.transparent,
-        useRootNavigator: false,
-        transitionDuration: const Duration(milliseconds: 240),
-        transitionBuilder: (context, animation, secondary, child) {
-          final curve = CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeOutCubic,
-          );
-          return FadeTransition(
-            opacity: curve,
-            child: ScaleTransition(
-              scale: Tween<double>(begin: 0.96, end: 1.0).animate(curve),
-              child: child,
-            ),
-          );
-        },
-        pageBuilder: (dialogContext, animation, secondary) {
-          return PopScope(
-            canPop: false,
-            child: StatefulBuilder(
-              builder: (ctx, setDialogState) {
-                return AvatarCandidateSelectionDialog(
-                  candidates: _candidates,
-                  isApproving:
-                      _avatarFlowState ==
-                      AvatarOnboardingFlowState.approvingAvatar,
-                  errorMessage: _avatarApprovalError,
-                  onConfirm: (candidate) async {
-                    setDialogState(() {});
-                    await _approveAvatarCandidate(
-                      candidate: candidate,
-                      dialogContext: dialogContext,
-                      refreshDialog: setDialogState,
-                    );
-                  },
-                );
-              },
-            ),
-          );
-        },
-      );
-    } finally {
-      _isCandidateDialogOpen = false;
-    }
-  }
-
-  Future<void> _approveAvatarCandidate({
-    required AvatarCandidate candidate,
-    required BuildContext dialogContext,
-    required void Function(VoidCallback) refreshDialog,
-  }) async {
-    if (_avatarFlowState == AvatarOnboardingFlowState.approvingAvatar) return;
-
-    setState(() {
-      _avatarApprovalError = null;
-      _avatarFlowState = AvatarOnboardingFlowState.approvingAvatar;
-    });
-    refreshDialog(() {});
-
-    try {
-      final approval = await _avatarClient.approveCandidate(
-        candidate.candidateId,
-      );
-
-      if (!mounted) return;
-
-      if (!approval.isApproved) {
-        throw Exception('avatar_status_not_approved');
-      }
-
-      setState(() {
-        _avatarFlowState = AvatarOnboardingFlowState.approved;
-      });
-
-      if (dialogContext.mounted && Navigator.of(dialogContext).canPop()) {
-        Navigator.of(dialogContext).pop();
-      }
-      await _goToSelfIntroduction();
-    } catch (e) {
-      debugPrint('avatar approval failed: ${PrivacyLogUtils.errorSummary(e)}');
-      if (!mounted) return;
-      setState(() {
-        _avatarFlowState = AvatarOnboardingFlowState.previewReady;
-        _avatarApprovalError = '아바타 저장에 실패했어요. 다시 한 번 선택해주세요.';
-      });
-      refreshDialog(() {});
-    }
-  }
-
   Future<void> _goToSelfIntroduction() async {
     // 원본 사진 URL은 클라이언트가 사용자 문서에 기록하지 않는다.
     // 공개 노출 가능한 값은 승인 시 서버가 쓰는 onboarding.avatarUrls뿐이다.
@@ -989,18 +804,6 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
     _showErrorSnack(message);
   }
 
-  void _releaseRejectedSourceSelection() {
-    if (!mounted) return;
-    setState(() {
-      _activeAvatarJobId = null;
-      _activeAvatarSourcePhotoId = null;
-      _activeSourceSelectionVersion = null;
-      _avatarSourceLocked = false;
-      _avatarRetryAllowed = false;
-      _sourceUploadRequestId = null;
-    });
-  }
-
   void _logAvatarFlow(
     String phase, {
     String? jobId,
@@ -1037,20 +840,9 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
   /// 로그에 임시 프리뷰 URL이나 사용자 식별 정보가 새는 것을 방지한다.
 
   Future<void> _handleBack() async {
-    if (_isAvatarFlowActive) {
-      final confirmed = await _confirmExitDuringGeneration();
-      if (confirmed != true) return;
-      _avatarFlowCancelled = true;
-      if (_isCandidateDialogOpen && mounted) {
-        Navigator.of(context, rootNavigator: false).maybePop();
-        _isCandidateDialogOpen = false;
-      }
-      if (!mounted) return;
-      setState(() {
-        _avatarFlowState = AvatarOnboardingFlowState.idle;
-      });
-    }
-
+    // admission 콜러블이 나가는 짧은 순간에는 뒤로가기를 무시한다. 생성 자체는
+    // 서버에서 이어지므로 확인 다이얼로그는 필요 없다.
+    if (_isSubmitting) return;
     if (!mounted) return;
 
     if (widget.onBack != null) {
@@ -1060,42 +852,10 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
     }
   }
 
-  Future<bool?> _confirmExitDuringGeneration() {
-    return showDialog<bool>(
-      context: context,
-      barrierDismissible: false,
-      builder: (ctx) {
-        return AlertDialog(
-          title: const Text(
-            '아바타 생성이 진행 중이에요',
-            style: TextStyle(
-              fontFamily: 'Pretendard',
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          content: const Text(
-            '지금 나가면 아바타 생성을 중단해요.\n나가시겠어요?',
-            style: TextStyle(fontFamily: 'Pretendard'),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(false),
-              child: const Text('계속 기다리기'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(true),
-              child: const Text('나가기'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: !_isAvatarFlowActive,
+      canPop: !_isSubmitting,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
         await _handleBack();
@@ -1253,14 +1013,11 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
                   photoCount: _photoCount,
                   minRequired: _minRequiredPhotos,
                   hasApprovedAvatar: _hasApprovedAvatarForProceed,
+                  hasActiveGeneration: _hasStartedAvatarSourceLock,
                   isUploading: _isUploading.any((e) => e),
-                  isAvatarGenerating: _isGenerating,
+                  isSubmitting: _isSubmitting,
                   onNext: _handleNext,
                 ),
-              ),
-              IgnorePointer(
-                ignoring: !_isGenerating,
-                child: AvatarGeneratingOverlay(visible: _isGenerating),
               ),
             ],
           ),
@@ -1731,27 +1488,36 @@ class _BottomActionBar extends StatelessWidget {
   final int photoCount;
   final int minRequired;
   final bool hasApprovedAvatar;
+
+  /// 서버가 이미 생성을 받아들였다(활성 job / source lock). 슬롯에는 합성
+  /// 토큰 하나만 남아 있을 수 있으므로 장수와 무관하게 "다음" 을 허용한다.
+  final bool hasActiveGeneration;
   final bool isUploading;
-  final bool isAvatarGenerating;
+
+  /// admission 콜러블이 나가는 중. 이때만 "다음" 을 잠깐 막는다.
+  final bool isSubmitting;
   final Future<void> Function() onNext;
 
   const _BottomActionBar({
     required this.photoCount,
     required this.minRequired,
     required this.hasApprovedAvatar,
+    required this.hasActiveGeneration,
     required this.isUploading,
-    required this.isAvatarGenerating,
+    required this.isSubmitting,
     required this.onNext,
   });
 
   @override
   Widget build(BuildContext context) {
     final bool canProceed =
-        (photoCount >= minRequired || hasApprovedAvatar) &&
+        (photoCount >= minRequired ||
+            hasApprovedAvatar ||
+            hasActiveGeneration) &&
         !isUploading &&
-        !isAvatarGenerating;
-    final String label = isAvatarGenerating
-        ? '아바타 생성중...'
+        !isSubmitting;
+    final String label = isSubmitting
+        ? '아바타 생성 준비 중...'
         : (isUploading ? '업로드 중...' : '다음');
 
     return Container(

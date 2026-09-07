@@ -189,10 +189,7 @@ def test_soft_review_never_outranks_a_pass_candidate():
 
 
 def test_soft_review_counts_as_safe_for_extra_round_planning():
-    # The adaptive planner reads "qa_model_signal_review" as a systemic model
-    # outage and suppresses extra rounds regardless of tier; use the other soft
-    # reasons here so the safe-count effect itself is what is asserted.
-    reasons = ["actual_qa_signal_review", "qa_signal_uncertain"]
+    reasons = list(SOFT_REASONS)
     candidates = [
         _candidate("a", _soft_review_qa(reviewReasons=reasons)),
         _candidate("b", _soft_review_qa(reviewReasons=reasons)),
@@ -206,6 +203,30 @@ def test_soft_review_counts_as_safe_for_extra_round_planning():
     )
     assert without.should_generate is True
     assert with_soft.should_generate is False
+
+
+def test_soft_review_reasons_do_not_block_a_needed_extra_round_as_model_outage():
+    for reason in (
+        "qa_model_signal_review",
+        "review_similarity",
+        "identifiability_review",
+        "qa_signal_uncertain",
+    ):
+        candidates = [
+            _candidate("a", _soft_review_qa(reviewReasons=[reason])),
+            _candidate("b", _soft_review_qa(reviewReasons=[reason])),
+        ]
+        plan = plan_generation_round(
+            candidates,
+            policy=AdaptiveGenerationPolicy(),
+            budget=GenerationBudget(
+                remaining_deadline_seconds=1000,
+                remaining_candidate_budget=2,
+            ),
+        )
+
+        assert plan.should_generate is True, reason
+        assert "qa_critical_model_unavailable" not in plan.blocked_reasons, reason
 
 
 # --- production evidence ----------------------------------------------------

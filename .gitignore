@@ -99,6 +99,15 @@ analyze_output.txt
 # Firebase hosting 배포 캐시 (firebase-tools 생성)
 .firebase/
 
+# Flutter golden 비교 실패 산출물
+/test/failures/
+
+# Local audit/smoke mappings and production data exports
+/mini_calibration_consent_map.txt
+/smoke_conset.txt
+/smoke_map.txt
+/functions/recEvents_export.csv
+
 # 서명 자료는 어떤 형식이든 커밋 금지 (fail-closed)
 *.jks
 *.keystore

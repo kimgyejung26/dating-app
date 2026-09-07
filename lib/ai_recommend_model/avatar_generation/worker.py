@@ -215,13 +215,13 @@ class AvatarWorkerDeadline:
     def from_env(cls) -> "AvatarWorkerDeadline":
         max_request = _int_env(
             "AVATAR_WORKER_MAX_REQUEST_SECONDS",
-            900,
+            1500,
             minimum=60,
             maximum=3600,
         )
         max_job = _int_env(
             "AVATAR_WORKER_MAX_JOB_SECONDS",
-            900,
+            1500,
             minimum=30,
             maximum=3600,
         )

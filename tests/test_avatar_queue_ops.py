@@ -518,14 +518,16 @@ def _install_preflight_fakes(
                 "task-invoker@seolleyeon-final.iam.gserviceaccount.com",
             ]
         if "tasks queues list" in joined:
+            assert "--location=asia-northeast3" in args
             return ["avatar-generation"]
         if "artifacts repositories list" in joined:
-            return ["seolleyeon-repo"]
+            assert "--location=asia-southeast1" in args
+            return ["seolleyeon-avatar-repo"]
         if "storage buckets list" in joined:
             return sorted(preflight.REQUIRED_BUCKETS)
         if "artifacts docker images list" in joined:
             return [
-                "asia-northeast3-docker.pkg.dev/seolleyeon-final/seolleyeon-repo/seolleyeon-avatar-worker"
+                "asia-southeast1-docker.pkg.dev/seolleyeon-final/seolleyeon-avatar-repo/seolleyeon-avatar-worker"
             ]
         return []
 
@@ -548,8 +550,9 @@ def _preflight_report(preflight, *, stage):
     return preflight.build_report(
         project="seolleyeon-final",
         location="asia-northeast3",
+        artifact_registry_location="asia-southeast1",
         worker_location="asia-southeast1",
-        repository="seolleyeon-repo",
+        repository="seolleyeon-avatar-repo",
         env_file=Path("unused.env"),
         avatar_only=True,
         expected_account="seolleyeon.official@gmail.com",
@@ -566,6 +569,7 @@ def test_staging_preflight_prepare_allows_secret_worker_and_env_as_warnings(monk
     report = _preflight_report(preflight, stage="prepare")
 
     assert report["ok"] is True
+    assert report["artifactRegistryLocation"] == "asia-southeast1"
     issue_map = {(issue["kind"], issue["value"]): issue["severity"] for issue in report["issues"]}
     assert issue_map[("run_service_missing", "seolleyeon-avatar-worker")] == "warning"
     assert issue_map[("env_key_missing", "JOB_QUEUE_MODE")] == "warning"

@@ -1295,12 +1295,27 @@ describe("team membership source contract", () => {
     assert.equal(/kakaoAccessToken|verifyKakaoAccessToken|resolveUserForFriendCallable/.test(membershipSource), false);
     // The Kakao-token callable resolver is gone from the codebase entirely.
     assert.equal(indexSource.includes("resolveUserForFriendCallable"), false);
-    for (const name of ["createTeamMeetingRequest", "respondTeamMeetingRequest", "reportAndBlockUser"]) {
+    for (const name of ["createTeamMeetingRequest", "respondTeamMeetingRequest"]) {
       const start = indexSource.indexOf(`export const ${name} = `);
       assert.ok(start >= 0, name);
       const body = indexSource.slice(start, indexSource.indexOf(");", start));
       assert.ok(body.includes("resolveCallableUserFirebaseOnly"), `${name} must use the Firebase-only resolver`);
     }
+    const reportStart = indexSource.indexOf("export const reportAndBlockUser = ");
+    assert.ok(reportStart >= 0, "reportAndBlockUser");
+    const reportBody = indexSource.slice(
+      reportStart,
+      indexSource.indexOf(");", reportStart),
+    );
+    assert.ok(
+      reportBody.includes("resolveReviewCapableAppUser(request.auth)"),
+      "reportAndBlockUser must allow only explicit Play Review or canonical Firebase auth",
+    );
+    assert.equal(
+      /kakaoAccessToken|verifyKakaoAccessToken|resolveUserForFriendCallable/.test(reportBody),
+      false,
+      "reportAndBlockUser must not restore Kakao token fallback",
+    );
     const respondBody = callableBody("respondEventTeamInvite");
     assert.ok(respondBody.includes('typeof data.accept !== "boolean"'), "non-boolean accept must be rejected, not treated as decline");
   });

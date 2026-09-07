@@ -18,8 +18,9 @@ from typing import Any, Iterable, Mapping, Sequence
 
 DEFAULT_PROJECT = "seolleyeon-final"
 DEFAULT_LOCATION = "asia-northeast3"
+DEFAULT_ARTIFACT_REGISTRY_LOCATION = "asia-southeast1"
 DEFAULT_WORKER_LOCATION = "asia-southeast1"
-DEFAULT_REPOSITORY = "seolleyeon-repo"
+DEFAULT_REPOSITORY = "seolleyeon-avatar-repo"
 DEFAULT_ACCOUNT = "seolleyeon.official@gmail.com"
 DEFAULT_HF_TOKEN_ENV_VAR = "AVATAR_WORKER_HF_TOKEN"
 DEFAULT_UPLOAD_FUNCTION = "beginAvatarGenerationFromOnboardingPhotos"
@@ -256,6 +257,7 @@ def build_report(
     *,
     project: str,
     location: str,
+    artifact_registry_location: str,
     worker_location: str,
     repository: str,
     env_file: Path,
@@ -333,7 +335,7 @@ def build_report(
                 "artifacts",
                 "repositories",
                 "list",
-                f"--location={location}",
+                f"--location={artifact_registry_location}",
                 f"--project={project}",
                 "--format=value(name)",
             ]
@@ -357,7 +359,7 @@ def build_report(
                 "docker",
                 "images",
                 "list",
-                f"{location}-docker.pkg.dev/{project}/{repository}",
+                f"{artifact_registry_location}-docker.pkg.dev/{project}/{repository}",
                 f"--project={project}",
                 "--include-tags",
                 "--format=value(IMAGE)",
@@ -472,6 +474,7 @@ def build_report(
     return {
         "project": project,
         "location": location,
+        "artifactRegistryLocation": artifact_registry_location,
         "workerLocation": worker_location,
         "stage": stage,
         "activeAccount": account,
@@ -516,6 +519,10 @@ def main() -> int:
     )
     parser.add_argument("--project", default=DEFAULT_PROJECT)
     parser.add_argument("--location", default=DEFAULT_LOCATION)
+    parser.add_argument(
+        "--artifact_registry_location",
+        default=DEFAULT_ARTIFACT_REGISTRY_LOCATION,
+    )
     parser.add_argument("--worker_location", default=DEFAULT_WORKER_LOCATION)
     parser.add_argument("--repository", default=DEFAULT_REPOSITORY)
     parser.add_argument("--expected_account", default=DEFAULT_ACCOUNT)
@@ -545,6 +552,7 @@ def main() -> int:
     report = build_report(
         project=args.project,
         location=args.location,
+        artifact_registry_location=args.artifact_registry_location,
         worker_location=args.worker_location,
         repository=args.repository,
         env_file=Path(args.env_file),
