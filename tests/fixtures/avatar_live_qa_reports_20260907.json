@@ -1,0 +1,818 @@
+{
+ "candidates": [
+  {
+   "identifiabilityRisk": "low",
+   "label": "live_run1_candidate1",
+   "observedStatus": "needs_review",
+   "qa": {
+    "adultQa": "pass",
+    "backgroundLeakageRisk": "low",
+    "beautificationRisk": "low",
+    "brandQa": "pass",
+    "candidateTraitConsistency": {
+     "candidatePresent": null,
+     "eyewearMatch": "not_applicable",
+     "eyewearReason": "trait_qa_not_applicable",
+     "sourceConfidence": "not_applicable",
+     "sourcePresent": null
+    },
+    "childlikeRisk": "low",
+    "cropConsistency": "pass",
+    "cropIsolationQuality": "pass",
+    "debug": {
+     "candidateTraitConsistency": {
+      "candidatePresent": null,
+      "eyewearMatch": "not_applicable",
+      "eyewearReason": "trait_qa_not_applicable",
+      "sourceConfidence": "not_applicable",
+      "sourcePresent": null
+     },
+     "decision": {
+      "hardRejectReasons": [],
+      "needsReviewReasons": [],
+      "previewAllowed": true,
+      "requiresHumanReview": false,
+      "selectionTier": "hard_pass",
+      "softPassReasons": []
+     },
+     "modelAvailability": {
+      "clip": "available",
+      "clipSafety": "available",
+      "dino": "unavailable",
+      "faceDetector": "available",
+      "faceSimilarity": "available",
+      "localSafetyRisk": "available",
+      "mediapipe": "available",
+      "visualRisk": "available"
+     },
+     "qaVersion": "avatar_qa_v7_watermark_evidence_parity_v1",
+     "scores": {
+      "beautificationRiskScore": null,
+      "brandFitScore": null,
+      "childlikeRiskScore": null,
+      "clipSimilarityScore": null,
+      "dinoStyleScore": null,
+      "faceSimilarityDecision": "low_similarity_risk",
+      "faceSimilarityObservedScore": 0.614208,
+      "faceSimilarityScore": 0.614208,
+      "perceptualHashDistance": 0.3988,
+      "perceptualSimilarityScore": 0.6012,
+      "privacyPenalty": null,
+      "ssimScore": null,
+      "traitConsistencyScore": null
+     },
+     "signalContract": {
+      "optional": [
+       "dino"
+      ],
+      "required": [
+       "faceDetector",
+       "visualRisk",
+       "clipSafety",
+       "faceSimilarity"
+      ],
+      "requiredSignalFailures": []
+     },
+     "thresholdSnapshot": {
+      "brandReject": null,
+      "faceSimilarityReject": 0.72,
+      "faceSimilarityReview": 0.68,
+      "perceptualReject": 0.985,
+      "perceptualReview": 0.92,
+      "requireReliableFaceSimilarityForTooIdentifiable": true
+     },
+     "traitComparisonStatus": "not_evaluated",
+     "traitPolicyVersion": "trait_policy_v2_applicability_v1",
+     "traitQaAction": "allow",
+     "traitQaApplicability": "not_applicable",
+     "traitQaReason": "disabled_by_canonical_azure_pipeline",
+     "traitReviewContribution": false,
+     "uniqueMarkPolicyVersion": "unique_mark_policy_v2_applicability_v1",
+     "uniqueMarkQaAction": "allow",
+     "uniqueMarkQaApplicability": "not_applicable",
+     "uniqueMarkQaReason": "disabled_by_canonical_azure_pipeline",
+     "visualRiskStatus": "needs_review",
+     "watermarkDecisionClass": "ambiguous_text_evidence",
+     "watermarkEvidence": {
+      "areaBands": {
+       "large": 1
+      },
+      "confidenceBands": {
+       "unknown": 1
+      },
+      "locationBands": {
+       "edge": 1
+      },
+      "ocrDetectionCount": 1,
+      "recognizedTokenCount": 1,
+      "regionEvidence": [
+       {
+        "areaBand": "large",
+        "artifactHint": false,
+        "confidenceBand": "unknown",
+        "kind": "text",
+        "location": "edge",
+        "overlayLike": false,
+        "repeated": false,
+        "sourceConsistent": false,
+        "textQuality": "plausible"
+       }
+      ],
+      "repeatedTokenCount": 0,
+      "schemaVersion": "watermark_evidence_v3_text_quality_field_v1",
+      "sourceConsistency": "inconsistent",
+      "textQualityBands": {
+       "plausible": 1
+      }
+     },
+     "watermarkEvidenceClasses": [
+      "ambiguous_text_evidence"
+     ],
+     "watermarkPolicyVersion": "watermark_policy_v4_runtime_evidence_parity_v1",
+     "watermarkQaAction": "allow"
+    },
+    "faceSimilarityScore": 0.614208,
+    "fidelityCorridor": {
+     "bands": {
+      "composition": "unavailable",
+      "fidelity": "unavailable",
+      "identityRisk": "low",
+      "traitConsistency": "unavailable"
+     },
+     "calibrationVersion": "uncalibrated",
+     "criticalSignalsAvailable": false,
+     "gates": {
+      "fidelityLowerBound": "review",
+      "privacyUpperBound": "pass",
+      "safety": "review"
+     },
+     "mode": "shadow",
+     "modelAvailability": {
+      "adultNaturalness": "unavailable",
+      "broadVisual": "unavailable",
+      "composition": "unavailable",
+      "geometry": "unavailable",
+      "identitySimilarity": "available",
+      "safety": "unavailable",
+      "traitConsistency": "unavailable"
+     },
+     "modelVersions": {
+      "identitySimilarity": "avatar_qa_v7_watermark_evidence_parity_v1"
+     },
+     "policyVersion": "avatar_corridor_policy_v1",
+     "reasonCodes": [
+      "fidelity_signal_unavailable",
+      "model_unavailable_systemic"
+     ],
+     "schemaVersion": "avatar_fidelity_corridor_shadow_v1",
+     "scores": {},
+     "timingMs": {
+      "total": 0.043
+     }
+    },
+    "identifiabilityRisk": "low",
+    "logoTextWatermarkRisk": "low",
+    "previewAllowed": true,
+    "primaryFaceConfidence": null,
+    "privacyQa": "pass",
+    "qaVersion": "avatar_qa_v7_watermark_evidence_parity_v1",
+    "rejectReasons": [],
+    "requiresHumanReview": false,
+    "reviewReasons": [],
+    "secondaryFaceLeakageRisk": "low",
+    "softPass": false,
+    "softPassReasons": [],
+    "textLogoWatermarkRisk": "low",
+    "traitComparisonStatus": "not_evaluated",
+    "traitPolicyVersion": "trait_policy_v2_applicability_v1",
+    "traitQaAction": "allow",
+    "traitQaApplicability": "not_applicable",
+    "traitQaReason": "disabled_by_canonical_azure_pipeline",
+    "traitReviewContribution": false,
+    "uniqueMarkCopyRisk": "unknown",
+    "uniqueMarkPolicyVersion": "unique_mark_policy_v2_applicability_v1",
+    "uniqueMarkQaAction": "allow",
+    "uniqueMarkQaApplicability": "not_applicable",
+    "uniqueMarkQaReason": "disabled_by_canonical_azure_pipeline",
+    "watermarkPolicyVersion": "watermark_policy_v4_runtime_evidence_parity_v1",
+    "watermarkQaAction": "allow"
+   },
+   "qaDecisionTier": "hard_pass"
+  },
+  {
+   "identifiabilityRisk": "medium",
+   "label": "live_run1_candidate2",
+   "observedStatus": "needs_review",
+   "qa": {
+    "adultQa": "pass",
+    "backgroundLeakageRisk": "low",
+    "beautificationRisk": "low",
+    "brandQa": "pass",
+    "candidateTraitConsistency": {
+     "candidatePresent": null,
+     "eyewearMatch": "not_applicable",
+     "eyewearReason": "trait_qa_not_applicable",
+     "sourceConfidence": "not_applicable",
+     "sourcePresent": null
+    },
+    "childlikeRisk": "low",
+    "cropConsistency": "pass",
+    "cropIsolationQuality": "pass",
+    "debug": {
+     "candidateTraitConsistency": {
+      "candidatePresent": null,
+      "eyewearMatch": "not_applicable",
+      "eyewearReason": "trait_qa_not_applicable",
+      "sourceConfidence": "not_applicable",
+      "sourcePresent": null
+     },
+     "decision": {
+      "hardRejectReasons": [],
+      "needsReviewReasons": [
+       "actual_qa_signal_review",
+       "qa_model_signal_review",
+       "qa_signal_uncertain"
+      ],
+      "previewAllowed": false,
+      "requiresHumanReview": true,
+      "selectionTier": "needs_review",
+      "softPassReasons": []
+     },
+     "modelAvailability": {
+      "clip": "available",
+      "clipSafety": "available",
+      "dino": "unavailable",
+      "faceDetector": "available",
+      "faceSimilarity": "available",
+      "localSafetyRisk": "available",
+      "mediapipe": "available",
+      "visualRisk": "available"
+     },
+     "qaVersion": "avatar_qa_v7_watermark_evidence_parity_v1",
+     "scores": {
+      "beautificationRiskScore": null,
+      "brandFitScore": null,
+      "childlikeRiskScore": null,
+      "clipSimilarityScore": null,
+      "dinoStyleScore": null,
+      "faceSimilarityDecision": "review_similarity",
+      "faceSimilarityObservedScore": 0.636536,
+      "faceSimilarityScore": null,
+      "perceptualHashDistance": 0.3983,
+      "perceptualSimilarityScore": 0.6017,
+      "privacyPenalty": null,
+      "ssimScore": null,
+      "traitConsistencyScore": null
+     },
+     "signalContract": {
+      "optional": [
+       "dino"
+      ],
+      "required": [
+       "faceDetector",
+       "visualRisk",
+       "clipSafety",
+       "faceSimilarity"
+      ],
+      "requiredSignalFailures": []
+     },
+     "thresholdSnapshot": {
+      "brandReject": null,
+      "faceSimilarityReject": 0.72,
+      "faceSimilarityReview": 0.68,
+      "perceptualReject": 0.985,
+      "perceptualReview": 0.92,
+      "requireReliableFaceSimilarityForTooIdentifiable": true
+     },
+     "traitComparisonStatus": "not_evaluated",
+     "traitPolicyVersion": "trait_policy_v2_applicability_v1",
+     "traitQaAction": "allow",
+     "traitQaApplicability": "not_applicable",
+     "traitQaReason": "disabled_by_canonical_azure_pipeline",
+     "traitReviewContribution": false,
+     "uniqueMarkPolicyVersion": "unique_mark_policy_v2_applicability_v1",
+     "uniqueMarkQaAction": "allow",
+     "uniqueMarkQaApplicability": "not_applicable",
+     "uniqueMarkQaReason": "disabled_by_canonical_azure_pipeline",
+     "visualRiskStatus": "needs_review",
+     "watermarkDecisionClass": "ambiguous_text_evidence",
+     "watermarkEvidence": {
+      "areaBands": {
+       "medium": 1
+      },
+      "confidenceBands": {
+       "unknown": 1
+      },
+      "locationBands": {
+       "edge": 1
+      },
+      "ocrDetectionCount": 1,
+      "recognizedTokenCount": 1,
+      "regionEvidence": [
+       {
+        "areaBand": "medium",
+        "artifactHint": false,
+        "confidenceBand": "unknown",
+        "kind": "text",
+        "location": "edge",
+        "overlayLike": false,
+        "repeated": false,
+        "sourceConsistent": false,
+        "textQuality": "plausible"
+       }
+      ],
+      "repeatedTokenCount": 0,
+      "schemaVersion": "watermark_evidence_v3_text_quality_field_v1",
+      "sourceConsistency": "inconsistent",
+      "textQualityBands": {
+       "plausible": 1
+      }
+     },
+     "watermarkEvidenceClasses": [
+      "ambiguous_text_evidence"
+     ],
+     "watermarkPolicyVersion": "watermark_policy_v4_runtime_evidence_parity_v1",
+     "watermarkQaAction": "allow"
+    },
+    "faceSimilarityScore": null,
+    "fidelityCorridor": {
+     "bands": {
+      "composition": "unavailable",
+      "fidelity": "unavailable",
+      "identityRisk": "medium",
+      "traitConsistency": "unavailable"
+     },
+     "calibrationVersion": "uncalibrated",
+     "criticalSignalsAvailable": false,
+     "gates": {
+      "fidelityLowerBound": "review",
+      "privacyUpperBound": "review",
+      "safety": "review"
+     },
+     "mode": "shadow",
+     "modelAvailability": {
+      "adultNaturalness": "unavailable",
+      "broadVisual": "unavailable",
+      "composition": "unavailable",
+      "geometry": "unavailable",
+      "identitySimilarity": "available",
+      "safety": "unavailable",
+      "traitConsistency": "unavailable"
+     },
+     "modelVersions": {
+      "identitySimilarity": "avatar_qa_v7_watermark_evidence_parity_v1"
+     },
+     "policyVersion": "avatar_corridor_policy_v1",
+     "reasonCodes": [
+      "fidelity_signal_unavailable",
+      "model_unavailable_systemic"
+     ],
+     "schemaVersion": "avatar_fidelity_corridor_shadow_v1",
+     "scores": {},
+     "timingMs": {
+      "total": 0.04
+     }
+    },
+    "identifiabilityRisk": "medium",
+    "logoTextWatermarkRisk": "low",
+    "previewAllowed": false,
+    "primaryFaceConfidence": null,
+    "privacyQa": "needs_review",
+    "qaVersion": "avatar_qa_v7_watermark_evidence_parity_v1",
+    "rejectReasons": [],
+    "requiresHumanReview": true,
+    "reviewReasons": [
+     "actual_qa_signal_review",
+     "qa_model_signal_review",
+     "qa_signal_uncertain"
+    ],
+    "secondaryFaceLeakageRisk": "low",
+    "softPass": false,
+    "softPassReasons": [],
+    "textLogoWatermarkRisk": "low",
+    "traitComparisonStatus": "not_evaluated",
+    "traitPolicyVersion": "trait_policy_v2_applicability_v1",
+    "traitQaAction": "allow",
+    "traitQaApplicability": "not_applicable",
+    "traitQaReason": "disabled_by_canonical_azure_pipeline",
+    "traitReviewContribution": false,
+    "uniqueMarkCopyRisk": "unknown",
+    "uniqueMarkPolicyVersion": "unique_mark_policy_v2_applicability_v1",
+    "uniqueMarkQaAction": "allow",
+    "uniqueMarkQaApplicability": "not_applicable",
+    "uniqueMarkQaReason": "disabled_by_canonical_azure_pipeline",
+    "watermarkPolicyVersion": "watermark_policy_v4_runtime_evidence_parity_v1",
+    "watermarkQaAction": "allow"
+   },
+   "qaDecisionTier": "needs_review"
+  },
+  {
+   "identifiabilityRisk": "medium",
+   "label": "live_run2_candidate1",
+   "observedStatus": "needs_review",
+   "qa": {
+    "adultQa": "pass",
+    "backgroundLeakageRisk": "low",
+    "beautificationRisk": "low",
+    "brandQa": "pass",
+    "candidateTraitConsistency": {
+     "candidatePresent": null,
+     "eyewearMatch": "not_applicable",
+     "eyewearReason": "trait_qa_not_applicable",
+     "sourceConfidence": "not_applicable",
+     "sourcePresent": null
+    },
+    "childlikeRisk": "low",
+    "cropConsistency": "pass",
+    "cropIsolationQuality": "pass",
+    "debug": {
+     "candidateTraitConsistency": {
+      "candidatePresent": null,
+      "eyewearMatch": "not_applicable",
+      "eyewearReason": "trait_qa_not_applicable",
+      "sourceConfidence": "not_applicable",
+      "sourcePresent": null
+     },
+     "decision": {
+      "hardRejectReasons": [],
+      "needsReviewReasons": [
+       "actual_qa_signal_review",
+       "qa_model_signal_review",
+       "qa_signal_uncertain"
+      ],
+      "previewAllowed": false,
+      "requiresHumanReview": true,
+      "selectionTier": "needs_review",
+      "softPassReasons": []
+     },
+     "modelAvailability": {
+      "clip": "available",
+      "clipSafety": "available",
+      "dino": "unavailable",
+      "faceDetector": "available",
+      "faceSimilarity": "available",
+      "localSafetyRisk": "available",
+      "mediapipe": "available",
+      "visualRisk": "available"
+     },
+     "qaVersion": "avatar_qa_v7_watermark_evidence_parity_v1",
+     "scores": {
+      "beautificationRiskScore": null,
+      "brandFitScore": null,
+      "childlikeRiskScore": null,
+      "clipSimilarityScore": null,
+      "dinoStyleScore": null,
+      "faceSimilarityDecision": "review_similarity",
+      "faceSimilarityObservedScore": 0.625808,
+      "faceSimilarityScore": null,
+      "perceptualHashDistance": 0.3951,
+      "perceptualSimilarityScore": 0.6049,
+      "privacyPenalty": null,
+      "ssimScore": null,
+      "traitConsistencyScore": null
+     },
+     "signalContract": {
+      "optional": [
+       "dino"
+      ],
+      "required": [
+       "faceDetector",
+       "visualRisk",
+       "clipSafety",
+       "faceSimilarity"
+      ],
+      "requiredSignalFailures": []
+     },
+     "thresholdSnapshot": {
+      "brandReject": null,
+      "faceSimilarityReject": 0.72,
+      "faceSimilarityReview": 0.68,
+      "perceptualReject": 0.985,
+      "perceptualReview": 0.92,
+      "requireReliableFaceSimilarityForTooIdentifiable": true
+     },
+     "traitComparisonStatus": "not_evaluated",
+     "traitPolicyVersion": "trait_policy_v2_applicability_v1",
+     "traitQaAction": "allow",
+     "traitQaApplicability": "not_applicable",
+     "traitQaReason": "disabled_by_canonical_azure_pipeline",
+     "traitReviewContribution": false,
+     "uniqueMarkPolicyVersion": "unique_mark_policy_v2_applicability_v1",
+     "uniqueMarkQaAction": "allow",
+     "uniqueMarkQaApplicability": "not_applicable",
+     "uniqueMarkQaReason": "disabled_by_canonical_azure_pipeline",
+     "visualRiskStatus": "needs_review",
+     "watermarkDecisionClass": "ambiguous_text_evidence",
+     "watermarkEvidence": {
+      "areaBands": {
+       "medium": 1
+      },
+      "confidenceBands": {
+       "unknown": 1
+      },
+      "locationBands": {
+       "edge": 1
+      },
+      "ocrDetectionCount": 1,
+      "recognizedTokenCount": 1,
+      "regionEvidence": [
+       {
+        "areaBand": "medium",
+        "artifactHint": false,
+        "confidenceBand": "unknown",
+        "kind": "text",
+        "location": "edge",
+        "overlayLike": false,
+        "repeated": false,
+        "sourceConsistent": false,
+        "textQuality": "plausible"
+       }
+      ],
+      "repeatedTokenCount": 0,
+      "schemaVersion": "watermark_evidence_v3_text_quality_field_v1",
+      "sourceConsistency": "inconsistent",
+      "textQualityBands": {
+       "plausible": 1
+      }
+     },
+     "watermarkEvidenceClasses": [
+      "ambiguous_text_evidence"
+     ],
+     "watermarkPolicyVersion": "watermark_policy_v4_runtime_evidence_parity_v1",
+     "watermarkQaAction": "allow"
+    },
+    "faceSimilarityScore": null,
+    "fidelityCorridor": {
+     "bands": {
+      "composition": "unavailable",
+      "fidelity": "unavailable",
+      "identityRisk": "medium",
+      "traitConsistency": "unavailable"
+     },
+     "calibrationVersion": "uncalibrated",
+     "criticalSignalsAvailable": false,
+     "gates": {
+      "fidelityLowerBound": "review",
+      "privacyUpperBound": "review",
+      "safety": "review"
+     },
+     "mode": "shadow",
+     "modelAvailability": {
+      "adultNaturalness": "unavailable",
+      "broadVisual": "unavailable",
+      "composition": "unavailable",
+      "geometry": "unavailable",
+      "identitySimilarity": "available",
+      "safety": "unavailable",
+      "traitConsistency": "unavailable"
+     },
+     "modelVersions": {
+      "identitySimilarity": "avatar_qa_v7_watermark_evidence_parity_v1"
+     },
+     "policyVersion": "avatar_corridor_policy_v1",
+     "reasonCodes": [
+      "fidelity_signal_unavailable",
+      "model_unavailable_systemic"
+     ],
+     "schemaVersion": "avatar_fidelity_corridor_shadow_v1",
+     "scores": {},
+     "timingMs": {
+      "total": 0.037
+     }
+    },
+    "identifiabilityRisk": "medium",
+    "logoTextWatermarkRisk": "low",
+    "previewAllowed": false,
+    "primaryFaceConfidence": null,
+    "privacyQa": "needs_review",
+    "qaVersion": "avatar_qa_v7_watermark_evidence_parity_v1",
+    "rejectReasons": [],
+    "requiresHumanReview": true,
+    "reviewReasons": [
+     "actual_qa_signal_review",
+     "qa_model_signal_review",
+     "qa_signal_uncertain"
+    ],
+    "secondaryFaceLeakageRisk": "low",
+    "softPass": false,
+    "softPassReasons": [],
+    "textLogoWatermarkRisk": "low",
+    "traitComparisonStatus": "not_evaluated",
+    "traitPolicyVersion": "trait_policy_v2_applicability_v1",
+    "traitQaAction": "allow",
+    "traitQaApplicability": "not_applicable",
+    "traitQaReason": "disabled_by_canonical_azure_pipeline",
+    "traitReviewContribution": false,
+    "uniqueMarkCopyRisk": "unknown",
+    "uniqueMarkPolicyVersion": "unique_mark_policy_v2_applicability_v1",
+    "uniqueMarkQaAction": "allow",
+    "uniqueMarkQaApplicability": "not_applicable",
+    "uniqueMarkQaReason": "disabled_by_canonical_azure_pipeline",
+    "watermarkPolicyVersion": "watermark_policy_v4_runtime_evidence_parity_v1",
+    "watermarkQaAction": "allow"
+   },
+   "qaDecisionTier": "needs_review"
+  },
+  {
+   "identifiabilityRisk": "low",
+   "label": "live_run2_candidate2",
+   "observedStatus": "needs_review",
+   "qa": {
+    "adultQa": "pass",
+    "backgroundLeakageRisk": "low",
+    "beautificationRisk": "low",
+    "brandQa": "pass",
+    "candidateTraitConsistency": {
+     "candidatePresent": null,
+     "eyewearMatch": "not_applicable",
+     "eyewearReason": "trait_qa_not_applicable",
+     "sourceConfidence": "not_applicable",
+     "sourcePresent": null
+    },
+    "childlikeRisk": "low",
+    "cropConsistency": "pass",
+    "cropIsolationQuality": "pass",
+    "debug": {
+     "candidateTraitConsistency": {
+      "candidatePresent": null,
+      "eyewearMatch": "not_applicable",
+      "eyewearReason": "trait_qa_not_applicable",
+      "sourceConfidence": "not_applicable",
+      "sourcePresent": null
+     },
+     "decision": {
+      "hardRejectReasons": [],
+      "needsReviewReasons": [],
+      "previewAllowed": true,
+      "requiresHumanReview": false,
+      "selectionTier": "hard_pass",
+      "softPassReasons": []
+     },
+     "modelAvailability": {
+      "clip": "available",
+      "clipSafety": "available",
+      "dino": "unavailable",
+      "faceDetector": "available",
+      "faceSimilarity": "available",
+      "localSafetyRisk": "available",
+      "mediapipe": "available",
+      "visualRisk": "available"
+     },
+     "qaVersion": "avatar_qa_v7_watermark_evidence_parity_v1",
+     "scores": {
+      "beautificationRiskScore": null,
+      "brandFitScore": null,
+      "childlikeRiskScore": null,
+      "clipSimilarityScore": null,
+      "dinoStyleScore": null,
+      "faceSimilarityDecision": "low_similarity_risk",
+      "faceSimilarityObservedScore": 0.601613,
+      "faceSimilarityScore": 0.601613,
+      "perceptualHashDistance": 0.3843,
+      "perceptualSimilarityScore": 0.6157,
+      "privacyPenalty": null,
+      "ssimScore": null,
+      "traitConsistencyScore": null
+     },
+     "signalContract": {
+      "optional": [
+       "dino"
+      ],
+      "required": [
+       "faceDetector",
+       "visualRisk",
+       "clipSafety",
+       "faceSimilarity"
+      ],
+      "requiredSignalFailures": []
+     },
+     "thresholdSnapshot": {
+      "brandReject": null,
+      "faceSimilarityReject": 0.72,
+      "faceSimilarityReview": 0.68,
+      "perceptualReject": 0.985,
+      "perceptualReview": 0.92,
+      "requireReliableFaceSimilarityForTooIdentifiable": true
+     },
+     "traitComparisonStatus": "not_evaluated",
+     "traitPolicyVersion": "trait_policy_v2_applicability_v1",
+     "traitQaAction": "allow",
+     "traitQaApplicability": "not_applicable",
+     "traitQaReason": "disabled_by_canonical_azure_pipeline",
+     "traitReviewContribution": false,
+     "uniqueMarkPolicyVersion": "unique_mark_policy_v2_applicability_v1",
+     "uniqueMarkQaAction": "allow",
+     "uniqueMarkQaApplicability": "not_applicable",
+     "uniqueMarkQaReason": "disabled_by_canonical_azure_pipeline",
+     "visualRiskStatus": "needs_review",
+     "watermarkDecisionClass": "ambiguous_text_evidence",
+     "watermarkEvidence": {
+      "areaBands": {
+       "small": 1
+      },
+      "confidenceBands": {
+       "unknown": 1
+      },
+      "locationBands": {
+       "edge": 1
+      },
+      "ocrDetectionCount": 1,
+      "recognizedTokenCount": 1,
+      "regionEvidence": [
+       {
+        "areaBand": "small",
+        "artifactHint": false,
+        "confidenceBand": "unknown",
+        "kind": "text",
+        "location": "edge",
+        "overlayLike": true,
+        "repeated": false,
+        "sourceConsistent": false,
+        "textQuality": "plausible"
+       }
+      ],
+      "repeatedTokenCount": 0,
+      "schemaVersion": "watermark_evidence_v3_text_quality_field_v1",
+      "sourceConsistency": "inconsistent",
+      "textQualityBands": {
+       "plausible": 1
+      }
+     },
+     "watermarkEvidenceClasses": [
+      "ambiguous_text_evidence"
+     ],
+     "watermarkPolicyVersion": "watermark_policy_v4_runtime_evidence_parity_v1",
+     "watermarkQaAction": "allow"
+    },
+    "faceSimilarityScore": 0.601613,
+    "fidelityCorridor": {
+     "bands": {
+      "composition": "unavailable",
+      "fidelity": "unavailable",
+      "identityRisk": "low",
+      "traitConsistency": "unavailable"
+     },
+     "calibrationVersion": "uncalibrated",
+     "criticalSignalsAvailable": false,
+     "gates": {
+      "fidelityLowerBound": "review",
+      "privacyUpperBound": "pass",
+      "safety": "review"
+     },
+     "mode": "shadow",
+     "modelAvailability": {
+      "adultNaturalness": "unavailable",
+      "broadVisual": "unavailable",
+      "composition": "unavailable",
+      "geometry": "unavailable",
+      "identitySimilarity": "available",
+      "safety": "unavailable",
+      "traitConsistency": "unavailable"
+     },
+     "modelVersions": {
+      "identitySimilarity": "avatar_qa_v7_watermark_evidence_parity_v1"
+     },
+     "policyVersion": "avatar_corridor_policy_v1",
+     "reasonCodes": [
+      "fidelity_signal_unavailable",
+      "model_unavailable_systemic"
+     ],
+     "schemaVersion": "avatar_fidelity_corridor_shadow_v1",
+     "scores": {},
+     "timingMs": {
+      "total": 0.04
+     }
+    },
+    "identifiabilityRisk": "low",
+    "logoTextWatermarkRisk": "low",
+    "previewAllowed": true,
+    "primaryFaceConfidence": null,
+    "privacyQa": "pass",
+    "qaVersion": "avatar_qa_v7_watermark_evidence_parity_v1",
+    "rejectReasons": [],
+    "requiresHumanReview": false,
+    "reviewReasons": [],
+    "secondaryFaceLeakageRisk": "low",
+    "softPass": false,
+    "softPassReasons": [],
+    "textLogoWatermarkRisk": "low",
+    "traitComparisonStatus": "not_evaluated",
+    "traitPolicyVersion": "trait_policy_v2_applicability_v1",
+    "traitQaAction": "allow",
+    "traitQaApplicability": "not_applicable",
+    "traitQaReason": "disabled_by_canonical_azure_pipeline",
+    "traitReviewContribution": false,
+    "uniqueMarkCopyRisk": "unknown",
+    "uniqueMarkPolicyVersion": "unique_mark_policy_v2_applicability_v1",
+    "uniqueMarkQaAction": "allow",
+    "uniqueMarkQaApplicability": "not_applicable",
+    "uniqueMarkQaReason": "disabled_by_canonical_azure_pipeline",
+    "watermarkPolicyVersion": "watermark_policy_v4_runtime_evidence_parity_v1",
+    "watermarkQaAction": "allow"
+   },
+   "qaDecisionTier": "hard_pass"
+  }
+ ],
+ "note": "Sanitized production QA reports from the backend E2E runs. No image, user, job or candidate identifiers.",
+ "schemaVersion": "avatar_live_qa_report_fixture_v1"
+}

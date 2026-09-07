@@ -1222,7 +1222,11 @@ def _qa_debug_document(
             "clipSafety": local_safety_status,
             "clip": local_safety_status,
             "localSafetyRisk": local_safety_status,
-            "dino": normalized_availability.get("dino", "unavailable"),
+            # dino is an optional signal (OPTIONAL_SIGNAL_NAMES). The runtime
+            # signal runner does not emit it, and an absent optional signal is
+            # "not_required", not an outage. An explicit "unavailable" report is
+            # preserved so preview_policy keeps treating it as a systemic gate.
+            "dino": normalized_availability.get("dino", "not_required"),
             "mediapipe": normalized_availability.get("mediapipe", "unavailable"),
         },
         "signalContract": {
