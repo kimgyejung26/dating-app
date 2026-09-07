@@ -73,3 +73,32 @@ paid Azure generation call remain a separate approval gate.
   refreshes independently. Controller, banner, and selection tests were rerun.
 - Singapore worker build submitted from aeb8be8b:
   3a43d928-0e74-4578-bedf-3dda3cf9e338. Deployment/readiness is a separate gate.
+
+## Production rollout
+
+The Singapore image built from this branch was deployed as a zero-traffic
+revision, validated, and then promoted:
+
+- Revision `seolleyeon-avatar-worker-fullint-aeb8be8b`, image digest
+  `sha256:2edd200652425be2ec80ba105ad06d67fd3297dc6bdbe0c5781e79b92baee43a`,
+  produced by Cloud Build `3a43d928-0e74-4578-bedf-3dda3cf9e338`. The digest
+  recorded in the revision environment matches the deployed image.
+- Runtime shape is unchanged from the previous production revision: 8 vCPU,
+  32 GiB, 1 GPU, request timeout 1800 s, concurrency 1, max scale 1. The only
+  intended configuration delta is the internal budget, now
+  `AVATAR_WORKER_MAX_REQUEST_SECONDS` and `AVATAR_WORKER_MAX_JOB_SECONDS` at
+  1500 s. `AVATAR_WORKER_DEADLINE_SECONDS` remains the separate lease deadline
+  aligned to the Cloud Run timeout.
+- `/readyz` on the zero-traffic revision reported `ok`: QA ready with no
+  blocking components, five configured provider endpoints at a 240 s transport
+  timeout, and DINO reported as a non-critical component outside the active QA
+  contract.
+- Traffic was then moved to 100 % on that revision and `/readyz` was rechecked
+  on the serving URL with the same result. The previous serving revision,
+  `seolleyeon-avatar-worker-softreview-47a16c11`, is retained as the rollback
+  target. Queue configuration was not touched.
+- No image was generated during this rollout. Paid provider generation calls
+  for the whole validation: zero.
+
+A real authenticated client flow and any paid generation run remain a separate
+approval gate and were not executed.
