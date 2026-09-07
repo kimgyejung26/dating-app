@@ -1,8 +1,9 @@
 param(
   [string]$Project = "seolleyeon-final",
   [string]$Region = "asia-northeast3",
+  [string]$ArtifactRegistryRegion = "asia-southeast1",
   [string]$WorkerRegion = "asia-southeast1",
-  [string]$Repository = "seolleyeon-repo",
+  [string]$Repository = "seolleyeon-avatar-repo",
   [string]$Tag = "staging-avatar-worker",
   [string]$ExpectedAccount = "seolleyeon.official@gmail.com",
   [string]$FunctionsEnvFile = "functions/.env.seolleyeon-final",
@@ -105,8 +106,8 @@ function Assert-PreApplyPrerequisites {
     throw "cloudbuild.avatar-worker.yaml was not found."
   }
 
-  if (-not (Test-Gcloud artifacts repositories describe $Repository --location=$Region --project=$Project)) {
-    throw "Artifact Registry repository '$Repository' is missing in $Region."
+  if (-not (Test-Gcloud artifacts repositories describe $Repository --location=$ArtifactRegistryRegion --project=$Project)) {
+    throw "Artifact Registry repository '$Repository' is missing in $ArtifactRegistryRegion."
   }
 
   $requiredBuckets = @(
@@ -190,7 +191,7 @@ function Set-EnvFileValues {
 Test-GcloudExists
 Assert-Guard
 
-$image = "$Region-docker.pkg.dev/$Project/$Repository/seolleyeon-avatar-worker:$Tag"
+$image = "$ArtifactRegistryRegion-docker.pkg.dev/$Project/$Repository/seolleyeon-avatar-worker:$Tag"
 $avatarWorkerSa = "avatar-worker@$Project.iam.gserviceaccount.com"
 $clipWorkerSa = "clip-worker@$Project.iam.gserviceaccount.com"
 $taskInvokerSa = "task-invoker@$Project.iam.gserviceaccount.com"
@@ -207,6 +208,7 @@ if (-not $functionsRuntimeSa) {
 
 Write-Host "Project: $Project"
 Write-Host "Region : $Region"
+Write-Host "Artifact Registry: $ArtifactRegistryRegion"
 Write-Host "Worker : $WorkerRegion"
 Write-Host "Image  : $image"
 Write-Host "Fn SA  : $functionsRuntimeSa"

@@ -67,6 +67,22 @@ def test_no_retired_generation_dependency_is_declared():
     assert "diffusers" not in dockerfile.lower()
 
 
+def test_avatar_worker_cloud_build_uses_canonical_registry_and_complete_context():
+    cloudbuild = _text(REPO_ROOT / "cloudbuild.avatar-worker.yaml")
+    gcloudignore = _text(REPO_ROOT / ".gcloudignore")
+
+    assert (
+        "asia-southeast1-docker.pkg.dev/seolleyeon-final/"
+        "seolleyeon-avatar-repo/seolleyeon-avatar-worker"
+    ) in cloudbuild
+    assert "!lib/ai_recommend_model/avatar_generation/**" in gcloudignore
+    assert "!requirements_avatar_worker.txt" in gcloudignore
+
+
+def test_retired_festival_bridge_has_no_deployment_env_template():
+    assert not (REPO_ROOT / "functions" / ".env.seolleyeon-festival.example").exists()
+
+
 FORBIDDEN = {
     "flux worker mode": re.compile(r"AVATAR_WORKER_MODE\s*=\s*['\"]?flux", re.I),
     "flux provider": re.compile(r"provider\s*[=:]\s*['\"]flux", re.I),

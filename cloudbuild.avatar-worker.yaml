@@ -1,5 +1,5 @@
 substitutions:
-  _IMAGE: asia-northeast3-docker.pkg.dev/seolleyeon-final/seolleyeon-repo/seolleyeon-avatar-worker:manual
+  _IMAGE: asia-southeast1-docker.pkg.dev/seolleyeon-final/seolleyeon-avatar-repo/seolleyeon-avatar-worker:manual
 
 steps:
   - name: gcr.io/cloud-builders/docker

@@ -7,6 +7,8 @@
 !lib/
 lib/*
 !lib/ai_recommend_model/
+!lib/ai_recommend_model/avatar_generation/
+!lib/ai_recommend_model/avatar_generation/**
 !infra/
 !cloudbuild.yaml
 !Dockerfile
