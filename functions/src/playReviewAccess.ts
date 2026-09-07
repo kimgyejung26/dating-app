@@ -389,6 +389,47 @@ async function resetReviewBambooArtifacts(firestore: Firestore): Promise<void> {
   await deleteRefsInBatches(firestore, refs);
 }
 
+/**
+ * Direct-chat heart ledger ids are deterministic.  The review-session reset
+ * removes the rooms themselves, so it must remove only these exact, known
+ * review ledger documents too; otherwise the next seeded session attempts to
+ * create an already-existing ledger record.
+ */
+async function resetReviewDirectChatHeartTransactions(
+  firestore: Firestore,
+): Promise<void> {
+  const entries = PLAY_REVIEW_FIXTURE_UIDS.map((fixtureUid) => {
+    const roomId = buildDirectRoomId(PLAY_REVIEWER_UID, fixtureUid);
+    const transactionId = createHash("sha256")
+      .update(`direct_chat:${roomId}`)
+      .digest("hex");
+    return {
+      roomId,
+      ref: firestore.collection("heartTransactions").doc(transactionId),
+    };
+  });
+  const snaps = await firestore.getAll(...entries.map(({ ref }) => ref));
+  const refsToDelete: DocumentReference[] = [];
+
+  for (let index = 0; index < snaps.length; index += 1) {
+    const snap = snaps[index];
+    if (!snap.exists) continue;
+    const data = (snap.data() ?? {}) as Record<string, unknown>;
+    const { roomId } = entries[index];
+    // Refuse to delete even a deterministically-addressed document unless it
+    // proves it belongs to this review-only direct-chat pair.
+    if (
+      data.uid !== PLAY_REVIEWER_UID ||
+      data.feature !== "direct_chat" ||
+      data.resourceId !== roomId
+    ) {
+      throw new HttpsError("internal", "Review data isolation check failed.");
+    }
+    refsToDelete.push(snap.ref);
+  }
+  await deleteRefsInBatches(firestore, refsToDelete);
+}
+
 async function resetReviewArtifacts(firestore: Firestore): Promise<void> {
   const [fromInteractions, toInteractions, matches, rooms, reports] =
     await Promise.all([
@@ -443,6 +484,7 @@ async function resetReviewArtifacts(firestore: Firestore): Promise<void> {
   await deleteValidatedReviewDocs(firestore, rooms.docs, "participantIds");
   await deleteValidatedReviewDocs(firestore, reports.docs);
   await resetReviewBambooArtifacts(firestore);
+  await resetReviewDirectChatHeartTransactions(firestore);
 
   const exactDeletes = [
     firestore.collection("blindMeetingApplications").doc(PLAY_REVIEWER_UID),

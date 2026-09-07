@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart' show Theme, Brightness;
 import 'package:flutter/services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/constants/app_colors.dart';
@@ -37,6 +38,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _isSavingProfileVisibility = false;
   bool _avoidSameDepartment = false;
   bool _isSavingAvoidSameDepartment = false;
+  bool _isPlayReviewSession = false;
 
   @override
   void initState() {
@@ -45,6 +47,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _loadPrivacySettings() async {
+    final claims = await FirebaseAuth.instance.currentUser?.getIdTokenResult();
+    final isPlayReviewSession = claims?.claims?['playReviewer'] == true;
+    if (mounted) {
+      setState(() => _isPlayReviewSession = isPlayReviewSession);
+    }
     final kakaoUserId = await _storageService.getKakaoUserId();
     if (kakaoUserId == null || kakaoUserId.isEmpty) return;
 
@@ -332,7 +339,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Text(
-                            '카카오 연동됨',
+                            _isPlayReviewSession
+                                ? 'Google Play 리뷰 세션'
+                                : '카카오 연동됨',
                             style: TextStyle(
                               fontFamily: 'NanumSquareRound',
                               fontSize: 11,

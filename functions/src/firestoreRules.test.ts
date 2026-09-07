@@ -201,7 +201,7 @@ test("matching and recommendation rules are participant or owner scoped", () => 
   );
   assertContains(
     "asks must be participant-readable and recipient can only mark read",
-    "match /asks/{askId} { allow read: if isAskParticipant(resource.data); allow create: if isCanonicalAppSession() && request.resource.data.fromUserId is string && request.resource.data.fromUserId == request.auth.uid"
+    "match /asks/{askId} { allow read: if isAskParticipant(resource.data); allow create: if (isCanonicalAppSession() || isPlayReviewSession()) && request.resource.data.fromUserId is string && request.resource.data.fromUserId == request.auth.uid"
   );
   assertContains(
     "interactions must be participant-readable and from-user-bound create only",
@@ -231,8 +231,8 @@ test("canonical app session gates the interactive surfaces (auth re-architecture
     "match /interactions/{interactionId} { allow read: if isInteractionParticipant(resource.data); allow create: if (isCanonicalAppSession() || isPlayReviewSession()) &&"
   );
   assertContains(
-    "asks create must require a canonical app session",
-    "match /asks/{askId} { allow read: if isAskParticipant(resource.data); allow create: if isCanonicalAppSession() &&"
+    "asks create must allow only canonical or isolated review sessions",
+    "match /asks/{askId} { allow read: if isAskParticipant(resource.data); allow create: if (isCanonicalAppSession() || isPlayReviewSession()) &&"
   );
   // 1:1 채팅방 생성은 unlockDirectChat callable(하트 차감) 전용으로
   // 서버에서만 이뤄진다 — 클라이언트 생성은 세션 종류와 무관하게 전면 거부.

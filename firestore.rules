@@ -2392,7 +2392,7 @@ request.resource.data.diff(resource.data).affectedKeys().hasOnly([
       allow read: if isAskParticipant(resource.data);
 
       allow create: if
-        isCanonicalAppSession() &&
+        (isCanonicalAppSession() || isPlayReviewSession()) &&
         request.resource.data.fromUserId is string &&
         request.resource.data.fromUserId == request.auth.uid &&
         request.resource.data.toUserId is string &&
