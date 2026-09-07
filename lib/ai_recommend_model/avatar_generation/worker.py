@@ -9,7 +9,9 @@ import json
 import logging
 import os
 import re
+import threading
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field, replace
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -92,6 +94,7 @@ from avatar_generation.qa_pipeline_contract import (
     canonical_azure_qa_pipeline_contract,
 )
 from avatar_generation.preview_policy import (
+    annotate_review_tier,
     is_preview_eligible,
     passes_absolute_preview_checks,
 )
@@ -1644,15 +1647,30 @@ def model_cache_metrics() -> Dict[str, int]:
 def warmup_avatar_model(*, mode: Optional[str] = None) -> Dict[str, Any]:
     run_mode = resolve_worker_mode(mode)
     warmed = False
+    qa_runtime_warmed = False
+    qa_runtime_error = ""
     if run_mode == CANONICAL_AZURE_WORKER_MODE:
         # Azure needs no model download; warming means building the provider
         # (config + rate limiter). No request is sent.
         get_azure_gpt_image2_provider()
         warmed = True
+        # The QA models (face detector, visual risk, CLIP safety/similarity)
+        # are otherwise loaded lazily by the first job; preloading them here
+        # moves that cost to the pre-warm request the client sends while the
+        # user is still picking photos.
+        try:
+            from avatar_generation.qa_runtime import get_default_qa_runtime
+
+            get_default_qa_runtime()
+            qa_runtime_warmed = True
+        except Exception as exc:  # pragma: no cover - runtime image only
+            qa_runtime_error = exc.__class__.__name__
     return {
         "status": "ok",
         "mode": run_mode,
         "warmed": warmed,
+        "qaRuntimeWarmed": qa_runtime_warmed,
+        "qaRuntimeError": qa_runtime_error,
         "metrics": model_cache_metrics(),
     }
 
@@ -1679,6 +1697,26 @@ def _candidate_generation_execution_audit(
     }
 
 
+ENV_GENERATION_PARALLELISM = "AVATAR_GENERATION_PARALLELISM"
+DEFAULT_GENERATION_PARALLELISM = 2
+MAX_GENERATION_PARALLELISM = 4
+
+
+def generation_parallelism_from_env() -> int:
+    """How many provider calls of one round may be in flight at once.
+
+    The Azure router paces every call through the transactional per-endpoint
+    reservation store, so concurrent calls land on different endpoints (or wait
+    for the same endpoint's RPM slot). Bounded to the endpoint count ceiling.
+    """
+    return _int_env(
+        ENV_GENERATION_PARALLELISM,
+        DEFAULT_GENERATION_PARALLELISM,
+        minimum=1,
+        maximum=MAX_GENERATION_PARALLELISM,
+    )
+
+
 def generate_candidate_artifacts(
     payload: AvatarGenerationPayload,
     source_image: Image.Image,
@@ -1696,8 +1734,78 @@ def generate_candidate_artifacts(
     azure_provider: Optional[Any] = None,
     provider_usage_doc: Optional[Dict[str, Any]] = None,
     artifact_storage_client: Any = None,
+    parallelism: Optional[int] = None,
 ) -> List[CandidateArtifact]:
-    artifacts: List[CandidateArtifact] = []
+    """Generate one round and return artifacts in candidate-index order."""
+    artifacts = list(
+        iter_candidate_artifacts(
+            payload,
+            source_image,
+            mode=mode,
+            source_analysis=source_analysis,
+            privacy_reference_image=privacy_reference_image,
+            reference_preprocess_metadata=reference_preprocess_metadata,
+            candidate_start_index=candidate_start_index,
+            candidate_count=candidate_count,
+            seconds_by_stage=seconds_by_stage,
+            source_image_bytes=source_image_bytes,
+            source_content_type=source_content_type,
+            deadline_monotonic=deadline_monotonic,
+            azure_provider=azure_provider,
+            provider_usage_doc=provider_usage_doc,
+            artifact_storage_client=artifact_storage_client,
+            parallelism=parallelism,
+        )
+    )
+    artifacts.sort(key=lambda item: item.candidate_index)
+    return artifacts
+
+
+_CANONICAL_GENERATE_CANDIDATE_ARTIFACTS = generate_candidate_artifacts
+
+
+def _initial_round_artifact_stream(**kwargs: Any) -> Iterable[CandidateArtifact]:
+    """Streaming entry for the initial round.
+
+    generate_candidate_artifacts is the public seam that tests and tooling
+    replace (forbidden-generation guards, redaction checks). When it has been
+    swapped out, honour the replacement instead of the streaming primitive.
+    """
+    current = globals().get("generate_candidate_artifacts")
+    if current is not None and current is not _CANONICAL_GENERATE_CANDIDATE_ARTIFACTS:
+        return iter(current(**kwargs))
+    return iter_candidate_artifacts(**kwargs)
+
+
+def iter_candidate_artifacts(
+    payload: AvatarGenerationPayload,
+    source_image: Image.Image,
+    *,
+    mode: str,
+    source_analysis: Any = None,
+    privacy_reference_image: Optional[Image.Image] = None,
+    reference_preprocess_metadata: Optional[Mapping[str, Any]] = None,
+    candidate_start_index: int = 0,
+    candidate_count: Optional[int] = None,
+    seconds_by_stage: Optional[Dict[str, float]] = None,
+    source_image_bytes: Optional[bytes] = None,
+    source_content_type: str = "image/jpeg",
+    deadline_monotonic: Optional[float] = None,
+    azure_provider: Optional[Any] = None,
+    provider_usage_doc: Optional[Dict[str, Any]] = None,
+    artifact_storage_client: Any = None,
+    parallelism: Optional[int] = None,
+) -> Iterable[CandidateArtifact]:
+    """Yield artifacts of one round as they complete.
+
+    Sequential (index order) unless the canonical Azure mode runs more than one
+    candidate with parallelism > 1; then provider calls run concurrently and
+    artifacts are yielded in completion order so the caller can start QA while
+    the remaining calls are still in flight. Provider errors keep their
+    post-send semantics: nothing is retried here, the remaining in-flight calls
+    are allowed to finish (their artifacts stay recoverable), and the error of
+    the lowest candidate index is raised.
+    """
     del privacy_reference_image, reference_preprocess_metadata, source_analysis
     if mode == CANONICAL_AZURE_WORKER_MODE:
         _assert_azure_source_bytes_are_normalized_jpeg(source_image_bytes, source_content_type)
@@ -1712,7 +1820,10 @@ def generate_candidate_artifacts(
         source_photo_refs=payload.source_photo_refs,
         source_photo_object_generations=payload.source_photo_object_generations,
     )
-    for index in range(candidate_start_index, candidate_start_index + round_count):
+    indexes = list(range(candidate_start_index, candidate_start_index + round_count))
+
+    def _produce(index: int) -> CandidateArtifact:
+        nonlocal provider
         candidate_id = candidate_id_for(payload.job_id, index)
         seed = deterministic_seed(payload.job_id, index)
         image_ref = build_temp_candidate_ref(
@@ -1732,20 +1843,17 @@ def generate_candidate_artifacts(
                     expected_source_identity_hash=source_identity_hash,
                 )
                 if recovered is not None:
-                    artifacts.append(
-                        CandidateArtifact(
-                            candidate_id=candidate_id,
-                            image_ref=image_ref,
-                            image_bytes=recovered.image_bytes,
-                            seed=recovered.seed,
-                            generation_params=recovered.generation_params,
-                            generation_id=recovered.generation_id,
-                            candidate_index=recovered.candidate_index,
-                            storage_persisted=True,
-                            recovery_source=recovered.recovery_source,
-                        )
+                    return CandidateArtifact(
+                        candidate_id=candidate_id,
+                        image_ref=image_ref,
+                        image_bytes=recovered.image_bytes,
+                        seed=recovered.seed,
+                        generation_params=recovered.generation_params,
+                        generation_id=recovered.generation_id,
+                        candidate_index=recovered.candidate_index,
+                        storage_persisted=True,
+                        recovery_source=recovered.recovery_source,
                     )
-                    continue
             if provider is None:
                 provider = get_azure_gpt_image2_provider()
             if source_image_bytes is None:
@@ -1823,9 +1931,37 @@ def generate_candidate_artifacts(
                 storage_persisted=True,
                 recovery_source=persisted.recovery_source,
             )
-        artifacts.append(artifact)
+        return artifact
+
     del seconds_by_stage  # no local model to load; Azure latency is in providerUsage
-    return artifacts
+    workers = 1
+    if mode == CANONICAL_AZURE_WORKER_MODE and len(indexes) > 1:
+        workers = min(
+            len(indexes),
+            generation_parallelism_from_env() if parallelism is None else max(1, int(parallelism)),
+        )
+    if workers <= 1:
+        for index in indexes:
+            yield _produce(index)
+        return
+
+    errors: Dict[int, BaseException] = {}
+    with ThreadPoolExecutor(max_workers=workers, thread_name_prefix="avatar-generate") as pool:
+        futures = {pool.submit(_produce, index): index for index in indexes}
+        for future in as_completed(futures):
+            index = futures[future]
+            try:
+                artifact = future.result()
+            except BaseException as exc:  # noqa: BLE001 - re-raised below, index-deterministic
+                errors[index] = exc
+                continue
+            if not errors:
+                yield artifact
+    if errors:
+        raise errors[min(errors)]
+
+
+_PROVIDER_USAGE_LOCK = threading.Lock()
 
 
 def _merge_provider_usage(
@@ -1834,6 +1970,11 @@ def _merge_provider_usage(
 ) -> None:
     if target is None or not isinstance(update, Mapping):
         return
+    with _PROVIDER_USAGE_LOCK:
+        _merge_provider_usage_locked(target, update)
+
+
+def _merge_provider_usage_locked(target: Dict[str, Any], update: Mapping[str, Any]) -> None:
     for key, value in update.items():
         if key in {
             "requestCount",
@@ -3189,11 +3330,18 @@ def _apply_preview_selection(
         if (
             candidate_id in selected_ids
             and allow_preview_selection
-            and is_preview_eligible(candidate_for_gate)
+            and is_preview_eligible(
+                candidate_for_gate,
+                allow_soft_review=policy.needs_review_low_risk_enabled,
+            )
         ):
             status = "preview_ready"
             qa_doc["previewAllowed"] = True
             qa_doc["selectedForPreview"] = True
+            if qa_doc.get("reviewTier") == "soft_review":
+                # Offered to the user despite the calibrated identity review
+                # band; requiresHumanReview stays true for audit provenance.
+                qa_doc["previewTier"] = "soft_review"
             preview_ready += 1
         elif candidate_id in selected_ids:
             status = "needs_review"
@@ -3752,9 +3900,14 @@ def process_avatar_generation_payload(
                 },
             )
         model_load_before = seconds_by_stage["model_load_seconds"]
-        artifacts = generate_candidate_artifacts(
-            payload,
-            source_image,
+        generation_started_at = stage_started_at
+        # Streaming round: provider calls run concurrently (see
+        # iter_candidate_artifacts) and each artifact enters upload+QA as soon
+        # as it lands, so QA of the first candidate overlaps the remaining
+        # provider latency instead of waiting for the whole round.
+        artifact_stream = _initial_round_artifact_stream(
+            payload=payload,
+            source_image=source_image,
             mode=run_mode,
             source_analysis=source_analysis,
             privacy_reference_image=privacy_reference_image,
@@ -3768,38 +3921,38 @@ def process_avatar_generation_payload(
             provider_usage_doc=provider_usage_doc,
             artifact_storage_client=st if run_mode == CANONICAL_AZURE_WORKER_MODE else None,
         )
-        elapsed = _elapsed_seconds(stage_started_at)
-        model_load_delta = max(0.0, seconds_by_stage["model_load_seconds"] - model_load_before)
-        generation_elapsed = round(max(0.0, elapsed - model_load_delta), 3)
-        seconds_by_stage["generate"] += generation_elapsed
-        seconds_by_stage["generation_seconds"] += generation_elapsed
-        _update_job_status(
-            fs,
-            payload.job_id,
-            {
-                "status": "generated" if run_mode == CANONICAL_AZURE_WORKER_MODE else "qa_pending",
-                "generationBackend": (
-                    AZURE_GPT_IMAGE_2_MODEL_ID
-                    if run_mode == CANONICAL_AZURE_WORKER_MODE
-                    else DRY_RUN_FIXTURE_BACKEND
-                ),
-            },
-        )
-        _update_job_status(
-            fs,
-            payload.job_id,
-            {
-                "status": "qa_pending",
-                "generationClaim": {
-                    "state": "active",
-                    "backend": AZURE_GPT_IMAGE_2_MODEL_ID,
-                    "idempotencyKey": payload.idempotency_key,
-                    "phase": "qa",
-                    "expectedCandidateIndexes": list(range(initial_count)),
-                    "claimedAt": SERVER_TIMESTAMP,
+        artifacts: List[CandidateArtifact] = []
+        last_artifact_at = generation_started_at
+        qa_phase_marked = False
+
+        def _mark_qa_phase_started() -> None:
+            _update_job_status(
+                fs,
+                payload.job_id,
+                {
+                    "status": "generated" if run_mode == CANONICAL_AZURE_WORKER_MODE else "qa_pending",
+                    "generationBackend": (
+                        AZURE_GPT_IMAGE_2_MODEL_ID
+                        if run_mode == CANONICAL_AZURE_WORKER_MODE
+                        else DRY_RUN_FIXTURE_BACKEND
+                    ),
                 },
-            },
-        )
+            )
+            _update_job_status(
+                fs,
+                payload.job_id,
+                {
+                    "status": "qa_pending",
+                    "generationClaim": {
+                        "state": "active",
+                        "backend": AZURE_GPT_IMAGE_2_MODEL_ID,
+                        "idempotencyKey": payload.idempotency_key,
+                        "phase": "qa",
+                        "expectedCandidateIndexes": list(range(initial_count)),
+                        "claimedAt": SERVER_TIMESTAMP,
+                    },
+                },
+            )
 
         candidate_ids: List[str] = []
         candidate_summaries: List[Dict[str, Any]] = []
@@ -3813,7 +3966,12 @@ def process_avatar_generation_payload(
              }
         ]
         stage_started_at = time.perf_counter()
-        for artifact in artifacts:
+        for artifact in artifact_stream:
+            artifacts.append(artifact)
+            last_artifact_at = time.perf_counter()
+            if not qa_phase_marked:
+                qa_phase_marked = True
+                _mark_qa_phase_started()
             worker_deadline.ensure_can_continue("upload_and_qa", min_remaining_seconds=10)
             upload_started_at = time.perf_counter()
             if fixture_output_dir is not None:
@@ -3860,7 +4018,7 @@ def process_avatar_generation_payload(
                 candidate_id=artifact.candidate_id,
                 source_trait_validation=trait_card_doc,
             )
-            qa_doc = shadow_evidence.qa_document
+            qa_doc = annotate_review_tier(shadow_evidence.qa_document)
             shadow_corridor_candidates.append(shadow_evidence.candidate)
             seconds_by_stage["qa_seconds"] += _elapsed_seconds(qa_started_at)
             candidate_status = _candidate_status_from_qa(qa_doc)
@@ -3882,6 +4040,18 @@ def process_avatar_generation_payload(
                     qa_doc=qa_doc,
                 )
             )
+
+        # Generation stage = wall time until the last artifact landed (QA of
+        # earlier candidates may have overlapped it).
+        elapsed = max(0.0, last_artifact_at - generation_started_at)
+        model_load_delta = max(0.0, seconds_by_stage["model_load_seconds"] - model_load_before)
+        generation_elapsed = round(max(0.0, elapsed - model_load_delta), 3)
+        seconds_by_stage["generate"] += generation_elapsed
+        seconds_by_stage["generation_seconds"] += generation_elapsed
+        artifacts.sort(key=lambda item: item.candidate_index)
+        candidate_summaries.sort(key=lambda item: str(item.get("candidateId") or ""))
+        if not qa_phase_marked:
+            _mark_qa_phase_started()
 
         qa_models_unavailable = _qa_critical_models_unavailable(candidate_summaries)
         extra_plan = plan_generation_round(
@@ -4034,7 +4204,7 @@ def process_avatar_generation_payload(
                     candidate_id=artifact.candidate_id,
                     source_trait_validation=trait_card_doc,
                 )
-                qa_doc = shadow_evidence.qa_document
+                qa_doc = annotate_review_tier(shadow_evidence.qa_document)
                 shadow_corridor_candidates.append(shadow_evidence.candidate)
                 seconds_by_stage["qa_seconds"] += _elapsed_seconds(qa_started_at)
                 candidate_status = _candidate_status_from_qa(qa_doc)
