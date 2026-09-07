@@ -17,7 +17,8 @@ import '../widgets/avatar_generation_models.dart';
 
 const String avatarSelectStatusUnavailableMessage =
     '아바타 생성 상태를 확인하지 못했어요. 잠시 후 다시 확인해주세요.';
-const String avatarSelectNoJobMessage = '아바타 생성이 시작되지 않았어요. 사진을 등록하고 다시 만들어주세요.';
+const String avatarSelectNoJobMessage =
+    '아바타 생성이 시작되지 않았어요. 사진을 등록하고 다시 만들어주세요.';
 const String avatarSelectApprovalErrorMessage = '아바타 저장에 실패했어요. 다시 한 번 선택해주세요.';
 const String avatarSelectCheckAgainLabel = '다시 확인';
 const String avatarSelectGoToPhotosLabel = '사진 등록하러 가기';

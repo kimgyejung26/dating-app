@@ -53,7 +53,8 @@ String? resolveOnboardingNextRoute(Map<String, dynamic>? profile) {
     return RouteNames.onboardingIdealType;
   }
   // 건너뛰기는 더 이상 완료를 기록하지 않으므로 skipped 를 완료로 인정한다.
-  if (idealType['preferredLifestyles'] == null && idealType['skipped'] != true) {
+  if (idealType['preferredLifestyles'] == null &&
+      idealType['skipped'] != true) {
     return RouteNames.onboardingIdealLifestyle;
   }
 

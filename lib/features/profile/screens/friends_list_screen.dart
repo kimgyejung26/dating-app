@@ -8,7 +8,6 @@ import '../../../services/friend_service.dart';
 import '../../../services/storage_service.dart';
 import '../../../services/user_service.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../matching/models/profile_card_args.dart';
 import '../widgets/friends_list_shared.dart';
 
 class FriendsListScreen extends StatefulWidget {

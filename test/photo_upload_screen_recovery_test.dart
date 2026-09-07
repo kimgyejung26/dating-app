@@ -17,7 +17,10 @@ import 'package:seolleyeon/shared/utils/avatar_lock_policy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class _RecoveryClient extends AvatarGenerationClient {
-  _RecoveryClient({required this.serverStatus, this.serverRetryAllowed = false});
+  _RecoveryClient({
+    required this.serverStatus,
+    this.serverRetryAllowed = false,
+  });
 
   String serverStatus;
   bool serverRetryAllowed;
@@ -212,7 +215,11 @@ void main() {
       final controller = session.controller;
       var advanced = false;
       await tester.pumpWidget(
-        _harness(client, controller: controller, onNext: (_) => advanced = true),
+        _harness(
+          client,
+          controller: controller,
+          onNext: (_) => advanced = true,
+        ),
       );
       await _settle(tester);
       expect(find.text('다시 시도'), findsOneWidget);
@@ -237,19 +244,20 @@ void main() {
       await session.finish(tester);
     });
 
-    testWidgets('retry is refused without a server call when server says terminal', (
-      tester,
-    ) async {
-      await _useMobileSurface(tester);
-      final client = _RecoveryClient(serverStatus: 'terminal_failed');
-      await tester.pumpWidget(_harness(client));
-      await _settle(tester);
+    testWidgets(
+      'retry is refused without a server call when server says terminal',
+      (tester) async {
+        await _useMobileSurface(tester);
+        final client = _RecoveryClient(serverStatus: 'terminal_failed');
+        await tester.pumpWidget(_harness(client));
+        await _settle(tester);
 
-      expect(client.retryCalls, 0);
-      expect(find.text(avatarTerminalFailureMessage), findsWidgets);
-      expect(find.text('다시 시도'), findsNothing);
-      expect(find.text(avatarStartOverButtonLabel), findsOneWidget);
-    });
+        expect(client.retryCalls, 0);
+        expect(find.text(avatarTerminalFailureMessage), findsWidgets);
+        expect(find.text('다시 시도'), findsNothing);
+        expect(find.text(avatarStartOverButtonLabel), findsOneWidget);
+      },
+    );
 
     testWidgets('reconciliation_required offers neither retry nor start over', (
       tester,

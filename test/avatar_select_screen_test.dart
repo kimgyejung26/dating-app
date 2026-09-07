@@ -156,52 +156,49 @@ void _drainImageErrors(WidgetTester tester) {
 }
 
 void main() {
-  testWidgets('generating shows the waiting overlay, then switches to selection', (
-    tester,
-  ) async {
-    await _useMobileSurface(tester);
-    final client = _SelectClient(status: 'queued');
-    final h = _Harness(client);
-    addTearDown(h.dispose);
+  testWidgets(
+    'generating shows the waiting overlay, then switches to selection',
+    (tester) async {
+      await _useMobileSurface(tester);
+      final client = _SelectClient(status: 'queued');
+      final h = _Harness(client);
+      addTearDown(h.dispose);
 
-    await tester.pumpWidget(h.build());
-    await _settle(tester);
+      await tester.pumpWidget(h.build());
+      await _settle(tester);
 
-    expect(find.text('아바타 생성중...'), findsOneWidget);
-    expect(find.byType(AvatarCandidateSelectionDialog), findsNothing);
+      expect(find.text('아바타 생성중...'), findsOneWidget);
+      expect(find.byType(AvatarCandidateSelectionDialog), findsNothing);
 
-    client.status = 'preview_ready';
-    client.candidateAvailability = 'preview_safe';
-    await h.controller.refresh();
-    await _settle(tester);
-    _drainImageErrors(tester);
+      client.status = 'preview_ready';
+      client.candidateAvailability = 'preview_safe';
+      await h.controller.refresh();
+      await _settle(tester);
+      _drainImageErrors(tester);
 
-    expect(find.byType(AvatarCandidateSelectionDialog), findsOneWidget);
-    expect(find.byType(AvatarCandidateTile), findsNWidgets(2));
-    expect(find.text('아바타 생성중...'), findsNothing);
-    expect(
-      h.controller.bannerShown,
-      isTrue,
-      reason: '마지막 화면에서는 배너 없이 소비한다',
-    );
+      expect(find.byType(AvatarCandidateSelectionDialog), findsOneWidget);
+      expect(find.byType(AvatarCandidateTile), findsNWidgets(2));
+      expect(find.text('아바타 생성중...'), findsNothing);
+      expect(h.controller.bannerShown, isTrue, reason: '마지막 화면에서는 배너 없이 소비한다');
 
-    await tester.tap(find.byType(AvatarCandidateTile).first);
-    await tester.pump();
-    await tester.tap(
-      find.descendant(
-        of: find.byType(AvatarCandidateSelectionDialog),
-        matching: find.byType(ElevatedButton),
-      ),
-    );
-    await _settle(tester);
-    _drainImageErrors(tester);
+      await tester.tap(find.byType(AvatarCandidateTile).first);
+      await tester.pump();
+      await tester.tap(
+        find.descendant(
+          of: find.byType(AvatarCandidateSelectionDialog),
+          matching: find.byType(ElevatedButton),
+        ),
+      );
+      await _settle(tester);
+      _drainImageErrors(tester);
 
-    expect(client.approvedCandidateId, 'cand_0');
-    expect(h.completeCalls, 1);
-    expect(h.finishedCalls, 1);
-    expect(client.events, ['approve', 'complete', 'finished']);
-    await _finish(tester, h);
-  });
+      expect(client.approvedCandidateId, 'cand_0');
+      expect(h.completeCalls, 1);
+      expect(h.finishedCalls, 1);
+      expect(client.events, ['approve', 'complete', 'finished']);
+      await _finish(tester, h);
+    },
+  );
 
   testWidgets('an approval exception never completes onboarding', (
     tester,
@@ -290,7 +287,10 @@ void main() {
 
     expect(find.byType(AvatarCandidateSelectionDialog), findsOneWidget);
     // 같은 화면(State) 안에서 전환됐다. push/pop 이 없다.
-    expect(find.byType(AvatarSelectScreen).evaluate().single, same(screenElement));
+    expect(
+      find.byType(AvatarSelectScreen).evaluate().single,
+      same(screenElement),
+    );
     await _finish(tester, h);
   });
 
@@ -321,7 +321,10 @@ void main() {
     tester,
   ) async {
     await _useMobileSurface(tester);
-    final client = _SelectClient(status: 'retryable_failed', retryAllowed: true);
+    final client = _SelectClient(
+      status: 'retryable_failed',
+      retryAllowed: true,
+    );
     final h = _Harness(client);
     addTearDown(h.dispose);
 

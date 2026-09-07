@@ -202,7 +202,9 @@ void main() {
       );
       controller.applySnapshot(_snapshot('queued', sourceLocked: false));
       expect(controller.jobId, isEmpty);
-      controller.applySnapshot(_snapshot('queued', jobId: 'avatar_job_bbbbbbbb'));
+      controller.applySnapshot(
+        _snapshot('queued', jobId: 'avatar_job_bbbbbbbb'),
+      );
       expect(controller.jobId, 'avatar_job_bbbbbbbb');
       expect(controller.bannerShown, isFalse);
       expect(controller.completionBannerPending, isFalse);
@@ -213,7 +215,9 @@ void main() {
       controller.markBannerShown();
       expect(controller.bannerShownForJobId, 'avatar_job_bbbbbbbb');
 
-      controller.applySnapshot(_snapshot('queued', jobId: 'avatar_job_bbbbbbbb'));
+      controller.applySnapshot(
+        _snapshot('queued', jobId: 'avatar_job_bbbbbbbb'),
+      );
       controller.applySnapshot(_previewSafe(jobId: 'avatar_job_bbbbbbbb'));
       expect(controller.completionBannerPending, isFalse);
     });
@@ -415,50 +419,52 @@ void main() {
       h.close();
     });
 
-    testWidgets('healthy listener still runs the slow safety poll while generating', (
-      tester,
-    ) async {
-      final h = _Harness(
-        fallback: const Duration(seconds: 1),
-        safety: const Duration(seconds: 10),
-      );
-      h.client.snapshot = _snap('queued');
+    testWidgets(
+      'healthy listener still runs the slow safety poll while generating',
+      (tester) async {
+        final h = _Harness(
+          fallback: const Duration(seconds: 1),
+          safety: const Duration(seconds: 10),
+        );
+        h.client.snapshot = _snap('queued');
 
-      await h.controller.ensureStarted();
-      final before = h.client.statusCalls;
+        await h.controller.ensureStarted();
+        final before = h.client.statusCalls;
 
-      await tester.pump(const Duration(seconds: 5));
-      expect(h.client.statusCalls, before, reason: 'fallback 간격은 쓰지 않는다');
+        await tester.pump(const Duration(seconds: 5));
+        expect(h.client.statusCalls, before, reason: 'fallback 간격은 쓰지 않는다');
 
-      await tester.pump(const Duration(seconds: 10));
-      expect(h.client.statusCalls, before + 1);
-      h.close();
-    });
+        await tester.pump(const Duration(seconds: 10));
+        expect(h.client.statusCalls, before + 1);
+        h.close();
+      },
+    );
 
-    testWidgets('repeated starts and adoptions never create a second poll loop', (
-      tester,
-    ) async {
-      final h = _Harness(
-        fallback: const Duration(seconds: 1),
-        safety: const Duration(seconds: 10),
-      );
-      h.client.snapshot = _snap('queued');
+    testWidgets(
+      'repeated starts and adoptions never create a second poll loop',
+      (tester) async {
+        final h = _Harness(
+          fallback: const Duration(seconds: 1),
+          safety: const Duration(seconds: 10),
+        );
+        h.client.snapshot = _snap('queued');
 
-      await h.controller.ensureStarted();
-      await h.controller.ensureStarted();
-      await h.controller.adoptJob('avatar_job_session_0001');
-      await h.controller.adoptJob('avatar_job_session_0001');
-      await h.controller.refresh();
-      final before = h.client.statusCalls;
+        await h.controller.ensureStarted();
+        await h.controller.ensureStarted();
+        await h.controller.adoptJob('avatar_job_session_0001');
+        await h.controller.adoptJob('avatar_job_session_0001');
+        await h.controller.refresh();
+        final before = h.client.statusCalls;
 
-      await tester.pump(const Duration(seconds: 30));
-      expect(
-        h.client.statusCalls,
-        before + 3,
-        reason: '10초 간격 타이머 하나만 돌아야 한다',
-      );
-      h.close();
-    });
+        await tester.pump(const Duration(seconds: 30));
+        expect(
+          h.client.statusCalls,
+          before + 3,
+          reason: '10초 간격 타이머 하나만 돌아야 한다',
+        );
+        h.close();
+      },
+    );
 
     testWidgets('polling stops once candidates are ready', (tester) async {
       final h = _Harness(
@@ -533,53 +539,54 @@ void main() {
       h.close();
     });
 
-    testWidgets('user switch: B starts clean and never sees A\'s job or banner', (
-      tester,
-    ) async {
-      final h = _Harness(
-        fallback: const Duration(seconds: 1),
-        safety: const Duration(seconds: 1),
-      );
-      // UID A: job A 진행 중, 배너 대기 상태.
-      h.uid = 'uid_A';
-      h.client.snapshot = _snap(
-        'preview_ready',
-        candidateAvailability: 'preview_safe',
-        jobId: 'avatar_job_aaaaaaaa',
-      );
-      await h.controller.ensureStarted();
-      expect(h.controller.uid, 'uid_A');
-      expect(h.controller.jobId, 'avatar_job_aaaaaaaa');
-      expect(h.controller.completionBannerPending, isTrue);
+    testWidgets(
+      'user switch: B starts clean and never sees A\'s job or banner',
+      (tester) async {
+        final h = _Harness(
+          fallback: const Duration(seconds: 1),
+          safety: const Duration(seconds: 1),
+        );
+        // UID A: job A 진행 중, 배너 대기 상태.
+        h.uid = 'uid_A';
+        h.client.snapshot = _snap(
+          'preview_ready',
+          candidateAvailability: 'preview_safe',
+          jobId: 'avatar_job_aaaaaaaa',
+        );
+        await h.controller.ensureStarted();
+        expect(h.controller.uid, 'uid_A');
+        expect(h.controller.jobId, 'avatar_job_aaaaaaaa');
+        expect(h.controller.completionBannerPending, isTrue);
 
-      // logout.
-      h.auth.add(null);
-      await tester.pump();
-      expect(h.controller.uid, isEmpty);
-      expect(h.controller.jobId, isEmpty);
-      expect(h.controller.completionBannerPending, isFalse);
-      expect(h.controller.hasPollTimer, isFalse);
+        // logout.
+        h.auth.add(null);
+        await tester.pump();
+        expect(h.controller.uid, isEmpty);
+        expect(h.controller.jobId, isEmpty);
+        expect(h.controller.completionBannerPending, isFalse);
+        expect(h.controller.hasPollTimer, isFalse);
 
-      // UID B login: 서버는 B 에게 아직 아무 작업도 없다고 답한다.
-      h.uid = 'uid_B';
-      h.auth.add('uid_B');
-      await tester.pump();
-      h.client.snapshot = _snap('queued', sourceLocked: false);
-      await h.controller.ensureStarted();
+        // UID B login: 서버는 B 에게 아직 아무 작업도 없다고 답한다.
+        h.uid = 'uid_B';
+        h.auth.add('uid_B');
+        await tester.pump();
+        h.client.snapshot = _snap('queued', sourceLocked: false);
+        await h.controller.ensureStarted();
 
-      expect(h.controller.uid, 'uid_B');
-      expect(h.subscribedUids.last, 'uid_B');
-      expect(h.controller.phase, AvatarSessionPhase.idle);
-      expect(h.controller.jobId, isEmpty);
-      expect(h.controller.completionBannerPending, isFalse);
-      expect(h.controller.bannerShownForJobId, isEmpty);
+        expect(h.controller.uid, 'uid_B');
+        expect(h.subscribedUids.last, 'uid_B');
+        expect(h.controller.phase, AvatarSessionPhase.idle);
+        expect(h.controller.jobId, isEmpty);
+        expect(h.controller.completionBannerPending, isFalse);
+        expect(h.controller.bannerShownForJobId, isEmpty);
 
-      // A 의 리스너는 죽었다: A 문서 이벤트가 와도 B 세션은 흔들리지 않는다.
-      final calls = h.client.statusCalls;
-      await tester.pump(const Duration(seconds: 3));
-      expect(h.client.statusCalls, calls);
-      h.close();
-    });
+        // A 의 리스너는 죽었다: A 문서 이벤트가 와도 B 세션은 흔들리지 않는다.
+        final calls = h.client.statusCalls;
+        await tester.pump(const Duration(seconds: 3));
+        expect(h.client.statusCalls, calls);
+        h.close();
+      },
+    );
 
     testWidgets('uid change in the auth stream resets even while stopped', (
       tester,
@@ -656,9 +663,7 @@ void main() {
       h.close();
     });
 
-    testWidgets('dispose cancels every timer and subscription', (
-      tester,
-    ) async {
+    testWidgets('dispose cancels every timer and subscription', (tester) async {
       final h = _Harness(
         fallback: const Duration(seconds: 1),
         safety: const Duration(seconds: 1),

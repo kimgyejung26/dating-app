@@ -514,40 +514,41 @@ void main() {
       expect(token, isNot(contains('sourcePhotoRefs')));
     });
 
-    testWidgets('restart while queued keeps the lock and lets the user move on', (
-      tester,
-    ) async {
-      await _useMobileSurface(tester);
-      final client = _AdmissionClient(serverStatus: 'queued');
-      final session = _Session(client);
-      var advanced = false;
+    testWidgets(
+      'restart while queued keeps the lock and lets the user move on',
+      (tester) async {
+        await _useMobileSurface(tester);
+        final client = _AdmissionClient(serverStatus: 'queued');
+        final session = _Session(client);
+        var advanced = false;
 
-      await tester.pumpWidget(
-        _harness(
-          client: client,
-          controller: session.controller,
-          initialPhotos: [
-            AvatarSourcePhotoService.queuedSlotToken('avatar_job_resume_1'),
-          ],
-          initialSourceRefs: const [],
-          onNext: (_) => advanced = true,
-        ),
-      );
-      await _settle(tester);
+        await tester.pumpWidget(
+          _harness(
+            client: client,
+            controller: session.controller,
+            initialPhotos: [
+              AvatarSourcePhotoService.queuedSlotToken('avatar_job_resume_1'),
+            ],
+            initialSourceRefs: const [],
+            onNext: (_) => advanced = true,
+          ),
+        );
+        await _settle(tester);
 
-      // 서버 작업이 살아 있으므로 실패 배너도, 대기 화면도 없다.
-      expect(find.byType(AvatarGenerationErrorBanner), findsNothing);
-      expect(find.text('아바타 생성중...'), findsNothing);
-      expect(find.text(sourceLockedAvatarMessage), findsOneWidget);
-      expect(session.controller.phase, AvatarSessionPhase.generating);
+        // 서버 작업이 살아 있으므로 실패 배너도, 대기 화면도 없다.
+        expect(find.byType(AvatarGenerationErrorBanner), findsNothing);
+        expect(find.text('아바타 생성중...'), findsNothing);
+        expect(find.text(sourceLockedAvatarMessage), findsOneWidget);
+        expect(session.controller.phase, AvatarSessionPhase.generating);
 
-      await tester.tap(_nextButton());
-      await _settle(tester);
-      expect(advanced, isTrue);
-      expect(client.beginCalls, 0);
-      _drainExpectedImageLoadException(tester);
-      await session.finish(tester);
-    });
+        await tester.tap(_nextButton());
+        await _settle(tester);
+        expect(advanced, isTrue);
+        expect(client.beginCalls, 0);
+        _drainExpectedImageLoadException(tester);
+        await session.finish(tester);
+      },
+    );
 
     testWidgets('restart while needs_review shows review copy and no retry', (
       tester,

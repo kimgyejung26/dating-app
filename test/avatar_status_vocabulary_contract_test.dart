@@ -54,7 +54,10 @@ void main() {
       r'PRESERVED_AVATAR_STATUSES\s*=\s*new Set\(\[([^\]]+)\]',
     ).firstMatch(source);
     expect(preservedBlock, isNotNull);
-    final preserved = _matches(preservedBlock!.group(1)!, RegExp(r'"([a-z_]+)"'));
+    final preserved = _matches(
+      preservedBlock!.group(1)!,
+      RegExp(r'"([a-z_]+)"'),
+    );
     expect(preserved, containsAll(['approved', 'approval_copying']));
     for (final status in preserved) {
       expect(

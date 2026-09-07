@@ -53,7 +53,6 @@ class _CountingAvatarClient extends AvatarGenerationClient {
       duplicate: false,
     );
   }
-
 }
 
 Future<void> _useMobileSurface(WidgetTester tester) async {

@@ -46,44 +46,58 @@ const Set<String> _legacyCompletionCallers = {
 void main() {
   final root = _repoRoot();
 
-  test('save helper completes onboarding only through completeOnboarding()', () {
-    final source = _read(root, 'lib/services/onboarding_save_helper.dart');
-    final privateCalls = RegExp(
-      r'await _completeOnboarding\(uid\);',
-    ).allMatches(source).length;
-    expect(
-      privateCalls,
-      1,
-      reason: '_completeOnboarding must be reachable only from '
-          'OnboardingSaveHelper.completeOnboarding()',
-    );
-    expect(source, contains('static Future<void> completeOnboarding() async'));
-    expect(source, isNot(contains('saveIdealPersonalityAndComplete')));
-    expect(source, isNot(contains('saveIdealLifestyleAndComplete')));
-    // 건너뛰기는 skipped 플래그만 기록한다.
-    final skipBody = source.substring(source.indexOf('skipIdealType() async'));
-    final skipEnd = skipBody.indexOf('\n  }\n');
-    expect(
-      skipBody.substring(0, skipEnd),
-      isNot(contains('_completeOnboarding')),
-    );
-  });
+  test(
+    'save helper completes onboarding only through completeOnboarding()',
+    () {
+      final source = _read(root, 'lib/services/onboarding_save_helper.dart');
+      final privateCalls = RegExp(
+        r'await _completeOnboarding\(uid\);',
+      ).allMatches(source).length;
+      expect(
+        privateCalls,
+        1,
+        reason:
+            '_completeOnboarding must be reachable only from '
+            'OnboardingSaveHelper.completeOnboarding()',
+      );
+      expect(
+        source,
+        contains('static Future<void> completeOnboarding() async'),
+      );
+      expect(source, isNot(contains('saveIdealPersonalityAndComplete')));
+      expect(source, isNot(contains('saveIdealLifestyleAndComplete')));
+      // 건너뛰기는 skipped 플래그만 기록한다.
+      final skipBody = source.substring(
+        source.indexOf('skipIdealType() async'),
+      );
+      final skipEnd = skipBody.indexOf('\n  }\n');
+      expect(
+        skipBody.substring(0, skipEnd),
+        isNot(contains('_completeOnboarding')),
+      );
+    },
+  );
 
-  test('only the avatar select screen calls OnboardingSaveHelper.completeOnboarding', () {
-    final callers = <String>[];
-    for (final file in _dartFiles(Directory('${root.path}/lib'))) {
-      final text = file.readAsStringSync();
-      if (text.contains('OnboardingSaveHelper.completeOnboarding')) {
-        callers.add(
-          file.path
-              .replaceFirst(root.path, '')
-              .replaceAll('\\', '/')
-              .replaceFirst(RegExp(r'^/'), ''),
-        );
+  test(
+    'only the avatar select screen calls OnboardingSaveHelper.completeOnboarding',
+    () {
+      final callers = <String>[];
+      for (final file in _dartFiles(Directory('${root.path}/lib'))) {
+        final text = file.readAsStringSync();
+        if (text.contains('OnboardingSaveHelper.completeOnboarding')) {
+          callers.add(
+            file.path
+                .replaceFirst(root.path, '')
+                .replaceAll('\\', '/')
+                .replaceFirst(RegExp(r'^/'), ''),
+          );
+        }
       }
-    }
-    expect(callers, ['lib/features/onboarding/screens/avatar_select_screen.dart']);
-  });
+      expect(callers, [
+        'lib/features/onboarding/screens/avatar_select_screen.dart',
+      ]);
+    },
+  );
 
   test('no non-legacy client path calls UserService.completeOnboarding', () {
     final offenders = <String>[];
@@ -103,26 +117,29 @@ void main() {
     expect(offenders, isEmpty);
   });
 
-  test('ideal-type terminal screens route to avatar select, never to tutorial', () {
-    for (final relative in const [
-      'lib/features/onboarding/screens/ideal_type/ideal_type_screen.dart',
-      'lib/features/onboarding/screens/ideal_type/ideal_lifestyle_screen.dart',
-      'lib/features/onboarding/screens/ideal_type/ideal_personality_screen.dart',
-    ]) {
-      final source = _read(root, relative);
-      expect(
-        source,
-        isNot(contains('welcomeTutorial')),
-        reason: '$relative must not skip the avatar step',
-      );
-      expect(
-        source,
-        contains('RouteNames.onboardingAvatarSelect'),
-        reason: '$relative must hand off to the avatar select step',
-      );
-      expect(source, isNot(contains('completeOnboarding')));
-    }
-  });
+  test(
+    'ideal-type terminal screens route to avatar select, never to tutorial',
+    () {
+      for (final relative in const [
+        'lib/features/onboarding/screens/ideal_type/ideal_type_screen.dart',
+        'lib/features/onboarding/screens/ideal_type/ideal_lifestyle_screen.dart',
+        'lib/features/onboarding/screens/ideal_type/ideal_personality_screen.dart',
+      ]) {
+        final source = _read(root, relative);
+        expect(
+          source,
+          isNot(contains('welcomeTutorial')),
+          reason: '$relative must not skip the avatar step',
+        );
+        expect(
+          source,
+          contains('RouteNames.onboardingAvatarSelect'),
+          reason: '$relative must hand off to the avatar select step',
+        );
+        expect(source, isNot(contains('completeOnboarding')));
+      }
+    },
+  );
 
   test('avatar select screen completes only after a verified approval', () {
     final source = _read(
@@ -131,7 +148,10 @@ void main() {
     );
     final approveIndex = source.indexOf('_client.approveCandidate(');
     final verifyIndex = source.indexOf('!approval.isApproved', approveIndex);
-    final finishIndex = source.indexOf('await _finishOnboarding()', verifyIndex);
+    final finishIndex = source.indexOf(
+      'await _finishOnboarding()',
+      verifyIndex,
+    );
     expect(approveIndex, greaterThan(0));
     expect(verifyIndex, greaterThan(approveIndex));
     expect(finishIndex, greaterThan(verifyIndex));
