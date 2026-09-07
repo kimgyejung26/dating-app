@@ -16,7 +16,13 @@ from avatar_generation.avatar_prompt_contract import AVATAR_GENERAL_PROMPT_VERSI
 from avatar_generation.calibration_runner import CalibrationRunnerError
 from avatar_generation.calibration_recovery import execute_g004_calibration_recovery_request
 from avatar_generation.calibration_service import execute_g004_calibration_request
+from avatar_generation.model_adapters.azure_endpoint_config import (
+    ENV_ENDPOINT_IDS,
+    AzureEndpointConfigError,
+    load_azure_endpoint_configs,
+)
 from avatar_generation.model_adapters.azure_contracts import (
+    AzureConfigurationError,
     AZURE_GPT_IMAGE_2_MODEL_ID,
     AZURE_GPT_IMAGE_2_VERSION,
     AzureGptImage2Config,
@@ -77,9 +83,46 @@ def _qa_diagnostics_enabled() -> bool:
 
 
 
+def _azure_release_posture() -> Dict[str, Any]:
+    """Azure provider posture derived from the endpoint loader the router uses.
+
+    The legacy single-endpoint variables are only authoritative when
+    AZURE_OPENAI_ENDPOINT_IDS is unset; in multi-endpoint production every
+    endpoint (EP1..EPn) must be fully configured for providerConfigured=true.
+    Only booleans/counts are reported: never endpoint URLs or credentials.
+    """
+    legacy = AzureGptImage2Config.from_env(require_credentials=False).safe_dict()
+    multi = bool(os.environ.get(ENV_ENDPOINT_IDS, "").strip())
+    config_error: Any = None
+    try:
+        endpoints = [config.safe_dict() for config in load_azure_endpoint_configs()]
+    except (AzureEndpointConfigError, AzureConfigurationError, ValueError) as exc:
+        endpoints = []
+        config_error = str(exc) or exc.__class__.__name__
+    flags = (
+        "endpointConfigured",
+        "deploymentConfigured",
+        "apiVersionConfigured",
+        "credentialConfigured",
+    )
+    aggregate = {
+        flag: bool(endpoints) and all(bool(entry.get(flag)) for entry in endpoints)
+        for flag in flags
+    }
+    return {
+        **legacy,
+        **aggregate,
+        "routingMode": "multi_endpoint" if multi else "single_endpoint",
+        "configuredEndpointCount": len(endpoints),
+        "providerConfigured": bool(endpoints) and all(aggregate.values()),
+        "endpoints": endpoints,
+        "configError": config_error,
+    }
+
+
 def _release_posture() -> Dict[str, Any]:
     corridor = CorridorPolicy.from_env()
-    azure_config = AzureGptImage2Config.from_env(require_credentials=False)
+    azure_config = _azure_release_posture()
     return {
         "provider": "azure",
         "generationBackend": AZURE_GPT_IMAGE_2_MODEL_ID,
@@ -88,7 +131,7 @@ def _release_posture() -> Dict[str, Any]:
         "sourceInputMode": "storage_normalized_original_direct",
         "uploadNormalization": "existing_avatar_media_ingestion",
         "preGenerationTransform": "none",
-        "azureConfig": azure_config.safe_dict(),
+        "azureConfig": azure_config,
         "legacyGenerationPrerequisites": {
             "flux": False,
             "referencePreprocessing": False,

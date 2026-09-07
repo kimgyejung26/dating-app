@@ -2101,6 +2101,11 @@ def test_worker_reference_profile_and_readyz_release_posture_contract(monkeypatc
             "requestsPerMinute": 2,
             "qualityConfigured": False,
             "sizeConfigured": False,
+            "routingMode": "single_endpoint",
+            "configuredEndpointCount": 0,
+            "providerConfigured": False,
+            "endpoints": [],
+            "configError": "azure_endpoint_configuration_missing_azure_openai_endpoint",
         },
         "legacyGenerationPrerequisites": {
             "flux": False,
