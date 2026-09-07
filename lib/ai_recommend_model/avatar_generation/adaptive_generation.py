@@ -395,7 +395,7 @@ def _systemic_unavailable_reason(candidate: Mapping[str, Any]) -> str:
         return "qa_critical_model_unavailable"
     for reason in qa_doc.get("reviewReasons") or ():
         lowered = str(reason or "").strip().lower()
-        if lowered in {"model_unavailable", "qa_model_signal_review"}:
+        if lowered == "model_unavailable":
             return "qa_critical_model_unavailable"
         if lowered == "policy_unavailable" or lowered.endswith("policy_unavailable"):
             return "qa_policy_unavailable"

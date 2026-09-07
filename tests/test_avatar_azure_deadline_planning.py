@@ -47,7 +47,7 @@ def test_deadline_budget_is_configurable_and_invalid_values_fail_closed():
         deadline_budget_from_env({"AZURE_OPENAI_TIMEOUT_SECONDS": "not-a-number"})
 
 
-def test_worker_default_deadline_can_hold_four_call_safe_budget(monkeypatch):
+def test_worker_default_deadline_can_hold_production_four_call_budget(monkeypatch):
     for name in (
         "AVATAR_WORKER_MAX_REQUEST_SECONDS",
         "AVATAR_WORKER_MAX_JOB_SECONDS",
@@ -56,10 +56,18 @@ def test_worker_default_deadline_can_hold_four_call_safe_budget(monkeypatch):
         monkeypatch.delenv(name, raising=False)
 
     deadline = AvatarWorkerDeadline.from_env()
+    production_budget = deadline_budget_from_env(
+        {"AZURE_OPENAI_TIMEOUT_SECONDS": "240"}
+    )
 
-    assert deadline.max_request_seconds == 900
-    assert deadline.max_job_seconds == 900
-    assert deadline.remaining_seconds() >= AzureDeadlineBudget().worst_safe_job_seconds(4)
+    assert production_budget.worst_safe_job_seconds(4) == 1320.0
+    assert deadline.max_request_seconds == 1500
+    assert deadline.max_job_seconds == 1500
+    assert deadline.remaining_seconds() >= (
+        production_budget.worst_safe_job_seconds(4)
+        + deadline.soft_stop_margin_seconds
+    )
+    assert deadline.remaining_seconds() <= 1650
 
 
 def test_round_budget_defers_before_reservation_when_remaining_time_is_unsafe():
