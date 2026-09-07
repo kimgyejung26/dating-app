@@ -41,8 +41,12 @@ three-second banner is shown for that job:
 > 아바타 생성이 완료되었어요! 프로필 가입 마지막 화면에서 아바타 사진을 선택할 수 있어요
 
 The final onboarding step reads the job-scoped candidate set and requires the
-user to choose an avatar. A persisted `bannerShownForJobId` guard prevents the
+user to choose an avatar. A session-scoped `bannerShownForJobId` guard prevents the
 same completion from being announced repeatedly.
+
+Stopping or resetting the session invalidates pending status requests. A response
+from an earlier session cannot restore its job, candidates, or banner after an
+account switch.
 
 ## Time budget
 

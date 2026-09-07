@@ -134,6 +134,7 @@ class AvatarGenerationSessionController extends ChangeNotifier {
   bool _refreshRequestedWhileInFlight = false;
   String _lastSeenProfileKey = '';
   Future<void>? _startInFlight;
+  int _sessionGeneration = 0;
 
   String get uid => _uid;
   String get jobId => _jobId;
@@ -166,13 +167,13 @@ class AvatarGenerationSessionController extends ChangeNotifier {
     if (_disposed) return Future<void>.value();
     if (_started) return _startInFlight ?? Future<void>.value();
     _started = true;
-    return _startInFlight = _start();
+    return _startInFlight = _start(_sessionGeneration);
   }
 
-  Future<void> _start() async {
+  Future<void> _start(int generation) async {
     try {
       final uid = (await _resolveUid()) ?? '';
-      if (_disposed || !_started) return;
+      if (_disposed || !_started || generation != _sessionGeneration) return;
       if (_uid.isNotEmpty && uid != _uid) {
         // 다른 계정으로 다시 시작됐다. 이전 사용자의 job/배너를 넘기지 않는다.
         _log('avatar_session_user_changed');
@@ -188,7 +189,7 @@ class AvatarGenerationSessionController extends ChangeNotifier {
       await refresh();
       _syncPollTimer();
     } finally {
-      _startInFlight = null;
+      if (generation == _sessionGeneration) _startInFlight = null;
     }
   }
 
@@ -225,10 +226,10 @@ class AvatarGenerationSessionController extends ChangeNotifier {
       _refreshRequestedWhileInFlight = true;
       return inFlight;
     }
-    return _refreshInFlight = _runRefresh();
+    return _refreshInFlight = _runRefresh(_sessionGeneration);
   }
 
-  Future<void> _runRefresh() async {
+  Future<void> _runRefresh(int generation) async {
     try {
       AvatarGenerationStatusSnapshot? snapshot;
       try {
@@ -237,13 +238,15 @@ class AvatarGenerationSessionController extends ChangeNotifier {
         _log('avatar_session_status_failed', error: error);
         snapshot = null;
       }
-      if (_disposed) return;
+      if (_disposed || generation != _sessionGeneration) return;
       applySnapshot(snapshot);
     } finally {
-      _refreshInFlight = null;
-      if (_refreshRequestedWhileInFlight && !_disposed) {
-        _refreshRequestedWhileInFlight = false;
-        unawaited(refresh());
+      if (generation == _sessionGeneration) {
+        _refreshInFlight = null;
+        if (_refreshRequestedWhileInFlight && !_disposed) {
+          _refreshRequestedWhileInFlight = false;
+          unawaited(refresh());
+        }
       }
     }
   }
@@ -341,6 +344,9 @@ class AvatarGenerationSessionController extends ChangeNotifier {
   /// 구독 취소 Future 는 기다리지 않는다. 취소는 즉시 효력이 있고, 이미 완료된
   /// Future 를 기다리면 fake-async 환경에서 영원히 돌아오지 않는다.
   void stop() {
+    _sessionGeneration += 1;
+    _refreshInFlight = null;
+    _refreshRequestedWhileInFlight = false;
     _started = false;
     _startInFlight = null;
     _cancelPollTimer();

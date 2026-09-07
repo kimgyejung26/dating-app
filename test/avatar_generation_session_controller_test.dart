@@ -12,10 +12,13 @@ class _StatusClient extends AvatarGenerationClient {
   Map<String, dynamic>? snapshot;
   int statusCalls = 0;
   bool throwOnStatus = false;
+  Completer<AvatarGenerationStatusSnapshot?>? pendingStatus;
 
   @override
   Future<AvatarGenerationStatusSnapshot?> getCurrentGenerationStatus() async {
     statusCalls += 1;
+    final pending = pendingStatus;
+    if (pending != null) return pending.future;
     if (throwOnStatus) throw Exception('network');
     final current = snapshot;
     if (current == null) return null;
@@ -132,6 +135,38 @@ class _Harness {
 }
 
 void main() {
+  test('late status response cannot restore a reset user session', () async {
+    final client = _StatusClient();
+    final controller = AvatarGenerationSessionController(client: client);
+    addTearDown(controller.dispose);
+    client.pendingStatus = Completer<AvatarGenerationStatusSnapshot?>();
+    final oldRefresh = controller.refresh();
+    controller.reset();
+    client.pendingStatus!.complete(_previewSafe(jobId: 'avatar_job_old_user'));
+    await oldRefresh;
+    expect(controller.jobId, isEmpty);
+    expect(controller.completionBannerPending, isFalse);
+    expect(controller.phase, AvatarSessionPhase.idle);
+  });
+
+  test('new session refresh proceeds while old response is pending', () async {
+    final client = _StatusClient();
+    final controller = AvatarGenerationSessionController(client: client);
+    addTearDown(controller.dispose);
+    final oldResponse = Completer<AvatarGenerationStatusSnapshot?>();
+    client.pendingStatus = oldResponse;
+    final oldRefresh = controller.refresh();
+    controller.reset();
+    client.pendingStatus = null;
+    client.snapshot = _snap('queued', jobId: 'avatar_job_new_user');
+    await controller.refresh();
+    expect(controller.jobId, 'avatar_job_new_user');
+    oldResponse.complete(_previewSafe(jobId: 'avatar_job_old_user'));
+    await oldRefresh;
+    expect(controller.jobId, 'avatar_job_new_user');
+    expect(controller.phase, AvatarSessionPhase.generating);
+    expect(controller.completionBannerPending, isFalse);
+  });
   group('applySnapshot state machine', () {
     late AvatarGenerationSessionController controller;
 
