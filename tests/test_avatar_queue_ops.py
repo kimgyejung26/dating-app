@@ -518,8 +518,10 @@ def _install_preflight_fakes(
                 "task-invoker@seolleyeon-final.iam.gserviceaccount.com",
             ]
         if "tasks queues list" in joined:
+            assert "--location=asia-northeast3" in args
             return ["avatar-generation"]
         if "artifacts repositories list" in joined:
+            assert "--location=asia-southeast1" in args
             return ["seolleyeon-avatar-repo"]
         if "storage buckets list" in joined:
             return sorted(preflight.REQUIRED_BUCKETS)

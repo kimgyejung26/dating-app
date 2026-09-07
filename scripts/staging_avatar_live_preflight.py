@@ -311,7 +311,7 @@ def build_report(
                 "tasks",
                 "queues",
                 "list",
-                f"--location={artifact_registry_location}",
+                f"--location={location}",
                 f"--project={project}",
                 "--format=value(name)",
             ]
@@ -335,7 +335,7 @@ def build_report(
                 "artifacts",
                 "repositories",
                 "list",
-                f"--location={location}",
+                f"--location={artifact_registry_location}",
                 f"--project={project}",
                 "--format=value(name)",
             ]
