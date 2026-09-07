@@ -58,9 +58,9 @@ service cloud.firestore {
     // minted by completePrimaryStudentEmailAuth carry appSession.
     function isCanonicalAppSession() {
       return request.auth != null &&
-          request.auth.token.playReviewer != true &&
-          (request.auth.token.appSession == true ||
-            request.auth.token.kakaoUserId != null);
+          request.auth.token.get('playReviewer', false) != true &&
+          (request.auth.token.get('appSession', false) == true ||
+            request.auth.token.get('kakaoUserId', null) != null);
     }
 
     // Review traffic is an isolated data plane. Existing production documents
@@ -68,9 +68,9 @@ service cloud.firestore {
     function callerDataPartition() {
       return request.auth != null &&
           request.auth.uid == 'play-reviewer-v1' &&
-          request.auth.token.appSession == true &&
-          request.auth.token.playReviewer == true &&
-          request.auth.token.dataPartition == 'play_review'
+          request.auth.token.get('appSession', false) == true &&
+          request.auth.token.get('playReviewer', false) == true &&
+          request.auth.token.get('dataPartition', 'production') == 'play_review'
         ? 'play_review'
         : 'production';
     }
@@ -87,9 +87,9 @@ service cloud.firestore {
     function isPlayReviewSession() {
       return request.auth != null &&
           request.auth.uid == 'play-reviewer-v1' &&
-          request.auth.token.appSession == true &&
-          request.auth.token.playReviewer == true &&
-          request.auth.token.dataPartition == 'play_review';
+          request.auth.token.get('appSession', false) == true &&
+          request.auth.token.get('playReviewer', false) == true &&
+          request.auth.token.get('dataPartition', 'production') == 'play_review';
     }
 
     function reviewAuthorityFieldsUnchanged() {

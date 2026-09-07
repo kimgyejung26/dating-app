@@ -42,6 +42,21 @@ function assertContains(description: string, expected: string): void {
   );
 }
 
+test("optional session claims use fail-closed defaults", () => {
+  for (const claim of [
+    "playReviewer",
+    "appSession",
+    "kakaoUserId",
+    "dataPartition",
+  ]) {
+    assert.doesNotMatch(
+      rules,
+      new RegExp(`request\\.auth\\.token\\.${claim}\\b`),
+      `${claim} is optional and must be read with token.get(..., default)`,
+    );
+  }
+});
+
 test("owner private collections and app feedback rules fail closed", () => {
   assertContains(
     "device tokens must be owner-scoped with token/doc binding",
@@ -205,7 +220,7 @@ test("matching and recommendation rules are participant or owner scoped", () => 
 test("canonical app session gates the interactive surfaces (auth re-architecture)", () => {
   assertContains(
     "isCanonicalAppSession helper must accept appSession or legacy kakaoUserId claims only",
-    "function isCanonicalAppSession() { return request.auth != null && request.auth.token.playReviewer != true && (request.auth.token.appSession == true || request.auth.token.kakaoUserId != null); }"
+    "function isCanonicalAppSession() { return request.auth != null && request.auth.token.get('playReviewer', false) != true && (request.auth.token.get('appSession', false) == true || request.auth.token.get('kakaoUserId', null) != null); }"
   );
   assertContains(
     "publicProfiles get must require a canonical app session",
@@ -226,8 +241,8 @@ test("canonical app session gates the interactive surfaces (auth re-architecture
     "// 1:1 방은 unlockDirectChat callable이 하트 차감과 함께 생성한다. // 시즌/블라인드 미팅 방도 각 서버 트랜잭션의 소유다. allow create: if false;"
   );
   assertContains(
-    "bamboo post create must require a canonical app session",
-    "allow create: if isCanonicalAppSession() && request.resource.data.authorId == request.auth.uid && request.resource.data.postId is string"
+    "bamboo post create must require a canonical or isolated Play Review session",
+    "allow create: if (isCanonicalAppSession() || isPlayReviewSession()) && request.resource.data.authorId == request.auth.uid && request.resource.data.postId is string"
   );
 });
 

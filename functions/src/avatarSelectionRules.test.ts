@@ -72,7 +72,7 @@ test("the client can never forge the generation lock on users/{uid}", () => {
   assertContains(
     compactRules,
     "every users update must pass the onboarding avatar-field guard",
-    "allow update: if onboardingAvatarPhotoFieldsUnchanged() && (",
+    "allow update: if onboardingAvatarPhotoFieldsUnchanged() && reviewAuthorityFieldsUnchanged() && (",
   );
 });
 
