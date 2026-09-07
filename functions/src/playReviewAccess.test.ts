@@ -101,5 +101,7 @@ test("review session reset and seed use only the isolated Bamboo roots", () => {
     assert.match(playReviewSource, new RegExp(collection));
   }
   assert.match(playReviewSource, /resetReviewBambooArtifacts\(firestore\)/);
+  assert.match(playReviewSource, /resetReviewDirectChatHeartTransactions\(firestore\)/);
+  assert.match(playReviewSource, /collection\("heartTransactions"\)/);
   assert.match(playReviewSource, /dataPartition: PLAY_REVIEW_PARTITION/);
 });

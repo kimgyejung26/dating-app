@@ -56,6 +56,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   bool _isLoading = true;
   bool _isSubmittingComment = false;
   bool _isPostLiked = false;
+  bool _didMutate = false;
 
   String? _currentUserId;
   String? _replyTargetCommentId;
@@ -194,6 +195,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         postId: previousPost.postId,
         userId: _currentUserId!,
       );
+      _didMutate = true;
     } catch (e) {
       if (!mounted) return;
 
@@ -253,6 +255,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         content: text,
         parentCommentId: _replyTargetCommentId,
       );
+      _didMutate = true;
 
       _commentController.clear();
 
@@ -410,90 +413,96 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     final bottomSafe = MediaQuery.of(context).padding.bottom;
     final dark = Theme.of(context).brightness == Brightness.dark;
 
-    return Scaffold(
-      backgroundColor: dark ? AppColorsDark.background : Colors.white,
-      body: Stack(
-        children: [
-          const _BackgroundDecoration(),
-          SafeArea(
-            bottom: false,
-            child: Column(
-              children: [
-                _Header(onBack: () => Navigator.of(context).pop()),
-                Expanded(
-                  child: _isLoading
-                      ? const Center(child: CupertinoActivityIndicator())
-                      : _post == null
-                      ? const Center(
-                          child: Text(
-                            '게시글을 찾을 수 없어요',
-                            style: TextStyle(
-                              fontFamily: 'NanumSquareRound',
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: _AppColors.textMain,
-                            ),
-                          ),
-                        )
-                      : RefreshIndicator.adaptive(
-                          onRefresh: _refreshDetail,
-                          child: ListView(
-                            controller: _scrollController,
-                            physics: const BouncingScrollPhysics(
-                              parent: AlwaysScrollableScrollPhysics(),
-                            ),
-                            padding: EdgeInsets.fromLTRB(
-                              16,
-                              12,
-                              16,
-                              bottomInset + bottomSafe + 120,
-                            ),
-                            children: [
-                              _DetailPostCard(
-                                post: _post!,
-                                isOwner: isCommunityPostOwner(
-                                  currentUserId: _currentUserId,
-                                  authorId: _post!.authorId,
-                                ),
-                                onDelete: _deletePost,
-                                categoryColor: _getCategoryColor(
-                                  _post!.category,
-                                ),
-                                categoryTextColor: _getCategoryTextColor(
-                                  _post!.category,
-                                ),
-                                isLiked: _isPostLiked,
-                                onLikeTap: _togglePostLike,
-                                timeAgo: _timeAgo(_post!.createdAt),
+    return PopScope<bool>(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) Navigator.of(context).pop(_didMutate);
+      },
+      child: Scaffold(
+        backgroundColor: dark ? AppColorsDark.background : Colors.white,
+        body: Stack(
+          children: [
+            const _BackgroundDecoration(),
+            SafeArea(
+              bottom: false,
+              child: Column(
+                children: [
+                  _Header(onBack: () => Navigator.of(context).pop(_didMutate)),
+                  Expanded(
+                    child: _isLoading
+                        ? const Center(child: CupertinoActivityIndicator())
+                        : _post == null
+                        ? const Center(
+                            child: Text(
+                              '게시글을 찾을 수 없어요',
+                              style: TextStyle(
+                                fontFamily: 'NanumSquareRound',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: _AppColors.textMain,
                               ),
-                              const SizedBox(height: 18),
-                              _CommentHeader(count: _comments.length),
-                              const SizedBox(height: 12),
-                              if (_comments.isEmpty)
-                                const _EmptyCommentState()
-                              else
-                                ..._buildCommentWidgets(),
-                            ],
+                            ),
+                          )
+                        : RefreshIndicator.adaptive(
+                            onRefresh: _refreshDetail,
+                            child: ListView(
+                              controller: _scrollController,
+                              physics: const BouncingScrollPhysics(
+                                parent: AlwaysScrollableScrollPhysics(),
+                              ),
+                              padding: EdgeInsets.fromLTRB(
+                                16,
+                                12,
+                                16,
+                                bottomInset + bottomSafe + 120,
+                              ),
+                              children: [
+                                _DetailPostCard(
+                                  post: _post!,
+                                  isOwner: isCommunityPostOwner(
+                                    currentUserId: _currentUserId,
+                                    authorId: _post!.authorId,
+                                  ),
+                                  onDelete: _deletePost,
+                                  categoryColor: _getCategoryColor(
+                                    _post!.category,
+                                  ),
+                                  categoryTextColor: _getCategoryTextColor(
+                                    _post!.category,
+                                  ),
+                                  isLiked: _isPostLiked,
+                                  onLikeTap: _togglePostLike,
+                                  timeAgo: _timeAgo(_post!.createdAt),
+                                ),
+                                const SizedBox(height: 18),
+                                _CommentHeader(count: _comments.length),
+                                const SizedBox(height: 12),
+                                if (_comments.isEmpty)
+                                  const _EmptyCommentState()
+                                else
+                                  ..._buildCommentWidgets(),
+                              ],
+                            ),
                           ),
-                        ),
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
-          ),
 
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: _CommentInputBar(
-              controller: _commentController,
-              isSubmitting: _isSubmittingComment,
-              replyPreview: _replyTargetPreview,
-              onCancelReply: _cancelReply,
-              onSubmit: _submitComment,
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: _CommentInputBar(
+                controller: _commentController,
+                isSubmitting: _isSubmittingComment,
+                replyPreview: _replyTargetPreview,
+                onCancelReply: _cancelReply,
+                onSubmit: _submitComment,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

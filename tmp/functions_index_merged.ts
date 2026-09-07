@@ -101,7 +101,6 @@ import {
 } from "./avatarSourceRetention";
 import { createAvatarGenerationStateSyncTrigger } from "./avatarGenerationStateSync";
 import { createBeginAvatarGenerationFromOnboardingPhotosFunction } from "./avatarSourceSetAdmission";
-import { createPrewarmAvatarWorkerFunction } from "./avatarWarmup";
 import { createReplaceAvatarGenerationFunction } from "./avatarGenerationRecovery";
 import { createAvatarClipAfterSelectionTrigger } from "./avatarClipAfterSelection";
 import { isSafePublicAvatarUrl } from "./publicMediaUrlPolicy";
@@ -1971,10 +1970,9 @@ export const unlockDirectChat = onCall(withAppCheck(), async (request) => {
   const partnerProfile = buildFriendProfileSnapshot(partnerId, partnerData);
 
   return db.runTransaction(async (transaction) => {
-    const [roomSnap, userSnap, spendSnap] = await Promise.all([
+    const [roomSnap, userSnap] = await Promise.all([
       transaction.get(roomRef),
       transaction.get(userRef),
-      transaction.get(spendRef),
     ]);
     if (roomSnap.exists) {
       const participantIds = normalizeStringList(roomSnap.get("participantIds"));
@@ -2023,32 +2021,14 @@ export const unlockDirectChat = onCall(withAppCheck(), async (request) => {
       lastMessage: "",
       lastMessageAt: null,
     });
-    const spendData = {
+    transaction.create(spendRef, {
       uid: user.userId,
       feature: "direct_chat",
       resourceId: roomId,
       amount,
       heartBalanceAfter: heartBalance,
       createdAt: FieldValue.serverTimestamp(),
-    };
-    if (spendSnap.exists) {
-      const existingSpend = (spendSnap.data() ?? {}) as Record<string, unknown>;
-      // A review-session reset from an older build could delete the room but
-      // leave its deterministic ledger record.  Recover that narrow,
-      // review-only case while preserving the normal account invariant that a
-      // duplicate payment record is never overwritten.
-      if (
-        !reviewFixtureDirectChat ||
-        existingSpend.uid !== user.userId ||
-        existingSpend.feature !== "direct_chat" ||
-        existingSpend.resourceId !== roomId
-      ) {
-        throw new HttpsError("internal", "채팅 결제 기록이 올바르지 않아요.");
-      }
-      transaction.set(spendRef, spendData);
-    } else {
-      transaction.create(spendRef, spendData);
-    }
+    });
     return { roomId, charged: true, heartBalance };
   });
 });
@@ -2090,13 +2070,6 @@ export const onAvatarClipAfterSelection =
 
 export const getCurrentAvatarGenerationStatus =
   createGetCurrentAvatarGenerationStatusFunction(db, resolveAuthedAppUser);
-
-// Best-effort worker pre-warm fired when the photo upload screen opens, so the
-// first generation does not pay instance start + QA model load. Same Auth /
-// App Check / canonical app-user prelude as the generation callables.
-export const prewarmAvatarWorker = createPrewarmAvatarWorkerFunction(
-  resolveAuthedAppUser,
-);
 
 export const retryCurrentAvatarGeneration =
   createRetryCurrentAvatarGenerationFunction(db, resolveAuthedAppUser);
