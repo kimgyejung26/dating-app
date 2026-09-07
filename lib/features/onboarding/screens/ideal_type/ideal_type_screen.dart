@@ -139,10 +139,9 @@ class _IdealTypeScreenState extends State<IdealTypeScreen> {
     setState(() => _isSkipping = true);
     await OnboardingSaveHelper.skipIdealType();
     if (!mounted) return;
-    Navigator.of(
-      context,
-      rootNavigator: true,
-    ).pushReplacementNamed(RouteNames.welcomeTutorial);
+    // 온보딩 완료는 아바타 선택(마지막) 화면이 승인 뒤에 기록한다.
+    setState(() => _isSkipping = false);
+    Navigator.of(context).pushNamed(RouteNames.onboardingAvatarSelect);
   }
 
   void _onHeightTap() {

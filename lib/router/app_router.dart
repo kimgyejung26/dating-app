@@ -33,6 +33,7 @@ import '../features/onboarding/screens/ideal_type/ideal_mbti_screen.dart';
 import '../features/onboarding/screens/ideal_type/ideal_department_screen.dart';
 import '../features/onboarding/screens/ideal_type/ideal_personality_screen.dart';
 import '../features/onboarding/screens/ideal_type/ideal_lifestyle_screen.dart';
+import '../features/onboarding/screens/avatar_select_screen.dart';
 
 // Tutorial
 import '../features/tutorial/screens/welcome_tutorial_screen.dart';
@@ -201,6 +202,8 @@ class AppRouter {
         return _cupertino(const IdealPersonalityScreen());
       case RouteNames.onboardingIdealLifestyle:
         return _cupertino(const IdealLifestyleScreen());
+      case RouteNames.onboardingAvatarSelect:
+        return _cupertino(const AvatarSelectScreen());
       case RouteNames.onboardingInterests:
         return _cupertino(const InterestsScreen());
 

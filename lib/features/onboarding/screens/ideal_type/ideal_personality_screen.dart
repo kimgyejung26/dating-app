@@ -99,14 +99,12 @@ class _IdealPersonalityScreenState extends State<IdealPersonalityScreen> {
 
   Future<void> _onSavePressed() async {
     HapticFeedback.mediumImpact();
-    await OnboardingSaveHelper.saveIdealPersonalityAndComplete(
+    await OnboardingSaveHelper.saveIdealPersonalityFinal(
       _selectedKeywords.toList(),
     );
     if (!mounted) return;
-    Navigator.of(
-      context,
-      rootNavigator: true,
-    ).pushReplacementNamed(RouteNames.welcomeTutorial);
+    // 온보딩 완료는 아바타 선택(마지막) 화면이 승인 뒤에 기록한다.
+    Navigator.of(context).pushNamed(RouteNames.onboardingAvatarSelect);
   }
 
   Future<void> _skipToTutorial() async {
@@ -115,10 +113,8 @@ class _IdealPersonalityScreenState extends State<IdealPersonalityScreen> {
     setState(() => _isSkipping = true);
     await OnboardingSaveHelper.skipIdealType();
     if (!mounted) return;
-    Navigator.of(
-      context,
-      rootNavigator: true,
-    ).pushReplacementNamed(RouteNames.welcomeTutorial);
+    setState(() => _isSkipping = false);
+    Navigator.of(context).pushNamed(RouteNames.onboardingAvatarSelect);
   }
 
   @override

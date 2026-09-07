@@ -46,6 +46,44 @@ class RouteNames {
   static const String onboardingIdealLifestyle = '/onboarding/ideal/lifestyle';
   static const String onboardingInterests = '/onboarding/interests';
 
+  /// 온보딩 마지막 단계. 생성이 끝났으면 아바타 후보를 고르고, 아직이면 여기서
+  /// 기다린다. 승인 후에만 `completeOnboarding` 이 호출된다.
+  static const String onboardingAvatarSelect = '/onboarding/avatar-select';
+
+  /// 신규 가입 온보딩을 구성하는 canonical 라우트 집합.
+  ///
+  /// 아바타 완료 배너의 노출 조건과 세션 컨트롤러의 시작/정지가 이 집합을 본다.
+  /// 문자열 prefix 로 판정하면 `/onboarding/` 아래에 있지만 온보딩이 아닌 보수
+  /// 라우트([campusLifeZoneRepair])가 새므로 명시적으로 나열한다.
+  static const Set<String> onboardingStepRoutes = <String>{
+    onboardingBasicInfo,
+    onboardingInterestsSelection,
+    onboardingLifestyle,
+    onboardingMajor,
+    onboardingDepartment,
+    onboardingPhoto,
+    onboardingSelfIntro,
+    onboardingProfileQa,
+    onboardingKeywords,
+    onboardingIdealType,
+    onboardingHeightSelection,
+    onboardingIdealHeightRange,
+    onboardingIdealAge,
+    onboardingIdealHeight,
+    onboardingIdealMbti,
+    onboardingIdealDepartment,
+    onboardingIdealPersonality,
+    onboardingIdealLifestyle,
+    onboardingInterests,
+    onboardingAvatarSelect,
+  };
+
+  /// 라우트가 신규 가입 온보딩 구간에 속하는지.
+  static bool isOnboardingRoute(String? name) {
+    if (name == null) return false;
+    return onboardingStepRoutes.contains(name);
+  }
+
   // Tutorial
   static const String tutorial = '/tutorial';
   static const String welcomeTutorial = '/tutorial/welcome';

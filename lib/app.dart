@@ -12,6 +12,9 @@ import 'providers/auth_provider.dart';
 import 'providers/theme_provider.dart';
 import 'features/community/providers/community_provider.dart';
 import 'features/event/meeting_icebreaker/services/meeting_icebreaker_deep_link_handler.dart';
+import 'features/onboarding/services/avatar_generation_session_controller.dart';
+import 'features/onboarding/widgets/avatar_ready_banner_overlay.dart';
+import 'services/current_route_observer.dart';
 import 'shared/widgets/app_compatibility_gate.dart';
 import 'shared/widgets/app_privacy_splash_overlay.dart';
 
@@ -29,6 +32,9 @@ class SeolleyeonApp extends StatefulWidget {
 }
 
 class _SeolleyeonAppState extends State<SeolleyeonApp> {
+  /// 아바타 완료 배너의 "지금 온보딩 구간인가" 판단에 쓰는 라우트 관측자.
+  final CurrentRouteObserver _routeObserver = CurrentRouteObserver();
+
   @override
   void initState() {
     super.initState();
@@ -52,6 +58,11 @@ class _SeolleyeonAppState extends State<SeolleyeonApp> {
           create: (ctx) =>
               CommunityProvider(authProvider: ctx.read<AuthProvider>()),
         ),
+        // 온보딩 전체에 걸쳐 아바타 생성을 지켜보는 세션. 리스너는 온보딩 라우트에
+        // 들어올 때 오버레이가 시작하고, 벗어나면 멈춘다.
+        ChangeNotifierProvider<AvatarGenerationSessionController>(
+          create: (_) => AvatarGenerationSessionController(),
+        ),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) {
@@ -64,6 +75,7 @@ class _SeolleyeonAppState extends State<SeolleyeonApp> {
             darkTheme: _buildDarkTheme(),
             initialRoute: RouteNames.splash,
             onGenerateRoute: AppRouter.generateRoute,
+            navigatorObservers: [_routeObserver],
             builder: (context, child) {
               final theme = Theme.of(context);
               final fallback =
@@ -77,7 +89,14 @@ class _SeolleyeonAppState extends State<SeolleyeonApp> {
                 child: AppPrivacySplashOverlay(
                   child: DefaultTextStyle(
                     style: fallback.copyWith(decoration: TextDecoration.none),
-                    child: child ?? const SizedBox.shrink(),
+                    // 아바타 완료 배너: Navigator 위라 온보딩 화면 전환에
+                    // 살아남고, 화면별 Scaffold 에 묶이지 않는다.
+                    child: AvatarReadyBannerOverlay(
+                      controller: context
+                          .read<AvatarGenerationSessionController>(),
+                      currentRouteName: _routeObserver.currentRouteName,
+                      child: child ?? const SizedBox.shrink(),
+                    ),
                   ),
                 ),
               );
