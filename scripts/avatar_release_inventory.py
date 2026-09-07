@@ -18,7 +18,10 @@ from typing import Any, Callable, Mapping, Optional, Sequence
 
 SCHEMA_VERSION = "avatar_release_inventory_v1"
 MANIFEST_VERSION = "avatar_release_manifest_v1"
-ALLOWED_PROJECTS = {"seolleyeon-final", "seolleyeon-festival"}
+# Authoritative production avatar topology. Configuration-driven: the manifest
+# declares its own allowedProjects, and this set bounds which projects are approved.
+# The Festival bridge project has been retired; production is seolleyeon-final only.
+ALLOWED_PROJECTS = {"seolleyeon-final"}
 FORBIDDEN_PROJECTS = {"", "default", "seolleyeon"}
 WRITE_VERBS = {"apply", "create", "delete", "deploy", "set-iam-policy", "update"}
 DEFAULT_COMMAND_TIMEOUT_SECONDS = 30
@@ -110,7 +113,7 @@ def build_release_report(
 def _validate_project(project: str) -> str:
     normalized = str(project or "").strip()
     if normalized in FORBIDDEN_PROJECTS or normalized not in ALLOWED_PROJECTS:
-        raise ValueError("refusing project; pass explicit seolleyeon-final or seolleyeon-festival")
+        raise ValueError("refusing project; pass an approved production avatar project (seolleyeon-final)")
     return normalized
 
 
@@ -121,8 +124,11 @@ def _load_manifest(path: Path) -> dict[str, Any]:
     projects = data.get("projects")
     if not isinstance(projects, Mapping):
         raise ValueError("manifest must define projects")
-    if set(projects) != ALLOWED_PROJECTS:
-        raise ValueError("manifest must define exactly seolleyeon-final and seolleyeon-festival")
+    declared = set(data.get("allowedProjects", []))
+    if not declared or (declared & FORBIDDEN_PROJECTS) or not (declared <= ALLOWED_PROJECTS):
+        raise ValueError("manifest allowedProjects must be within the approved production topology")
+    if set(projects) != declared:
+        raise ValueError("manifest projects must match allowedProjects")
     return data
 
 
@@ -529,12 +535,6 @@ def _normalize_inventory(
             key: "placeholder-present" if value else "missing"
             for key, value in expected.get("evidencePlaceholders", {}).items()
         },
-        "temporaryBridge": {
-            "status": str(expected.get("temporaryBridge", {}).get("status", "unknown")),
-            "expectedDirectFestivalWorker": bool(
-                expected.get("temporaryBridge", {}).get("expectedDirectFestivalWorker", False)
-            ),
-        },
     }
 
 
@@ -815,9 +815,6 @@ def _build_drift(expected: Mapping[str, Any], inventory: Mapping[str, Any]) -> l
             if actual.get(field) != expected_bucket.get(field):
                 drift.append(_drift("error", f"{prefix}.{field}", "actual value differs from manifest"))
 
-    bridge = inventory.get("temporaryBridge", {})
-    if bridge.get("status") == "temporary":
-        drift.append(_drift("warning", "temporaryBridge.status", "temporary bridge remains active"))
     return drift
 
 
@@ -847,7 +844,7 @@ def _parse_command_timeout(value: str) -> float:
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
     parser = argparse.ArgumentParser(description="Build read-only avatar release inventory drift report.")
-    parser.add_argument("--project", required=True, help="Only seolleyeon-final or seolleyeon-festival.")
+    parser.add_argument("--project", required=True, help="Only the approved production avatar project (seolleyeon-final).")
     parser.add_argument(
         "--manifest",
         type=Path,

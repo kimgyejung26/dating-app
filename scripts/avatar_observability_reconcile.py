@@ -15,7 +15,9 @@ from pathlib import Path
 from typing import Any, Callable, Mapping, Optional, Sequence
 
 
-ALLOWED_PROJECTS = {"seolleyeon-final", "seolleyeon-festival"}
+# Authoritative production avatar topology for observability reconciliation.
+# Festival bridge project retired; production is seolleyeon-final only.
+ALLOWED_PROJECTS = {"seolleyeon-final"}
 FORBIDDEN_PROJECTS = {"", "default", "seolleyeon"}
 SCHEMA_VERSION = "avatar_observability_reconcile_v1"
 LOW_CARDINALITY_LABELS = {"service", "event_name", "status", "severity", "component", "signal"}
@@ -420,7 +422,7 @@ def _validate_project(project: str) -> str:
     normalized = str(project or "").strip()
     if normalized in FORBIDDEN_PROJECTS or normalized not in ALLOWED_PROJECTS:
         raise ValueError(
-            "refusing project; pass explicit seolleyeon-final or seolleyeon-festival"
+            "refusing project; pass an approved production avatar project (seolleyeon-final)"
         )
     return normalized
 
@@ -663,7 +665,7 @@ def _cleanup_json_file(command: Sequence[str]) -> bool:
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
     parser = argparse.ArgumentParser(description="Reconcile avatar observability resources.")
-    parser.add_argument("--project", required=True, help="Only seolleyeon-final or seolleyeon-festival.")
+    parser.add_argument("--project", required=True, help="Only the approved production avatar project (seolleyeon-final).")
     parser.add_argument("--config", type=Path, default=Path("config/avatar-ops/avatar-observability.json"))
     parser.add_argument("--output", type=Path, help="Optional sanitized JSON report path.")
     parser.add_argument("--verify", action="store_true", help="Describe remote resources without mutation.")

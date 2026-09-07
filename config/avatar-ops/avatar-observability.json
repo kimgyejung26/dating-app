@@ -160,7 +160,7 @@
     },
     {
       "name": "avatar_bridge_auth_failure",
-      "description": "Festival bridge auth failure.",
+      "description": "Avatar worker bridge auth failure.",
       "filter": "jsonPayload.service=\"avatar-generation\" AND jsonPayload.attributes.signal=\"bridge_auth_failure\"",
       "labels": {
         "service": "jsonPayload.service",
@@ -173,7 +173,7 @@
     },
     {
       "name": "avatar_bridge_isolation_violation",
-      "description": "Festival bridge tenant or storage isolation violation.",
+      "description": "Avatar worker bridge tenant or storage isolation violation.",
       "filter": "jsonPayload.service=\"avatar-generation\" AND jsonPayload.attributes.signal=\"bridge_isolation_violation\"",
       "labels": {
         "service": "jsonPayload.service",

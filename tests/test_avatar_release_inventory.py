@@ -123,12 +123,14 @@ class FakeRunner:
         return "{}"
 
 
-def test_manifest_versions_release_expectations_for_both_allowed_projects():
+def test_manifest_versions_release_expectations_for_seolleyeon_final_only():
     data = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
 
     assert data["schemaVersion"] == "avatar_release_manifest_v1"
-    assert set(data["projects"]) == {"seolleyeon-final", "seolleyeon-festival"}
+    assert set(data["allowedProjects"]) == {"seolleyeon-final"}
+    assert set(data["projects"]) == {"seolleyeon-final"}
     assert "seolleyeon" not in data["projects"]
+    assert "seolleyeon-festival" not in data["projects"]
 
     for project in data["projects"].values():
         assert project["selectedFunctions"]
@@ -142,10 +144,10 @@ def test_manifest_versions_release_expectations_for_both_allowed_projects():
         assert project["evidencePlaceholders"]["appCheck"]
         assert project["evidencePlaceholders"]["rules"]
         assert project["evidencePlaceholders"]["hosting"]
-        assert project["temporaryBridge"]["status"] == "temporary"
+        assert "temporaryBridge" not in project
 
 
-@pytest.mark.parametrize("project", ["", "default", "seolleyeon", "other-project"])
+@pytest.mark.parametrize("project", ["", "default", "seolleyeon", "seolleyeon-festival", "other-project"])
 def test_refuses_empty_default_source_and_unapproved_projects(project):
     mod = load_inventory()
 
@@ -153,7 +155,7 @@ def test_refuses_empty_default_source_and_unapproved_projects(project):
         mod.build_release_report(project=project, manifest_path=MANIFEST_PATH, fixture_path=None)
 
 
-def test_fixture_reports_known_festival_drift_without_sensitive_values(tmp_path):
+def test_fixture_reports_drift_without_sensitive_values(tmp_path):
     mod = load_inventory()
     fixture = {
         "functions": [],
@@ -179,11 +181,11 @@ def test_fixture_reports_known_festival_drift_without_sensitive_values(tmp_path)
             "identity": "person@example.com",
         },
     }
-    fixture_path = tmp_path / "festival.json"
+    fixture_path = tmp_path / "inventory.json"
     fixture_path.write_text(json.dumps(fixture), encoding="utf-8")
 
     report = mod.build_release_report(
-        project="seolleyeon-festival",
+        project="seolleyeon-final",
         manifest_path=MANIFEST_PATH,
         fixture_path=fixture_path,
     )
@@ -194,7 +196,6 @@ def test_fixture_reports_known_festival_drift_without_sensitive_values(tmp_path)
     assert report["summary"]["actualSelectedFunctions"] == 0
     assert {"field": "selectedFunctions.count", "severity": "error"}.items() <= report["drift"][0].items()
     assert any(item["field"] == "cloudRunServices.seolleyeon-avatar-worker.present" for item in report["drift"])
-    assert any(item["field"] == "temporaryBridge.status" and item["severity"] == "warning" for item in report["drift"])
     assert "X-Goog-Signature" not in encoded
     assert "ya29" not in encoded
     assert "person@example.com" not in encoded

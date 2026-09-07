@@ -191,7 +191,7 @@ def test_default_plan_causes_zero_mutations_and_runs_no_gcloud():
     assert all(op["action"] in {"create", "update"} for op in report["plannedOperations"])
 
 
-@pytest.mark.parametrize("project", ["", "default", "seolleyeon", "my-staging"])
+@pytest.mark.parametrize("project", ["", "default", "seolleyeon", "seolleyeon-festival", "my-staging"])
 def test_forbidden_or_unapproved_project_is_hard_rejected(project):
     mod = load_reconciler()
 
@@ -209,13 +209,13 @@ def test_verify_returns_sanitized_resource_existence_and_drift_without_mutating(
     mod = load_reconciler()
     plan = mod.reconcile(
         config_path=CONFIG_PATH,
-        project="seolleyeon-festival",
+        project="seolleyeon-final",
         mode="plan",
     )
     operations = {operation["name"]: operation for operation in plan["plannedOperations"]}
     worker_remote = json.loads(json.dumps(operations["avatar_worker_unhealthy"]["body"]))
     worker_remote["name"] = (
-        "projects/seolleyeon-festival/metrics/avatar_worker_unhealthy"
+        "projects/seolleyeon-final/metrics/avatar_worker_unhealthy"
     )
     failed_job_remote = json.loads(json.dumps(operations["avatar_job_failed"]["body"]))
     failed_job_remote["filter"] = "REMOTE_FILTER_SHOULD_NOT_LEAK"
@@ -228,7 +228,7 @@ def test_verify_returns_sanitized_resource_existence_and_drift_without_mutating(
 
     report = mod.reconcile(
         config_path=CONFIG_PATH,
-        project="seolleyeon-festival",
+        project="seolleyeon-final",
         mode="verify",
         notification_channels=[],
         runner=runner,
@@ -377,9 +377,6 @@ def test_filters_use_low_cardinality_labels_and_canonical_events_only():
     for metric in data["logMetrics"]:
         labels = metric.get("labels", {})
         assert set(labels) <= {"service", "event_name", "status", "severity", "component", "signal"}
-
-
-
 
 
 
