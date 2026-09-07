@@ -11,6 +11,8 @@ from avatar_generation.preview_policy import (
     is_needs_review,
     is_preview_eligible,
     is_soft_pass,
+    is_soft_review,
+    SOFT_REVIEW_TIER,
 )
 
 
@@ -105,10 +107,11 @@ def rerank_preview_candidates(
     active_policy = policy or AdaptiveGenerationPolicy.from_env()
     active_provider_config = provider_config or RerankProviderConfig.from_env()
 
+    allow_soft_review = bool(active_policy.needs_review_low_risk_enabled)
     ranked = [
         _RankedCandidate(
             candidate_id=_candidate_id(candidate),
-            tier=_selection_tier(candidate),
+            tier=_selection_tier(candidate, allow_soft_review=allow_soft_review),
             metadata=_metadata_for_candidate(candidate, score_hooks or ()),
         )
         for candidate in candidates
@@ -134,6 +137,17 @@ def rerank_preview_candidates(
             metadata_by_candidate_id,
             selected,
             "soft_pass",
+            active_policy.preview_candidate_count,
+        )
+    if allow_soft_review:
+        # Product decision (2026-09-07): soft-review candidates (calibrated
+        # identity review band only) fill remaining preview slots after every
+        # hard/soft pass. Hard review signals never reach this tier.
+        _select_from_tier(
+            ranked,
+            metadata_by_candidate_id,
+            selected,
+            SOFT_REVIEW_TIER,
             active_policy.preview_candidate_count,
         )
     min_preview_count = max(1, int(active_policy.min_preview_candidate_count))
@@ -189,9 +203,10 @@ def _rank_sort_key(item: _RankedCandidate) -> tuple[int, float, str]:
     tier_order = {
         "hard_pass": 0,
         "soft_pass": 1,
-        "needs_review": 2,
-        "not_previewable": 3,
-        "hard_reject": 4,
+        SOFT_REVIEW_TIER: 2,
+        "needs_review": 3,
+        "not_previewable": 4,
+        "hard_reject": 5,
     }
     return (
         tier_order.get(item.tier, 99),
@@ -200,15 +215,21 @@ def _rank_sort_key(item: _RankedCandidate) -> tuple[int, float, str]:
     )
 
 
-def _selection_tier(candidate: Mapping[str, Any]) -> str:
+def _selection_tier(
+    candidate: Mapping[str, Any],
+    *,
+    allow_soft_review: bool = False,
+) -> str:
     if is_hard_reject(candidate):
         return "hard_reject"
+    if is_needs_review(candidate):
+        if allow_soft_review and is_soft_review(candidate):
+            return SOFT_REVIEW_TIER
+        return "needs_review"
     if is_preview_eligible(candidate) and is_hard_pass(candidate):
         return "hard_pass"
     if is_preview_eligible(candidate) and is_soft_pass(candidate):
         return "soft_pass"
-    if is_needs_review(candidate):
-        return "needs_review"
     return "not_previewable"
 
 
