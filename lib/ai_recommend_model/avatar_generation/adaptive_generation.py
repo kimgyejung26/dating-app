@@ -424,9 +424,10 @@ def _counts_as_safe(
 ) -> bool:
     if is_hard_reject(candidate):
         return False
-    if is_preview_eligible(candidate) and (
-        not is_soft_pass(candidate) or policy.soft_pass_fill_enabled
-    ):
+    if is_preview_eligible(
+        candidate,
+        allow_soft_review=policy.needs_review_low_risk_enabled,
+    ) and (not is_soft_pass(candidate) or policy.soft_pass_fill_enabled):
         return True
     return False
 

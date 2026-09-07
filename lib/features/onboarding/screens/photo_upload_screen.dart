@@ -166,6 +166,7 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
     super.initState();
     _avatarClient =
         widget.avatarGenerationClient ?? BackendAvatarGenerationClient();
+    _prewarmAvatarWorkerIfNeeded();
     final initialPhotos = widget.initialPhotosForTesting;
     if (initialPhotos != null) {
       for (int i = 0; i < initialPhotos.length && i < _photos.length; i++) {
@@ -554,6 +555,21 @@ class _PhotoUploadScreenState extends State<PhotoUploadScreen> {
     } finally {
       _isHandlingNext = false;
     }
+  }
+
+  /// 사진을 고르는 동안 워커를 미리 깨운다(best effort, Azure 호출 없음).
+  /// 이미 승인된 아바타로 잠긴 화면은 새 생성이 없으므로 건너뛴다.
+  void _prewarmAvatarWorkerIfNeeded() {
+    final lockedUrl = widget.lockedApprovedAvatarUrlForTesting?.trim() ?? '';
+    if (lockedUrl.isNotEmpty) return;
+    unawaited(
+      _avatarClient.prewarmWorker().catchError((Object error) {
+        // Best effort: a warmup failure must never reach the photo flow.
+        debugPrint(
+          'avatar worker prewarm failed: ${PrivacyLogUtils.errorSummary(error)}',
+        );
+      }),
+    );
   }
 
   String? _findPrimaryAvatarJobId() {

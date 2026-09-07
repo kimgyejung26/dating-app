@@ -46,6 +46,12 @@ abstract class AvatarGenerationClient {
   Future<AvatarGenerationStatusSnapshot?> getCurrentGenerationStatus() async =>
       null;
 
+  /// 워커 pre-warm(best effort). 사진 선택 화면에 들어온 시점에 한 번 호출해
+  /// 첫 생성이 인스턴스 기동 + QA 모델 로드 비용을 치르지 않게 한다.
+  /// Azure 호출은 발생하지 않는다. 실패해도 온보딩 흐름에 영향을 주지 않으므로
+  /// 기본 구현은 아무것도 하지 않고, 어떤 구현도 예외를 던지면 안 된다.
+  Future<void> prewarmWorker() async {}
+
   /// 서버가 재시도를 허용한 실패를 재시도한다. 같은 logical generation 을
   /// 서버가 재디스패치하며, 돌아온 상태의 jobId 로 폴링을 잇는다.
   /// 기본 구현은 null(재시도 콜러블 없음) 이라 호출자는 폴링으로 되돌아간다.
@@ -226,6 +232,22 @@ class BackendAvatarGenerationClient extends AvatarGenerationClient {
         ? raw.map((key, value) => MapEntry(key.toString(), value))
         : <String, dynamic>{};
     return AvatarCandidatesResult.fromMap(map);
+  }
+
+  @override
+  Future<void> prewarmWorker() async {
+    try {
+      final callable = _functions.httpsCallable(
+        'prewarmAvatarWorker',
+        options: HttpsCallableOptions(timeout: const Duration(seconds: 20)),
+      );
+      await callable.call(<String, dynamic>{});
+    } catch (e) {
+      // Best effort only: never block or fail the photo flow on a warmup.
+      debugPrint(
+        'avatar worker prewarm skipped: ${PrivacyLogUtils.errorSummary(e)}',
+      );
+    }
   }
 
   @override

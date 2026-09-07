@@ -15,3 +15,7 @@ lib/*
 recsys/.venv/
 **/.venv/
 **/__pycache__/
+
+# Avatar worker Cloud Build context (lib/ai_recommend_model/avatar_generation/Dockerfile)
+!requirements_avatar_worker.txt
+!cloudbuild.avatar-worker.yaml

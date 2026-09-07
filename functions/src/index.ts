@@ -101,6 +101,7 @@ import {
 } from "./avatarSourceRetention";
 import { createAvatarGenerationStateSyncTrigger } from "./avatarGenerationStateSync";
 import { createBeginAvatarGenerationFromOnboardingPhotosFunction } from "./avatarSourceSetAdmission";
+import { createPrewarmAvatarWorkerFunction } from "./avatarWarmup";
 import { createReplaceAvatarGenerationFunction } from "./avatarGenerationRecovery";
 import { createAvatarClipAfterSelectionTrigger } from "./avatarClipAfterSelection";
 import { isSafePublicAvatarUrl } from "./publicMediaUrlPolicy";
@@ -2070,6 +2071,13 @@ export const onAvatarClipAfterSelection =
 
 export const getCurrentAvatarGenerationStatus =
   createGetCurrentAvatarGenerationStatusFunction(db, resolveAuthedAppUser);
+
+// Best-effort worker pre-warm fired when the photo upload screen opens, so the
+// first generation does not pay instance start + QA model load. Same Auth /
+// App Check / canonical app-user prelude as the generation callables.
+export const prewarmAvatarWorker = createPrewarmAvatarWorkerFunction(
+  resolveAuthedAppUser,
+);
 
 export const retryCurrentAvatarGeneration =
   createRetryCurrentAvatarGenerationFunction(db, resolveAuthedAppUser);
