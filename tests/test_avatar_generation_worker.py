@@ -2131,3 +2131,222 @@ def test_worker_reference_profile_unknown_value_falls_back_to_privacy_strict(mon
     monkeypatch.setenv("AVATAR_REFERENCE_PROFILE", "not-a-profile")
     config = worker._reference_preprocess_config_from_env()
     assert config.profile_name == "privacy_strict"
+
+class DeniedBlob(FakeBlob):
+    """Storage 쓰기 권한이 없는 객체. 프로덕션 인시던트의 GCS 403 재현."""
+
+    def upload_from_string(self, data, **_kwargs):
+        raise RuntimeError(
+            "403 POST https://storage.googleapis.com/upload/storage/v1/b/bucket/o"
+            ": avatar-worker@example.iam.gserviceaccount.com does not have"
+            " storage.objects.create access."
+        )
+
+
+class DeniedBucket(FakeBucket):
+    def blob(self, path):
+        return self.blobs.setdefault(path, DeniedBlob())
+
+
+def _storage_denying(bucket_name):
+    storage = _fake_storage()
+    storage.buckets[bucket_name] = DeniedBucket({})
+    return storage
+
+
+def _disclosure_payload(job_id):
+    payload = _payload(job_id=job_id)
+    return payload
+
+
+def _firestore_with_disclosure(payload):
+    fs = _fake_firestore(payload)
+    fs.data["avatarJobs"][payload["jobId"]]["chatPartnerRealPhotoDisclosure"] = True
+    return fs
+
+
+def test_chat_profile_storage_failure_does_not_block_avatar_generation():
+    """채팅 실사진 공개 자산 준비는 아바타 생성의 전제가 아니다.
+
+    프로덕션에서는 이 복사가 생성보다 먼저 실행되고 실패가 전파되어, Storage
+    403 하나로 아바타 생성 전체가 죽었다.
+    """
+    payload = _disclosure_payload("avatar_job_chat_profile_denied")
+    fs = _firestore_with_disclosure(payload)
+    st = _storage_denying(worker_module.DEFAULT_CHAT_PROFILE_PHOTO_BUCKET)
+
+    result = process_avatar_generation_payload(
+        payload,
+        firestore_client=fs,
+        storage_client=st,
+        qa_runner=_passing_qa,
+        mode="dry_run",
+    )
+
+    assert result.status == "preview_ready"
+    assert result.preview_ready_count == 2
+    job = fs.data["avatarJobs"][payload["jobId"]]
+    assert job["status"] == "preview_ready"
+    assert job["chatRealPhotoPersistence"]["state"] == "failed"
+    assert job["chatRealPhotoPersistence"]["retryable"] is True
+    assert (
+        job["chatRealPhotoPersistence"]["failureClass"]
+        == worker_module.FAILURE_CLASS_INFRASTRUCTURE_RECOVERABLE
+    )
+
+
+def test_chat_profile_storage_failure_never_reports_the_asset_as_available():
+    payload = _disclosure_payload("avatar_job_chat_profile_unavailable")
+    fs = _firestore_with_disclosure(payload)
+    st = _storage_denying(worker_module.DEFAULT_CHAT_PROFILE_PHOTO_BUCKET)
+
+    process_avatar_generation_payload(
+        payload,
+        firestore_client=fs,
+        storage_client=st,
+        qa_runner=_passing_qa,
+        mode="dry_run",
+    )
+
+    chat_real_photo = fs.data["userPrivateMedia"][payload["uid"]]["chatRealPhoto"]
+    assert chat_real_photo["enabled"] is False
+    assert chat_real_photo["status"] == "failed"
+    # 준비되지 않은 자산의 저장 위치를 남기지 않는다.
+    assert "gcsUri" not in chat_real_photo
+    assert "storagePath" not in chat_real_photo
+    assert "storageBucket" not in chat_real_photo
+
+
+def test_chat_profile_persistence_marks_the_asset_ready_on_success():
+    payload = _disclosure_payload("avatar_job_chat_profile_ready")
+    fs = _firestore_with_disclosure(payload)
+    st = _fake_storage()
+
+    process_avatar_generation_payload(
+        payload,
+        firestore_client=fs,
+        storage_client=st,
+        qa_runner=_passing_qa,
+        mode="dry_run",
+    )
+
+    job = fs.data["avatarJobs"][payload["jobId"]]
+    assert job["chatRealPhotoPersistence"]["state"] == "ready"
+    chat_real_photo = fs.data["userPrivateMedia"][payload["uid"]]["chatRealPhoto"]
+    assert chat_real_photo["enabled"] is True
+    assert chat_real_photo["status"] == "ready"
+    assert (
+        chat_real_photo["storageBucket"]
+        == worker_module.DEFAULT_CHAT_PROFILE_PHOTO_BUCKET
+    )
+
+
+def test_chat_profile_persistence_is_not_attempted_without_disclosure_consent():
+    payload = _payload(job_id="avatar_job_chat_profile_no_consent")
+    fs = _fake_firestore(payload)
+    st = _fake_storage()
+
+    process_avatar_generation_payload(
+        payload,
+        firestore_client=fs,
+        storage_client=st,
+        qa_runner=_passing_qa,
+        mode="dry_run",
+    )
+
+    job = fs.data["avatarJobs"][payload["jobId"]]
+    assert "chatRealPhotoPersistence" not in job
+    assert "chatRealPhoto" not in fs.data["userPrivateMedia"][payload["uid"]]
+    assert worker_module.DEFAULT_CHAT_PROFILE_PHOTO_BUCKET not in st.buckets
+
+
+def test_chat_profile_failure_does_not_construct_a_paid_provider(monkeypatch):
+    """보조 자산 실패가 유료 재생성을 유발해서는 안 된다."""
+    payload = _disclosure_payload("avatar_job_chat_profile_no_paid_retry")
+    fs = _firestore_with_disclosure(payload)
+    st = _storage_denying(worker_module.DEFAULT_CHAT_PROFILE_PHOTO_BUCKET)
+    provider_calls = []
+    monkeypatch.setattr(
+        worker_module,
+        "get_azure_gpt_image2_provider",
+        lambda: provider_calls.append("constructed"),
+    )
+
+    process_avatar_generation_payload(
+        payload,
+        firestore_client=fs,
+        storage_client=st,
+        qa_runner=_passing_qa,
+        mode="dry_run",
+    )
+
+    assert provider_calls == []
+    assert len(fs.data["avatarCandidates"]) == 2
+
+
+def test_infrastructure_failure_is_classified_and_kept_retryable():
+    """인프라 실패는 종료가 아니다. 원본 보존 계약이 여기에 달려 있다."""
+    payload = _payload(job_id="avatar_job_temp_bucket_denied")
+    fs = _fake_firestore(payload)
+    st = _storage_denying(DEFAULT_AVATAR_TEMP_BUCKET)
+
+    with pytest.raises(AvatarGenerationError):
+        process_avatar_generation_payload(
+            payload,
+            firestore_client=fs,
+            storage_client=st,
+            qa_runner=_passing_qa,
+            mode="dry_run",
+        )
+
+    job = fs.data["avatarJobs"][payload["jobId"]]
+    assert job["status"] == "failed"
+    assert job["failureClass"] == worker_module.FAILURE_CLASS_INFRASTRUCTURE_RECOVERABLE
+    assert job["retryable"] is True
+
+
+def test_unknown_exceptions_default_to_infrastructure_not_terminal():
+    """분류를 확신할 수 없는 실패의 기본값은 파괴적이지 않아야 한다."""
+    assert (
+        worker_module._worker_failure_class(RuntimeError("something unexpected"))
+        == worker_module.FAILURE_CLASS_INFRASTRUCTURE_RECOVERABLE
+    )
+    assert (
+        worker_module._worker_failure_class(
+            worker_module.AzureProviderError("azure_content_rejected", retryable=False)
+        )
+        == worker_module.FAILURE_CLASS_CONTENT_TERMINAL
+    )
+    assert (
+        worker_module._worker_failure_class(
+            worker_module.AzureProviderError("azure_auth_failed", retryable=False)
+        )
+        == worker_module.FAILURE_CLASS_INFRASTRUCTURE_RECOVERABLE
+    )
+
+
+def test_source_selection_failure_separates_content_from_infrastructure():
+    payload_data = _payload(job_id="avatar_job_selection_failure_class")
+    payload = parse_avatar_generation_payload(payload_data)
+
+    content_fs = _fake_firestore(payload_data)
+    worker_module._finalize_source_selection_failure(
+        content_fs,
+        payload,
+        SourceSelectionError(NO_ELIGIBLE_SOURCE_ERROR),
+    )
+    content_job = content_fs.data["avatarJobs"][payload.job_id]
+    assert content_job["failureClass"] == worker_module.FAILURE_CLASS_CONTENT_TERMINAL
+
+    infra_fs = _fake_firestore(payload_data)
+    worker_module._finalize_source_selection_failure(
+        infra_fs,
+        payload,
+        SourceSelectionError(worker_module.SOURCE_ANALYSIS_INFRA_ERROR),
+    )
+    infra_job = infra_fs.data["avatarJobs"][payload.job_id]
+    assert (
+        infra_job["failureClass"]
+        == worker_module.FAILURE_CLASS_INFRASTRUCTURE_RECOVERABLE
+    )
+    assert infra_job["retryable"] is True

@@ -814,6 +814,10 @@ def _finalize_admission_denied(
             "status": "failed",
             "errorCode": error_code,
             "errorMessage": error_message,
+            # 예산/데드라인 차단은 사진 문제가 아니다. 원본을 남기고 재시도한다.
+            "failureClass": FAILURE_CLASS_INFRASTRUCTURE_RECOVERABLE,
+            "retryable": True,
+            "failedAt": SERVER_TIMESTAMP,
             "admissionDecision": decision.to_dict(),
             "processing": {
                 "lastErrorCode": error_code,
@@ -2010,6 +2014,76 @@ def _upload_candidate(storage_client: Any, artifact: CandidateArtifact) -> None:
         blob.patch()
 
 
+def _chat_real_photo_source_photo_id(payload: AvatarGenerationPayload) -> str:
+    return payload.source_photo_ids[0] if payload.source_photo_ids else ""
+
+
+def _mark_chat_real_photo_unavailable(
+    firestore_client: Any,
+    payload: AvatarGenerationPayload,
+    error_code: str,
+) -> None:
+    """공개 자산이 준비되지 않았음을 명시적으로 남긴다.
+
+    동의했다는 사실만으로 준비됐다고 표시하면, 실제로는 존재하지 않는 실사진을
+    채팅 상대에게 공개할 수 있다고 잘못 약속하게 된다.
+    """
+    photo_id = _chat_real_photo_source_photo_id(payload)
+    _set_doc(
+        _doc_ref(firestore_client, "userPrivateMedia", payload.uid),
+        {
+            "chatRealPhoto": {
+                "photoId": photo_id,
+                "sourcePhotoId": photo_id,
+                "enabled": False,
+                "status": "failed",
+                "consentVersion": "chat_real_photo_visibility_v1",
+                "errorCode": error_code,
+                "updatedAt": SERVER_TIMESTAMP,
+            },
+            "updatedAt": SERVER_TIMESTAMP,
+        },
+        merge=True,
+    )
+
+
+def _persist_chat_real_photo_disclosure_isolated(
+    firestore_client: Any,
+    storage_client: Any,
+    payload: AvatarGenerationPayload,
+    job_doc: Mapping[str, Any],
+    source_image_bytes: bytes,
+) -> Optional[Dict[str, Any]]:
+    """채팅 실사진 공개 자산 준비를 아바타 생성에서 분리한다.
+
+    이것은 생성 파이프라인의 단계가 아니라 부수 자산 준비다. 여기서 난 Storage
+    오류가 아바타 생성 전체를 죽이면, 인프라 문제 하나로 사용자가 아바타를
+    아예 받지 못한다(실제 프로덕션 인시던트). 실패는 격리해 기록만 한다.
+    """
+    if job_doc.get("chatPartnerRealPhotoDisclosure") is not True:
+        return None
+    try:
+        _persist_chat_real_photo_if_consented(
+            firestore_client,
+            storage_client,
+            payload,
+            job_doc,
+            source_image_bytes,
+        )
+    except Exception as exc:  # noqa: BLE001 - 부수 자산 실패를 생성에 전파하지 않는다
+        error_code = _worker_error_code(exc)
+        failure_class = _worker_failure_class(exc)
+        _mark_chat_real_photo_unavailable(firestore_client, payload, error_code)
+        return {
+            "state": "failed",
+            "errorCode": error_code,
+            "failureClass": failure_class,
+            "retryable": failure_class != FAILURE_CLASS_CONTENT_TERMINAL,
+            "updatedAt": SERVER_TIMESTAMP,
+        }
+    return {"state": "ready", "updatedAt": SERVER_TIMESTAMP}
+
+
 def _persist_chat_real_photo_if_consented(
     firestore_client: Any,
     storage_client: Any,
@@ -2036,19 +2110,23 @@ def _persist_chat_real_photo_if_consented(
         "purpose": "chat_partner_real_profile_photo",
     }
     blob.cache_control = "private, max-age=0, no-store"
+    # metadata 와 cache_control 은 업로드 요청에 함께 실린다. 뒤따르던 patch()
+    # 는 같은 값을 다시 쓰는 중복 호출이었고, 그 한 번 때문에 워커가
+    # storage.objects.update 까지 필요해졌다. 지우면 이 버킷에 필요한 권한이
+    # storage.objects.create 하나로 줄어든다.
     blob.upload_from_string(
         source_image_bytes,
         content_type="image/jpeg",
         predefined_acl=None,
     )
-    if hasattr(blob, "patch"):
-        blob.patch()
     _set_doc(
         _doc_ref(firestore_client, "userPrivateMedia", payload.uid),
         {
             "chatRealPhoto": {
                 "photoId": photo_id,
                 "enabled": True,
+                "status": "ready",
+                "errorCode": "",
                 "consentVersion": "chat_real_photo_visibility_v1",
                 "sourcePhotoId": photo_id,
                 "storageBucket": bucket_name,
@@ -2624,6 +2702,12 @@ def _finalize_source_selection_failure(
             "errorCode": error.error_code,
             "errorMessage": "Avatar source selection failed.",
             "retryable": retryable,
+            "failureClass": (
+                FAILURE_CLASS_INFRASTRUCTURE_RECOVERABLE
+                if retryable
+                else FAILURE_CLASS_CONTENT_TERMINAL
+            ),
+            "failedAt": SERVER_TIMESTAMP,
             "sourceSelection": selection_failure,
         },
     )
@@ -2965,6 +3049,33 @@ def _source_reject_error_message(analysis_doc: Mapping[str, Any]) -> str:
         return "얼굴이 잘 보이는 사진을 선택해주세요."
     return "아바타를 만들기 어려운 사진이에요. 다른 사진을 선택해주세요."
 
+# 실패 분류. `retryable` 하나가 재시도 UX 와 원본 보존이라는 서로 다른 두
+# 의미를 겸하다가, Storage 403 같은 인프라 실패가 사용자의 원본 사진을 영구
+# 삭제하는 사고로 이어졌다. 분류를 명시적으로 적어 두 결정을 분리한다.
+FAILURE_CLASS_CONTENT_TERMINAL = "content_terminal"
+FAILURE_CLASS_USER_TERMINAL = "user_terminal"
+FAILURE_CLASS_INFRASTRUCTURE_RECOVERABLE = "infrastructure_recoverable"
+FAILURE_CLASS_PROVIDER_AMBIGUOUS = "provider_ambiguous"
+
+# provider 가 콘텐츠 사유로 거절한 경우만 콘텐츠 종료다. 인증/전송/쿼터는 아니다.
+_CONTENT_TERMINAL_PROVIDER_ERROR_CODES = frozenset({"azure_content_rejected"})
+
+
+def _worker_failure_class(exc: Exception) -> str:
+    """예외를 실패 분류로 옮긴다.
+
+    기본값은 인프라 복구 가능이다. 분류를 확신할 수 없는 실패를 종료로
+    취급하면 원본 삭제 같은 되돌릴 수 없는 처분이 따라오기 때문이다.
+    """
+    if isinstance(exc, AzureUnknownOutcomeError):
+        return FAILURE_CLASS_PROVIDER_AMBIGUOUS
+    if isinstance(exc, AzureProviderError):
+        if exc.error_code in _CONTENT_TERMINAL_PROVIDER_ERROR_CODES:
+            return FAILURE_CLASS_CONTENT_TERMINAL
+        return FAILURE_CLASS_INFRASTRUCTURE_RECOVERABLE
+    return FAILURE_CLASS_INFRASTRUCTURE_RECOVERABLE
+
+
 def _worker_error_code(exc: Exception) -> str:
     if isinstance(exc, AvatarQAReadinessError):
         return exc.error_code
@@ -3020,6 +3131,8 @@ def _run_qa_runtime_preflight_if_required(
             "errorCode": error.error_code,
             "errorMessage": str(error),
             "retryable": True,
+            "failureClass": FAILURE_CLASS_INFRASTRUCTURE_RECOVERABLE,
+            "failedAt": SERVER_TIMESTAMP,
             "queueStatus": "qa_preflight_blocked",
             "qaPreflight": preflight_document,
             "generationBackend": AZURE_GPT_IMAGE_2_MODEL_ID,
@@ -3637,13 +3750,19 @@ def process_avatar_generation_payload(
             ),
         )
         source_image = image_from_stored_source_bytes(source_image_bytes)
-        _persist_chat_real_photo_if_consented(
+        chat_real_photo_persistence = _persist_chat_real_photo_disclosure_isolated(
             fs,
             st,
             payload,
             job_doc or {},
             source_image_bytes,
         )
+        if chat_real_photo_persistence is not None:
+            _update_job_status(
+                fs,
+                payload.job_id,
+                {"chatRealPhotoPersistence": chat_real_photo_persistence},
+            )
         source_selection_version = _selection_version(
             (job_doc or {}).get("avatarSourceSelectionVersion")
         )
@@ -3708,6 +3827,9 @@ def process_avatar_generation_payload(
                     "sourceAnalysis": source_analysis_doc,
                     "errorCode": _source_reject_error_code(source_analysis_doc),
                     "errorMessage": _source_reject_error_message(source_analysis_doc),
+                    # 사진 자체가 부적합하다고 판정한 유일한 지점이다.
+                    "failureClass": FAILURE_CLASS_CONTENT_TERMINAL,
+                    "failedAt": SERVER_TIMESTAMP,
                  }
                 seconds_by_stage["total"] = _elapsed_seconds(job_started_at)
                 seconds_by_stage["total_seconds"] = seconds_by_stage["total"]
@@ -4453,6 +4575,7 @@ def process_avatar_generation_payload(
         )
         is_unknown_provider_outcome = isinstance(exc, AzureUnknownOutcomeError)
         is_artifact_recovery_review = isinstance(exc, CandidateArtifactNeedsReview)
+        failure_class = _worker_failure_class(exc)
         error_update: Dict[str, Any] = {
             "status": (
                 "needs_review"
@@ -4461,7 +4584,12 @@ def process_avatar_generation_payload(
             ),
             "errorCode": _worker_error_code(exc),
             "errorMessage": redact_error_message(exc),
+            "failureClass": failure_class,
+            "failedAt": SERVER_TIMESTAMP,
         }
+        if failure_class != FAILURE_CLASS_CONTENT_TERMINAL:
+            # 인프라/모호 실패는 같은 사진으로 다시 시도할 수 있어야 한다.
+            error_update["retryable"] = True
         if isinstance(exc, AzureProviderError):
             error_update["providerUsage"] = dict(provider_usage_doc)
             error_update["retryable"] = bool(exc.retryable and not exc.unknown_outcome)
