@@ -105,3 +105,41 @@ now enabled, but creating a budget requires a billing-account role that the
 operator account does not hold. Until that grant exists, network egress,
 Artifact Registry storage, Cloud Build and GCS spend have no alerting layer,
 because the app-level guards do not model them.
+
+## Future Cleanup Strategy
+
+An automatic Artifact Registry cleanup policy is deliberately **not** applied.
+Cleanup policies match on age, tag state and version count; they cannot see
+which digests Cloud Run revisions still pin. On this repository an age rule
+would delete images that back retained revisions of the live service.
+
+The ordering that makes automatic cleanup safe is:
+
+1. Define a Cloud Run **revision retention policy** — how many historical
+   revisions of `seolleyeon-avatar-worker` are worth keeping as rollback
+   targets, beyond current production and canary. This is a release-safety
+   decision, not a cost one, and it has not been made.
+2. Prune revisions down to that policy. Only then do their images stop being
+   referenced.
+3. Apply a registry cleanup policy whose retention window is strictly longer
+   than the revision retention window, so the policy can never outrun it.
+
+Until step 1 exists, cleanup stays manual and reference-driven: enumerate every
+digest referenced by every live revision, subtract, delete only the remainder,
+and assert the intersection is empty first.
+
+### Operational note
+
+Deleting a version through `gcloud artifacts docker images delete` reports
+failure on this project even though the underlying delete is accepted: gcloud
+polls the long-running operation and gets `PERMISSION_DENIED` reading the
+operation resource, which is indistinguishable from a real failure in its
+output. The Artifact Registry REST API reports the true result. Verify
+deletions by listing versions rather than trusting the command's exit status,
+and never re-run a delete loop on the assumption that it failed.
+
+### Storage accounting
+
+`sizeBytes` on a repository is computed periodically, not on write. It does not
+move immediately after a deletion, so reclaimed storage has to be read back
+later rather than measured straight after a cleanup.
