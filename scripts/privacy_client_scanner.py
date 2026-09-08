@@ -82,6 +82,30 @@ BUILT_PRIVATE_BUCKET_RE = re.compile(
 class ClientSurfaceScan:
     scanned_file_count: int
     leakage_count: int
+    # 스캔했다고 말할 수 없는 파일들. UTF-16 로 저장된 소스가 여기에 해당한다.
+    # 이전 구현은 errors="ignore" 로 디코드해 NUL 이 섞인 문자열을 만들었고,
+    # 어떤 마커도 매치되지 않아 조용히 통과했다. 침묵은 통과가 아니다.
+    unscannable_files: tuple[str, ...] = ()
+
+    @property
+    def unscannable_count(self) -> int:
+        return len(self.unscannable_files)
+
+
+def decode_client_source(data: bytes) -> str:
+    """소스 파일을 UTF-8 로만 읽는다. 실패는 예외로 드러낸다.
+
+    UTF-16 BOM 은 UTF-8 로도 디코드는 되지만(0xFF 0xFE 는 실패) 내용이 NUL 로
+    갈라져 어떤 검사도 통과시켜 버린다. BOM 과 NUL 을 명시적으로 거부한다.
+    """
+    if data[:2] in (b"\xff\xfe", b"\xfe\xff"):
+        raise UnicodeDecodeError("utf-8", data, 0, 2, "UTF-16 BOM in a source file")
+    text = data.decode("utf-8")
+    if "\x00" in text:
+        raise UnicodeDecodeError(
+            "utf-8", data, 0, 1, "NUL byte in a source file (wide encoding?)"
+        )
+    return text
 
 
 def scan_client_files(
@@ -91,13 +115,19 @@ def scan_client_files(
 ) -> ClientSurfaceScan:
     files = list(_iter_surface_files(repo_root, festival_roots=festival_roots))
     leakage_count = 0
+    unscannable: list[str] = []
     for path in files:
-        text = path.read_text(encoding="utf-8", errors="ignore")
+        try:
+            text = decode_client_source(path.read_bytes())
+        except (UnicodeDecodeError, OSError):
+            unscannable.append(str(path))
+            continue
         if _file_has_leak(path, text):
             leakage_count += 1
     return ClientSurfaceScan(
         scanned_file_count=len(files),
         leakage_count=leakage_count,
+        unscannable_files=tuple(sorted(unscannable)),
     )
 
 
