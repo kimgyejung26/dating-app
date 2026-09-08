@@ -9,6 +9,11 @@ import { onDocumentWritten } from "firebase-functions/v2/firestore";
 import { onSchedule } from "firebase-functions/v2/scheduler";
 import * as logger from "firebase-functions/logger";
 
+import {
+  mapTerminalJobStatus,
+  syncAvatarGenerationStateForJob,
+} from "./avatarGenerationStateSync";
+
 const DEFAULT_SOURCE_PHOTO_BUCKET = "seolleyeon-final-private-source-photos";
 const SOURCE_RETENTION_STATE_COLLECTION = "avatarSourceRetentionStates";
 const SOURCE_RETENTION_EVENTS_COLLECTION = "avatarSourceRetentionEvents";
@@ -63,6 +68,20 @@ export type AvatarSourceRetentionDecision =
       sourceSelectionVersion: number | null;
       refs: GcsRef[];
       waitForClipTerminal: boolean;
+    }
+  /**
+   * 아직 삭제해서는 안 되지만 언젠가는 삭제해야 하는 상태. 상태 문서를 남겨
+   * 회수 스케줄러가 기한에 다시 평가하도록 한다.
+   */
+  | {
+      action: "defer";
+      uid: string;
+      jobId: string;
+      photoId: string;
+      sourceSelectionVersion: number | null;
+      refs: GcsRef[];
+      reason: string;
+      eligibleAtMs: number;
     };
 
 function envValue(name: string, fallback: string): string {
@@ -166,17 +185,171 @@ function clipRecommendationConsented(privateData: RecordData, jobData: RecordDat
   return jobConsent === true;
 }
 
-function isIrreversibleSourceDeletionTerminal(jobData: RecordData): boolean {
-  const status = asString(jobData.status).toLowerCase();
-  if (["terminal_failed", "cancelled", "canceled"].includes(status)) return true;
-  if (status === "failed") return jobData.retryable !== true;
-  if (["approved", "completed"].includes(status)) {
-    return (
-      jobData.sourceDeletionIrreversible === true ||
-      jobData.sourceCleanupIrreversible === true
-    );
+/**
+ * 원본 삭제는 되돌릴 수 없다. 따라서 "종료임이 명시적으로 증명된" 실패만
+ * 즉시 삭제를 허용한다. 인프라 오류나 분류가 없는 레거시 실패는 삭제가
+ * 아니라 유예로 떨어진다. 과거에는 `status === "failed"` 이면서 retryable
+ * 플래그가 없다는 이유만으로 삭제했고, 그래서 Storage 403 같은 인프라
+ * 실패가 사용자의 원본 사진을 영구 삭제했다.
+ */
+const CONTENT_TERMINAL_FAILURE_CLASSES = new Set([
+  "content_terminal",
+  "user_terminal",
+]);
+
+/**
+ * 유예는 무기한이 아니다. 동의하지 않은 원본을 영구 보관하지 않도록
+ * 회수 기한이 지나면 삭제로 수렴한다.
+ */
+const DEFAULT_SOURCE_RECOVERY_GRACE_MS = 72 * 60 * 60 * 1000;
+const MAX_SOURCE_RECOVERY_GRACE_MS = 30 * 24 * 60 * 60 * 1000;
+
+/** 공개 상태 수렴 증거를 기다리는 짧은 창. 회수 기한을 넘지 않는다. */
+const PUBLIC_STATE_CONVERGENCE_WAIT_MS = 15 * 60 * 1000;
+
+export function sourceRecoveryGraceMs(): number {
+  const parsed = Number(process.env.AVATAR_SOURCE_RECOVERY_GRACE_MS);
+  return Number.isFinite(parsed) && parsed >= 0
+    ? Math.min(Math.floor(parsed), MAX_SOURCE_RECOVERY_GRACE_MS)
+    : DEFAULT_SOURCE_RECOVERY_GRACE_MS;
+}
+
+function millisValue(value: unknown): number | null {
+  if (value instanceof Timestamp) return value.toMillis();
+  if (value instanceof Date) return value.getTime();
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (isRecord(value)) {
+    const seconds = numericValue(value._seconds ?? value.seconds);
+    if (seconds !== null) {
+      const nanos = numericValue(value._nanoseconds ?? value.nanoseconds) ?? 0;
+      return seconds * 1000 + Math.floor(nanos / 1_000_000);
+    }
+    return null;
   }
-  return false;
+  if (typeof value === "string") {
+    const parsed = Date.parse(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+  return null;
+}
+
+function terminalAtMs(jobData: RecordData, nowMs: number): number {
+  return (
+    millisValue(jobData.failedAt) ??
+    millisValue(jobData.terminalAt) ??
+    millisValue(jobData.updatedAt) ??
+    nowMs
+  );
+}
+
+/**
+ * 공개 아바타 상태가 이 job 의 종료 상태로 수렴했는가.
+ *
+ * 증거는 별도 스탬프가 아니라 공개 문서 그 자체다. 스탬프는 "sync 가 돌았다"만
+ * 증명하지만 여기서 필요한 것은 "사용자가 보는 상태가 실제로 맞다" 이기 때문이다.
+ * 트리거 실행 순서는 보장되지 않으므로 파괴적 동작 전에 이 증거를 요구한다.
+ */
+export function avatarPublicStateConverged(params: {
+  jobData: RecordData;
+  userData: RecordData | null | undefined;
+  userExists?: boolean;
+}): boolean {
+  // 공개 문서가 없으면 어긋날 공개 상태도 없다.
+  if (params.userExists === false || !params.userData) return true;
+  // 승인/승인 진행 상태는 state-sync 가 의도적으로 보존한다. 수렴 대기 아님.
+  if (hasAvatarApprovalProtectedState(params.userData)) return true;
+
+  const mapped = mapTerminalJobStatus(
+    asString(params.jobData.status).toLowerCase(),
+    asString(params.jobData.errorCode).toLowerCase(),
+  );
+  // 공개 어휘로 옮기지 않는 종료 상태는 기다릴 대상이 없다.
+  if (!mapped) return true;
+
+  const avatarStatus = asString(readMap(params.userData.avatar).status).toLowerCase();
+  return avatarStatus === mapped.avatarStatus;
+}
+
+export type AvatarSourceDeletionDisposition =
+  | { kind: "delete_now"; reason: string }
+  | { kind: "defer"; reason: string; eligibleAtMs: number }
+  | { kind: "preserve"; reason: string };
+
+/**
+ * 원본 삭제 처분을 결정한다. 부수효과 없음.
+ *
+ * 안전 기본값은 삭제가 아니라 보존이다. `delete_now` 는 (1) 명시적 종료
+ * 사유이고 (2) 공개 상태가 수렴했거나 회수 기한이 지난 경우에만 나온다.
+ */
+export function planSourceDeletionDisposition(params: {
+  jobData: RecordData;
+  userData?: RecordData | null;
+  userExists?: boolean;
+  nowMs?: number;
+}): AvatarSourceDeletionDisposition {
+  const jobData = params.jobData;
+  const nowMs = params.nowMs ?? Date.now();
+  const status = asString(jobData.status).toLowerCase();
+  const deadlineMs = terminalAtMs(jobData, nowMs) + sourceRecoveryGraceMs();
+  const graceExpired = nowMs >= deadlineMs;
+
+  const gate = (reason: string): AvatarSourceDeletionDisposition => {
+    const converged = avatarPublicStateConverged({
+      jobData,
+      userData: params.userData,
+      userExists: params.userExists,
+    });
+    if (converged || graceExpired) {
+      return { kind: "delete_now", reason };
+    }
+    return {
+      kind: "defer",
+      reason: "awaiting_public_state_convergence",
+      eligibleAtMs: Math.min(deadlineMs, nowMs + PUBLIC_STATE_CONVERGENCE_WAIT_MS),
+    };
+  };
+
+  if (status === "approved" || status === "completed") {
+    const irreversible =
+      jobData.sourceDeletionIrreversible === true ||
+      jobData.sourceCleanupIrreversible === true;
+    return irreversible
+      ? gate("approved_irreversible_contract")
+      : { kind: "preserve", reason: "approval_without_irreversible_contract" };
+  }
+  if (status === "cancelled" || status === "canceled") {
+    return gate("generation_cancelled");
+  }
+  if (status !== "failed" && status !== "terminal_failed") {
+    return { kind: "preserve", reason: "avatar_not_terminal" };
+  }
+
+  const retryable = jobData.retryable === true;
+  const failureClass = asString(jobData.failureClass).toLowerCase();
+  const provenTerminal = !retryable && CONTENT_TERMINAL_FAILURE_CLASSES.has(failureClass);
+  if (!provenTerminal && !graceExpired) {
+    return {
+      kind: "defer",
+      reason: retryable
+        ? "retryable_failure_source_preserved"
+        : "unproven_terminal_source_preserved",
+      eligibleAtMs: deadlineMs,
+    };
+  }
+  return gate(provenTerminal ? "content_terminal_failure" : "source_recovery_grace_expired");
+}
+
+/**
+ * retention 이 깨어나야 하는 전이인가. "삭제해도 되는가" 와 다르다. 유예도
+ * 상태 문서를 남겨야 회수 기한에 스케줄러가 다시 평가하므로 여기서 깨운다.
+ */
+function isSourceRetentionActionable(jobData: RecordData, nowMs: number): boolean {
+  // 트리거 페이로드에는 공개 문서가 없다. 여기서는 "깨울 것인가"만 정하고,
+  // 삭제 여부는 트랜잭션 안에서 공개 문서까지 읽고 다시 판정한다.
+  return (
+    planSourceDeletionDisposition({ jobData, nowMs, userData: null, userExists: false })
+      .kind !== "preserve"
+  );
 }
 
 function isTerminalClipStatus(value: unknown): boolean {
@@ -202,12 +375,14 @@ function clipDocumentStatus(data: RecordData): string {
 export function shouldEvaluateAvatarJobSourceRetentionTransition(params: {
   beforeData: RecordData | null | undefined;
   afterData: RecordData | null | undefined;
+  nowMs?: number;
 }): boolean {
-  if (!params.afterData || !isIrreversibleSourceDeletionTerminal(params.afterData)) {
+  const nowMs = params.nowMs ?? Date.now();
+  if (!params.afterData || !isSourceRetentionActionable(params.afterData, nowMs)) {
     return false;
   }
   if (!params.beforeData) return true;
-  return !isIrreversibleSourceDeletionTerminal(params.beforeData);
+  return !isSourceRetentionActionable(params.beforeData, nowMs);
 }
 
 /**
@@ -310,7 +485,11 @@ export function planAvatarSourceRetention(params: {
   privateData: RecordData;
   jobData: RecordData;
   clipData?: RecordData | null;
+  userData?: RecordData | null;
+  userExists?: boolean;
+  nowMs?: number;
 }): AvatarSourceRetentionDecision {
+  const nowMs = params.nowMs ?? Date.now();
   if (sourceRetentionConsented(params.privateData)) {
     return { action: "skip", reason: "retained_by_consent" };
   }
@@ -321,8 +500,14 @@ export function planAvatarSourceRetention(params: {
   if (asString(params.privateData.currentAvatarJobId) !== params.jobId) {
     return { action: "skip", reason: "not_current_job" };
   }
-  if (!isIrreversibleSourceDeletionTerminal(params.jobData)) {
-    return { action: "skip", reason: "avatar_not_irreversible_terminal" };
+  const disposition = planSourceDeletionDisposition({
+    jobData: params.jobData,
+    userData: params.userData,
+    userExists: params.userExists,
+    nowMs,
+  });
+  if (disposition.kind === "preserve") {
+    return { action: "skip", reason: disposition.reason };
   }
 
   const sourceEntry = currentSourceEntry(params.privateData, params.jobData);
@@ -345,6 +530,19 @@ export function planAvatarSourceRetention(params: {
   const ref = gcsRefFromSource(sourceEntry);
   if (!ref || !isUidBoundPrivateSourceRef(ref, params.uid)) {
     return { action: "skip", reason: "missing_uid_bound_source_ref" };
+  }
+
+  if (disposition.kind === "defer") {
+    return {
+      action: "defer",
+      uid: params.uid,
+      jobId: params.jobId,
+      photoId: asString(sourceEntry.photoId),
+      sourceSelectionVersion,
+      refs: [ref],
+      reason: disposition.reason,
+      eligibleAtMs: disposition.eligibleAtMs,
+    };
   }
 
   return {
@@ -437,13 +635,15 @@ async function claimPendingSourceDeletion(params: {
   const privateRef = params.firestore.collection("userPrivateMedia").doc(params.uid);
   const jobRef = params.firestore.collection("avatarJobs").doc(params.jobId);
   const clipRef = params.firestore.collection("clipEmbeddings").doc(params.uid);
+  const userRef = params.firestore.collection("users").doc(params.uid);
   const now = Timestamp.now();
 
   return params.firestore.runTransaction(async (tx) => {
-    const [privateSnap, jobSnap, clipSnap] = await Promise.all([
+    const [privateSnap, jobSnap, clipSnap, userSnap] = await Promise.all([
       tx.get(privateRef),
       tx.get(jobRef),
       tx.get(clipRef),
+      tx.get(userRef),
     ]);
     const privateData = readMap(privateSnap.data());
     const jobData = readMap(jobSnap.data());
@@ -454,8 +654,11 @@ async function claimPendingSourceDeletion(params: {
       privateData,
       jobData,
       clipData,
+      userData: userSnap.exists ? readMap(userSnap.data()) : null,
+      userExists: userSnap.exists,
+      nowMs: now.toMillis(),
     });
-    if (decision.action !== "claim") return null;
+    if (decision.action === "skip") return null;
 
     const stateId = avatarSourceRetentionStateId(params.uid, decision.photoId);
     const stateRef = params.firestore.collection(SOURCE_RETENTION_STATE_COLLECTION).doc(stateId);
@@ -463,6 +666,26 @@ async function claimPendingSourceDeletion(params: {
     const stateData = readMap(stateSnap.data());
     const existingStatus = asString(stateData.status);
     if (existingStatus === "deleted") return null;
+
+    if (decision.action === "defer") {
+      // 삭제하지 않는다. 다만 회수 기한을 상태 문서에 남겨야 스케줄러가
+      // 기한에 다시 평가한다. 남기지 않으면 동의 없는 원본이 영구 보관된다.
+      if (existingStatus === "deleting") return null;
+      tx.set(stateRef, {
+        uid: decision.uid,
+        jobId: decision.jobId,
+        photoId: decision.photoId,
+        sourceSelectionVersion: decision.sourceSelectionVersion,
+        refs: decision.refs,
+        status: "deferred",
+        deferredReason: decision.reason,
+        nextRetryAt: Timestamp.fromMillis(decision.eligibleAtMs),
+        trigger: params.trigger,
+        updatedAt: FieldValue.serverTimestamp(),
+      }, { merge: true });
+      return null;
+    }
+
     if (!isLeaseClaimable(stateData, now) || !dueForRetry(stateData, now)) return null;
 
     const attempts = Math.max(0, numericValue(stateData.attempts) ?? 0) + 1;
@@ -535,6 +758,8 @@ async function preDeleteRevalidateClaim(params: {
       privateData,
       jobData,
       clipData: clipSnap.exists ? readMap(clipSnap.data()) : null,
+      userData: userSnap.exists ? readMap(userSnap.data()) : null,
+      userExists: userSnap.exists,
     });
     if (
       decision.action !== "claim" ||
@@ -656,8 +881,24 @@ export async function executeAvatarSourceRetention(params: {
   jobId: string;
   trigger: "avatar_job" | "clip_embedding";
   deleteObject?: DeleteRetainedObject;
+  convergePublicState?: (jobId: string) => Promise<unknown>;
 }): Promise<"claimed" | "skipped"> {
   const deleteObject = params.deleteObject ?? deleteRetainedObjectFromStorage;
+  // Firestore 트리거 실행 순서는 보장되지 않는다. retention 이 먼저 깨어났다면
+  // 스스로 공개 상태 수렴을 유도한 뒤에만 파괴적 동작으로 넘어간다. 이 호출은
+  // 멱등이며, state-sync 가 이미 돌았다면 아무것도 바꾸지 않는다.
+  const converge = params.convergePublicState ?? defaultConvergePublicState(params.firestore);
+  try {
+    await converge(params.jobId);
+  } catch (error) {
+    logger.warn("Avatar public state convergence failed before source retention", {
+      jobIdHash: shortHash(params.jobId),
+      errorHash: createHash("sha256")
+        .update(error instanceof Error ? error.message : String(error))
+        .digest("hex")
+        .slice(0, 16),
+    });
+  }
   const claim = await claimPendingSourceDeletion(params);
   if (!claim) return "skipped";
   const valid = await preDeleteRevalidateClaim({ firestore: params.firestore, claim });
@@ -701,7 +942,7 @@ export async function recoverAvatarSourceRetentionDeletions(params: {
   const now = Timestamp.now();
   const snap = await params.firestore
     .collection(SOURCE_RETENTION_STATE_COLLECTION)
-    .where("status", "in", ["deleting", "retryable_failed", "stale"])
+    .where("status", "in", ["deleting", "retryable_failed", "stale", "deferred"])
     .limit(params.limit ?? 25)
     .get();
   const summary: AvatarSourceRetentionRecoverySummary = {
@@ -728,6 +969,13 @@ export async function recoverAvatarSourceRetentionDeletions(params: {
     else summary.skipped += 1;
   }
   return summary;
+}
+
+function defaultConvergePublicState(
+  firestore: Firestore,
+): (jobId: string) => Promise<unknown> {
+  return (jobId: string) =>
+    syncAvatarGenerationStateForJob({ firestore, jobId });
 }
 
 async function currentJobIdForUid(

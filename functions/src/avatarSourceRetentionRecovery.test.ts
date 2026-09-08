@@ -6,7 +6,9 @@ import {
   avatarSourceRetentionStateId,
   executeAvatarSourceRetention,
   recoverAvatarSourceRetentionDeletions,
+  sourceRecoveryGraceMs,
 } from "./avatarSourceRetention";
+import { syncAvatarGenerationStateForJob } from "./avatarGenerationStateSync";
 import { FakeFirestore, type Db, type Doc } from "./testing/fakeFirestore";
 
 /**
@@ -57,6 +59,8 @@ function build(fixture: Fixture = {}): { db: Db; fs: FakeFirestore; deleted: str
     db.set(`avatarJobs/${JOB}`, {
       uid: UID,
       status: "terminal_failed",
+      // 원본 삭제는 "콘텐츠 사유로 확실히 종료됐다"가 증명된 실패에서만 일어난다.
+      failureClass: "content_terminal",
       sourcePhotoIds: [PHOTO],
       sourcePhotoRefs: [`gs://${BUCKET}/${PATH}`],
       avatarSourceSelectionVersion: 1,
@@ -299,4 +303,104 @@ test("M: a deleter failure is recorded as retryable_failed with a bounded retry 
   assert.equal(st.status, "retryable_failed");
   assert.ok(st.nextRetryAt instanceof Timestamp);
   assert.equal((db.get(`avatarJobs/${JOB}`)?.sourcePhotoRefs as string[]).length, 1);
+});
+
+/**
+ * 이번 인시던트의 통합 회귀 테스트. Storage 403 처럼 인프라 사유로 실패한 job은
+ * 원본을 지우지 않고 회수 기한만 남긴다.
+ */
+test("N: infrastructure failure defers instead of deleting the source", async () => {
+  const { db, fs, deleted } = build({
+    job: {
+      status: "failed",
+      failureClass: "infrastructure_recoverable",
+      errorCode: "avatar_generation_worker_error",
+      failedAt: new Date().toISOString(),
+    },
+    user: { avatar: { status: "failed" } },
+    state: null,
+  });
+
+  await executeAvatarSourceRetention({
+    firestore: fs as never,
+    uid: UID,
+    jobId: JOB,
+    trigger: "avatar_job",
+    deleteObject: deleter(deleted),
+  });
+
+  assert.deepEqual(deleted, []);
+  assert.equal(state(db).status, "deferred");
+  assert.equal(state(db).deferredReason, "unproven_terminal_source_preserved");
+  const priv = db.get(`userPrivateMedia/${UID}`) ?? {};
+  assert.equal((priv.sourcePhotos as Doc[])[0].status, "active");
+  const job = db.get(`avatarJobs/${JOB}`) ?? {};
+  assert.deepEqual(job.sourcePhotoRefs, [`gs://${BUCKET}/${PATH}`]);
+});
+
+/**
+ * 유예가 무기한이 되지 않는다. 회수 기한이 지나면 스케줄러가 같은 상태
+ * 문서를 다시 평가해 삭제로 수렴시킨다.
+ */
+test("N: a deferred source is deleted once the recovery window expires", async () => {
+  const expired = new Date(Date.now() - sourceRecoveryGraceMs() - 1000).toISOString();
+  const { db, fs, deleted } = build({
+    job: {
+      status: "failed",
+      failureClass: "infrastructure_recoverable",
+      failedAt: expired,
+    },
+    user: { avatar: { status: "failed" } },
+    state: {
+      status: "deferred",
+      attempts: 0,
+      nextRetryAt: Timestamp.fromMillis(Date.now() - 1000),
+    },
+  });
+
+  const summary = await recover(fs, deleted);
+
+  assert.equal(summary.claimed, 1);
+  assert.deepEqual(deleted, [`gs://${BUCKET}/${PATH}`]);
+  assert.equal(state(db).status, "deleted");
+});
+
+/**
+ * 파괴적 동작은 공개 상태 수렴을 요구한다. 인시던트에서 공개 문서가 queued 로
+ * 남았던 것이 정확히 이 경우다.
+ */
+test("O: retention converges public state before deleting, in either trigger order", async () => {
+  async function run(stateSyncFirst: boolean) {
+    const { db, fs, deleted } = build({
+      // 공개 문서는 아직 생성 중 상태다. state-sync 가 아직 돌지 않았다.
+      user: { avatar: { status: "queued", jobId: JOB } },
+      state: null,
+    });
+    if (stateSyncFirst) {
+      await syncAvatarGenerationStateForJob({ firestore: fs as never, jobId: JOB });
+    }
+    await executeAvatarSourceRetention({
+      firestore: fs as never,
+      uid: UID,
+      jobId: JOB,
+      trigger: "avatar_job",
+      deleteObject: deleter(deleted),
+    });
+    const user = db.get(`users/${UID}`) ?? {};
+    return {
+      deleted,
+      avatarStatus: (user.avatar as Doc | undefined)?.status,
+      stateStatus: state(db).status,
+    };
+  }
+
+  const retentionFirst = await run(false);
+  const syncFirst = await run(true);
+
+  // 트리거 순서와 무관하게 최종 상태가 같아야 한다.
+  assert.deepEqual(retentionFirst, syncFirst);
+  // 공개 상태는 queued 로 남지 않는다.
+  assert.equal(retentionFirst.avatarStatus, "terminal_failed");
+  assert.deepEqual(retentionFirst.deleted, [`gs://${BUCKET}/${PATH}`]);
+  assert.equal(retentionFirst.stateStatus, "deleted");
 });
