@@ -51,7 +51,8 @@ class AvatarGenerationStatusSnapshot {
           map['candidateAvailability']?.toString().trim().toLowerCase() ?? '',
       retryAllowed: map['retryAllowed'] == true,
       approved: map['approved'] == true,
-      safeReasonCode: map['safeReasonCode']?.toString().trim().toLowerCase() ?? '',
+      safeReasonCode:
+          map['safeReasonCode']?.toString().trim().toLowerCase() ?? '',
       sourceAvailable: map.containsKey('sourceAvailable')
           ? map['sourceAvailable'] == true
           : true,
@@ -181,7 +182,8 @@ AvatarResumePlan planAvatarResume(AvatarGenerationStatusSnapshot? snapshot) {
         retryAllowed: snapshot.retryAllowed && snapshot.sourceAvailable,
         allowsNewGeneration: true,
         blocksPhotoEditing: true,
-        message: avatarFailureMessageForReasonCode(snapshot.safeReasonCode) ??
+        message:
+            avatarFailureMessageForReasonCode(snapshot.safeReasonCode) ??
             avatarGenericNoPreviewMessage,
       );
     case 'terminal_failed':
@@ -192,7 +194,8 @@ AvatarResumePlan planAvatarResume(AvatarGenerationStatusSnapshot? snapshot) {
         blocksPhotoEditing: true,
         // 사진이 원인일 때만 "다른 사진으로 다시 시작"을 말한다. 서버 문제나
         // 원본 소실은 사용자가 사진을 바꿔도 달라지지 않는다.
-        message: avatarFailureMessageForReasonCode(snapshot.safeReasonCode) ??
+        message:
+            avatarFailureMessageForReasonCode(snapshot.safeReasonCode) ??
             avatarTerminalFailureMessage,
       );
     default:
