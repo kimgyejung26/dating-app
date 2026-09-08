@@ -88,3 +88,20 @@ def test_operator_setup_script_defaults_to_the_canonical_registry():
     assert f'$ArtifactRegistryRegion = "{CANONICAL_REGISTRY_REGION}"' in text
     assert f'$Repository = "{CANONICAL_REPOSITORY}"' in text
     assert f'$WorkerRegion = "{CANONICAL_REGISTRY_REGION}"' in text
+
+
+def test_operator_setup_script_pins_the_build_to_the_canonical_region():
+    """A global Cloud Build runs in the US and ships ~5GB across continents.
+
+    Build execution, source staging, registry and runtime must all sit in
+    ``asia-southeast1``; relying on the operator to remember ``--region`` is
+    exactly how the cross-region bill came back last time.
+    """
+    text = (REPO_ROOT / "scripts" / "staging_avatar_live_setup.ps1").read_text(
+        encoding="utf-8"
+    )
+    assert f'$BuildRegion = "{CANONICAL_REGISTRY_REGION}"' in text
+    assert "--region=$BuildRegion" in text
+    # Regional execution alone still stages source in the US multi-region
+    # bucket; this is the supported flag that moves staging into the region.
+    assert "--default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET" in text

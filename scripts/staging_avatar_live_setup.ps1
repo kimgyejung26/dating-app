@@ -2,6 +2,10 @@ param(
   [string]$Project = "seolleyeon-final",
   [string]$Region = "asia-northeast3",
   [string]$ArtifactRegistryRegion = "asia-southeast1",
+  # Cloud Build 실행 리전. 전역(global) 빌드는 미국에서 실행되므로
+  # 5GB 급 워커 이미지를 싱가포르 Artifact Registry 로 push 할 때
+  # 대륙 간 전송이 과금된다. 빌드/레지스트리/런타임을 같은 리전에 정렬한다.
+  [string]$BuildRegion = "asia-southeast1",
   [string]$WorkerRegion = "asia-southeast1",
   [string]$Repository = "seolleyeon-avatar-repo",
   [string]$Tag = "staging-avatar-worker",
@@ -249,6 +253,8 @@ Invoke-Step "Create Cloud Tasks queues" {
 Invoke-Step "Build and push avatar worker image with Cloud Build" {
   gcloud builds submit . `
     --project=$Project `
+    --region=$BuildRegion `
+    --default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET `
     --config=cloudbuild.avatar-worker.yaml `
     --substitutions="_IMAGE=$image"
 }
