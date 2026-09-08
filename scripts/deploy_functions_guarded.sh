@@ -13,7 +13,8 @@
 #     --env-file functions/.env.seolleyeon-final \
 #     getCurrentAvatarGenerationStatus retryCurrentAvatarGeneration
 #
-# Add --allow-removal KEY for each variable you intend to drop.
+# Add --allow-removal KEY / --allow-addition KEY for each variable you
+# intend to drop or introduce.
 set -euo pipefail
 
 PROJECT=""
@@ -28,6 +29,7 @@ while [ $# -gt 0 ]; do
     --region) REGION="$2"; shift 2 ;;
     --env-file) ENV_FILE="$2"; shift 2 ;;
     --allow-removal) ALLOWED+=(--allow-removal "$2"); shift 2 ;;
+    --allow-addition) ALLOWED+=(--allow-addition "$2"); shift 2 ;;
     --) shift; break ;;
     -*) echo "unknown flag: $1" >&2; exit 2 ;;
     *) FUNCTIONS+=("$1"); shift ;;

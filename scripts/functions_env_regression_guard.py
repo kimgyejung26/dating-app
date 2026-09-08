@@ -16,7 +16,7 @@ Usage:
         --project seolleyeon-final --region asia-northeast3 \\
         --env-file functions/.env.seolleyeon-final \\
         --function getCurrentAvatarGenerationStatus [--function ...] \\
-        [--allow-removal KEY] [--source-dir functions/src]
+        [--allow-removal KEY] [--allow-addition KEY] [--source-dir functions/src]
 """
 
 from __future__ import annotations
@@ -59,7 +59,7 @@ ENV_READ_PATTERN = re.compile(r"process\.env(?:\.([A-Z][A-Z0-9_]*)|\[\"([A-Z][A-
 class EnvFinding:
     function: str
     key: str
-    kind: str  # "removed" | "changed" | "missing_required"
+    kind: str  # "removed" | "changed" | "added" | "missing_required"
     detail: str = ""
 
     def render(self) -> str:
@@ -121,12 +121,14 @@ def plan_functions_env_check(
     candidate: Mapping[str, str],
     required_from_source: Iterable[str] = (),
     allowed_removals: Iterable[str] = (),
+    allowed_additions: Iterable[str] = (),
 ) -> EnvCheckResult:
     """Compare each function's live environment against the candidate deploy.
 
     Pure: no gcloud, no filesystem. The caller supplies the live environments.
     """
     allowed = set(allowed_removals)
+    additions_allowed = set(allowed_additions)
     required = set(required_from_source)
     result = EnvCheckResult()
 
@@ -150,6 +152,15 @@ def plan_functions_env_check(
                     function, key, "changed",
                     f"{redact(key, live[key])} -> {redact(key, candidate[key])}",
                 ))
+        # An added variable is a behaviour change too. One of these re-enabled
+        # a closed-beta upload allowlist on the onboarding entry point while
+        # the app sat in store review: every non-listed user, the reviewer
+        # included, would have been refused.
+        for key in sorted(set(candidate) - set(live) - additions_allowed):
+            result.findings.append(EnvFinding(
+                function, key, "added",
+                "absent from the serving revision but present in the candidate env",
+            ))
         # A variable the code reads and the platform does not inject must be
         # present somewhere; losing it is how a guard turns into a silent
         # fallback.
@@ -187,6 +198,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--env-file", required=True)
     parser.add_argument("--function", action="append", required=True, dest="functions")
     parser.add_argument("--allow-removal", action="append", default=[], dest="allowed")
+    parser.add_argument("--allow-addition", action="append", default=[], dest="additions")
     parser.add_argument("--source-dir", default="functions/src")
     args = parser.parse_args(argv)
 
@@ -203,6 +215,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         candidate=candidate,
         required_from_source=required,
         allowed_removals=args.allowed,
+        allowed_additions=args.additions,
     )
     for function in result.checked_functions:
         print(f"checked {function}: {len(deployed[function])} live variables")
@@ -214,7 +227,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"  {finding.render()}")
     print(
         "\nDeploying now would change these variables. Restore them in the env "
-        "file, or pass --allow-removal KEY for each one you intend to drop."
+        "file, or pass --allow-removal / --allow-addition KEY for each change "
+        "you intend to make."
     )
     return 1
 

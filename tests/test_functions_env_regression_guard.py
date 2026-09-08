@@ -159,3 +159,23 @@ def test_a_variable_the_code_reads_cannot_quietly_disappear():
 
     kinds = {(f.key, f.kind) for f in result.findings}
     assert ("JOB_QUEUE_MODE", "missing_required") in kinds
+
+
+def test_an_added_variable_is_reported():
+    """실제로 이 케이스가 심사 중인 앱의 온보딩 진입점에 beta allowlist 를 되살렸다."""
+    candidate = {k: v for k, v in LIVE.items() if k not in PLATFORM_MANAGED_KEYS}
+    candidate["AVATAR_UPLOAD_ALLOWED_UIDS"] = "uid_a,uid_b"
+
+    blocked = plan_functions_env_check(
+        deployed={"beginAvatarGenerationFromOnboardingPhotos": LIVE},
+        candidate=candidate,
+    )
+    declared = plan_functions_env_check(
+        deployed={"beginAvatarGenerationFromOnboardingPhotos": LIVE},
+        candidate=candidate,
+        allowed_additions=["AVATAR_UPLOAD_ALLOWED_UIDS"],
+    )
+
+    added = [f for f in blocked.findings if f.kind == "added"]
+    assert [f.key for f in added] == ["AVATAR_UPLOAD_ALLOWED_UIDS"]
+    assert declared.ok
