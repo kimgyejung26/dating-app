@@ -19,6 +19,8 @@ class AvatarGenerationStatusSnapshot {
     required this.candidateAvailability,
     required this.retryAllowed,
     required this.approved,
+    this.safeReasonCode = '',
+    this.sourceAvailable = true,
   });
 
   final bool sourceLocked;
@@ -28,6 +30,13 @@ class AvatarGenerationStatusSnapshot {
   final String candidateAvailability;
   final bool retryAllowed;
   final bool approved;
+
+  /// 서버가 허용한 안전 사유 코드. 사진 문제와 서버 문제를 가르는 유일한 근거다.
+  final String safeReasonCode;
+
+  /// 같은 사진으로 다시 시도할 원본이 아직 남아 있는가. 구 백엔드 응답에는
+  /// 이 필드가 없으므로, 없을 때는 서버의 retryAllowed 판단을 그대로 따른다.
+  final bool sourceAvailable;
 
   bool get hasPreviewSafeCandidates => candidateAvailability == 'preview_safe';
 
@@ -42,6 +51,10 @@ class AvatarGenerationStatusSnapshot {
           map['candidateAvailability']?.toString().trim().toLowerCase() ?? '',
       retryAllowed: map['retryAllowed'] == true,
       approved: map['approved'] == true,
+      safeReasonCode: map['safeReasonCode']?.toString().trim().toLowerCase() ?? '',
+      sourceAvailable: map.containsKey('sourceAvailable')
+          ? map['sourceAvailable'] == true
+          : true,
     );
   }
 }
@@ -164,10 +177,12 @@ AvatarResumePlan planAvatarResume(AvatarGenerationStatusSnapshot? snapshot) {
         jobId: snapshot.jobId,
         // 재시도 가능 여부의 권위는 서버다. 서버가 거부할 재시도를
         // UI가 제안하면 사용자는 반드시 실패하는 버튼을 누르게 된다.
-        retryAllowed: snapshot.retryAllowed,
+        // 원본이 남아 있지 않으면 같은 사진 재시도는 성립하지 않는다.
+        retryAllowed: snapshot.retryAllowed && snapshot.sourceAvailable,
         allowsNewGeneration: true,
         blocksPhotoEditing: true,
-        message: avatarGenericNoPreviewMessage,
+        message: avatarFailureMessageForReasonCode(snapshot.safeReasonCode) ??
+            avatarGenericNoPreviewMessage,
       );
     case 'terminal_failed':
       return AvatarResumePlan(
@@ -175,7 +190,10 @@ AvatarResumePlan planAvatarResume(AvatarGenerationStatusSnapshot? snapshot) {
         jobId: snapshot.jobId,
         allowsNewGeneration: true,
         blocksPhotoEditing: true,
-        message: avatarTerminalFailureMessage,
+        // 사진이 원인일 때만 "다른 사진으로 다시 시작"을 말한다. 서버 문제나
+        // 원본 소실은 사용자가 사진을 바꿔도 달라지지 않는다.
+        message: avatarFailureMessageForReasonCode(snapshot.safeReasonCode) ??
+            avatarTerminalFailureMessage,
       );
     default:
       return const AvatarResumePlan(action: AvatarResumeAction.unavailable);

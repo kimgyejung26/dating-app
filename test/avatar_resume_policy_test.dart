@@ -138,4 +138,85 @@ void main() {
       }
     });
   });
+
+  /// 프로덕션 인시던트 회귀. Storage 403 은 서버 문제였는데 사용자에게는
+  /// "이 사진으로는 아바타를 만들 수 없어요" 로 표시됐다. 사진을 바꿔도
+  /// 인프라는 고쳐지지 않으므로 이 안내는 사용자를 잘못된 행동으로 보낸다.
+  group('failure taxonomy', () {
+    AvatarGenerationStatusSnapshot snapWith({
+      required String status,
+      String safeReasonCode = '',
+      bool retryAllowed = false,
+      bool? sourceAvailable,
+    }) {
+      return AvatarGenerationStatusSnapshot.fromMap(<String, dynamic>{
+        'sourceLocked': true,
+        'jobId': 'avatar_job_abcdefgh',
+        'sourceSelectionVersion': 3,
+        'status': status,
+        'candidateAvailability': 'none',
+        'retryAllowed': retryAllowed,
+        'approved': false,
+        'safeReasonCode': safeReasonCode,
+        if (sourceAvailable != null) 'sourceAvailable': sourceAvailable,
+      });
+    }
+
+    test('infrastructure failure never tells the user to change the photo', () {
+      final plan = planAvatarResume(
+        snapWith(
+          status: 'retryable_failed',
+          safeReasonCode: 'avatar_generation_infrastructure_failed',
+          retryAllowed: true,
+        ),
+      );
+
+      expect(plan.action, AvatarResumeAction.showRetryable);
+      expect(plan.message, avatarInfrastructureFailureMessage);
+      expect(plan.message, isNot(contains('다른 사진')));
+      expect(plan.retryAllowed, isTrue);
+    });
+
+    test('a genuine photo problem still asks for a different photo', () {
+      final plan = planAvatarResume(
+        snapWith(
+          status: 'terminal_failed',
+          safeReasonCode: 'avatar_source_face_too_small',
+        ),
+      );
+
+      expect(plan.action, AvatarResumeAction.showTerminal);
+      expect(plan.message, avatarSourceFaceTooSmallMessage);
+      expect(plan.allowsNewGeneration, isTrue);
+    });
+
+    test('an unclassified terminal failure keeps the existing wording', () {
+      final plan = planAvatarResume(snapWith(status: 'terminal_failed'));
+
+      expect(plan.message, avatarTerminalFailureMessage);
+    });
+
+    test('a deleted source never offers a same-photo retry', () {
+      final plan = planAvatarResume(
+        snapWith(
+          status: 'retryable_failed',
+          safeReasonCode: 'avatar_source_unavailable',
+          retryAllowed: true,
+          sourceAvailable: false,
+        ),
+      );
+
+      expect(plan.retryAllowed, isFalse);
+      expect(plan.allowsNewGeneration, isTrue);
+      expect(plan.message, avatarSourceUnavailableMessage);
+    });
+
+    test('a backend without sourceAvailable keeps the server decision', () {
+      final plan = planAvatarResume(
+        snapWith(status: 'retryable_failed', retryAllowed: true),
+      );
+
+      expect(plan.retryAllowed, isTrue);
+    });
+  });
 }

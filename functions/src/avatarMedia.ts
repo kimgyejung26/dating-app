@@ -837,6 +837,22 @@ const RETRYABLE_CURRENT_AVATAR_STATUSES = new Set([
 ]);
 
 const SAFE_AVATAR_REASON_CODES = new Set([
+  // 사진 문제와 서버 문제를 사용자에게 다르게 말하기 위한 코드.
+  "avatar_generation_infrastructure_failed",
+  "avatar_source_unavailable",
+  // 워커가 이미 기록하는 콘텐츠 사유들. 클라이언트에 그대로 전달해야
+  // "다른 사진으로" 라는 안내가 실제 이유와 함께 나간다.
+  "avatar_no_eligible_source_photo",
+  "avatar_source_no_face",
+  "avatar_source_multi_face",
+  "avatar_source_face_too_small",
+  "avatar_source_face_too_blurry",
+  "avatar_source_face_out_of_frame",
+  "avatar_source_landmarks_unstable",
+  "avatar_source_low_light",
+  "avatar_source_compression_damage",
+  "avatar_source_analysis_uncertain",
+  "avatar_background_text_logo_risky",
   "avatar_generation_paused",
   "avatar_provider_outcome_unknown",
   "avatar_queue_dispatch_failed",
@@ -884,6 +900,11 @@ export type CurrentAvatarGenerationStatusResponse = {
   retryAllowed: boolean;
   approved: boolean;
   safeReasonCode: string | null;
+  /**
+   * 같은 사진으로 다시 시도할 원본이 아직 남아 있는가. 원본이 이미 삭제된
+   * 작업에 재시도 버튼을 띄우면 사용자는 반드시 실패하는 버튼을 누른다.
+   */
+  sourceAvailable: boolean;
 };
 
 function normalizeCurrentAvatarStatus(value: unknown): string {
@@ -902,6 +923,28 @@ const PROVIDER_OUTCOME_UNKNOWN_ERROR_CODES = new Set([
   "azure_unknown_post_send_outcome",
 ]);
 
+/// 워커가 남긴 실패 분류. 사진 자체가 부적합해서 끝난 실패와, 서버 인프라가
+/// 실패한 것을 같은 최종 실패로 합치면 사용자는 "다른 사진으로 다시" 라는
+/// 잘못된 안내를 받는다. 사진을 바꿔도 인프라는 고쳐지지 않는다.
+const CONTENT_TERMINAL_FAILURE_CLASSES = new Set([
+  "content_terminal",
+  "user_terminal",
+]);
+
+export function isInfrastructureFailureJob(
+  jobData: Record<string, unknown>,
+): boolean {
+  const status = asString(jobData.status).toLowerCase();
+  if (status !== "failed" && status !== "terminal_failed") return false;
+  if (jobData.retryable === true) return true;
+  const failureClass = asString(jobData.failureClass).toLowerCase();
+  if (!failureClass) {
+    // 분류가 없는 레거시 실패. 사진 탓으로 단정하지 않는다.
+    return true;
+  }
+  return !CONTENT_TERMINAL_FAILURE_CLASSES.has(failureClass);
+}
+
 function normalizeCurrentAvatarStatusFromJob(
   jobData: Record<string, unknown>,
   userAvatar: Record<string, unknown>,
@@ -914,8 +957,13 @@ function normalizeCurrentAvatarStatusFromJob(
     return "reconciliation_required";
   }
   const rawStatus = asString(jobData.status ?? userAvatar.status).toLowerCase();
-  if (rawStatus === "failed") {
-    return jobData.retryable === true ? "retryable_failed" : "terminal_failed";
+  if (rawStatus === "failed" || rawStatus === "terminal_failed") {
+    if (asString(jobData.failureClass).toLowerCase() === "provider_ambiguous") {
+      return "reconciliation_required";
+    }
+    return isInfrastructureFailureJob(jobData)
+      ? "retryable_failed"
+      : "terminal_failed";
   }
   return normalizeCurrentAvatarStatus(rawStatus);
 }
@@ -943,6 +991,9 @@ function safeReasonCodeFromJob(
     )
   ) {
     return "avatar_provider_outcome_unknown";
+  }
+  if (isInfrastructureFailureJob(jobData)) {
+    return "avatar_generation_infrastructure_failed";
   }
   return (
     safeAvatarReasonCode(jobData.errorCode) ??
@@ -1030,6 +1081,7 @@ export function buildCurrentAvatarGenerationStatusResponse(params: {
       retryAllowed: false,
       approved: Boolean(approvedAvatarUrl),
       safeReasonCode: approvedAvatarUrl ? null : "avatar_already_approved",
+      sourceAvailable: false,
     };
   }
 
@@ -1047,6 +1099,7 @@ export function buildCurrentAvatarGenerationStatusResponse(params: {
         retryAllowed: false,
         approved: false,
         safeReasonCode: "avatar_state_inconsistent",
+        sourceAvailable: false,
       };
     }
     throw error;
@@ -1063,6 +1116,7 @@ export function buildCurrentAvatarGenerationStatusResponse(params: {
         retryAllowed: false,
         approved: false,
         safeReasonCode: "avatar_state_inconsistent",
+        sourceAvailable: false,
       };
     }
     return {
@@ -1074,6 +1128,7 @@ export function buildCurrentAvatarGenerationStatusResponse(params: {
       retryAllowed: false,
       approved: false,
       safeReasonCode: null,
+      sourceAvailable: false,
     };
   }
 
@@ -1092,6 +1147,7 @@ export function buildCurrentAvatarGenerationStatusResponse(params: {
       retryAllowed: false,
       approved: false,
       safeReasonCode: "avatar_state_inconsistent",
+      sourceAvailable: false,
     };
   }
   const jobStatus = normalizeCurrentAvatarStatusFromJob(jobData, userAvatar);
@@ -1105,17 +1161,22 @@ export function buildCurrentAvatarGenerationStatusResponse(params: {
     status === "preview_ready" && params.candidatesAvailable
       ? "preview_safe"
       : "none";
+  // 소스 선택 단계는 아직 잠글 원본을 고르는 중이므로 "남아 있다"로 본다.
+  const sourceAvailable = contract.sourceSelecting || contract.sourceEntry !== null;
   return {
     sourceLocked: true,
     jobId: contract.jobId,
     sourceSelectionVersion: contract.sourceSelectionVersion,
     status,
     candidateAvailability,
-    retryAllowed: retryAllowedForStatus(status),
+    // 서버가 재시도를 허용해도 원본이 없으면 같은 사진 재시도는 불가능하다.
+    retryAllowed: retryAllowedForStatus(status) && sourceAvailable,
     approved: false,
-    safeReasonCode:
-      safeReasonCodeFromJob(jobData) ??
-      (retryAllowedForStatus(status) ? status : null),
+    safeReasonCode: !sourceAvailable
+      ? "avatar_source_unavailable"
+      : safeReasonCodeFromJob(jobData) ??
+        (retryAllowedForStatus(status) ? status : null),
+    sourceAvailable,
   };
 }
 

@@ -25,6 +25,16 @@ const avatarNeedsReviewMessage = '아바타 안전 확인에 추가 검토가 �
 const avatarTerminalFailureMessage =
     '이 사진으로는 아바타를 만들 수 없었어요. 다른 사진으로 다시 시작해주세요.';
 
+/// 서버/인프라 실패. 사진을 바꿔도 해결되지 않으므로 사진 교체를 권하면 안 된다.
+/// 사용자는 고쳐지지 않는 문제를 자기 탓으로 되풀이하게 된다.
+const avatarInfrastructureFailureMessage =
+    '아바타 생성 중 일시적인 문제가 발생했어요. 잠시 후 다시 시도해주세요.';
+
+/// 같은 사진으로 이어서 시도할 원본이 남아 있지 않은 상태. 재시도 버튼을
+/// 띄우면 반드시 실패하므로, 새로 등록하는 길만 안내한다.
+const avatarSourceUnavailableMessage =
+    '이전 사진 정보가 남아 있지 않아 이어서 만들 수 없어요. 사진을 다시 등록해주세요.';
+
 /// provider 요청은 나갔지만 결과를 확인하지 못한 상태. 이미 생성된(과금된)
 /// 아바타가 있을 수 있으므로 재시도도, 새 생성도 권하지 않는다.
 const avatarReconciliationRequiredMessage =
@@ -43,10 +53,33 @@ const avatarSourceSetInvalidMessage = '사진 정보를 확인하지 못했어�
 const avatarStartOverButtonLabel = '사진을 바꾸고 다시 만들기';
 const avatarStartOverUnavailableMessage = '지금은 새로 만들 수 없어요. 잠시 후 다시 시도해주세요.';
 
+/// 서버가 내려준 안전 사유 코드로 안내 문구를 고른다. 상태만으로는 "사진
+/// 문제"와 "서버 문제"를 구분할 수 없다.
+String? avatarFailureMessageForReasonCode(String reasonCode) {
+  switch (reasonCode.trim()) {
+    case 'avatar_generation_infrastructure_failed':
+      return avatarInfrastructureFailureMessage;
+    case 'avatar_source_unavailable':
+    case 'avatar_state_inconsistent':
+      return avatarSourceUnavailableMessage;
+    case 'avatar_no_eligible_source_photo':
+      return avatarNoEligibleSourcePhotoMessage;
+    case 'avatar_source_multi_face':
+      return avatarSourceMultiFaceMessage;
+    case 'avatar_source_face_too_small':
+      return avatarSourceFaceTooSmallMessage;
+    case 'avatar_background_text_logo_risky':
+      return avatarBackgroundTextLogoRiskMessage;
+  }
+  return null;
+}
+
 String avatarGenerationFailureMessage({
   required AvatarJobStatus status,
   String errorCode = '',
 }) {
+  final reasonMessage = avatarFailureMessageForReasonCode(errorCode);
+  if (reasonMessage != null) return reasonMessage;
   switch (errorCode.trim()) {
     case 'avatar_no_eligible_source_photo':
       return avatarNoEligibleSourcePhotoMessage;
