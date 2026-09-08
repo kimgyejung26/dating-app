@@ -17,6 +17,7 @@ import {
   queueMode,
   shouldSupersedeAvatarJobStatus,
   summarizeQueueWriteState,
+  queueMode as queueModeExport,
 } from "./avatarMedia";
 
 function withEnv(env: Record<string, string | undefined>, run: () => void) {
@@ -666,4 +667,96 @@ test("a job whose source was already deleted never offers a same-photo retry", (
   assert.equal(response.retryAllowed, false);
   assert.equal(response.sourceAvailable, false);
   assert.equal(response.safeReasonCode, "avatar_state_inconsistent");
+});
+
+/**
+ * 배포된 런타임에서 JOB_QUEUE_MODE 가 빠지면 큰 소리로 실패해야 한다.
+ *
+ * 예전 계약은 `ENVIRONMENT` 문자열에만 의존했다. 프로덕션 Functions 는
+ * `ENVIRONMENT=staging` 으로 떠 있어서, 큐 설정이 사라지면 예외 대신 조용히
+ * dry_run 으로 떨어질 수 있었다. 실제로 2026-09-08 배포에서 env 파일이
+ * 불완전해 JOB_QUEUE_MODE 가 통째로 사라진 적이 있다. 조용한 fallback 은
+ * "작업을 큐에 넣었다"고 보고하면서 아무것도 넣지 않는다.
+ */
+function cloudRuntime(extra: Record<string, string | undefined> = {}) {
+  return {
+    K_SERVICE: "retrycurrentavatargeneration",
+    K_REVISION: "retrycurrentavatargeneration-00008-cip",
+    FUNCTION_TARGET: "retryCurrentAvatarGeneration",
+    FUNCTIONS_EMULATOR: undefined,
+    NODE_ENV: undefined,
+    ...extra,
+  };
+}
+
+function localRuntime(extra: Record<string, string | undefined> = {}) {
+  return {
+    K_SERVICE: undefined,
+    K_REVISION: undefined,
+    FUNCTION_TARGET: undefined,
+    FUNCTIONS_EMULATOR: undefined,
+    NODE_ENV: undefined,
+    ...extra,
+  };
+}
+
+test("a deployed runtime never silently falls back to dry_run", () => {
+  for (const environment of ["staging", "production", undefined, "", "anything"]) {
+    withEnv(
+      cloudRuntime({ JOB_QUEUE_MODE: undefined, ENVIRONMENT: environment }),
+      () => {
+        assert.throws(
+          () => queueModeExport(),
+          /JOB_QUEUE_MODE/,
+          `ENVIRONMENT=${String(environment)} must still fail closed`,
+        );
+      },
+    );
+  }
+});
+
+test("a deployed runtime with an explicit queue mode keeps working", () => {
+  withEnv(
+    cloudRuntime({ JOB_QUEUE_MODE: "cloud_tasks", ENVIRONMENT: "staging" }),
+    () => {
+      assert.equal(queueModeExport(), "cloud_tasks");
+    },
+  );
+});
+
+test("the emulator keeps its local dry_run default", () => {
+  withEnv(
+    cloudRuntime({
+      JOB_QUEUE_MODE: undefined,
+      FUNCTIONS_EMULATOR: "true",
+      ENVIRONMENT: "local",
+    }),
+    () => {
+      assert.equal(queueModeExport(), "dry_run");
+    },
+  );
+  withEnv(
+    localRuntime({ JOB_QUEUE_MODE: undefined, ENVIRONMENT: "local" }),
+    () => {
+      assert.equal(queueModeExport(), "dry_run");
+    },
+  );
+});
+
+test("an explicit local dry_run stays allowed", () => {
+  withEnv(
+    localRuntime({ JOB_QUEUE_MODE: "dry_run", ENVIRONMENT: "local" }),
+    () => {
+      assert.equal(queueModeExport(), "dry_run");
+    },
+  );
+});
+
+test("an explicit dry_run is still refused in a production environment", () => {
+  withEnv(
+    cloudRuntime({ JOB_QUEUE_MODE: "dry_run", ENVIRONMENT: "production" }),
+    () => {
+      assert.throws(() => queueModeExport(), /dry_run/);
+    },
+  );
 });

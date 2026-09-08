@@ -152,6 +152,21 @@ function isProductionEnvironment(): boolean {
   );
 }
 
+/**
+ * 배포된 Firebase/Cloud Run 런타임인가.
+ *
+ * `ENVIRONMENT` 는 사람이 설정하는 라벨이라 실수로 빠지거나 어긋난다. 실제로
+ * 프로덕션 Functions 는 `ENVIRONMENT=staging` 으로 떠 있다. 반면 `K_SERVICE`
+ * 와 `FUNCTION_TARGET` 은 플랫폼이 주입하므로 배포 여부를 라벨보다 정확하게
+ * 말해 준다. 에뮬레이터는 `FUNCTIONS_EMULATOR` 로 자신을 밝힌다.
+ */
+export function isDeployedFunctionsRuntime(): boolean {
+  if (truthyEnv("FUNCTIONS_EMULATOR")) return false;
+  return Boolean(
+    process.env.K_SERVICE?.trim() || process.env.FUNCTION_TARGET?.trim(),
+  );
+}
+
 function isLocalEnvironment(): boolean {
   const environment = process.env.ENVIRONMENT?.trim().toLowerCase();
   return (
@@ -1389,10 +1404,13 @@ export function redactQueuePayload(
 export function queueMode(): string {
   const configured = process.env.JOB_QUEUE_MODE?.trim().toLowerCase();
   if (!configured) {
-    if (isProductionEnvironment()) {
+    // 설정이 없을 때의 조용한 dry_run fallback 은 로컬에서만 허용한다. 배포된
+    // 런타임에서 이 값이 사라지면 큐에 아무것도 넣지 않고 "넣었다"고 보고하게
+    // 되므로, 라벨이 무엇이든 큰 소리로 실패한다.
+    if (isDeployedFunctionsRuntime() || isProductionEnvironment()) {
       throw new HttpsError(
         "failed-precondition",
-        "JOB_QUEUE_MODE must be explicitly configured in production.",
+        "JOB_QUEUE_MODE must be explicitly configured in a deployed runtime.",
       );
     }
     return "dry_run";
