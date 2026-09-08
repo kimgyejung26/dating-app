@@ -66,3 +66,38 @@ if bad:
     raise SystemExit(f"Overbroad bucket IAM roles for {member}: {bad}")
 print(f"[p1-chat-real-photo] Runtime service account has expected bucket role: {allowed_role}")
 PY
+
+# 실제 uploader 는 아바타 워커다. 이 바인딩이 없으면 chatPartnerRealPhotoDisclosure
+# 를 켠 사용자의 생성이 GCS 403 으로 실패한다(프로덕션 인시던트).
+python - "$TMP_POLICY_JSON" "$AVATAR_WORKER_SERVICE_ACCOUNT" <<'PY'
+import json
+import sys
+
+path, service_account = sys.argv[1:3]
+member = f"serviceAccount:{service_account}"
+accepted_roles = {
+    "roles/storage.objectCreator",
+    "roles/storage.objectUser",
+    "roles/storage.objectAdmin",
+}
+forbidden_roles = {
+    "roles/storage.admin",
+    "roles/owner",
+    "roles/editor",
+}
+with open(path, "r", encoding="utf-8") as f:
+    policy = json.load(f)
+bindings = policy.get("bindings") or []
+roles = {
+    binding.get("role")
+    for binding in bindings
+    if member in set(binding.get("members") or [])
+}
+granted = sorted(roles & accepted_roles)
+if not granted:
+    raise SystemExit(f"Missing an object-write binding for the avatar worker {member}")
+bad = sorted(role for role in roles if role in forbidden_roles)
+if bad:
+    raise SystemExit(f"Overbroad bucket IAM roles for {member}: {bad}")
+print(f"[p1-chat-real-photo] Avatar worker has a scoped bucket write role: {granted}")
+PY

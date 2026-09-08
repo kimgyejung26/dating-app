@@ -14,7 +14,7 @@ PROJECT="$(effective_gcp_project)"
 prepare_mutation_project "$PROJECT"
 assert_runtime_service_account_project "$FUNCTIONS_RUNTIME_SERVICE_ACCOUNT" "$PROJECT"
 
-info "Preparing bucket=$CHAT_PROFILE_PHOTO_BUCKET location=$GCP_LOCATION runtime_sa=$FUNCTIONS_RUNTIME_SERVICE_ACCOUNT"
+info "Preparing bucket=$CHAT_PROFILE_PHOTO_BUCKET location=$GCP_LOCATION runtime_sa=$FUNCTIONS_RUNTIME_SERVICE_ACCOUNT worker_sa=$AVATAR_WORKER_SERVICE_ACCOUNT"
 
 if bucket_exists "$CHAT_PROFILE_PHOTO_BUCKET"; then
   verify_bucket_ownership "$CHAT_PROFILE_PHOTO_BUCKET" "$PROJECT"
@@ -37,6 +37,14 @@ fi
 run_or_print gcloud storage buckets add-iam-policy-binding "gs://$CHAT_PROFILE_PHOTO_BUCKET" \
   --member="serviceAccount:$FUNCTIONS_RUNTIME_SERVICE_ACCOUNT" \
   --role="roles/storage.objectAdmin"
+
+# 이 버킷에 객체를 실제로 쓰는 주체는 Functions 런타임이 아니라 아바타 워커다
+# (`_persist_chat_real_photo_if_consented`). 이 바인딩이 없어서 프로덕션에서
+# GCS 403 이 났고, 그 실패가 아바타 생성 전체를 죽였다. 워커는 새 객체를 만들
+# 뿐 읽거나 지우지 않으므로 objectCreator 로 충분하다.
+run_or_print gcloud storage buckets add-iam-policy-binding "gs://$CHAT_PROFILE_PHOTO_BUCKET" \
+  --member="serviceAccount:$AVATAR_WORKER_SERVICE_ACCOUNT" \
+  --role="roles/storage.objectCreator"
 
 if [ "${USE_CHAT_PROFILE_SIGNED_URL:-true}" = "true" ] && [ "${GRANT_SIGN_BLOB:-false}" = "true" ]; then
   run_or_print gcloud iam service-accounts add-iam-policy-binding "$FUNCTIONS_RUNTIME_SERVICE_ACCOUNT" \

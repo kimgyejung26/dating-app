@@ -142,6 +142,8 @@ require_standard_env_defaults() {
   : "${GCP_LOCATION:=asia-northeast3}"
   : "${FUNCTIONS_REGION:=asia-northeast3}"
   : "${CHAT_PROFILE_PHOTO_BUCKET:=seolleyeon-final-chat-profile-photos}"
+  # chat-profile 객체를 실제로 쓰는 주체. Functions 런타임과 다르다.
+  : "${AVATAR_WORKER_SERVICE_ACCOUNT:=avatar-worker@seolleyeon-final.iam.gserviceaccount.com}"
   : "${SOURCE_PHOTO_BUCKET:=seolleyeon-final-private-source-photos}"
   : "${APPROVED_AVATAR_BUCKET:=seolleyeon-final-approved-avatars}"
   : "${AVATAR_TEMP_BUCKET:=seolleyeon-final-avatar-temp}"
