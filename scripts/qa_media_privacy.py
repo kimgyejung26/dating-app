@@ -134,6 +134,8 @@ class PrivacyQASummary:
     public_report_leakage_count: int = 0
     public_log_leakage_count: int = 0
     scanned_file_count: int = 0
+    # 디코드에 실패해 실제로는 검사되지 않은 클라이언트 소스 파일 수.
+    client_code_unscannable_count: int = 0
 
     @property
     def leakage_count(self) -> int:
@@ -152,6 +154,8 @@ class PrivacyQASummary:
             and self.browser_storage_leakage_count == 0
             and self.public_report_leakage_count == 0
             and self.public_log_leakage_count == 0
+            # 검사하지 못한 파일이 있으면 통과라고 말하지 않는다.
+            and self.client_code_unscannable_count == 0
         )
 
     def to_dict(self) -> Dict[str, Any]:
@@ -167,6 +171,7 @@ class PrivacyQASummary:
             "browser_storage_leakage_count": self.browser_storage_leakage_count,
             "public_report_leakage_count": self.public_report_leakage_count,
             "public_log_leakage_count": self.public_log_leakage_count,
+            "client_code_unscannable_count": self.client_code_unscannable_count,
             "scanned_file_count": self.scanned_file_count,
             "status": "pass" if self.passed else "fail",
         }
@@ -505,6 +510,7 @@ def scan_client_surfaces(
     return PrivacyQASummary(
         client_code_leakage_count=scan.leakage_count,
         scanned_file_count=scan.scanned_file_count,
+        client_code_unscannable_count=scan.unscannable_count,
     )
 
 
@@ -575,6 +581,7 @@ def run_fixture_checks(
             client_scan.client_code_leakage_count,
         )
         summary.scanned_file_count = client_scan.scanned_file_count
+        summary.client_code_unscannable_count = client_scan.client_code_unscannable_count
     return summary
 
 

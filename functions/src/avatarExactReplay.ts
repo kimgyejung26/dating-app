@@ -453,7 +453,14 @@ async function validateRow(params: RunAvatarExactReplayParams, row: AvatarExactR
   }
   if (!await params.storage.objectExists(SOURCE_BUCKET, sourcePath)) throw new Error("ERR_EXACT_REPLAY_SOURCE_MISSING");
 
-  const normalizedJobData = { ...jobData, status: "terminal_failed", retryable: false };
+  // 이 도구는 운영자가 종료를 이미 증명한 행만 처리한다(위의 priorStatus 게이트).
+  // retention 계약은 "종료임이 명시된 실패"만 삭제하므로 분류를 함께 적는다.
+  const normalizedJobData = {
+    ...jobData,
+    status: "terminal_failed",
+    retryable: false,
+    failureClass: "content_terminal",
+  };
   const decision = planAvatarSourceRetention({ uid, jobId, privateData, jobData: normalizedJobData });
   if (decision.action !== "claim") throw new Error("ERR_EXACT_REPLAY_RETENTION_CONTRACT");
   const candidates = await loadCandidateProofs({
@@ -566,6 +573,7 @@ async function applyRow(
     await params.firestore.collection("avatarJobs").doc(validation.jobId).set({
       status: "terminal_failed",
       retryable: false,
+      failureClass: "content_terminal",
     }, { merge: true });
     const executeRetention = params.executeRetention ?? defaultRetentionExecutor;
     await executeRetention({ firestore: params.firestore, uid: validation.uid, jobId: validation.jobId, trigger: "avatar_job" });

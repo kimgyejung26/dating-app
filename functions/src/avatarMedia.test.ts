@@ -17,6 +17,7 @@ import {
   queueMode,
   shouldSupersedeAvatarJobStatus,
   summarizeQueueWriteState,
+  queueMode as queueModeExport,
 } from "./avatarMedia";
 
 function withEnv(env: Record<string, string | undefined>, run: () => void) {
@@ -518,7 +519,8 @@ test("source-set retry re-dispatches the same job without a new job id or select
 
 test("source-set retry refuses terminal, ambiguous, and in-flight jobs and honours the limit", () => {
   for (const [status, extra] of [
-    ["terminal_failed", {}],
+    // 사진 자체가 부적합해서 끝난 실패만 재시도 불가다.
+    ["terminal_failed", { failureClass: "content_terminal" }],
     ["needs_review", { errorCode: "azure_unknown_post_send_outcome", generationClaim: { state: "active" } }],
     ["needs_review", { errorCode: "qa_requires_review" }],
     ["queued", {}],
@@ -533,6 +535,21 @@ test("source-set retry refuses terminal, ambiguous, and in-flight jobs and honou
     });
     assert.equal(plan.allowed, false, `${status} must not be retryable`);
   }
+  // 인프라 실패는 같은 사진으로 다시 시도할 수 있어야 한다. 사진을 바꾸라고
+  // 안내하면 사용자는 고쳐지지 않는 문제를 자기 탓으로 되풀이한다.
+  for (const extra of [
+    { failureClass: "infrastructure_recoverable" },
+    {}, // 분류가 없는 레거시 실패도 사진 탓으로 단정하지 않는다.
+  ]) {
+    const infrastructure = buildSourceSetRetryPlan({
+      uid: RESUME_UID,
+      jobId: RESUME_JOB_ID,
+      currentJobData: sourceSetStatusFixture("failed", "failed", extra).jobData,
+      clientRequestId: "retry-ss-0005",
+    });
+    assert.equal(infrastructure.allowed, true);
+  }
+
   const exhausted = buildSourceSetRetryPlan({
     uid: RESUME_UID,
     jobId: RESUME_JOB_ID,
@@ -578,4 +595,168 @@ test("local insecure Cloud Tasks bypass requires the explicit local flag (shared
     const request = buildCloudTaskHttpRequest("http://localhost:8080/tasks/avatar-generation", payload);
     assert.equal(request.oidcToken, undefined);
   });
+});
+
+/**
+ * 프로덕션 인시던트 회귀. Storage 403 은 사진 문제가 아니라 서버 문제였는데
+ * 클라이언트에는 "이 사진으로는 아바타를 만들 수 없어요" 로 표시됐다.
+ */
+test("infrastructure failures are reported as retryable, not as a photo problem", () => {
+  const response = buildCurrentAvatarGenerationStatusResponse(
+    sourceSetStatusFixture("failed", "selected", {
+      failureClass: "infrastructure_recoverable",
+      errorCode: "avatar_generation_worker_error",
+    }),
+  );
+
+  assert.equal(response.status, "retryable_failed");
+  assert.equal(response.safeReasonCode, "avatar_generation_infrastructure_failed");
+  assert.equal(response.retryAllowed, true);
+  assert.equal(response.sourceAvailable, true);
+});
+
+test("unclassified legacy failures do not blame the photo either", () => {
+  const response = buildCurrentAvatarGenerationStatusResponse(
+    sourceSetStatusFixture("failed", "selected", {
+      errorCode: "avatar_generation_worker_error",
+    }),
+  );
+
+  assert.equal(response.status, "retryable_failed");
+  assert.equal(response.safeReasonCode, "avatar_generation_infrastructure_failed");
+});
+
+test("content-terminal failures stay terminal and are not retryable", () => {
+  const response = buildCurrentAvatarGenerationStatusResponse(
+    sourceSetStatusFixture("failed", "selected", {
+      failureClass: "content_terminal",
+      errorCode: "avatar_source_face_too_small",
+    }),
+  );
+
+  assert.equal(response.status, "terminal_failed");
+  assert.equal(response.retryAllowed, false);
+  assert.equal(response.safeReasonCode, "avatar_source_face_too_small");
+});
+
+test("provider-ambiguous failures reconcile instead of retrying", () => {
+  const response = buildCurrentAvatarGenerationStatusResponse(
+    sourceSetStatusFixture("failed", "selected", {
+      failureClass: "provider_ambiguous",
+    }),
+  );
+
+  assert.equal(response.status, "reconciliation_required");
+  assert.equal(response.retryAllowed, false);
+});
+
+/**
+ * 원본이 이미 삭제된 과거 인시던트 작업. 재시도 버튼을 띄우면 사용자는 반드시
+ * 실패하는 버튼을 누르게 된다.
+ */
+test("a job whose source was already deleted never offers a same-photo retry", () => {
+  const fixture = sourceSetStatusFixture("failed", "selected", {
+    failureClass: "infrastructure_recoverable",
+  });
+  const photos = (fixture.privateData as Record<string, unknown>)
+    .sourcePhotos as Record<string, unknown>[];
+  photos[1].status = "source_deleted";
+
+  const response = buildCurrentAvatarGenerationStatusResponse(fixture);
+
+  assert.equal(response.retryAllowed, false);
+  assert.equal(response.sourceAvailable, false);
+  assert.equal(response.safeReasonCode, "avatar_state_inconsistent");
+});
+
+/**
+ * 배포된 런타임에서 JOB_QUEUE_MODE 가 빠지면 큰 소리로 실패해야 한다.
+ *
+ * 예전 계약은 `ENVIRONMENT` 문자열에만 의존했다. 프로덕션 Functions 는
+ * `ENVIRONMENT=staging` 으로 떠 있어서, 큐 설정이 사라지면 예외 대신 조용히
+ * dry_run 으로 떨어질 수 있었다. 실제로 2026-09-08 배포에서 env 파일이
+ * 불완전해 JOB_QUEUE_MODE 가 통째로 사라진 적이 있다. 조용한 fallback 은
+ * "작업을 큐에 넣었다"고 보고하면서 아무것도 넣지 않는다.
+ */
+function cloudRuntime(extra: Record<string, string | undefined> = {}) {
+  return {
+    K_SERVICE: "retrycurrentavatargeneration",
+    K_REVISION: "retrycurrentavatargeneration-00008-cip",
+    FUNCTION_TARGET: "retryCurrentAvatarGeneration",
+    FUNCTIONS_EMULATOR: undefined,
+    NODE_ENV: undefined,
+    ...extra,
+  };
+}
+
+function localRuntime(extra: Record<string, string | undefined> = {}) {
+  return {
+    K_SERVICE: undefined,
+    K_REVISION: undefined,
+    FUNCTION_TARGET: undefined,
+    FUNCTIONS_EMULATOR: undefined,
+    NODE_ENV: undefined,
+    ...extra,
+  };
+}
+
+test("a deployed runtime never silently falls back to dry_run", () => {
+  for (const environment of ["staging", "production", undefined, "", "anything"]) {
+    withEnv(
+      cloudRuntime({ JOB_QUEUE_MODE: undefined, ENVIRONMENT: environment }),
+      () => {
+        assert.throws(
+          () => queueModeExport(),
+          /JOB_QUEUE_MODE/,
+          `ENVIRONMENT=${String(environment)} must still fail closed`,
+        );
+      },
+    );
+  }
+});
+
+test("a deployed runtime with an explicit queue mode keeps working", () => {
+  withEnv(
+    cloudRuntime({ JOB_QUEUE_MODE: "cloud_tasks", ENVIRONMENT: "staging" }),
+    () => {
+      assert.equal(queueModeExport(), "cloud_tasks");
+    },
+  );
+});
+
+test("the emulator keeps its local dry_run default", () => {
+  withEnv(
+    cloudRuntime({
+      JOB_QUEUE_MODE: undefined,
+      FUNCTIONS_EMULATOR: "true",
+      ENVIRONMENT: "local",
+    }),
+    () => {
+      assert.equal(queueModeExport(), "dry_run");
+    },
+  );
+  withEnv(
+    localRuntime({ JOB_QUEUE_MODE: undefined, ENVIRONMENT: "local" }),
+    () => {
+      assert.equal(queueModeExport(), "dry_run");
+    },
+  );
+});
+
+test("an explicit local dry_run stays allowed", () => {
+  withEnv(
+    localRuntime({ JOB_QUEUE_MODE: "dry_run", ENVIRONMENT: "local" }),
+    () => {
+      assert.equal(queueModeExport(), "dry_run");
+    },
+  );
+});
+
+test("an explicit dry_run is still refused in a production environment", () => {
+  withEnv(
+    cloudRuntime({ JOB_QUEUE_MODE: "dry_run", ENVIRONMENT: "production" }),
+    () => {
+      assert.throws(() => queueModeExport(), /dry_run/);
+    },
+  );
 });
