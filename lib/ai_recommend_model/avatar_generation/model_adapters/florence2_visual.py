@@ -97,24 +97,141 @@ class Florence2VisualRiskAdapter:
         inputs = self._processor(text=task, images=image, return_tensors="pt")
         if self.device and hasattr(inputs, "to"):
             inputs = inputs.to(self.device)
-        generated_ids = self._model.generate(
-            input_ids=inputs["input_ids"],
-            pixel_values=inputs["pixel_values"],
-            max_new_tokens=1024,
-            num_beams=3,
-        )
+        base_kwargs = {
+            "input_ids": inputs["input_ids"],
+            "pixel_values": inputs["pixel_values"],
+            "max_new_tokens": NUM_MAX_NEW_TOKENS,
+            "num_beams": NUM_BEAMS,
+        }
+        scored = True
+        try:
+            # Beam search already computes a sequence score. Asking for it costs
+            # nothing and is the only way OCR evidence can ever carry a real
+            # confidence; today every watermark decision reads "unknown".
+            generated = self._model.generate(
+                **base_kwargs,
+                return_dict_in_generate=True,
+                output_scores=True,
+            )
+        except TypeError:
+            # A runtime that rejects the scoring kwargs must still produce OCR.
+            # analyze() swallows exceptions into an unavailable analysis, so
+            # letting this propagate would downgrade every candidate over a
+            # telemetry nicety.
+            scored = False
+            generated = self._model.generate(**base_kwargs)
+        generated_ids = getattr(generated, "sequences", generated)
         generated_text = self._processor.batch_decode(
             generated_ids,
             skip_special_tokens=False,
         )[0]
-        return self._processor.post_process_generation(
+        parsed = self._processor.post_process_generation(
             generated_text,
             task=task,
             image_size=_image_size(image),
         )
+        return _attach_shadow_ocr_evidence(
+            parsed,
+            task,
+            generated if scored else None,
+            generated_ids,
+            self._length_penalty(),
+        )
+
+    def _length_penalty(self) -> Optional[float]:
+        config = getattr(self._model, "generation_config", None)
+        value = getattr(config, "length_penalty", None)
+        try:
+            return float(value) if value is not None else None
+        except (TypeError, ValueError):
+            return None
 
 
 def _image_size(image: Any) -> Tuple[int, int]:
     if hasattr(image, "size") and isinstance(image.size, tuple) and len(image.size) == 2:
         return (int(image.size[0]), int(image.size[1]))
     return (int(image.width), int(image.height))
+
+
+NUM_BEAMS = 3
+NUM_MAX_NEW_TOKENS = 1024
+SHADOW_OCR_SCORE_SOURCE = "florence_beam_sequence_score"
+SHADOW_OCR_EVIDENCE_KEY = "shadowOcrEvidence"
+
+
+def _raw_sequence_score(generated: Any) -> Optional[float]:
+    scores = getattr(generated, "sequences_scores", None)
+    if scores is None:
+        return None
+    try:
+        raw = float(scores[0])
+    except (TypeError, ValueError, IndexError):
+        return None
+    if raw != raw:  # NaN
+        return None
+    return raw
+
+
+def _output_token_count(generated_ids: Any) -> Optional[int]:
+    try:
+        return int(len(generated_ids[0]))
+    except (TypeError, ValueError, IndexError):
+        return None
+
+
+def _attach_shadow_ocr_evidence(
+    parsed: Any,
+    task: str,
+    generated: Any,
+    generated_ids: Any,
+    length_penalty: Optional[float],
+) -> Any:
+    """Record the OCR score as telemetry, never as decision confidence.
+
+    The parser turns a "scores" key into VisualRiskRegion.confidence, which the
+    watermark policy reads directly, so writing there would change decisions --
+    including enabling a hard-reject branch that has never been reachable. This
+    keeps the score in its own namespace instead.
+
+    It is a beam-search sequence log-probability for the whole generated string,
+    not a per-region OCR probability, so it is stored raw and marked
+    uncalibrated. It is attributed to a region only when the model emitted
+    exactly one; otherwise the scope says so.
+    """
+
+    if task != TASK_OCR_WITH_REGION or not isinstance(parsed, dict):
+        return parsed
+    payload = parsed.get(task)
+    if not isinstance(payload, dict):
+        return parsed
+
+    labels = payload.get("labels") or []
+    region_count = len(labels)
+    shadow: Dict[str, Any] = {
+        "scoreSource": SHADOW_OCR_SCORE_SOURCE,
+        "scoreCalibrated": False,
+        "generationMode": "beam_search",
+        "numBeams": NUM_BEAMS,
+        "regionCount": region_count,
+        "attributionScope": "single_region" if region_count == 1 else "whole_sequence",
+    }
+    if length_penalty is not None:
+        shadow["lengthPenalty"] = length_penalty
+    token_count = _output_token_count(generated_ids)
+    if token_count is not None:
+        shadow["outputTokenCount"] = token_count
+
+    if generated is None:
+        shadow["scoreAvailable"] = False
+        shadow["scoreUnavailableReason"] = "scores_not_supported_by_runtime"
+    else:
+        raw = _raw_sequence_score(generated)
+        if raw is None:
+            shadow["scoreAvailable"] = False
+            shadow["scoreUnavailableReason"] = "sequence_score_missing"
+        else:
+            shadow["scoreAvailable"] = True
+            shadow["rawSequenceScore"] = raw
+
+    payload[SHADOW_OCR_EVIDENCE_KEY] = shadow
+    return parsed
