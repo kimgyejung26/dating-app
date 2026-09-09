@@ -214,3 +214,87 @@ test("reconciliation_required is nameable from the log alone", async () => {
   assert.equal(entry.stage, "replacement_policy");
   assert.equal(entry.reasonCode, "avatar_reconciliation_required");
 });
+
+// ---------------------------------------------------------------------------
+// Identifier case sensitivity (2026-09-09, production organic evidence)
+//
+// asString() normalises status tokens with trim().toLowerCase(). Applied to an
+// identifier it destroys case, and requireSegment() only trims, so the two
+// sides of an identifier comparison disagree. Firebase UIDs are mixed case, so
+// ownership validation rejected every real user:
+//   stage=job_ownership_validation reason=avatar_job_not_current
+// The fixtures above all use lowercase ids, which is why nothing caught it.
+// ---------------------------------------------------------------------------
+
+const MIXED_CASE_UID = "ZqXvT7MixedCaseUidFixture001";
+const MIXED_CASE_JOB = "avatar_job_MixedCase000001";
+
+function mixedCaseDb(uid: string, jobId: string, jobStatus = "failed"): Db {
+  return new Map<string, Record<string, unknown>>([
+    [`users/${uid}`, { avatar: { status: jobStatus } }],
+    [
+      `userPrivateMedia/${uid}`,
+      {
+        currentAvatarJobId: jobId,
+        currentAvatarSourcePhotoId: "src_old",
+        sourcePhotos: [{ photoId: "src_old", avatarGenerationState: "current" }],
+      },
+    ],
+    [`avatarJobs/${jobId}`, { uid, jobId, status: jobStatus }],
+  ]);
+}
+
+test("a mixed-case Firebase uid owns its own job", async () => {
+  // job.uid and the caller uid are byte-identical; only normalisation differed.
+  const store = mixedCaseDb(MIXED_CASE_UID, "avatar_job_ownership_0001");
+  const result = await replaceAvatarGenerationCore({
+    firestore: new FakeFirestore(store) as never,
+    uid: MIXED_CASE_UID,
+    clientRequestId: "replace-mixed-0001",
+  });
+  assert.equal(result.replaced, true);
+  assert.equal(result.duplicate, false);
+});
+
+test("a mixed-case job id resolves to the job it names", async () => {
+  const store = mixedCaseDb(MIXED_CASE_UID, MIXED_CASE_JOB);
+  const result = await replaceAvatarGenerationCore({
+    firestore: new FakeFirestore(store) as never,
+    uid: MIXED_CASE_UID,
+    clientRequestId: "replace-mixed-0002",
+  });
+  assert.equal(result.replaced, true);
+  assert.equal(result.previousJobId, MIXED_CASE_JOB, "job id must survive verbatim");
+  const job = store.get(`avatarJobs/${MIXED_CASE_JOB}`) ?? {};
+  assert.equal(job.status, "cancelled", "the named job must be the one cancelled");
+});
+
+test("an uppercase clientRequestId is still recognised as a replay", async () => {
+  const requestId = "Replace-UPPER-0003";
+  const store = mixedCaseDb(MIXED_CASE_UID, "avatar_job_idem_0003");
+  const firestore = new FakeFirestore(store) as never;
+  const first = await replaceAvatarGenerationCore({
+    firestore,
+    uid: MIXED_CASE_UID,
+    clientRequestId: requestId,
+  });
+  const replay = await replaceAvatarGenerationCore({
+    firestore,
+    uid: MIXED_CASE_UID,
+    clientRequestId: requestId,
+  });
+  assert.equal(first.duplicate, false);
+  assert.equal(replay.duplicate, true, "same request id must not start a second replacement");
+  assert.equal(replay.generationAttemptCount, first.generationAttemptCount);
+});
+
+test("lowercase fixtures keep behaving exactly as before", async () => {
+  const store = db("needs_review", { errorCode: "qa_requires_review" });
+  const result = await replaceAvatarGenerationCore({
+    firestore: new FakeFirestore(store) as never,
+    uid: UID,
+    clientRequestId: "replace-lower-0004",
+  });
+  assert.equal(result.replaced, true);
+  assert.equal(result.previousJobId, JOB);
+});

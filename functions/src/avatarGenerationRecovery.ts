@@ -43,6 +43,15 @@ function asString(value: unknown): string {
   return typeof value === "string" ? value.trim().toLowerCase() : "";
 }
 
+/// Identifiers are opaque and case-sensitive: Firebase UIDs are mixed case, and
+/// so are job and request ids. Reading one with asString() folds its case while
+/// requireSegment() only trims, so the two sides of a comparison disagree and
+/// every real user fails ownership validation. Never normalise these beyond
+/// trimming.
+function asIdentifier(value: unknown): string {
+  return typeof value === "string" ? value.trim() : "";
+}
+
 /** 사용자가 스스로 시작할 수 있는 총 generation 횟수 상한. */
 export const MAX_USER_GENERATION_ATTEMPTS = 3;
 
@@ -306,7 +315,7 @@ export async function replaceAvatarGenerationCore(params: {
     const userData = readMap(userSnap.data());
     const privateData = readMap(privateSnap.data());
     const userAvatar = readMap(userData.avatar);
-    const currentJobId = asString(privateData.currentAvatarJobId);
+    const currentJobId = asIdentifier(privateData.currentAvatarJobId);
 
     let jobData: RecordData = {};
     let jobRef: ReturnType<Firestore["collection"]> extends infer C
@@ -319,7 +328,11 @@ export async function replaceAvatarGenerationCore(params: {
       reportStage("job_ownership_validation");
       const jobSnap = await tx.get(jobRef);
       jobData = jobSnap.exists ? readMap(jobSnap.data()) : {};
-      if (jobSnap.exists && asString(jobData.uid) && asString(jobData.uid) !== uid) {
+      if (
+        jobSnap.exists &&
+        asIdentifier(jobData.uid) &&
+        asIdentifier(jobData.uid) !== uid
+      ) {
         throw new HttpsError("failed-precondition", "avatar_job_not_current");
       }
     }
@@ -332,13 +345,13 @@ export async function replaceAvatarGenerationCore(params: {
     // Idempotent replay: the same request already released this generation.
     if (
       currentJobId === "" &&
-      asString(userAvatar.replacedByClientRequestId) === clientRequestId
+      asIdentifier(userAvatar.replacedByClientRequestId) === clientRequestId
     ) {
       // The counter was already advanced by the original request.
       return {
         replaced: true,
         duplicate: true,
-        previousJobId: asString(userAvatar.replacedJobId) || null,
+        previousJobId: asIdentifier(userAvatar.replacedJobId) || null,
         generationAttemptCount: previousReplacements,
       };
     }
@@ -446,7 +459,7 @@ export function createReplaceAvatarGenerationFunction(
       const result = await replaceAvatarGenerationCore({
         firestore,
         uid,
-        clientRequestId: asString(data.clientRequestId),
+        clientRequestId: asIdentifier(data.clientRequestId),
         onStage: (next) => {
           stage = next;
         },

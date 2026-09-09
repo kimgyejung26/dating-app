@@ -309,3 +309,13 @@ test("a completion log records the outcome without dumping user state", () => {
   // The job id identifies a user's generation; only its fingerprint may ship.
   assert.ok(!JSON.stringify(entry).includes("avatar_job_2276bSECRET"));
 });
+
+test("status tokens keep their case-insensitive normalisation", () => {
+  // The identifier fix must not touch how status/enum tokens are read.
+  assert.equal(decide("APPROVED").allowed, false);
+  const upper = decide("APPROVED");
+  if (upper.allowed) return;
+  assert.equal(upper.reasonCode, "avatar_already_approved");
+  const mixed = decide("Preview_Ready");
+  assert.equal(mixed.allowed, true, "status comparison stays case-insensitive");
+});
