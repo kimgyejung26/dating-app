@@ -1248,6 +1248,144 @@ def _doc_ref(client: Any, collection: str, doc_id: str) -> Any:
     return col.doc(doc_id)
 
 
+def _durable_candidate_count(firestore_client: Any, job_id: str) -> Optional[int]:
+    """Candidates this job already paid for and persisted, or None if unreadable.
+
+    None is distinct from 0: an unreadable collection must not be mistaken for
+    a fresh job, or a transient read error would authorize a second paid round.
+    """
+
+    if not job_id:
+        return None
+    try:
+        query = firestore_client.collection("avatarCandidates").where(
+            "jobId", "==", job_id
+        )
+        docs = query.stream() if hasattr(query, "stream") else query.get()
+        return sum(1 for _ in docs)
+    except Exception:
+        return None
+
+
+def _job_doc_candidate_evidence(job_doc: Optional[Mapping[str, Any]]) -> int:
+    """Durable candidate evidence already present on the job document itself."""
+
+    if not isinstance(job_doc, Mapping):
+        return 0
+    raw_ids = job_doc.get("candidateIds")
+    count = (
+        len([value for value in raw_ids if str(value).strip()])
+        if isinstance(raw_ids, Sequence) and not isinstance(raw_ids, str)
+        else 0
+    )
+    plan = job_doc.get("generationPlan")
+    if isinstance(plan, Mapping):
+        try:
+            count = max(count, int(plan.get("totalGenerated") or 0))
+        except (TypeError, ValueError):
+            pass
+    return max(0, count)
+
+
+PAID_GENERATION_LEDGER_FIELD = "generationCostLedger"
+
+
+def _paid_candidate_reservations(job_doc: Optional[Mapping[str, Any]]) -> int:
+    """Provider calls this job has already reserved, across every run."""
+
+    if not isinstance(job_doc, Mapping):
+        return 0
+    ledger = job_doc.get(PAID_GENERATION_LEDGER_FIELD)
+    if not isinstance(ledger, Mapping):
+        return 0
+    try:
+        return max(0, int(ledger.get("paidCandidateReservations") or 0))
+    except (TypeError, ValueError):
+        return 0
+
+
+def _preexisting_paid_candidate_count(
+    firestore_client: Any,
+    job_doc: Optional[Mapping[str, Any]],
+    job_id: str,
+) -> int:
+    """How much of max4 this job already spent, before this run.
+
+    Counting surviving candidate documents is not enough on its own: candidate
+    ids are deterministic in the job id and index, so a rerun overwrites rather
+    than appends and the count stays flat while the bill keeps growing. The
+    reservation ledger is the only monotonic record, so it leads; the candidate
+    collection and the job's own candidateIds/totalGenerated back it up for
+    jobs written before the ledger existed, and cost nothing extra to read.
+    """
+
+    durable = _durable_candidate_count(firestore_client, job_id)
+    return max(
+        _paid_candidate_reservations(job_doc),
+        durable if durable is not None else 0,
+        _job_doc_candidate_evidence(job_doc),
+    )
+
+
+def _reserve_paid_candidates(
+    firestore_client: Any,
+    job_id: str,
+    *,
+    already_reserved: int,
+    count: int,
+) -> int:
+    """Record intent to spend before spending, so a crash cannot lose the bill.
+
+    Reserving after the provider call would drop the accounting for exactly the
+    runs that crash mid-round -- the ones a redelivery then pays for again.
+    """
+
+    return _write_paid_ledger(
+        firestore_client,
+        job_id,
+        max(0, int(already_reserved)) + max(0, int(count)),
+    )
+
+
+def _write_paid_ledger(firestore_client: Any, job_id: str, total: int) -> int:
+    _update_job_status(
+        firestore_client,
+        job_id,
+        {
+            PAID_GENERATION_LEDGER_FIELD: {
+                "paidCandidateReservations": max(0, int(total)),
+                "updatedAt": SERVER_TIMESTAMP,
+            }
+        },
+    )
+    return max(0, int(total))
+
+
+def _settle_paid_candidates(
+    firestore_client: Any,
+    job_id: str,
+    *,
+    baseline: int,
+    provider_usage_doc: Optional[Mapping[str, Any]],
+) -> int:
+    """Replace the round's estimate with the provider requests actually made.
+
+    A redelivery that recovers existing artifacts pays nothing, so leaving the
+    reservation in place would retire budget this job never spent and starve a
+    legitimate extra round. Settling only ever runs after the round returned;
+    if it crashes instead, the conservative reservation is what survives.
+    """
+
+    baseline = max(0, int(baseline))
+    if not isinstance(provider_usage_doc, Mapping):
+        return baseline
+    try:
+        requests = max(0, int(provider_usage_doc.get("requestCount") or 0))
+    except (TypeError, ValueError):
+        return baseline
+    return _write_paid_ledger(firestore_client, job_id, baseline + requests)
+
+
 def _doc_to_dict(snapshot: Any) -> Optional[Dict[str, Any]]:
     exists = bool(getattr(snapshot, "exists", False))
     if not exists:
@@ -3677,10 +3815,13 @@ def process_avatar_generation_payload(
         qa_runner=qa_runner,
         metrics_hook=metrics_hook,
     )
+    preexisting_paid_candidates = _preexisting_paid_candidate_count(
+        fs, job_doc, payload.job_id
+    )
     initial_admission = _evaluate_worker_admission(
         fs,
         phase="initial",
-        existing_candidate_count=0,
+        existing_candidate_count=preexisting_paid_candidates,
         retry_attempt=_processing_attempt_from_job_doc(job_doc),
         remaining_deadline_seconds=_worker_admission_remaining_seconds(worker_deadline),
     )
@@ -3974,9 +4115,10 @@ def process_avatar_generation_payload(
         initial_plan = plan_generation_round(
             [],
             policy=policy,
+            preexisting_candidate_count=preexisting_paid_candidates,
             budget=_generation_budget(
                 worker_deadline,
-                generated_count=0,
+                generated_count=preexisting_paid_candidates,
                 max_total_candidates=policy.max_candidate_count,
             ),
         )
@@ -4027,6 +4169,12 @@ def process_avatar_generation_payload(
         # iter_candidate_artifacts) and each artifact enters upload+QA as soon
         # as it lands, so QA of the first candidate overlaps the remaining
         # provider latency instead of waiting for the whole round.
+        paid_reserved = _reserve_paid_candidates(
+            fs,
+            payload.job_id,
+            already_reserved=preexisting_paid_candidates,
+            count=initial_count,
+        )
         artifact_stream = _initial_round_artifact_stream(
             payload=payload,
             source_image=source_image,
@@ -4176,19 +4324,28 @@ def process_avatar_generation_payload(
             _mark_qa_phase_started()
 
         qa_models_unavailable = _qa_critical_models_unavailable(candidate_summaries)
+        paid_reserved = _settle_paid_candidates(
+            fs,
+            payload.job_id,
+            baseline=preexisting_paid_candidates,
+            provider_usage_doc=provider_usage_doc,
+        )
         extra_plan = plan_generation_round(
             candidate_summaries,
             policy=policy,
+            preexisting_candidate_count=max(
+                0, paid_reserved - len(candidate_summaries)
+            ),
             budget=_generation_budget(
                 worker_deadline,
-                generated_count=len(candidate_summaries),
+                generated_count=max(paid_reserved, len(candidate_summaries)),
                 max_total_candidates=policy.max_candidate_count,
             ),
         )
         extra_admission = _evaluate_worker_admission(
             fs,
             phase="extra",
-            existing_candidate_count=len(candidate_summaries),
+            existing_candidate_count=max(paid_reserved, len(candidate_summaries)),
             retry_attempt=_processing_attempt_from_job_doc(job_doc),
             remaining_deadline_seconds=_worker_admission_remaining_seconds(worker_deadline),
         ) if extra_plan.should_generate else AdmissionDecision(allowed=True, reason="admitted")
@@ -4231,6 +4388,12 @@ def process_avatar_generation_payload(
                 )
             stage_generate_extra_started_at = time.perf_counter()
             model_load_before = seconds_by_stage["model_load_seconds"]
+            paid_reserved = _reserve_paid_candidates(
+                fs,
+                payload.job_id,
+                already_reserved=paid_reserved,
+                count=extra_count,
+            )
             extra_artifacts = generate_candidate_artifacts(
                 payload,
                 source_image,
@@ -4252,6 +4415,12 @@ def process_avatar_generation_payload(
             generation_elapsed = round(max(0.0, elapsed - model_load_delta), 3)
             seconds_by_stage["generate"] += generation_elapsed
             seconds_by_stage["generation_seconds"] += generation_elapsed
+            paid_reserved = _settle_paid_candidates(
+                fs,
+                payload.job_id,
+                baseline=preexisting_paid_candidates,
+                provider_usage_doc=provider_usage_doc,
+            )
             generation_rounds.append(
                 {
                     "reason": extra_plan.reason,

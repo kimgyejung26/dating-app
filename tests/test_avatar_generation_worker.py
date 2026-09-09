@@ -139,17 +139,34 @@ class RecordingDocRef(FakeDocRef):
         return super().get(**kwargs)
 
 
-class FakeCollection:
-    def __init__(self, store, name):
+class FakeQuery:
+    """Equality-filtered view, mirroring the real client's where().stream()."""
+
+    def __init__(self, store, name, filters):
         self.store = store
         self.name = name
+        self.filters = list(filters)
 
-    def document(self, doc_id):
-        return FakeDocRef(self.store, self.name, doc_id)
+    def where(self, field, op, value):
+        if op != "==":
+            raise NotImplementedError(f"fake query supports '==' only, got {op!r}")
+        return FakeQuery(self.store, self.name, [*self.filters, (field, value)])
 
     def stream(self):
         for doc_id, data in self.store.get(self.name, {}).items():
-            yield FakeSnapshot(data, doc_id)
+            if all(data.get(field) == value for field, value in self.filters):
+                yield FakeSnapshot(data, doc_id)
+
+    def get(self):
+        return list(self.stream())
+
+
+class FakeCollection(FakeQuery):
+    def __init__(self, store, name):
+        super().__init__(store, name, [])
+
+    def document(self, doc_id):
+        return FakeDocRef(self.store, self.name, doc_id)
 
 
 class FakeFirestore:

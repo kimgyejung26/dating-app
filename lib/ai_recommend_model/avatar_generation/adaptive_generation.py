@@ -139,14 +139,28 @@ def plan_generation_round(
     regenerate_requested: bool = False,
     retry_attempt: int = 0,
     adaptive_retry_enabled: bool = False,
+    preexisting_candidate_count: int = 0,
 ) -> GenerationPlan:
+    """Plan one generation round.
+
+    `existing_candidates` is what this run produced, and only those carry QA
+    verdicts, so safe_count comes from them alone.
+    `preexisting_candidate_count` is what the job already paid for in earlier
+    runs: it consumes max4 capacity without contributing safety evidence.
+    Without it a redelivered job starts from zero and pays again.
+    """
+
     active_policy = policy or AdaptiveGenerationPolicy.from_env()
     candidates = list(existing_candidates or [])
     existing_count = len(candidates)
     safe_count = sum(
         1 for candidate in candidates if _counts_as_safe(candidate, active_policy)
     )
-    remaining_capacity = max(0, active_policy.max_candidate_count - existing_count)
+    already_paid = max(0, int(preexisting_candidate_count or 0))
+    remaining_capacity = max(
+        0,
+        active_policy.max_candidate_count - existing_count - already_paid,
+    )
 
     if remaining_capacity <= 0:
         return _plan(
