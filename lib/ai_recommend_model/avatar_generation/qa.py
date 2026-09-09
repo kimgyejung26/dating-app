@@ -572,13 +572,19 @@ def _risk_from_score(
     return "low"
 
 
-def _resolve_identifiability_risk(
-    signals: Mapping[str, Any],
-    *,
-    face_similarity: Optional[float],
-    thresholds: AvatarQAThresholds,
-) -> str:
-    """Use the versioned calibrated face decision before generic fallback thresholds."""
+FIDELITY_DECISION_MODE_PRODUCER = "producer_calibration"
+FIDELITY_DECISION_MODE_CONFIGURED = "configured_thresholds"
+
+
+def _fidelity_decision_mode(signals: Mapping[str, Any]) -> str:
+    """Which authority actually resolved identifiability risk.
+
+    thresholdSnapshot reports the env thresholds unconditionally, but they are
+    only consulted on the fallback path below. In production the calibration
+    artifact's review band decides instead, so a reader who assumes the
+    reported numbers were applied is reading the wrong authority. Both the
+    decision and the record derive the mode from here so they cannot diverge.
+    """
 
     decision = str(signals.get("faceSimilarityDecision") or "").strip().lower()
     calibration_state = str(
@@ -587,16 +593,30 @@ def _resolve_identifiability_risk(
     reliable = signals.get("faceSimilarityReliable") is True
 
     if calibration_state == "calibrated" and reliable:
-        if decision == "low_similarity_risk":
-            return "low"
-        if decision == "high_similarity_risk":
-            return "high"
+        if decision in {"low_similarity_risk", "high_similarity_risk"}:
+            return FIDELITY_DECISION_MODE_PRODUCER
     if (
         calibration_state == "calibrated_review_band"
         and not reliable
         and decision == "review_similarity"
     ):
-        return "medium"
+        return FIDELITY_DECISION_MODE_PRODUCER
+    return FIDELITY_DECISION_MODE_CONFIGURED
+
+
+def _resolve_identifiability_risk(
+    signals: Mapping[str, Any],
+    *,
+    face_similarity: Optional[float],
+    thresholds: AvatarQAThresholds,
+) -> str:
+    """Use the versioned calibrated face decision before generic fallback thresholds."""
+
+    if _fidelity_decision_mode(signals) == FIDELITY_DECISION_MODE_PRODUCER:
+        decision = str(signals.get("faceSimilarityDecision") or "").strip().lower()
+        if signals.get("faceSimilarityReliable") is not True:
+            return "medium"
+        return "high" if decision == "high_similarity_risk" else "low"
 
     return _risk_from_score(
         face_similarity,
@@ -1186,6 +1206,8 @@ def _qa_debug_document(
     soft_pass_reasons: Sequence[str],
     face_similarity_observed_score: Optional[float] = None,
     face_similarity_decision: Optional[str] = None,
+    fidelity_decision_mode: str = FIDELITY_DECISION_MODE_CONFIGURED,
+    effective_producer_calibration: Optional[Mapping[str, Any]] = None,
 ) -> Dict[str, Any]:
     perceptual_distance = (
         None
@@ -1203,8 +1225,24 @@ def _qa_debug_document(
         "localSafetyRisk": local_safety_status,
         "clip": local_safety_status,
     }
+    producer_applied = fidelity_decision_mode == FIDELITY_DECISION_MODE_PRODUCER
     return {
         "qaVersion": QA_CONTRACT_VERSION,
+        # Which authority resolved identifiability risk for this candidate, and
+        # the numbers each side holds. thresholdSnapshot below is retained
+        # verbatim for existing readers; it says what is configured, not what
+        # was applied, and configuredQaThresholds.applied is what says so.
+        "fidelityDecisionMode": fidelity_decision_mode,
+        "configuredQaThresholds": {
+            "faceSimilarityReject": thresholds.face_similarity_reject,
+            "faceSimilarityReview": thresholds.face_similarity_review,
+            "applied": not producer_applied,
+        },
+        "effectiveProducerCalibration": (
+            dict(effective_producer_calibration)
+            if producer_applied and effective_producer_calibration
+            else None
+        ),
         "thresholdSnapshot": {
             "faceSimilarityReject": thresholds.face_similarity_reject,
             "faceSimilarityReview": thresholds.face_similarity_review,
@@ -1540,6 +1578,12 @@ def build_avatar_qa_from_signals(
         result.reviewReasons = sorted(review_reasons)
     result.debug = _qa_debug_document(
         thresholds=t,
+        fidelity_decision_mode=_fidelity_decision_mode(signals),
+        effective_producer_calibration=(
+            signals.get("effectiveProducerCalibration")
+            if isinstance(signals.get("effectiveProducerCalibration"), Mapping)
+            else None
+        ),
         face_similarity_score=face_similarity,
         face_similarity_observed_score=_score(signals.get("faceSimilarityObservedScore")),
         face_similarity_decision=(
