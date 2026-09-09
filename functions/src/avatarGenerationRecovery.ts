@@ -102,17 +102,28 @@ export type NewGenerationRecoveryDecision =
     };
 
 export function planNewGenerationRecovery(params: {
+  /// currentAvatarJobId 가 있는가. 이것이 "생성이 진행 중인가"의 유일한 권위다.
+  /// job 문서와 이 포인터는 같은 트랜잭션에서 쓰이고, 포인터를 지우는 모든
+  /// 경로가 source 포인터도 함께 지운다. 기존 호출자 호환을 위해 기본값 true.
+  currentJobExists?: boolean;
+  /// 포인터는 있는데 job 문서가 없는 상태. stale UI 상태가 아니라 불일치다.
+  currentJobDocumentMissing?: boolean;
   currentJobData: unknown;
   userAvatar: unknown;
   generationAttemptCount: number;
 }): NewGenerationRecoveryDecision {
+  const jobExists = params.currentJobExists ?? true;
   const job = readMap(params.currentJobData);
   const avatar = readMap(params.userAvatar);
-  const status = asString(job.status) || asString(avatar.status);
-  const errorCode = asString(job.errorCode);
-  const claimState = asString(readMap(job.generationClaim).state);
+  const avatarStatus = asString(avatar.status);
+  // users.avatar.status 는 UI 용 비정규화 상태다. 현재 job 이 없을 때 이것을
+  // job 상태처럼 꾸며내면, 남아 있던 "queued" 문자열이 영구히 복구를 막는다.
+  const status = jobExists ? asString(job.status) || avatarStatus : avatarStatus;
+  // 모호성 증거는 job 에 산다. job 이 없으면 사용자 문서의 흔적을 본다.
+  const errorCode = jobExists ? asString(job.errorCode) : asString(avatar.errorCode);
+  const claimState = jobExists ? asString(readMap(job.generationClaim).state) : "";
 
-  if (status === "approved" || asString(avatar.status) === "approved") {
+  if (status === "approved" || avatarStatus === "approved") {
     return { allowed: false, reasonCode: "avatar_already_approved" };
   }
 
@@ -124,17 +135,29 @@ export function planNewGenerationRecovery(params: {
     return { allowed: false, reasonCode: "avatar_provider_outcome_unknown" };
   }
 
-  if (REPLACE_BLOCKING_IN_FLIGHT_STATUSES.has(status)) {
-    return { allowed: false, reasonCode: "avatar_generation_in_progress" };
-  }
-
   // provider 결과나 상태가 어긋났다는 뜻이므로 새 generation 이 이전 상태와
   // 충돌할 수 있다. generic not_replaceable 로 흘려보내면 이 의도가 사라진다.
   if (RECONCILIATION_REQUIRED_STATUSES.has(status)) {
     return { allowed: false, reasonCode: "avatar_reconciliation_required" };
   }
 
-  if (!REPLACEABLE_STATUSES.has(status)) {
+  if (jobExists) {
+    // 포인터가 가리키는 job 이 사라졌다면 추측으로 새 generation 을 열지 않는다.
+    if (params.currentJobDocumentMissing) {
+      return { allowed: false, reasonCode: "avatar_state_inconsistent" };
+    }
+    if (REPLACE_BLOCKING_IN_FLIGHT_STATUSES.has(status)) {
+      return { allowed: false, reasonCode: "avatar_generation_in_progress" };
+    }
+    if (!REPLACEABLE_STATUSES.has(status)) {
+      return { allowed: false, reasonCode: "avatar_generation_not_replaceable" };
+    }
+  } else if (
+    // 진행 중인 job 이 없으므로 in-flight 문자열은 stale 흔적일 뿐이다. 다만
+    // 아무 상태에서나 새로 시작하게 두지는 않는다: idle("none") 은 그대로 둔다.
+    !REPLACEABLE_STATUSES.has(status) &&
+    !REPLACE_BLOCKING_IN_FLIGHT_STATUSES.has(status)
+  ) {
     return { allowed: false, reasonCode: "avatar_generation_not_replaceable" };
   }
 
@@ -318,6 +341,7 @@ export async function replaceAvatarGenerationCore(params: {
     const currentJobId = asIdentifier(privateData.currentAvatarJobId);
 
     let jobData: RecordData = {};
+    let jobDocumentMissing = false;
     let jobRef: ReturnType<Firestore["collection"]> extends infer C
       ? C extends { doc(id: string): infer D }
         ? D
@@ -328,6 +352,7 @@ export async function replaceAvatarGenerationCore(params: {
       reportStage("job_ownership_validation");
       const jobSnap = await tx.get(jobRef);
       jobData = jobSnap.exists ? readMap(jobSnap.data()) : {};
+      jobDocumentMissing = !jobSnap.exists;
       if (
         jobSnap.exists &&
         asIdentifier(jobData.uid) &&
@@ -358,7 +383,9 @@ export async function replaceAvatarGenerationCore(params: {
 
     reportStage("replacement_policy");
     const decision = planNewGenerationRecovery({
-      currentJobData: currentJobId ? jobData : { status: asString(userAvatar.status) },
+      currentJobExists: Boolean(currentJobId),
+      currentJobDocumentMissing: jobDocumentMissing,
+      currentJobData: jobData,
       userAvatar,
       generationAttemptCount: previousReplacements + 1,
     });
