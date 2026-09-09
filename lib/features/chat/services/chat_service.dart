@@ -70,6 +70,14 @@ class ChatService {
     return _firestore.collection('chat_rooms').doc(roomId).snapshots();
   }
 
+  /// 블라인드 3:3 미팅 전용 이탈. 멤버십과 대타 충원은 서버만 변경한다.
+  Future<void> leaveBlindMeeting({required String meetingId}) async {
+    await _functions.httpsCallable('blindMeetingAction').call<dynamic>({
+      'action': 'leaveBlindMeeting',
+      'meetingId': meetingId,
+    });
+  }
+
   Future<bool> cancelExpiredIncompleteSafetyStamp({
     required String roomId,
     required String promiseId,
