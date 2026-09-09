@@ -370,3 +370,117 @@ test("a replayed replacement stays idempotent through the nested map", async () 
   assert.equal(replay.duplicate, true);
   assert.equal(replay.generationAttemptCount, first.generationAttemptCount);
 });
+
+// ---------------------------------------------------------------------------
+// No current job + stale denormalized status (2026-09-09)
+//
+// users.avatar.status is denormalised UI state. It is NOT the authority on
+// whether a generation is running; currentAvatarJobId is. A job document and
+// that pointer are written in one transaction, and every clearer removes the
+// pointer and the source pointer together, so "no pointer" means "no canonical
+// active generation".
+//
+// The replace policy fabricated a job out of the stale user status when the
+// pointer was gone, so a leftover "queued" string blocked recovery forever.
+// ---------------------------------------------------------------------------
+
+const STALE_UID = "TestStaleUid_7Qm4";
+
+function staleDb(avatarStatus: string, extraAvatar: Record<string, unknown> = {}): Db {
+  return new Map<string, Record<string, unknown>>([
+    // A historical job may still exist; it is simply not current any more.
+    ["users/" + STALE_UID, { avatar: { status: avatarStatus, ...extraAvatar } }],
+    ["userPrivateMedia/" + STALE_UID, { sourcePhotos: [] }],
+    ["avatarJobs/avatar_job_history_01", { uid: STALE_UID, status: "failed" }],
+  ]);
+}
+
+async function replaceStale(store: Db, requestId = "replace-stale-0001") {
+  return replaceAvatarGenerationCore({
+    firestore: new FakeFirestore(store) as never,
+    uid: STALE_UID,
+    clientRequestId: requestId,
+  });
+}
+
+test("CASE A: no current job and a stale queued status recovers", async () => {
+  const store = staleDb("queued");
+  const result = await replaceStale(store);
+  assert.equal(result.replaced, true);
+  assert.equal(result.previousJobId, null, "there is no current job to report");
+  const avatar = (store.get("users/" + STALE_UID) as Record<string, unknown>).avatar as Record<string, unknown>;
+  assert.equal(avatar.status, "none");
+  // A historical job must not be hunted down and cancelled.
+  assert.equal((store.get("avatarJobs/avatar_job_history_01") as Record<string, unknown>).status, "failed");
+});
+
+test("CASE B: other stale in-flight strings recover the same way", async () => {
+  for (const stale of ["running", "generating", "provider_inflight", "qa_pending"]) {
+    const store = staleDb(stale);
+    const result = await replaceStale(store, `replace-stale-${stale}`);
+    assert.equal(result.replaced, true, `${stale} must be recoverable without a pointer`);
+  }
+});
+
+test("CASE F/H: user-level ambiguity still blocks without a pointer", async () => {
+  await assert.rejects(
+    () => replaceStale(staleDb("reconciliation_required"), "replace-stale-recon"),
+    /avatar_reconciliation_required/,
+  );
+  await assert.rejects(
+    () => replaceStale(staleDb("queued", { errorCode: "azure_unknown_post_send_outcome" }), "replace-stale-amb"),
+    /avatar_provider_outcome_unknown/,
+  );
+  await assert.rejects(
+    () => replaceStale(staleDb("approved"), "replace-stale-approved"),
+    /avatar_already_approved/,
+  );
+});
+
+test("an idle user without a pointer is still not a replacement", async () => {
+  // "none" is not a stale in-flight state; nothing to start over from.
+  await assert.rejects(
+    () => replaceStale(staleDb("none"), "replace-stale-idle"),
+    /avatar_generation_not_replaceable/,
+  );
+});
+
+test("CASE C: a real current job that is running still blocks", async () => {
+  const store = new Map<string, Record<string, unknown>>([
+    ["users/" + STALE_UID, { avatar: { status: "queued" } }],
+    ["userPrivateMedia/" + STALE_UID, { currentAvatarJobId: "avatar_job_live_01", sourcePhotos: [] }],
+    ["avatarJobs/avatar_job_live_01", { uid: STALE_UID, status: "running" }],
+  ]);
+  await assert.rejects(() => replaceStale(store, "replace-live"), /avatar_generation_in_progress/);
+});
+
+test("CASE G: a pointer whose job document is missing is inconsistent, not stale", async () => {
+  const store = new Map<string, Record<string, unknown>>([
+    ["users/" + STALE_UID, { avatar: { status: "queued" } }],
+    ["userPrivateMedia/" + STALE_UID, { currentAvatarJobId: "avatar_job_ghost_01", sourcePhotos: [] }],
+  ]);
+  await assert.rejects(() => replaceStale(store, "replace-ghost"), /avatar_state_inconsistent/);
+});
+
+test("literal dotted garbage is never the authority", async () => {
+  const store = staleDb("queued");
+  // Fields the pre-#98 writer left behind must be ignored entirely.
+  const user = store.get("users/" + STALE_UID) as Record<string, unknown>;
+  user["avatar.status"] = "none";
+  user["avatar.generationReplacementCount"] = 99;
+  const result = await replaceStale(store, "replace-garbage");
+  assert.equal(result.replaced, true);
+  const avatar = (store.get("users/" + STALE_UID) as Record<string, unknown>).avatar as Record<string, unknown>;
+  assert.equal(avatar.status, "none");
+  assert.equal(avatar.generationReplacementCount, 1, "the literal count must not seed the canonical one");
+});
+
+test("stale recovery stays idempotent for one clientRequestId", async () => {
+  const store = staleDb("queued");
+  const firestore = new FakeFirestore(store) as never;
+  const first = await replaceAvatarGenerationCore({ firestore, uid: STALE_UID, clientRequestId: "stale-idem-1" });
+  const replay = await replaceAvatarGenerationCore({ firestore, uid: STALE_UID, clientRequestId: "stale-idem-1" });
+  assert.equal(first.duplicate, false);
+  assert.equal(replay.duplicate, true);
+  assert.equal(replay.generationAttemptCount, first.generationAttemptCount);
+});
