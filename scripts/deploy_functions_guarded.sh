@@ -13,8 +13,10 @@
 #     --env-file functions/.env.seolleyeon-final \
 #     getCurrentAvatarGenerationStatus retryCurrentAvatarGeneration
 #
-# Add --allow-removal KEY / --allow-addition KEY for each variable you
-# intend to drop or introduce.
+# Declare each intended config change one key and one operation at a time:
+#   --allow-remove-key KEY   --allow-add-key KEY   --allow-change-key KEY
+# A declaration authorises exactly that key and exactly that operation. Any
+# other difference still refuses the deploy.
 set -euo pipefail
 
 PROJECT=""
@@ -28,8 +30,13 @@ while [ $# -gt 0 ]; do
     --project) PROJECT="$2"; shift 2 ;;
     --region) REGION="$2"; shift 2 ;;
     --env-file) ENV_FILE="$2"; shift 2 ;;
-    --allow-removal) ALLOWED+=(--allow-removal "$2"); shift 2 ;;
-    --allow-addition) ALLOWED+=(--allow-addition "$2"); shift 2 ;;
+    --allow-remove-key) ALLOWED+=(--allow-remove-key "$2"); shift 2 ;;
+    --allow-add-key) ALLOWED+=(--allow-add-key "$2"); shift 2 ;;
+    --allow-change-key) ALLOWED+=(--allow-change-key "$2"); shift 2 ;;
+    --allow-removal|--allow-addition)
+      echo "$1 waived every check for that key, a value change included." >&2
+      echo "Use --allow-remove-key / --allow-add-key / --allow-change-key." >&2
+      exit 2 ;;
     --) shift; break ;;
     -*) echo "unknown flag: $1" >&2; exit 2 ;;
     *) FUNCTIONS+=("$1"); shift ;;
@@ -58,6 +65,9 @@ done
 echo "[deploy] firebase deploy --only $TARGETS"
 firebase deploy --only "$TARGETS" --project "$PROJECT" --non-interactive
 
+# No declarations on the way back. The intended change has been applied, so the
+# serving revision must now match the env file exactly - any remaining
+# difference is drift the deploy introduced.
 echo "[deploy] post-deploy environment comparison"
-python scripts/functions_env_regression_guard.py "${GUARD_ARGS[@]}" "${ALLOWED[@]+"${ALLOWED[@]}"}"
+python scripts/functions_env_regression_guard.py "${GUARD_ARGS[@]}"
 echo "[deploy] done"
