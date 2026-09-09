@@ -71,6 +71,7 @@ function deepClone<T>(value: T): T {
   return value;
 }
 
+/// update() semantics: a dotted key is a nested field path.
 export function mergeInto(existing: Doc, update: Doc): Doc {
   const out: Doc = deepClone(existing);
   for (const [key, value] of Object.entries(update)) {
@@ -84,6 +85,27 @@ export function mergeInto(existing: Doc, update: Doc): Doc {
     }
     if (isRecord(value) && isRecord(out[key])) {
       out[key] = mergeInto(out[key] as Doc, value);
+      continue;
+    }
+    out[key] = materialize(value);
+  }
+  return out;
+}
+
+/// set(..., {merge:true}) semantics: keys are field NAMES, never paths. A key
+/// containing a dot becomes a literal top-level field and leaves the nested map
+/// alone — this is what wrote "avatar.status" beside the real avatar map in
+/// production while avatar.status itself stayed stale. Nested maps merge by
+/// object structure instead.
+export function mergeSetData(existing: Doc, data: Doc): Doc {
+  const out: Doc = deepClone(existing);
+  for (const [key, value] of Object.entries(data)) {
+    if (isDeleteSentinel(value)) {
+      delete out[key];
+      continue;
+    }
+    if (isRecord(value) && isRecord(out[key])) {
+      out[key] = mergeSetData(out[key] as Doc, value);
       continue;
     }
     out[key] = materialize(value);
@@ -124,7 +146,7 @@ export class FakeFirestore {
             const existing = self.db.get(path) ?? {};
             self.db.set(
               path,
-              options?.merge ? mergeInto(existing, data) : (materialize(data) as Doc),
+              options?.merge ? mergeSetData(existing, data) : (materialize(data) as Doc),
             );
           },
           async update(data: Doc) {
