@@ -138,6 +138,8 @@ Build with Cloud Build:
 
 ```sh
 gcloud builds submit \
+  --region asia-southeast1 \
+  --default-buckets-behavior REGIONAL_USER_OWNED_BUCKET \
   --config cloudbuild.avatar-worker.yaml \
   --substitutions _IMAGE=REGION-docker.pkg.dev/PROJECT_ID/REPOSITORY/seolleyeon-avatar-worker:TAG
 ```

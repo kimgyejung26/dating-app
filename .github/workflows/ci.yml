@@ -168,6 +168,11 @@ jobs:
       - run: pytest -q tests/test_rec_policy_and_blocks.py tests/test_recsys_policy_args.py --maxfail=20
         env:
           PYTHONPATH: .
+      # 아바타 워커 이미지가 Cloud Run 리전(asia-southeast1) 밖으로 push 되면
+      # 콜드스타트마다 리전 간 pull 이 과금된다. 빌드 설정 회귀를 CI 에서 막는다.
+      - run: pytest -q tests/test_avatar_build_region_guard.py --maxfail=10
+        env:
+          PYTHONPATH: .
 
   secret-scan:
     name: Secret scan (gitleaks)
