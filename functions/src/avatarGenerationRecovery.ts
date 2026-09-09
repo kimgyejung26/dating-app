@@ -44,6 +44,9 @@ function asString(value: unknown): string {
 export const MAX_USER_GENERATION_ATTEMPTS = 3;
 
 /** 새 generation 으로 교체 가능한 종료 상태. */
+// 아래 두 집합은 "교체 자격" 전용이다. polling / status normalization /
+// resume planning 이 쓰는 전역 상태 집합과 섞지 마라. 여기서의 in-flight 는
+// "새로 만들기를 막아야 하는가"라는 뜻이지 "작업이 끝났는가"가 아니다.
 const REPLACEABLE_STATUSES = new Set([
   "needs_review",
   "terminal_failed",
@@ -52,10 +55,16 @@ const REPLACEABLE_STATUSES = new Set([
   "no_previewable_candidates",
   "failed",
   "cancelled",
+  // 후보는 나왔지만 사용자가 아직 고르지 않았다. 선택 화면이 제공하는
+  // "사진을 바꾸고 다시 만들기" 가 바로 이 상태에서 눌리므로 허용해야 한다.
+  "preview_ready",
 ]);
 
+// 새 generation 을 시작하면 진행 중인 작업과 충돌하는 상태들.
+const RECONCILIATION_REQUIRED_STATUSES = new Set(["reconciliation_required"]);
+
 /** 아직 워커/승인이 붙들고 있는 상태. 교체 금지. */
-const IN_PROGRESS_STATUSES = new Set([
+const REPLACE_BLOCKING_IN_FLIGHT_STATUSES = new Set([
   "queued",
   "running",
   "generating",
@@ -63,7 +72,6 @@ const IN_PROGRESS_STATUSES = new Set([
   "generated",
   "persisted",
   "qa_pending",
-  "preview_ready",
   "approval_copying",
 ]);
 
@@ -104,8 +112,14 @@ export function planNewGenerationRecovery(params: {
     return { allowed: false, reasonCode: "avatar_provider_outcome_unknown" };
   }
 
-  if (IN_PROGRESS_STATUSES.has(status)) {
+  if (REPLACE_BLOCKING_IN_FLIGHT_STATUSES.has(status)) {
     return { allowed: false, reasonCode: "avatar_generation_in_progress" };
+  }
+
+  // provider 결과나 상태가 어긋났다는 뜻이므로 새 generation 이 이전 상태와
+  // 충돌할 수 있다. generic not_replaceable 로 흘려보내면 이 의도가 사라진다.
+  if (RECONCILIATION_REQUIRED_STATUSES.has(status)) {
+    return { allowed: false, reasonCode: "avatar_reconciliation_required" };
   }
 
   if (!REPLACEABLE_STATUSES.has(status)) {
