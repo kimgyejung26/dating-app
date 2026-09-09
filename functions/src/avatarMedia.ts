@@ -1805,12 +1805,16 @@ export function createRetryCurrentAvatarGenerationFunction(
             tx.set(
               userRef,
               {
-                "avatar.status": "queued",
-                "avatar.errorCode": FieldValue.delete(),
-                "avatar.updatedAt": FieldValue.serverTimestamp(),
-                "onboarding.sourcePhotoUploadStatus": plan.sourceLocked
-                  ? "avatar_generation_queued"
-                  : "avatar_source_selection_pending",
+                avatar: {
+                  status: "queued",
+                  errorCode: FieldValue.delete(),
+                  updatedAt: FieldValue.serverTimestamp(),
+                },
+                onboarding: {
+                  sourcePhotoUploadStatus: plan.sourceLocked
+                    ? "avatar_generation_queued"
+                    : "avatar_source_selection_pending",
+                },
                 updatedAt: FieldValue.serverTimestamp(),
               },
               { merge: true },
@@ -1901,11 +1905,14 @@ export function createRetryCurrentAvatarGenerationFunction(
           );
           await userRef.set(
             {
-              "avatar.status": "retryable_failed",
-              "avatar.errorCode": "avatar_queue_enqueue_failed",
-              "avatar.updatedAt": FieldValue.serverTimestamp(),
-              "onboarding.sourcePhotoUploadStatus":
-                "avatar_queue_enqueue_failed",
+              avatar: {
+                status: "retryable_failed",
+                errorCode: "avatar_queue_enqueue_failed",
+                updatedAt: FieldValue.serverTimestamp(),
+              },
+              onboarding: {
+                sourcePhotoUploadStatus: "avatar_queue_enqueue_failed",
+              },
               updatedAt: FieldValue.serverTimestamp(),
             },
             { merge: true },

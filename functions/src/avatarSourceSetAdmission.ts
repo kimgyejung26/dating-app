@@ -603,9 +603,11 @@ export async function admitAvatarGenerationFromOnboardingPhotos(
           );
           await userRef.set(
             {
-              "avatar.status": "retryable_failed",
-              "avatar.errorCode": "avatar_queue_dispatch_failed",
-              "avatar.updatedAt": FieldValue.serverTimestamp(),
+              avatar: {
+                status: "retryable_failed",
+                errorCode: "avatar_queue_dispatch_failed",
+                updatedAt: FieldValue.serverTimestamp(),
+              },
               updatedAt: FieldValue.serverTimestamp(),
             },
             { merge: true },

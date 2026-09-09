@@ -298,3 +298,75 @@ test("lowercase fixtures keep behaving exactly as before", async () => {
   assert.equal(result.replaced, true);
   assert.equal(result.previousJobId, JOB);
 });
+
+// ---------------------------------------------------------------------------
+// Nested write shape (2026-09-09)
+//
+// set(merge) reads keys as field names. Dotted keys wrote literal
+// "avatar.status" fields beside the real map while users.avatar.status stayed
+// queued, so the callable returned 200 and the user stayed stuck.
+// ---------------------------------------------------------------------------
+
+const NESTED_UID = "TestMixedCaseUid_9Xk2";
+const NESTED_JOB = "avatar_job_nested_shape_01";
+
+function nestedDb(): Db {
+  return new Map<string, Record<string, unknown>>([
+    [
+      `users/${NESTED_UID}`,
+      {
+        avatar: { status: "needs_review", errorCode: "qa_requires_review", jobId: NESTED_JOB },
+        onboarding: { avatarGenerationJobId: NESTED_JOB, sourcePhotoUploadStatus: "queued" },
+      },
+    ],
+    [
+      `userPrivateMedia/${NESTED_UID}`,
+      { currentAvatarJobId: NESTED_JOB, currentAvatarSourcePhotoId: "src_x", sourcePhotos: [] },
+    ],
+    [`avatarJobs/${NESTED_JOB}`, { uid: NESTED_UID, jobId: NESTED_JOB, status: "needs_review" }],
+  ]);
+}
+
+test("replacement writes the nested avatar map, not literal dotted fields", async () => {
+  const store = nestedDb();
+  await replaceAvatarGenerationCore({
+    firestore: new FakeFirestore(store) as never,
+    uid: NESTED_UID,
+    clientRequestId: "replace-nested-0001",
+  });
+  const user = store.get(`users/${NESTED_UID}`) as Record<string, unknown>;
+
+  const literal = Object.keys(user).filter((k) => k.startsWith("avatar.") || k.startsWith("onboarding."));
+  assert.deepEqual(literal, [], `literal dotted fields must not be created: ${literal.join(", ")}`);
+
+  const avatar = user.avatar as Record<string, unknown>;
+  assert.equal(avatar.status, "none", "the nested status must actually leave its old value");
+  assert.equal(avatar.generationReplacementCount, 1);
+  assert.equal(avatar.replacedByClientRequestId, "replace-nested-0001");
+  assert.equal(avatar.replacedJobId, NESTED_JOB);
+  // delete sentinels must reach the nested leaves
+  assert.equal("errorCode" in avatar, false);
+  assert.equal("jobId" in avatar, false);
+
+  const onboarding = user.onboarding as Record<string, unknown>;
+  assert.equal(onboarding.sourcePhotoUploadStatus, "avatar_generation_replaced");
+  assert.equal("avatarGenerationJobId" in onboarding, false);
+});
+
+test("a replayed replacement stays idempotent through the nested map", async () => {
+  const store = nestedDb();
+  const firestore = new FakeFirestore(store) as never;
+  const first = await replaceAvatarGenerationCore({
+    firestore,
+    uid: NESTED_UID,
+    clientRequestId: "replace-nested-0002",
+  });
+  const replay = await replaceAvatarGenerationCore({
+    firestore,
+    uid: NESTED_UID,
+    clientRequestId: "replace-nested-0002",
+  });
+  assert.equal(first.duplicate, false);
+  assert.equal(replay.duplicate, true);
+  assert.equal(replay.generationAttemptCount, first.generationAttemptCount);
+});

@@ -413,18 +413,25 @@ export async function replaceAvatarGenerationCore(params: {
     tx.set(
       userRef,
       {
-        "avatar.status": decision.userAvatarStatus,
-        "avatar.errorCode": FieldValue.delete(),
-        "avatar.reasonCode": FieldValue.delete(),
-        "avatar.sourceJobId": FieldValue.delete(),
-        "avatar.jobId": FieldValue.delete(),
-        "avatar.sourcePhotoId": FieldValue.delete(),
-        "avatar.generationReplacementCount": previousReplacements + 1,
-        "avatar.replacedByClientRequestId": clientRequestId,
-        "avatar.replacedJobId": currentJobId || FieldValue.delete(),
-        "avatar.updatedAt": FieldValue.serverTimestamp(),
-        "onboarding.avatarGenerationJobId": FieldValue.delete(),
-        "onboarding.sourcePhotoUploadStatus": "avatar_generation_replaced",
+        // set(merge) reads keys as field NAMES, so a dotted key would create a
+        // literal "avatar.status" field and leave the real map stale. Nested
+        // objects merge into the map and delete sentinels reach the leaves.
+        avatar: {
+          status: decision.userAvatarStatus,
+          errorCode: FieldValue.delete(),
+          reasonCode: FieldValue.delete(),
+          sourceJobId: FieldValue.delete(),
+          jobId: FieldValue.delete(),
+          sourcePhotoId: FieldValue.delete(),
+          generationReplacementCount: previousReplacements + 1,
+          replacedByClientRequestId: clientRequestId,
+          replacedJobId: currentJobId || FieldValue.delete(),
+          updatedAt: FieldValue.serverTimestamp(),
+        },
+        onboarding: {
+          avatarGenerationJobId: FieldValue.delete(),
+          sourcePhotoUploadStatus: "avatar_generation_replaced",
+        },
         updatedAt: FieldValue.serverTimestamp(),
       },
       { merge: true },

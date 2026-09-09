@@ -518,7 +518,9 @@ export async function applySocialCleanupOperation(
     case "scrubFriendInvite":
       await firestore.collection("friendInvites").doc(operation.id).set(
         {
-          "metadata.inviterEmail": FieldValue.delete(),
+          // A dotted key here is a literal field name, so the nested address
+          // survived the scrub. Nested objects reach the leaf.
+          metadata: { inviterEmail: FieldValue.delete() },
           inviterEmail: FieldValue.delete(),
           updatedAt: now,
         },
