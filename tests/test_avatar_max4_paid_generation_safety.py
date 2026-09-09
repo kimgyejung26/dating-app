@@ -355,3 +355,160 @@ def test_recovered_redelivery_does_not_retire_budget_it_never_spent(monkeypatch)
     assert ledger["paidCandidateReservations"] == 2, (
         "the recovered round paid nothing, so it must not consume max4 budget"
     )
+
+
+# --------------------------------------------------------------------------
+# reservation ledger: atomicity, crash safety, legacy jobs
+# --------------------------------------------------------------------------
+
+
+def _ledger(fs, payload):
+    doc = _job(fs, payload).get("generationCostLedger") or {}
+    return doc.get("paidCandidateReservations")
+
+
+def _reserve(fs, job_id, *, fallback=0, requested=2, max_total=4):
+    return worker_module._reserve_paid_candidates(
+        fs,
+        job_id,
+        fallback_evidence=fallback,
+        requested=requested,
+        max_total=max_total,
+    )
+
+
+def test_two_deliveries_reading_the_same_ledger_cannot_both_be_granted():
+    """Lost update: reading the baseline outside the transaction authorized six."""
+
+    payload = _azure_payload("ledger_concurrent")
+    fs = _fake_firestore(payload)
+    _job(fs, payload)["generationCostLedger"] = {"paidCandidateReservations": 2}
+
+    a_granted, _ = _reserve(fs, payload["jobId"], fallback=2)
+    b_granted, _ = _reserve(fs, payload["jobId"], fallback=2)
+
+    assert 2 + a_granted + b_granted <= 4, (
+        "both deliveries saw a baseline of 2; only one of them may spend"
+    )
+    assert b_granted == 0
+
+
+def test_repeated_grants_from_an_empty_ledger_stop_at_max4():
+    payload = _azure_payload("ledger_pileup")
+    fs = _fake_firestore(payload)
+
+    grants = [_reserve(fs, payload["jobId"])[0] for _ in range(4)]
+
+    assert sum(grants) == 4
+    assert grants[-1] == 0
+
+
+def test_reservation_survives_a_crash_before_the_provider_call():
+    """D4-A: the estimate must outlive the run that never got to spend it."""
+
+    payload = _azure_payload("ledger_crash_before_call")
+    fs = _fake_firestore(payload)
+
+    granted, total = _reserve(fs, payload["jobId"])
+    # crash here: no provider call, no settle
+    assert granted == 2 and total == 2
+    assert _ledger(fs, payload) == 2
+
+    again, _ = _reserve(fs, payload["jobId"], fallback=0)
+    assert again == 2
+    assert _reserve(fs, payload["jobId"], fallback=0)[0] == 0
+
+
+def test_settle_only_releases_this_runs_own_reservation():
+    """A concurrent delivery's reservation must not be handed back."""
+
+    payload = _azure_payload("ledger_settle_cas")
+    fs = _fake_firestore(payload)
+    _reserve(fs, payload["jobId"])
+    _reserve(fs, payload["jobId"])  # a second delivery reserved on top
+
+    settled = worker_module._settle_paid_candidates(
+        fs,
+        payload["jobId"],
+        baseline=0,
+        expected_total=2,
+        provider_usage_doc={"requestCount": 0},
+    )
+
+    assert settled == 4, "the ledger moved on; releasing to 0 would double-grant"
+    assert _ledger(fs, payload) == 4
+
+
+def test_settle_failure_keeps_the_conservative_reservation():
+    """D4-D: fail-safe must point at the cost cap, never at spending more."""
+
+    payload = _azure_payload("ledger_settle_failure")
+    fs = _fake_firestore(payload)
+    _reserve(fs, payload["jobId"])
+
+    class Unreadable:
+        def collection(self, *_args, **_kwargs):
+            raise RuntimeError("firestore unavailable")
+
+        def transaction(self):
+            raise RuntimeError("firestore unavailable")
+
+    settled = worker_module._settle_paid_candidates(
+        Unreadable(),
+        payload["jobId"],
+        baseline=0,
+        expected_total=2,
+        provider_usage_doc={"requestCount": 0},
+    )
+
+    assert settled == 2, "an unreadable ledger must not release budget"
+
+
+def test_legacy_job_without_a_ledger_is_bounded_after_deployment(monkeypatch):
+    """LEGACY CASE A/C: evidence may undercount once, then the ledger takes over."""
+
+    from avatar_generation.worker import DEFAULT_AVATAR_TEMP_BUCKET
+
+    payload = _azure_payload("legacy_no_ledger")
+    fs = _fake_firestore(payload)
+    st = _fake_storage()
+    provider = FakeAzureProvider()
+    ids = _seed_durable_candidates(fs, payload, 2)
+    job = _job(fs, payload)
+    job["candidateIds"] = list(ids)
+    job.pop("generationCostLedger", None)
+
+    per_delivery = []
+    for _ in range(3):
+        st.buckets[DEFAULT_AVATAR_TEMP_BUCKET].blobs.clear()
+        job["status"] = "queued"
+        before = len(provider.calls)
+        _run(payload, fs, st, provider, monkeypatch)
+        per_delivery.append(len(provider.calls) - before)
+
+    assert per_delivery[1:] == [0, 0], (
+        "a pre-ledger job may spend its inferred remaining capacity once, "
+        "never repeatedly"
+    )
+    assert len(provider.calls) <= 4
+
+
+def test_legacy_job_with_full_evidence_spends_nothing(monkeypatch):
+    """LEGACY CASE B."""
+
+    from avatar_generation.worker import DEFAULT_AVATAR_TEMP_BUCKET
+
+    payload = _azure_payload("legacy_full_evidence")
+    fs = _fake_firestore(payload)
+    st = _fake_storage()
+    provider = FakeAzureProvider()
+    ids = _seed_durable_candidates(fs, payload, 4)
+    job = _job(fs, payload)
+    job["candidateIds"] = list(ids)
+    job.pop("generationCostLedger", None)
+    job["status"] = "queued"
+    st.buckets[DEFAULT_AVATAR_TEMP_BUCKET].blobs.clear()
+
+    _run(payload, fs, st, provider, monkeypatch)
+
+    assert len(provider.calls) == 0

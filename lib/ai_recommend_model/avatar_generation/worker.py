@@ -1331,20 +1331,65 @@ def _reserve_paid_candidates(
     firestore_client: Any,
     job_id: str,
     *,
-    already_reserved: int,
-    count: int,
-) -> int:
-    """Record intent to spend before spending, so a crash cannot lose the bill.
+    fallback_evidence: int,
+    requested: int,
+    max_total: int,
+) -> Tuple[int, int]:
+    """Grant provider authorizations transactionally; returns (granted, total).
 
-    Reserving after the provider call would drop the accounting for exactly the
-    runs that crash mid-round -- the ones a redelivery then pays for again.
+    Record intent to spend before spending: reserving afterwards would drop the
+    accounting for exactly the runs that crash mid-round, which are the ones a
+    redelivery then pays for again.
+
+    The baseline has to be re-read inside the transaction. Reading it outside is
+    a lost update -- two deliveries of one job both see 2, both reserve 4, and
+    between them they authorize six paid calls against a max of four.
+
+    `fallback_evidence` covers jobs written before the ledger existed; it only
+    ever raises the baseline, so it cannot be used to hand out extra capacity.
     """
 
-    return _write_paid_ledger(
-        firestore_client,
-        job_id,
-        max(0, int(already_reserved)) + max(0, int(count)),
-    )
+    ref = _doc_ref(firestore_client, "avatarJobs", job_id)
+    ceiling = max(0, int(max_total))
+    want = max(0, int(requested))
+    floor = max(0, int(fallback_evidence))
+
+    def _grant(current: Optional[Mapping[str, Any]]) -> Tuple[int, int]:
+        baseline = max(_paid_candidate_reservations(current or {}), floor)
+        granted = max(0, min(want, ceiling - baseline))
+        return granted, baseline + granted
+
+    def reserve_transaction(transaction: Any) -> Tuple[int, int]:
+        current = _doc_to_dict(ref.get(transaction=transaction)) or {}
+        granted, total = _grant(current)
+        if granted > 0:
+            transaction.set(
+                ref,
+                {
+                    PAID_GENERATION_LEDGER_FIELD: {
+                        "paidCandidateReservations": total,
+                        "updatedAt": SERVER_TIMESTAMP,
+                    }
+                },
+                merge=True,
+            )
+        return granted, total
+
+    transaction_factory = getattr(firestore_client, "transaction", None)
+    if not callable(transaction_factory):
+        granted, total = _grant(_doc_to_dict(ref.get()) or {})
+        if granted > 0:
+            _write_paid_ledger(firestore_client, job_id, total)
+        return granted, total
+
+    transaction = transaction_factory()
+    if (
+        firestore is not None
+        and hasattr(firestore, "transactional")
+        and not getattr(transaction, "_codex_fake_transaction", False)
+    ):
+        return firestore.transactional(reserve_transaction)(transaction)
+    return reserve_transaction(transaction)
 
 
 def _write_paid_ledger(firestore_client: Any, job_id: str, total: int) -> int:
@@ -1366,24 +1411,77 @@ def _settle_paid_candidates(
     job_id: str,
     *,
     baseline: int,
+    expected_total: int,
     provider_usage_doc: Optional[Mapping[str, Any]],
 ) -> int:
-    """Replace the round's estimate with the provider requests actually made.
+    """Retire the part of this run's reservation the provider never charged for.
 
     A redelivery that recovers existing artifacts pays nothing, so leaving the
-    reservation in place would retire budget this job never spent and starve a
-    legitimate extra round. Settling only ever runs after the round returned;
-    if it crashes instead, the conservative reservation is what survives.
+    reservation standing would retire budget the job never spent and starve a
+    legitimate extra round.
+
+    Only this run's own reservation may be released, so the write is a
+    compare-and-set against the total this run left behind. If a concurrent
+    delivery has since reserved on top, the ledger is left alone -- releasing it
+    would hand that delivery capacity twice. Settling also only runs after the
+    round returned; a crash leaves the conservative reservation in place.
     """
 
     baseline = max(0, int(baseline))
+    expected_total = max(0, int(expected_total))
     if not isinstance(provider_usage_doc, Mapping):
-        return baseline
+        return expected_total
     try:
         requests = max(0, int(provider_usage_doc.get("requestCount") or 0))
     except (TypeError, ValueError):
-        return baseline
-    return _write_paid_ledger(firestore_client, job_id, baseline + requests)
+        return expected_total
+    settled = baseline + requests
+    if settled >= expected_total:
+        return expected_total
+
+    try:
+        ref = _doc_ref(firestore_client, "avatarJobs", job_id)
+    except Exception:
+        return expected_total
+
+    def settle_transaction(transaction: Any) -> int:
+        current = _paid_candidate_reservations(
+            _doc_to_dict(ref.get(transaction=transaction)) or {}
+        )
+        if current != expected_total:
+            return current
+        transaction.set(
+            ref,
+            {
+                PAID_GENERATION_LEDGER_FIELD: {
+                    "paidCandidateReservations": settled,
+                    "updatedAt": SERVER_TIMESTAMP,
+                }
+            },
+            merge=True,
+        )
+        return settled
+
+    try:
+        transaction_factory = getattr(firestore_client, "transaction", None)
+        if not callable(transaction_factory):
+            current = _paid_candidate_reservations(_doc_to_dict(ref.get()) or {})
+            if current != expected_total:
+                return current
+            return _write_paid_ledger(firestore_client, job_id, settled)
+
+        transaction = transaction_factory()
+        if (
+            firestore is not None
+            and hasattr(firestore, "transactional")
+            and not getattr(transaction, "_codex_fake_transaction", False)
+        ):
+            return int(firestore.transactional(settle_transaction)(transaction))
+        return int(settle_transaction(transaction))
+    except Exception:
+        # Failing to release unused budget is a smaller harm than failing the
+        # job, and smaller than releasing it twice. Keep the reservation.
+        return expected_total
 
 
 def _doc_to_dict(snapshot: Any) -> Optional[Dict[str, Any]]:
@@ -4123,6 +4221,14 @@ def process_avatar_generation_payload(
             ),
         )
         initial_count = min(max(0, int(payload.candidate_count)), initial_plan.candidate_count)
+        initial_granted, paid_reserved = _reserve_paid_candidates(
+            fs,
+            payload.job_id,
+            fallback_evidence=preexisting_paid_candidates,
+            requested=initial_count,
+            max_total=policy.max_candidate_count,
+        )
+        initial_count = min(initial_count, initial_granted)
         if initial_count <= 0:
             return _finalize_needs_review_without_generation(
                 fs,
@@ -4169,12 +4275,6 @@ def process_avatar_generation_payload(
         # iter_candidate_artifacts) and each artifact enters upload+QA as soon
         # as it lands, so QA of the first candidate overlaps the remaining
         # provider latency instead of waiting for the whole round.
-        paid_reserved = _reserve_paid_candidates(
-            fs,
-            payload.job_id,
-            already_reserved=preexisting_paid_candidates,
-            count=initial_count,
-        )
         artifact_stream = _initial_round_artifact_stream(
             payload=payload,
             source_image=source_image,
@@ -4328,6 +4428,7 @@ def process_avatar_generation_payload(
             fs,
             payload.job_id,
             baseline=preexisting_paid_candidates,
+            expected_total=paid_reserved,
             provider_usage_doc=provider_usage_doc,
         )
         extra_plan = plan_generation_round(
@@ -4350,6 +4451,15 @@ def process_avatar_generation_payload(
             remaining_deadline_seconds=_worker_admission_remaining_seconds(worker_deadline),
         ) if extra_plan.should_generate else AdmissionDecision(allowed=True, reason="admitted")
         extra_count = min(extra_plan.candidate_count, extra_admission.candidate_count)
+        if extra_count > 0:
+            extra_granted, paid_reserved = _reserve_paid_candidates(
+                fs,
+                payload.job_id,
+                fallback_evidence=paid_reserved,
+                requested=extra_count,
+                max_total=policy.max_candidate_count,
+            )
+            extra_count = min(extra_count, extra_granted)
         if (
             payload.candidate_count >= policy.min_safe_before_extra
             and extra_plan.should_generate
@@ -4388,12 +4498,6 @@ def process_avatar_generation_payload(
                 )
             stage_generate_extra_started_at = time.perf_counter()
             model_load_before = seconds_by_stage["model_load_seconds"]
-            paid_reserved = _reserve_paid_candidates(
-                fs,
-                payload.job_id,
-                already_reserved=paid_reserved,
-                count=extra_count,
-            )
             extra_artifacts = generate_candidate_artifacts(
                 payload,
                 source_image,
@@ -4419,6 +4523,7 @@ def process_avatar_generation_payload(
                 fs,
                 payload.job_id,
                 baseline=preexisting_paid_candidates,
+                expected_total=paid_reserved,
                 provider_usage_doc=provider_usage_doc,
             )
             generation_rounds.append(

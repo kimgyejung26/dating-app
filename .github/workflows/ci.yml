@@ -173,6 +173,12 @@ jobs:
       - run: pytest -q tests/test_avatar_build_region_guard.py --maxfail=10
         env:
           PYTHONPATH: .
+      # 후보 생성은 건당 유료다. max4 는 워커 실행 1회가 아니라 job 생애 전체에
+      # 걸린 상한이어야 하고, 재배달·retention 만료·crash·동시 배달에서도
+      # 유지돼야 한다. 비용 회귀를 CI 에서 막는다.
+      - run: pytest -q tests/test_avatar_max4_paid_generation_safety.py --maxfail=10
+        env:
+          PYTHONPATH: .
       # 배포 가드는 Windows 운영자 셸에서 Hangul env 값을 "???" 로 읽어 바뀐 적
       # 없는 변수를 changed 로 보고했다. 인코딩과 키 단위 승인 계약을 Linux
       # 에서도 고정한다.
