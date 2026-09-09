@@ -171,3 +171,141 @@ test("preview_ready respects the per-user generation attempt limit", () => {
   if (decision.allowed) return;
   assert.equal(decision.reasonCode, "avatar_generation_limit_reached");
 });
+
+// ---------------------------------------------------------------------------
+// Rejection observability (2026-09-09)
+//
+// Production rejects replaceAvatarGeneration with 400 while a source-level
+// replay of the same documents says the replacement is allowed. The callable
+// returns the reason in the response body only, so the server logs nothing we
+// can classify. These cover the sanitized log payload, not the transport.
+// ---------------------------------------------------------------------------
+
+import {
+  REPLACE_REJECTION_STAGES,
+  buildReplaceCompletionLog,
+  buildReplaceRejectionLog,
+  shortHash,
+} from "./avatarGenerationRecovery";
+import { HttpsError } from "firebase-functions/v2/https";
+
+const SECRET_UID = "AlNkhWSecretUid0123456789QR22";
+const SECRET_REQUEST_ID = "3f2504e0-4f89-11d3-9a0c-0305e82c3301";
+
+test("every rejection stage is a canonical snake_case token", () => {
+  for (const stage of REPLACE_REJECTION_STAGES) {
+    assert.match(stage, /^[a-z][a-z0-9_]*$/, stage);
+  }
+  // The stages the audit enumerated must all exist.
+  for (const required of [
+    "app_user_resolution",
+    "uid_validation",
+    "request_argument_validation",
+    "client_request_id_validation",
+    "user_document_lookup",
+    "job_ownership_validation",
+    "replacement_policy",
+    "transaction_commit",
+    "unexpected",
+  ]) {
+    assert.ok(REPLACE_REJECTION_STAGES.includes(required as never), required);
+  }
+});
+
+test("a policy rejection reports its stage, https code and internal reason", () => {
+  const entry = buildReplaceRejectionLog({
+    stage: "replacement_policy",
+    error: new HttpsError("failed-precondition", "avatar_generation_in_progress"),
+    uidHash: shortHash(SECRET_UID),
+  });
+  assert.equal(entry.event, "avatar_replace_rejected");
+  assert.equal(entry.stage, "replacement_policy");
+  assert.equal(entry.httpsCode, "failed-precondition");
+  assert.equal(entry.reasonCode, "avatar_generation_in_progress");
+});
+
+test("the attempt limit keeps its distinct resource-exhausted code", () => {
+  const entry = buildReplaceRejectionLog({
+    stage: "replacement_policy",
+    error: new HttpsError("resource-exhausted", "avatar_generation_limit_reached"),
+    uidHash: "",
+  });
+  assert.equal(entry.httpsCode, "resource-exhausted");
+  assert.equal(entry.reasonCode, "avatar_generation_limit_reached");
+});
+
+test("a user-facing message is never logged verbatim, only fingerprinted", () => {
+  // resolveAuthedAppUser throws human sentences. Those are not internal codes,
+  // so they must not be copied into the log line.
+  const message = "학생 인증이 완료된 계정으로 다시 로그인해주세요.";
+  const entry = buildReplaceRejectionLog({
+    stage: "app_user_resolution",
+    error: new HttpsError("failed-precondition", message),
+    uidHash: "",
+  });
+  assert.equal(entry.reasonCode, "non_canonical_message");
+  assert.notEqual(entry.messageHash, "");
+  assert.ok(!JSON.stringify(entry).includes(message));
+  // The fingerprint must be stable so the operator can identify which message.
+  assert.equal(
+    entry.messageHash,
+    buildReplaceRejectionLog({
+      stage: "app_user_resolution",
+      error: new HttpsError("failed-precondition", message),
+      uidHash: "",
+    }).messageHash,
+  );
+});
+
+test("a non-HttpsError is classified as unexpected without leaking its text", () => {
+  const entry = buildReplaceRejectionLog({
+    stage: "transaction_commit",
+    error: new Error(`firestore write failed for ${SECRET_UID}`),
+    uidHash: "",
+  });
+  assert.equal(entry.httpsCode, "internal");
+  assert.equal(entry.reasonCode, "non_canonical_message");
+  assert.ok(!JSON.stringify(entry).includes(SECRET_UID));
+});
+
+test("no rejection log carries a raw uid, email, request id or token", () => {
+  const entry = buildReplaceRejectionLog({
+    stage: "client_request_id_validation",
+    error: new HttpsError(
+      "invalid-argument",
+      `clientRequestId is invalid. ${SECRET_REQUEST_ID} test-user@example.invalid`,
+    ),
+    uidHash: shortHash(SECRET_UID),
+  });
+  const serialized = JSON.stringify(entry);
+  for (const secret of [SECRET_UID, SECRET_REQUEST_ID, "test-user@example.invalid", "example.invalid"]) {
+    assert.ok(!serialized.includes(secret), `${secret} leaked into ${serialized}`);
+  }
+});
+
+test("shortHash is irreversible-looking, stable and not the input", () => {
+  const hashed = shortHash(SECRET_UID);
+  assert.equal(hashed, shortHash(SECRET_UID));
+  assert.notEqual(hashed, SECRET_UID);
+  assert.ok(!SECRET_UID.includes(hashed));
+  assert.match(hashed, /^[0-9a-f]{12}$/);
+  assert.equal(shortHash(""), "");
+});
+
+test("a completion log records the outcome without dumping user state", () => {
+  const entry = buildReplaceCompletionLog({
+    uidHash: shortHash(SECRET_UID),
+    result: {
+      replaced: true,
+      duplicate: false,
+      previousJobId: "avatar_job_2276bSECRET",
+      generationAttemptCount: 1,
+    },
+  });
+  assert.equal(entry.event, "avatar_replace_succeeded");
+  assert.equal(entry.stage, "complete");
+  assert.equal(entry.duplicate, false);
+  assert.equal(entry.generationAttemptCount, 1);
+  // The job id identifies a user's generation; only its fingerprint may ship.
+  assert.ok(!JSON.stringify(entry).includes("avatar_job_2276bSECRET"));
+});
