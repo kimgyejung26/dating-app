@@ -16,12 +16,15 @@ import {
   FieldValue,
   type Firestore,
 } from "firebase-admin/firestore";
+import { createHash } from "node:crypto";
+
 import {
   HttpsError,
   onCall,
   type CallableOptions,
   type CallableRequest,
 } from "firebase-functions/v2/https";
+import * as logger from "firebase-functions/logger";
 
 import {
   rejectAvatarRetryRequestWithImageBytes,
@@ -148,6 +151,98 @@ export function planNewGenerationRecovery(params: {
 }
 
 // ---------------------------------------------------------------------------
+// Rejection observability
+//
+// The callable hands the reason back to the client in the response body, which
+// Cloud Run never logs. When production rejected a replacement that a
+// source-level replay said was allowed, there was nothing on the server to
+// classify. These emit one sanitized line per outcome: enough to name the
+// stage and reason, never enough to identify the person.
+// ---------------------------------------------------------------------------
+
+export const REPLACE_REJECTION_STAGES = [
+  "app_user_resolution",
+  "uid_validation",
+  "request_argument_validation",
+  "client_request_id_validation",
+  "user_document_lookup",
+  "job_ownership_validation",
+  "replacement_policy",
+  "transaction_commit",
+  "unexpected",
+] as const;
+
+export type ReplaceRejectionStage = (typeof REPLACE_REJECTION_STAGES)[number];
+
+/** Irreversible short fingerprint. Correlates lines without naming anyone. */
+export function shortHash(value: string): string {
+  if (!value) return "";
+  return createHash("sha256").update(value).digest("hex").slice(0, 12);
+}
+
+/** Internal codes are safe to log verbatim; human sentences never are. */
+const CANONICAL_REASON = /^[a-z][a-z0-9_]*$/;
+
+function readHttpsCode(error: unknown): string {
+  const code = (error as { code?: unknown } | null)?.code;
+  return typeof code === "string" && code ? code : "internal";
+}
+
+function readMessage(error: unknown): string {
+  const message = (error as { message?: unknown } | null)?.message;
+  return typeof message === "string" ? message : "";
+}
+
+export type ReplaceRejectionLog = {
+  event: "avatar_replace_rejected";
+  stage: ReplaceRejectionStage;
+  httpsCode: string;
+  reasonCode: string;
+  messageHash: string;
+  uidHash: string;
+};
+
+export function buildReplaceRejectionLog(params: {
+  stage: ReplaceRejectionStage;
+  error: unknown;
+  uidHash: string;
+}): ReplaceRejectionLog {
+  const message = readMessage(params.error);
+  // A user-facing sentence can carry anything the thrower interpolated into
+  // it, so it is fingerprinted rather than copied.
+  const canonical = CANONICAL_REASON.test(message);
+  return {
+    event: "avatar_replace_rejected",
+    stage: params.stage,
+    httpsCode: readHttpsCode(params.error),
+    reasonCode: canonical ? message : "non_canonical_message",
+    messageHash: canonical ? "" : shortHash(message),
+    uidHash: params.uidHash,
+  };
+}
+
+export function buildReplaceCompletionLog(params: {
+  uidHash: string;
+  result: ReplaceAvatarGenerationResult;
+}): {
+  event: "avatar_replace_succeeded";
+  stage: "complete";
+  duplicate: boolean;
+  generationAttemptCount: number;
+  previousJobHash: string;
+  uidHash: string;
+} {
+  return {
+    event: "avatar_replace_succeeded",
+    stage: "complete",
+    duplicate: params.result.duplicate,
+    generationAttemptCount: params.result.generationAttemptCount,
+    previousJobHash: shortHash(params.result.previousJobId ?? ""),
+    uidHash: params.uidHash,
+  };
+}
+
+// ---------------------------------------------------------------------------
 // Callable boundary
 // ---------------------------------------------------------------------------
 
@@ -189,8 +284,12 @@ export async function replaceAvatarGenerationCore(params: {
   firestore: Firestore;
   uid: string;
   clientRequestId: string;
+  /** Optional so existing callers and tests keep working unchanged. */
+  onStage?: (stage: ReplaceRejectionStage) => void;
 }): Promise<ReplaceAvatarGenerationResult> {
   const { firestore, uid } = params;
+  const reportStage = params.onStage ?? (() => {});
+  reportStage("client_request_id_validation");
   const clientRequestId = requireSegment(params.clientRequestId, "clientRequestId");
   const userRef = firestore.collection("users").doc(uid);
   const privateRef = firestore.collection("userPrivateMedia").doc(uid);
@@ -200,6 +299,7 @@ export async function replaceAvatarGenerationCore(params: {
       tx.get(userRef),
       tx.get(privateRef),
     ]);
+    reportStage("user_document_lookup");
     if (!userSnap.exists) {
       throw new HttpsError("failed-precondition", "User profile was not found.");
     }
@@ -216,6 +316,7 @@ export async function replaceAvatarGenerationCore(params: {
       : never;
     jobRef = firestore.collection("avatarJobs").doc(currentJobId || "__none__");
     if (currentJobId) {
+      reportStage("job_ownership_validation");
       const jobSnap = await tx.get(jobRef);
       jobData = jobSnap.exists ? readMap(jobSnap.data()) : {};
       if (jobSnap.exists && asString(jobData.uid) && asString(jobData.uid) !== uid) {
@@ -242,6 +343,7 @@ export async function replaceAvatarGenerationCore(params: {
       };
     }
 
+    reportStage("replacement_policy");
     const decision = planNewGenerationRecovery({
       currentJobData: currentJobId ? jobData : { status: asString(userAvatar.status) },
       userAvatar,
@@ -255,6 +357,7 @@ export async function replaceAvatarGenerationCore(params: {
       throw new HttpsError(code, decision.reasonCode);
     }
 
+    reportStage("transaction_commit");
     if (currentJobId) {
       tx.set(
         jobRef,
@@ -328,15 +431,39 @@ export function createReplaceAvatarGenerationFunction(
   resolveUploadUser: ResolveUploadUser,
 ) {
   return onCall(REPLACE_AVATAR_GENERATION_CALLABLE_OPTIONS, async (request) => {
-    const user = await resolveUploadUser(request.auth);
-    const uid = requireSegment(user.userId, "uid");
-    const data = readMap(request.data);
-    // This endpoint never accepts image bytes or source refs.
-    rejectAvatarRetryRequestWithImageBytes(data);
-    return replaceAvatarGenerationCore({
-      firestore,
-      uid,
-      clientRequestId: asString(data.clientRequestId),
-    });
+    // Tracks how far the request got, so a rejection names its own stage.
+    let stage: ReplaceRejectionStage = "app_user_resolution";
+    let uidHash = "";
+    try {
+      const user = await resolveUploadUser(request.auth);
+      stage = "uid_validation";
+      const uid = requireSegment(user.userId, "uid");
+      uidHash = shortHash(uid);
+      stage = "request_argument_validation";
+      const data = readMap(request.data);
+      // This endpoint never accepts image bytes or source refs.
+      rejectAvatarRetryRequestWithImageBytes(data);
+      const result = await replaceAvatarGenerationCore({
+        firestore,
+        uid,
+        clientRequestId: asString(data.clientRequestId),
+        onStage: (next) => {
+          stage = next;
+        },
+      });
+      logger.info(
+        "avatar_replace_succeeded",
+        buildReplaceCompletionLog({ uidHash, result }),
+      );
+      return result;
+    } catch (error) {
+      // The response contract is unchanged: the client still receives the same
+      // HttpsError. This only makes the rejection visible server side.
+      logger.warn(
+        "avatar_replace_rejected",
+        buildReplaceRejectionLog({ stage, error, uidHash }),
+      );
+      throw error;
+    }
   });
 }

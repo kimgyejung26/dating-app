@@ -112,3 +112,105 @@ test("the generation attempt limit is enforced across replacements", async () =>
       error instanceof Error && error.message.includes("avatar_generation_limit_reached"),
   );
 });
+
+// ---------------------------------------------------------------------------
+// Stage reporting (2026-09-09)
+//
+// A 400 whose stage we cannot name is what left the production rejection
+// unexplained. These assert the core reports where it actually stopped.
+// ---------------------------------------------------------------------------
+
+import {
+  buildReplaceRejectionLog,
+  type ReplaceRejectionStage,
+} from "./avatarGenerationRecovery";
+
+async function runStages(
+  store: Db,
+  clientRequestId = "replace-stage-0001",
+): Promise<{ stages: ReplaceRejectionStage[]; error: unknown }> {
+  const stages: ReplaceRejectionStage[] = [];
+  let error: unknown = null;
+  try {
+    await replaceAvatarGenerationCore({
+      firestore: new FakeFirestore(store) as never,
+      uid: UID,
+      clientRequestId,
+      onStage: (stage) => stages.push(stage),
+    });
+  } catch (caught) {
+    error = caught;
+  }
+  return { stages, error };
+}
+
+test("a successful replacement walks every stage up to the commit", async () => {
+  const { stages, error } = await runStages(db("needs_review"));
+  assert.equal(error, null);
+  assert.deepEqual(stages, [
+    "client_request_id_validation",
+    "user_document_lookup",
+    "job_ownership_validation",
+    "replacement_policy",
+    "transaction_commit",
+  ]);
+});
+
+test("an invalid clientRequestId stops at its own stage", async () => {
+  const { stages, error } = await runStages(db("needs_review"), "not a safe segment!");
+  assert.notEqual(error, null);
+  assert.equal(stages.at(-1), "client_request_id_validation");
+  const entry = buildReplaceRejectionLog({
+    stage: stages.at(-1) as ReplaceRejectionStage,
+    error,
+    uidHash: "",
+  });
+  assert.equal(entry.httpsCode, "invalid-argument");
+  assert.equal(entry.stage, "client_request_id_validation");
+});
+
+test("a missing user document stops at the lookup stage", async () => {
+  const store = db("needs_review");
+  store.delete(`users/${UID}`);
+  const { stages, error } = await runStages(store);
+  assert.notEqual(error, null);
+  assert.equal(stages.at(-1), "user_document_lookup");
+});
+
+test("a job owned by someone else stops at ownership validation", async () => {
+  const store = db("needs_review");
+  store.set(`avatarJobs/${JOB}`, { uid: "someone_else", jobId: JOB, status: "needs_review" });
+  const { stages, error } = await runStages(store);
+  assert.notEqual(error, null);
+  assert.equal(stages.at(-1), "job_ownership_validation");
+  const entry = buildReplaceRejectionLog({
+    stage: stages.at(-1) as ReplaceRejectionStage,
+    error,
+    uidHash: "",
+  });
+  assert.equal(entry.reasonCode, "avatar_job_not_current");
+});
+
+test("a blocked status stops at the policy stage with its reason", async () => {
+  const { stages, error } = await runStages(db("queued"));
+  assert.notEqual(error, null);
+  assert.equal(stages.at(-1), "replacement_policy");
+  const entry = buildReplaceRejectionLog({
+    stage: stages.at(-1) as ReplaceRejectionStage,
+    error,
+    uidHash: "",
+  });
+  assert.equal(entry.reasonCode, "avatar_generation_in_progress");
+  assert.equal(entry.httpsCode, "failed-precondition");
+});
+
+test("reconciliation_required is nameable from the log alone", async () => {
+  const { stages, error } = await runStages(db("reconciliation_required"));
+  const entry = buildReplaceRejectionLog({
+    stage: stages.at(-1) as ReplaceRejectionStage,
+    error,
+    uidHash: "",
+  });
+  assert.equal(entry.stage, "replacement_policy");
+  assert.equal(entry.reasonCode, "avatar_reconciliation_required");
+});
