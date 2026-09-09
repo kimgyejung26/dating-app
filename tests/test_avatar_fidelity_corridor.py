@@ -342,6 +342,7 @@ def test_nested_document_is_strictly_sanitized_and_rounded():
         "policyVersion",
         "calibrationVersion",
         "criticalSignalsAvailable",
+        "criticalSignalGaps",
         "gates",
         "bands",
         "reasonCodes",
@@ -349,6 +350,18 @@ def test_nested_document_is_strictly_sanitized_and_rounded():
         "modelVersions",
         "scores",
         "timingMs",
+    }
+    # The gap names explain criticalSignalsAvailable; they are a closed
+    # vocabulary so the field can never carry candidate-derived text.
+    assert set(document["criticalSignalGaps"]) <= {
+        "safety",
+        "identitySimilarity",
+        "fidelitySignals",
+        "traitCoverage",
+        "fidelityComponents",
+        "fidelityBands",
+        "conflictingSignals",
+        "policyCalibration",
     }
     assert document["scores"] == {
         "fidelity": 1.0,

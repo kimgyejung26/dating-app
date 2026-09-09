@@ -179,6 +179,12 @@ jobs:
       - run: pytest -q tests/test_avatar_max4_paid_generation_safety.py --maxfail=10
         env:
           PYTHONPATH: .
+      # fidelity 기록은 실제로 적용된 calibration 권위를 말해야 하고, 그 기록
+      # 추가가 결정을 바꿔서는 안 된다. provenance 와 decision-diff 가드를
+      # 함께 고정한다.
+      - run: pytest -q tests/test_avatar_fidelity_provenance.py --maxfail=10
+        env:
+          PYTHONPATH: .
       # 배포 가드는 Windows 운영자 셸에서 Hangul env 값을 "???" 로 읽어 바뀐 적
       # 없는 변수를 changed 로 보고했다. 인코딩과 키 단위 승인 계약을 Linux
       # 에서도 고정한다.

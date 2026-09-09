@@ -45,6 +45,10 @@ class SimilarityResult:
     threshold: float | None
     provider_version: str | None = None
     availability_reason: str | None = None
+    # The margin the policy actually applied. Without it the review band that
+    # produced identity_reliable=False cannot be reconstructed downstream, so
+    # every in-band candidate looks like an unexplained null score.
+    review_margin: float | None = None
     source_embedding: Embedding | None = field(default=None, repr=False, compare=False)
     target_embedding: Embedding | None = field(default=None, repr=False, compare=False)
 
@@ -61,6 +65,7 @@ class SimilarityResult:
             "needsReview": bool(self.needs_review),
             "calibrationVersion": self.calibration_version,
             "threshold": _round_optional(self.threshold),
+            "reviewMargin": _round_optional(self.review_margin),
         }
 
 
@@ -204,6 +209,7 @@ def compare_image_similarity(
             needs_review=True,
             calibration_version=_policy_version(calibration_policy),
             threshold=_policy_threshold(calibration_policy),
+            review_margin=_policy_review_margin(calibration_policy),
             source_embedding=source_embedding,
             target_embedding=target_embedding,
         )
@@ -234,6 +240,7 @@ def compare_image_similarity(
         needs_review=needs_review,
         calibration_version=calibration_policy.calibration_version,
         threshold=threshold,
+        review_margin=review_margin,
         source_embedding=source_embedding,
         target_embedding=target_embedding,
     )
@@ -289,6 +296,10 @@ def _policy_threshold(policy: CalibrationPolicy | None) -> float | None:
     return None if policy is None else float(policy.threshold)
 
 
+def _policy_review_margin(policy: CalibrationPolicy | None) -> float | None:
+    return None if policy is None else max(0.0, float(policy.review_margin))
+
+
 def _unavailable_result(
     *,
     provider: str,
@@ -308,6 +319,7 @@ def _unavailable_result(
         needs_review=True,
         calibration_version=_policy_version(calibration_policy),
         threshold=_policy_threshold(calibration_policy),
+        review_margin=_policy_review_margin(calibration_policy),
     )
 
 

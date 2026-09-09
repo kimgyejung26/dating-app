@@ -121,18 +121,32 @@ class FidelitySignalBundle:
         )
 
     @property
+    def critical_signal_gaps(self) -> tuple[str, ...]:
+        """Which conjuncts of critical_signals_available are missing.
+
+        The bool alone cannot be explained downstream, and trait coverage in
+        particular never reaches any persisted record. Deriving the bool from
+        this list keeps the two from drifting apart.
+        """
+
+        gaps: list[str] = []
+        if self.trait_coverage_status != "sufficient":
+            gaps.append("traitCoverage")
+        if any(
+            _availability(self.model_availability.get(key)) != "available"
+            for key in FIDELITY_COMPONENT_KEYS
+        ):
+            gaps.append("fidelityComponents")
+        if any(
+            _band(self.bands.get(key)) == "unavailable"
+            for key in FIDELITY_BAND_KEYS
+        ):
+            gaps.append("fidelityBands")
+        return tuple(gaps)
+
+    @property
     def critical_signals_available(self) -> bool:
-        return bool(
-            self.trait_coverage_status == "sufficient"
-            and all(
-                _availability(self.model_availability.get(key)) == "available"
-                for key in FIDELITY_COMPONENT_KEYS
-            )
-            and all(
-                _band(self.bands.get(key)) != "unavailable"
-                for key in FIDELITY_BAND_KEYS
-            )
-        )
+        return not self.critical_signal_gaps
 
     def ranking_vector(self) -> tuple[float, float, float, float, float, float]:
         """Return broad-only descending rank inputs.

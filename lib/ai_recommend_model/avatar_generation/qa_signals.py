@@ -487,31 +487,71 @@ def _add_local_risk_signals(signals: dict[str, Any], availability: dict[str, str
         signals["cropIsolationQuality"] = "fail"
 
 
+CANONICAL_UNAVAILABLE_SIGNAL = "similarity_signal_unavailable"
+CANONICAL_UNAVAILABLE_REVIEW_BAND = "identity_within_calibrated_review_band"
+CANONICAL_UNAVAILABLE_UNCALIBRATED = "producer_calibration_absent"
+
+
+def _effective_producer_calibration(similarity: Any) -> dict[str, Any] | None:
+    """The calibration the producer actually split on, if it had one.
+
+    The canonical faceSimilarityScore is withheld whenever the producer says
+    identity_reliable=False, and in production that verdict comes from this
+    band -- not from the QA env thresholds the record otherwise reports. Naming
+    the artifact and its numbers is what makes a null score readable.
+    """
+
+    version = str(_attr(similarity, "calibration_version", "") or "").strip()
+    threshold = _rounded(_attr(similarity, "threshold", None))
+    if not version or threshold is None:
+        return None
+    margin = _rounded(_attr(similarity, "review_margin", None)) or 0.0
+    margin = max(0.0, margin)
+    return {
+        "source": "calibration_artifact",
+        "calibrationVersion": version,
+        "threshold": threshold,
+        "reviewMargin": margin,
+        "reviewBandLow": round(threshold - margin, 6),
+        "reviewBandHigh": threshold,
+    }
+
+
 def _add_similarity_signals(signals: dict[str, Any], availability: dict[str, str], similarity: Any) -> None:
     if not bool(_attr(similarity, "available", False)):
         availability["faceSimilarity"] = "unavailable"
         signals["faceSimilarityReliable"] = False
+        signals["faceSimilarityCanonicalScoreAvailable"] = False
+        signals["faceSimilarityCanonicalUnavailableReason"] = CANONICAL_UNAVAILABLE_SIGNAL
         return
     observed_score = _rounded(_attr(similarity, "score", None))
     decision = str(_attr(similarity, "identity_decision", "") or "").strip()
     calibration_version = str(_attr(similarity, "calibration_version", "") or "").strip()
+    effective_calibration = _effective_producer_calibration(similarity)
     if observed_score is not None:
         signals["faceSimilarityObservedScore"] = observed_score
     if decision:
         signals["faceSimilarityDecision"] = decision
+    if effective_calibration is not None:
+        signals["effectiveProducerCalibration"] = effective_calibration
     if not bool(_attr(similarity, "identity_reliable", False)):
         if calibration_version and decision == "review_similarity":
             availability["faceSimilarity"] = "available"
             signals["faceSimilarityCalibrationState"] = "calibrated_review_band"
+            reason = CANONICAL_UNAVAILABLE_REVIEW_BAND
         else:
             availability["faceSimilarity"] = "uncalibrated"
+            reason = CANONICAL_UNAVAILABLE_UNCALIBRATED
         signals["faceSimilarityReliable"] = False
         signals["faceSimilarityNeedsReview"] = True
+        signals["faceSimilarityCanonicalScoreAvailable"] = False
+        signals["faceSimilarityCanonicalUnavailableReason"] = reason
         return
     availability["faceSimilarity"] = "available"
     signals["faceSimilarityCalibrationState"] = "calibrated"
     signals["faceSimilarityReliable"] = True
     signals["faceSimilarityScore"] = observed_score
+    signals["faceSimilarityCanonicalScoreAvailable"] = True
     signals["faceSimilarityNeedsReview"] = bool(_attr(similarity, "needs_review", False))
 
 

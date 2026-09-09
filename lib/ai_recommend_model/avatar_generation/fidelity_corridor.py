@@ -358,6 +358,7 @@ class CorridorDecision:
     model_versions: Mapping[str, str]
     timing_ms: Mapping[str, float]
     reason_codes: Sequence[str] = field(default_factory=tuple)
+    critical_signal_gaps: Sequence[str] = field(default_factory=tuple)
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "mode", CorridorMode.parse(self.mode))
@@ -402,6 +403,7 @@ class CorridorDecision:
                 UNCALIBRATED_VERSION,
             ),
             "criticalSignalsAvailable": bool(self.critical_signals_available),
+            "criticalSignalGaps": list(self.critical_signal_gaps),
             "gates": {
                 "safety": self.safety.status.value,
                 "privacyUpperBound": self.privacy_upper_bound.status.value,
@@ -489,15 +491,25 @@ def evaluate_fidelity_corridor(
     if identity_document.get("timingMs") is not None:
         timing_ms["identitySimilarity"] = identity_document["timingMs"]
 
-    critical_available = bool(
-        safety.status is not GateStatus.REVIEW
-        and identity_signal is not None
-        and identity_signal.critical_signal_available
-        and fidelity_signals is not None
-        and fidelity_signals.critical_signals_available
-        and not fidelity_signals.conflicting
-        and active_policy.calibrated
-    )
+    # criticalSignalsAvailable is a conjunction reported as one bool, and four
+    # of its causes collapse into the single reason code
+    # "fidelity_signal_unavailable". Name each failed conjunct so a false can
+    # be explained from the record alone.
+    critical_gaps: list[str] = []
+    if safety.status is GateStatus.REVIEW:
+        critical_gaps.append("safety")
+    if identity_signal is None or not identity_signal.critical_signal_available:
+        critical_gaps.append("identitySimilarity")
+    if fidelity_signals is None:
+        critical_gaps.append("fidelitySignals")
+    else:
+        critical_gaps.extend(fidelity_signals.critical_signal_gaps)
+        if fidelity_signals.conflicting:
+            critical_gaps.append("conflictingSignals")
+    if not active_policy.calibrated:
+        critical_gaps.append("policyCalibration")
+
+    critical_available = not critical_gaps
     reasons = _ordered_reason_codes(
         (
             *safety.reason_codes,
@@ -513,6 +525,7 @@ def evaluate_fidelity_corridor(
         privacy_upper_bound=privacy,
         fidelity_lower_bound=fidelity,
         critical_signals_available=critical_available,
+        critical_signal_gaps=tuple(critical_gaps),
         scores=dict(signal_document["scores"]),
         bands={
             **dict(signal_document["bands"]),
