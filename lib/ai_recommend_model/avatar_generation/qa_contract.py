@@ -33,12 +33,42 @@ def unreported_signal_status(signal_key: str) -> str:
     way on 2026-09-07 with a literal; ``mediapipe`` is the same shape and kept
     the bug, so the rule lives here instead of being restated per key.
 
-    An explicit report always wins over this default. A caller that genuinely
-    saw a signal fail still records ``"unavailable"`` and still gates.
+    An explicit report always wins over this default and is preserved verbatim
+    in the record. Whether it *gates* is a separate question, answered by
+    ``blocking_signal_failure_codes``.
     """
 
     key = str(signal_key or "").strip().lower()
     return STATUS_UNAVAILABLE if key in _REQUIRED_SIGNAL_KEYS else STATUS_NOT_REQUIRED
+
+
+def blocking_signal_failure_codes(availability: Mapping[str, Any]) -> tuple[str, ...]:
+    """Which reported failures may withhold a candidate or suppress generation.
+
+    This is the same rule ``qa_preflight.QARuntimeReadiness.blocking_components``
+    already applies -- ``critical and status != available`` -- restated for the
+    per-candidate availability map so the two authorities cannot disagree.
+
+    They did disagree. ``preview_policy`` and ``adaptive_generation`` scanned
+    *every* key in the flat map and treated any "unavailable" as a systemic
+    outage, while the readiness contract declares ``dino`` with
+    ``critical=False, status=not_required, reason="not_in_active_qa_contract"``
+    and ``signalCoverage`` maps every QA decision to a *required* component
+    (``dinoRerank -> not_required_in_active_qa_contract``). A signal that no
+    decision consults cannot make a decision less trustworthy by failing, so
+    withholding a candidate over it is a fabricated outage rather than
+    fail-closed behaviour.
+
+    ``mediapipe`` is narrower still: it is a provider of the ``faceDetector``
+    capability, not a capability of its own. When the OpenCV Haar fallback
+    answers, ``faceDetector`` is available and the capability is intact
+    whatever mediapipe reports.
+
+    Required capabilities are unchanged: absent, unavailable or uncalibrated,
+    they all still block.
+    """
+
+    return required_signal_failure_codes(availability)
 
 
 def required_signal_failure_codes(availability: Mapping[str, Any]) -> tuple[str, ...]:
@@ -69,6 +99,7 @@ def _first_status(normalized: Mapping[str, str], aliases: tuple[str, ...]) -> st
 __all__ = [
     "OPTIONAL_SIGNAL_NAMES",
     "REQUIRED_SIGNAL_ALIASES",
+    "blocking_signal_failure_codes",
     "STATUS_NOT_REQUIRED",
     "STATUS_UNAVAILABLE",
     "required_signal_failure_codes",

@@ -214,24 +214,164 @@ def test_the_four_availability_states_are_distinguishable():
 
     assert unreported["modelAvailability"]["mediapipe"] == "not_required"
     # An explicit report is testimony and is preserved verbatim, even for a
-    # signal the contract does not require.
+    # signal the contract does not require. Preserved is not the same as
+    # authoritative -- see test_explicit_outage_of_a_non_required_signal_*.
     assert explicit["modelAvailability"]["mediapipe"] == "unavailable"
     assert uncalibrated["modelAvailability"]["localSafetyRisk"] == "uncalibrated"
 
+    # Only the required capability's state decides the gate.
     assert passes_absolute_preview_checks(_candidate(_clean_qa(unreported))) is True
-    assert passes_absolute_preview_checks(_candidate(_clean_qa(explicit))) is False
+    assert passes_absolute_preview_checks(_candidate(_clean_qa(explicit))) is True
     assert passes_absolute_preview_checks(_candidate(_clean_qa(uncalibrated))) is False
 
 
-def test_absent_optional_signal_keeps_its_existing_semantics():
-    """dino's 2026-09-07 contract is unchanged by this fix."""
-
+def test_absent_optional_signal_keeps_its_existing_reporting_semantics():
     debug = _debug(MEDIAPIPE_AVAILABILITY)
     assert debug["modelAvailability"]["dino"] == "not_required"
     assert debug["signalContract"]["optional"] == ["dino"]
-    explicit = _debug({**MEDIAPIPE_AVAILABILITY, "dino": "unavailable"})
-    assert explicit["modelAvailability"]["dino"] == "unavailable"
-    assert passes_absolute_preview_checks(_candidate(_clean_qa(explicit))) is False
+
+
+def test_explicit_outage_of_a_non_required_signal_is_recorded_not_enforced():
+    """qa_preflight declares dino critical=False / not_in_active_qa_contract, and
+    QARuntimeReadiness.blocking_components is "critical and not available". A
+    signal that no QA decision consults cannot make a decision less trustworthy
+    by failing, so withholding a candidate over it is a fabricated outage."""
+
+    for key in ("dino", "mediapipe"):
+        debug = _debug({**MEDIAPIPE_AVAILABILITY, key: "unavailable"})
+        assert debug["modelAvailability"][key] == "unavailable", key
+        assert debug["signalContract"]["requiredSignalFailures"] == [], key
+        candidate = _candidate(_clean_qa(debug))
+        assert passes_absolute_preview_checks(candidate) is True, key
+        assert is_preview_eligible(candidate) is True, key
+        assert _systemic_unavailable_reason(candidate) == "", key
+
+
+def test_gate_agrees_with_the_runtime_readiness_contract():
+    """The two authorities must not disagree. qa_preflight decides readiness with
+    "critical and not available"; the per-candidate gate now applies the same
+    rule through blocking_signal_failure_codes."""
+
+    from avatar_generation.qa_preflight import build_qa_runtime_readiness
+
+    dino = next(
+        component
+        for component in build_qa_runtime_readiness().components
+        if component.name == "dino"
+    )
+    assert dino.critical is False
+    assert dino.status == "not_required"
+    assert dino.reason == "not_in_active_qa_contract"
+
+
+def test_optional_outage_does_not_stand_down_the_extra_generation_round():
+    """Suppressing the round costs the user their remaining candidates."""
+
+    debug = _debug({**MEDIAPIPE_AVAILABILITY, "dino": "unavailable"}, decision_tier="needs_review")
+    qa = _clean_qa(
+        debug,
+        previewAllowed=False,
+        requiresHumanReview=True,
+        reviewReasons=["actual_qa_signal_review"],
+    )
+    candidates = [_candidate(qa, status="needs_review", candidate_id=f"c{i}") for i in range(2)]
+    plan = plan_generation_round(candidates, policy=AdaptiveGenerationPolicy())
+    assert plan.reason != "extra_suppressed_systemic_unavailable"
+
+
+# The exact availability map carried by production jobs avatar_job_992 and
+# avatar_job_78f (avatar_qa_v7_watermark_evidence_parity_v1). Every required
+# signal available, rejectReasons empty, and dino reported unavailable.
+PRODUCTION_DINO_OUTAGE_AVAILABILITY = {
+    "faceDetector": "available",
+    "visualRisk": "available",
+    "faceSimilarity": "available",
+    "localSafetyRisk": "available",
+    "clipSafety": "available",
+    "clip": "available",
+    "mediapipe": "available",
+    "dino": "unavailable",
+}
+
+
+def test_recorded_production_jobs_are_no_longer_denied_their_extra_round():
+    """Read-only replay of 298 stored candidates against main showed two live
+    current-contract jobs suppressed at extra_suppressed_systemic_unavailable
+    with every required signal available and no rejectReasons. Their users were
+    denied the extra candidates the adaptive policy had allocated, over a signal
+    no QA decision reads."""
+
+    debug = _debug(PRODUCTION_DINO_OUTAGE_AVAILABILITY, decision_tier="needs_review")
+    assert debug["signalContract"]["requiredSignalFailures"] == []
+    qa = _clean_qa(
+        debug,
+        previewAllowed=False,
+        requiresHumanReview=True,
+        privacyQa="needs_review",
+        identifiabilityRisk="medium",
+        reviewReasons=["actual_qa_signal_review"],
+    )
+    candidates = [_candidate(qa, status="needs_review", candidate_id=f"c{i}") for i in range(2)]
+    for candidate in candidates:
+        assert _systemic_unavailable_reason(candidate) == ""
+    plan = plan_generation_round(candidates, policy=AdaptiveGenerationPolicy())
+    assert plan.reason == "extra_insufficient_safe"
+    assert plan.candidate_count > 0
+
+
+def test_those_same_candidates_are_still_withheld_from_preview():
+    """The fix returns the generation round, not the candidates. These stay
+    needs_review on their own QA verdict."""
+
+    debug = _debug(PRODUCTION_DINO_OUTAGE_AVAILABILITY, decision_tier="needs_review")
+    qa = _clean_qa(
+        debug,
+        previewAllowed=False,
+        requiresHumanReview=True,
+        privacyQa="needs_review",
+        identifiabilityRisk="medium",
+        reviewReasons=["actual_qa_signal_review"],
+    )
+    candidate = _candidate(qa, status="needs_review")
+    assert is_preview_eligible(candidate) is False
+
+
+def test_mediapipe_outage_with_a_working_fallback_is_not_a_capability_failure():
+    """Case D2: mediapipe is a provider of the faceDetector capability, not a
+    capability. Haar answering means face detection worked."""
+
+    debug = _debug({**MEDIAPIPE_AVAILABILITY, "mediapipe": "unavailable"})
+    assert debug["modelAvailability"]["faceDetector"] == "available"
+    assert is_preview_eligible(_candidate(_clean_qa(debug))) is True
+
+
+def test_mediapipe_outage_with_no_working_fallback_still_fails_closed():
+    """Case E: no fallback answered, so the capability itself is gone."""
+
+    debug = _debug(
+        {**MEDIAPIPE_AVAILABILITY, "mediapipe": "unavailable", "faceDetector": "unavailable"}
+    )
+    assert "face_detector_unavailable" in debug["signalContract"]["requiredSignalFailures"]
+    candidate = _candidate(_clean_qa(debug))
+    assert passes_absolute_preview_checks(candidate) is False
+    assert _systemic_unavailable_reason(candidate) == "qa_critical_model_unavailable"
+
+
+def test_explicit_safety_reject_is_unaffected_by_availability_semantics():
+    """Case F: whatever the availability map says, a real rejection stands."""
+
+    for availability in (
+        MEDIAPIPE_AVAILABILITY,
+        {**MEDIAPIPE_AVAILABILITY, "dino": "unavailable"},
+        {**MEDIAPIPE_AVAILABILITY, "faceDetector": "unavailable"},
+    ):
+        debug = _debug(availability, decision_tier="rejected")
+        qa = _clean_qa(
+            debug, previewAllowed=False, rejectReasons=["secondary_person_generated"]
+        )
+        candidate = _candidate(qa, status="rejected")
+        assert passes_absolute_preview_checks(candidate) is False
+        assert is_preview_eligible(candidate) is False
 
 
 # ---------------------------------------------------------------------------
