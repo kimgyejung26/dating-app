@@ -214,6 +214,13 @@ jobs:
       - run: pytest -q tests/test_avatar_identity_crop_parity.py --maxfail=10
         env:
           PYTHONPATH: .
+      # 2026-09-10: 실행 리전/레지스트리는 맞았는데 source staging 만 US
+      # 멀티리전 버킷으로 갔다. --default-buckets-behavior 가 빠졌기 때문인데
+      # 그 플래그는 cloudbuild YAML 로 표현할 수 없고 builds describe 에도
+      # 안 남는다. 레시피를 기억에 맡기지 않고 계약으로 고정한다.
+      - run: pytest -q tests/test_avatar_build_recipe_contract.py --maxfail=10
+        env:
+          PYTHONPATH: .
       # 배포 가드는 Windows 운영자 셸에서 Hangul env 값을 "???" 로 읽어 바뀐 적
       # 없는 변수를 changed 로 보고했다. 인코딩과 키 단위 승인 계약을 Linux
       # 에서도 고정한다.
