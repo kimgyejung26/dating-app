@@ -23,6 +23,10 @@ from avatar_generation.avatar_prompt_contract import (
     AVATAR_GENERAL_PROMPT_V0_TEMP,
     AVATAR_GENERAL_PROMPT_VERSION,
 )
+from avatar_generation.qa_contract import (
+    candidate_availability,
+    candidate_blocking_failures,
+)
 from avatar_generation.adaptive_generation import (
     AdaptiveGenerationPolicy,
     GenerationBudget,
@@ -949,7 +953,22 @@ def _ensure_azure_round_deadline_budget(
 
 
 def _qa_critical_models_unavailable(candidate_summaries: Sequence[Mapping[str, Any]]) -> bool:
-    unavailable = {"unavailable", "critical_unavailable", "uncalibrated"}
+    """May this run's QA state withhold the extra round's provider calls?
+
+    Aggregation is deliberately "any candidate": the planner suppresses only on
+    a *uniform* systemic outage, but paying for more generation while QA could
+    not judge what we already produced is wrong even for one candidate. That is
+    a scope decision. What counts as a blocking failure is not decided here --
+    candidate_blocking_failures owns it, so this gate, preview_policy and
+    adaptive_generation cannot drift apart.
+
+    Previously this scanned every value in the flat availability map and called
+    any "unavailable" critical, contradicting qa_preflight's own rule
+    (critical and not available). It also read the map from qa["modelAvailability"],
+    which the QA document does not write, so the scan saw {} on all 298 stored
+    production candidates and the gate never fired.
+    """
+
     for summary in candidate_summaries:
         qa = summary.get("qa") if isinstance(summary, Mapping) else None
         if not isinstance(qa, Mapping):
@@ -957,15 +976,22 @@ def _qa_critical_models_unavailable(candidate_summaries: Sequence[Mapping[str, A
         version = str(qa.get("qaVersion") or "").strip().lower()
         if "model_unavailable" in version:
             return True
+        # Every producer of a *_unavailable review reason names a real capability
+        # failure (faceDetector, visualRisk, localSafetyRisk, faceSimilarity,
+        # sourceVisualRisk) or the generic model_unavailable marker; no optional
+        # signal can reach this list, which is pinned by test.
         review_reasons = {str(reason) for reason in (qa.get("reviewReasons") or [])}
         if "model_unavailable" in review_reasons or any(reason.endswith("_unavailable") for reason in review_reasons):
             return True
         if qa.get("modelsUnavailable") is True:
             return True
-        availability = qa.get("modelAvailability") if isinstance(qa.get("modelAvailability"), Mapping) else {}
-        for value in availability.values():
-            if str(value).strip().lower() in unavailable:
-                return True
+        # An absent map means this channel is not reporting, not that four
+        # capabilities failed -- a QA result may legitimately carry no debug
+        # document. Same rule as preview_policy and adaptive_generation, so all
+        # three agree. A real outage still arrives via qaVersion, the
+        # *_unavailable review reasons, or modelsUnavailable above.
+        if candidate_availability(qa) and candidate_blocking_failures(qa):
+            return True
     return False
 
 
