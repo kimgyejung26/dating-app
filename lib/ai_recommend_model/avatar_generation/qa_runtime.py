@@ -244,26 +244,91 @@ def _clip_risk_policy_from_env() -> ClipRiskCalibrationPolicy | None:
     return ClipRiskCalibrationPolicy.from_env()
 
 
-def _similarity_policy_from_env() -> CalibrationPolicy | None:
-    if _calibration_artifact_is_configured():
+CALIBRATION_SOURCE_ARTIFACT = "calibration_artifact"
+CALIBRATION_SOURCE_ENV_TRIPLE = "env_threshold_triple"
+CALIBRATION_SOURCE_NONE = "none"
+
+_POSTURE_LABELS = ("staging", "production", "canary", "dev", "test")
+
+
+def _declared_release_posture(calibration_version: str) -> str:
+    """What the calibration version *claims* about its release posture.
+
+    The label is a claim, not proof: no promotion procedure exists here that
+    could have verified it. That is why it is recorded rather than branched on
+    -- so a reader auditing a decision can see that a staging-labelled
+    calibration was the effective authority.
+    """
+
+    text = str(calibration_version or "").strip().lower()
+    for label in _POSTURE_LABELS:
+        if label in text:
+            return label
+    return "unknown"
+
+
+def resolve_similarity_calibration() -> tuple[CalibrationPolicy | None, dict[str, Any]]:
+    """Resolve the face-similarity calibration and say where it came from.
+
+    Three tiers answer this and the caller could not tell them apart: an
+    artifact that failed its own sha256/model/preprocessing checks degraded to
+    the same silent None as "nothing was configured at all". The policy
+    returned here is identical to what the previous resolution produced; only
+    the second element is new.
+    """
+
+    provenance: dict[str, Any] = {
+        "source": CALIBRATION_SOURCE_NONE,
+        "artifactConfigured": _calibration_artifact_is_configured(),
+        "calibrationVersion": None,
+        "declaredReleasePosture": "unknown",
+        "postureSource": "calibration_version_label",
+        "fallbackReason": None,
+    }
+
+    if provenance["artifactConfigured"]:
         artifact = _configured_calibration_artifact()
-        return artifact.to_similarity_policy() if artifact is not None else None
+        if artifact is None:
+            # Fail closed: a rejected artifact must not hand authority to env.
+            provenance["fallbackReason"] = "artifact_invalid"
+            return None, provenance
+        policy = artifact.to_similarity_policy()
+        provenance["source"] = CALIBRATION_SOURCE_ARTIFACT
+        provenance["calibrationVersion"] = policy.calibration_version
+        provenance["declaredReleasePosture"] = _declared_release_posture(
+            policy.calibration_version
+        )
+        return policy, provenance
+
     version = os.environ.get(_ENV_SIMILARITY_CALIBRATION_VERSION, "").strip()
     if not version:
-        return None
+        provenance["fallbackReason"] = "no_calibration_configured"
+        return None, provenance
     try:
         threshold = float(os.environ[_ENV_SIMILARITY_THRESHOLD])
     except (KeyError, ValueError):
-        return None
+        provenance["fallbackReason"] = "env_threshold_missing_or_invalid"
+        return None, provenance
     try:
         margin = float(os.environ.get(_ENV_SIMILARITY_REVIEW_MARGIN, "0"))
     except ValueError:
         margin = 0.0
-    return CalibrationPolicy(
-        calibration_version=version,
-        threshold=threshold,
-        review_margin=max(0.0, margin),
+    provenance["source"] = CALIBRATION_SOURCE_ENV_TRIPLE
+    provenance["calibrationVersion"] = version
+    provenance["declaredReleasePosture"] = _declared_release_posture(version)
+    provenance["fallbackReason"] = "artifact_not_configured"
+    return (
+        CalibrationPolicy(
+            calibration_version=version,
+            threshold=threshold,
+            review_margin=max(0.0, margin),
+        ),
+        provenance,
     )
+
+
+def _similarity_policy_from_env() -> CalibrationPolicy | None:
+    return resolve_similarity_calibration()[0]
 
 
 def _mapping_child(parent: Mapping[str, Any], key: str) -> Mapping[str, Any]:
