@@ -575,6 +575,11 @@ def _risk_from_score(
 FIDELITY_DECISION_MODE_PRODUCER = "producer_calibration"
 FIDELITY_DECISION_MODE_CONFIGURED = "configured_thresholds"
 
+# Configured knobs that reach the QA record but govern no decision anywhere in
+# this repository. Listing them keeps the record from implying enforcement that
+# does not exist; removing them outright would break existing readers.
+UNENFORCED_QA_THRESHOLD_FLAGS = ("requireReliableFaceSimilarityForTooIdentifiable",)
+
 
 def _fidelity_decision_mode(signals: Mapping[str, Any]) -> str:
     """Which authority actually resolved identifiability risk.
@@ -1237,6 +1242,11 @@ def _qa_debug_document(
             "faceSimilarityReject": thresholds.face_similarity_reject,
             "faceSimilarityReview": thresholds.face_similarity_review,
             "applied": not producer_applied,
+            # thresholdSnapshot lists these next to the thresholds, which reads
+            # as though they governed a decision. They have no consumer, so an
+            # audit of why a candidate was or was not rejected would otherwise
+            # credit configuration that does nothing.
+            "unenforced": list(UNENFORCED_QA_THRESHOLD_FLAGS),
         },
         "effectiveProducerCalibration": (
             dict(effective_producer_calibration)

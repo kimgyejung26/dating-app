@@ -185,6 +185,12 @@ jobs:
       - run: pytest -q tests/test_avatar_fidelity_provenance.py --maxfail=10
         env:
           PYTHONPATH: .
+      # calibration 은 artifact / env triple / none 세 갈래로 풀리는데, 실패한
+      # artifact 가 "설정 안 됨" 과 똑같이 조용한 None 으로 떨어졌다. 어느 갈래가
+      # 답했는지와 fail-closed 계약을 고정한다.
+      - run: pytest -q tests/test_avatar_calibration_authority.py --maxfail=10
+        env:
+          PYTHONPATH: .
       # 배포 가드는 Windows 운영자 셸에서 Hangul env 값을 "???" 로 읽어 바뀐 적
       # 없는 변수를 changed 로 보고했다. 인코딩과 키 단위 승인 계약을 Linux
       # 에서도 고정한다.
