@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 
-from .qa_contract import blocking_signal_failure_codes
+from .qa_contract import candidate_availability, candidate_blocking_failures
 from .unique_mark_policy import (
     normalize_unique_mark_qa_state,
     unique_mark_qa_satisfied,
@@ -216,17 +216,16 @@ def _qa_model_unavailable(qa: Mapping[str, Any]) -> bool:
         lowered = str(reason or "").strip().lower()
         if lowered == "model_unavailable" or lowered.endswith("_unavailable"):
             return True
-    debug = qa.get("debug")
-    if not isinstance(debug, Mapping):
-        return False
-    model_availability = debug.get("modelAvailability")
-    if not isinstance(model_availability, Mapping):
-        return False
     # Only a *required* capability may withhold a candidate. Scanning every
     # value made any entry in the flat map a systemic outage, which contradicts
     # qa_preflight's own rule -- blocking_components is "critical and not
     # available" -- and withheld candidates over signals no QA decision reads.
-    return bool(blocking_signal_failure_codes(model_availability))
+    # An absent map is not evidence of health, but this gate has always treated
+    # it as "nothing to say"; candidate_blocking_failures preserves that by
+    # returning () only when a map is genuinely present and clean.
+    if not candidate_availability(qa):
+        return False
+    return bool(candidate_blocking_failures(qa))
 
 
 def _status_is_pass(value: Any) -> bool:

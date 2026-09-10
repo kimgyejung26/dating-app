@@ -71,6 +71,42 @@ def blocking_signal_failure_codes(availability: Mapping[str, Any]) -> tuple[str,
     return required_signal_failure_codes(availability)
 
 
+def candidate_availability(qa_doc: Mapping[str, Any]) -> Mapping[str, Any]:
+    """Where a candidate's availability map actually lives.
+
+    ``_qa_debug_document`` writes it to ``qa["debug"]["modelAvailability"]``.
+    ``worker._qa_critical_models_unavailable`` read ``qa["modelAvailability"]``
+    instead and so scanned an empty dict on every candidate production has ever
+    stored -- 0 of 298. The gate it guards is not decoration: it authorises the
+    extra round's provider calls. It was inert by accident of shape, not by
+    design, and a consumer that reads the wrong key fails open silently.
+
+    The top-level form is still accepted because ``calibration_evaluator``
+    reads that shape.
+    """
+
+    debug = qa_doc.get("debug")
+    if isinstance(debug, Mapping):
+        availability = debug.get("modelAvailability")
+        if isinstance(availability, Mapping):
+            return availability
+    availability = qa_doc.get("modelAvailability")
+    return availability if isinstance(availability, Mapping) else {}
+
+
+def candidate_blocking_failures(qa_doc: Mapping[str, Any]) -> tuple[str, ...]:
+    """Required-capability failures for one candidate QA document.
+
+    The single entry point for every consumer that asks "may this candidate's
+    availability state withhold something?" -- the preview gate, the generation
+    planner, and the worker's provider-call gate. They differ in how they
+    *aggregate* across candidates (any vs uniform), which is a scope decision;
+    what counts as a blocking failure is decided here, once.
+    """
+
+    return blocking_signal_failure_codes(candidate_availability(qa_doc))
+
+
 def required_signal_failure_codes(availability: Mapping[str, Any]) -> tuple[str, ...]:
     """Return stable typed failures without retaining adapter exceptions."""
 
@@ -100,6 +136,8 @@ __all__ = [
     "OPTIONAL_SIGNAL_NAMES",
     "REQUIRED_SIGNAL_ALIASES",
     "blocking_signal_failure_codes",
+    "candidate_availability",
+    "candidate_blocking_failures",
     "STATUS_NOT_REQUIRED",
     "STATUS_UNAVAILABLE",
     "required_signal_failure_codes",

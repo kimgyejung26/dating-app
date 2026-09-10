@@ -197,11 +197,23 @@ jobs:
       # 때 OD 가 본 1인이 secondary person hard reject 로 둔갑하면 안 된다.
       # required 신호는 여전히 fail-closed 라는 것까지 함께 고정한다.
       - run: pytest -q tests/test_avatar_outage_semantics_contract.py --maxfail=10
+        env:
+          PYTHONPATH: .
+      # availability 판단 authority가 preview_policy / adaptive_generation /
+      # worker 세 곳에 각각 구현돼 있으면 반드시 갈라진다. worker gate 는
+      # top-level qa.modelAvailability 를 읽어 프로덕션 298/298 에서 빈 dict
+      # 를 스캔하고 있었다(우연히 inert). 하나의 resolver 를 세 consumer 가
+      # 공유한다는 것과 planner/worker 가 반대로 답하지 않는다는 것을 고정한다.
+      - run: pytest -q tests/test_avatar_worker_availability_authority.py --maxfail=10
+        env:
+          PYTHONPATH: .
       # QA 가 실제로 잰 숫자가 문서를 못 넘어가면 다음 calibration 은 근거가
       # 0 이다. CLIP raw score / 보류된 canonical identity score 의 사유 /
       # shadow OCR 이 PII 없이 살아남는지, 그리고 그 기록 추가가 결정을 전혀
       # 바꾸지 않는지(decision diff = 0)를 함께 고정한다.
       - run: pytest -q tests/test_avatar_measurement_observability.py --maxfail=10
+        env:
+          PYTHONPATH: .
       # identity 비교의 source 쪽은 사진 전체, candidate 쪽은 얼굴 crop 이라
       # 두 숫자가 같은 양이 아니다. 대칭 crop 점수는 shadow 로만 재고,
       # 기존 asymmetric 점수/threshold/결정은 그대로라는 것을 고정한다.
