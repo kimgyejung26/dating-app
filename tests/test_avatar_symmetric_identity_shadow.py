@@ -531,3 +531,66 @@ def test_persisting_the_shadow_does_not_move_the_effective_score(monkeypatch):
     assert off.debug["scores"] == on.debug["scores"]
     assert off.debug["thresholdSnapshot"] == on.debug["thresholdSnapshot"]
     assert off.debug["decision"] == on.debug["decision"]
+
+
+# ---------------------------------------------------------------------------
+# 8. What enabling the shadow costs (telemetry only)
+# ---------------------------------------------------------------------------
+
+
+def test_enabled_shadow_reports_what_it_cost(monkeypatch):
+    """qa_seconds already exists but is job-level and spans 0.39s..152s in
+    production, so the incremental cost of one extra detection plus one extra
+    comparison cannot be attributed out of it."""
+
+    result, _, _ = _build(monkeypatch, enabled=True)
+    for key in (
+        "shadowSourceFaceDetectionMs",
+        "shadowSymmetricSimilarityMs",
+        "shadowIdentityTotalMs",
+    ):
+        assert key in result.signals, key
+        assert isinstance(result.signals[key], float), key
+        assert result.signals[key] >= 0.0, key
+    assert (
+        result.signals["shadowIdentityTotalMs"]
+        >= result.signals["shadowSourceFaceDetectionMs"]
+    )
+
+
+def test_disabled_shadow_costs_nothing_and_reports_no_timing(monkeypatch):
+    """The timers must not become a reason to run the inference."""
+
+    result, detector, similarity = _build(monkeypatch, enabled=False)
+    assert result.signals["shadowSymmetricIdentityStatus"] == SYMMETRIC_SHADOW_DISABLED
+    assert detector.calls == [(768, 768)]
+    assert len(similarity.calls) == 1
+    for key in (
+        "shadowSourceFaceDetectionMs",
+        "shadowSymmetricSimilarityMs",
+        "shadowIdentityTotalMs",
+    ):
+        assert key not in result.signals, key
+
+
+def test_timings_reach_the_document_and_stay_out_of_every_decision(monkeypatch):
+    result, _, _ = _build(monkeypatch, enabled=True)
+    shadow = _qa_from(result).debug["symmetricIdentityShadow"]
+    assert shadow["shadowIdentityTotalMs"] >= 0.0
+    assert shadow["consumedByPolicy"] is False
+
+    off = _qa_from(_build(monkeypatch, enabled=False)[0])
+    on = _qa_from(_build(monkeypatch, enabled=True)[0])
+    assert off.debug["scores"] == on.debug["scores"]
+    assert off.debug["decision"] == on.debug["decision"]
+    assert off.debug["thresholdSnapshot"] == on.debug["thresholdSnapshot"]
+
+
+def test_timing_fields_carry_no_geometry_or_identifier(monkeypatch):
+    import json
+
+    result, _, _ = _build(monkeypatch, enabled=True)
+    shadow = _qa_from(result).debug["symmetricIdentityShadow"]
+    serialized = json.dumps(shadow, default=str).lower()
+    for forbidden in ("bbox", "landmark", "embedding", "uid", "quad", "gs://", "https://"):
+        assert forbidden not in serialized, forbidden

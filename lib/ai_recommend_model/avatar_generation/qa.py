@@ -1465,6 +1465,11 @@ def _attach_symmetric_identity_shadow_debug(
         "identitySourceDetector",
         "identityCandidateDetector",
         "shadowSymmetricIdentityErrorCode",
+        # What enabling the shadow costs per candidate. Present only when it
+        # actually ran; read by nothing.
+        "shadowSourceFaceDetectionMs",
+        "shadowSymmetricSimilarityMs",
+        "shadowIdentityTotalMs",
     ):
         value = signals.get(signal_key)
         if isinstance(value, (str, int, float)) and str(value).strip():
