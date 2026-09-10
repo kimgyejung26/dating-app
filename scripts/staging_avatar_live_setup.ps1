@@ -251,12 +251,13 @@ Invoke-Step "Create Cloud Tasks queues" {
 }
 
 Invoke-Step "Build and push avatar worker image with Cloud Build" {
-  gcloud builds submit . `
-    --project=$Project `
-    --region=$BuildRegion `
-    --default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET `
-    --config=cloudbuild.avatar-worker.yaml `
-    --substitutions="_IMAGE=$image"
+  # Delegated to the single sanctioned entrypoint. The recipe used to be spelled
+  # out here and in two docs; on 2026-09-10 a hand-reconstructed copy dropped
+  # --default-buckets-behavior and staged source in the US multi-region bucket.
+  # scripts/avatar_build_contract.py is now the one definition.
+  & (Join-Path $PSScriptRoot "build_avatar_worker.ps1") `
+    -Sha (git rev-parse HEAD).Trim() `
+    -Tag $Tag
 }
 
 Invoke-Step "Grant pre-deploy IAM for avatar worker and task invoker" {

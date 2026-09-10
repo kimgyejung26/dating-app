@@ -96,12 +96,29 @@ def test_operator_setup_script_pins_the_build_to_the_canonical_region():
     Build execution, source staging, registry and runtime must all sit in
     ``asia-southeast1``; relying on the operator to remember ``--region`` is
     exactly how the cross-region bill came back last time.
+
+    Updated 2026-09-11. This assertion used to read the inline gcloud command in
+    the setup script. It passed on 2026-09-10 while a production build still
+    staged source in the US multi-region bucket, because the operator did not
+    run the script -- the command was reconstructed by hand. Guarding the file
+    could never catch that, so the recipe moved into
+    ``scripts/avatar_build_contract.py`` and the invariant is asserted there,
+    where every sanctioned invocation has to go through it.
     """
-    text = (REPO_ROOT / "scripts" / "staging_avatar_live_setup.ps1").read_text(
+    setup = (REPO_ROOT / "scripts" / "staging_avatar_live_setup.ps1").read_text(
         encoding="utf-8"
     )
-    assert f'$BuildRegion = "{CANONICAL_REGISTRY_REGION}"' in text
-    assert "--region=$BuildRegion" in text
+    assert f'$BuildRegion = "{CANONICAL_REGISTRY_REGION}"' in setup
+    # The setup script must delegate rather than carry a second copy of the
+    # recipe; two copies is how they drifted apart.
+    assert "build_avatar_worker.ps1" in setup
+    assert "gcloud builds submit" not in setup
+
+    contract = (REPO_ROOT / "scripts" / "avatar_build_contract.py").read_text(
+        encoding="utf-8"
+    )
+    assert f'BUILD_REGION = "{CANONICAL_REGISTRY_REGION}"' in contract
     # Regional execution alone still stages source in the US multi-region
     # bucket; this is the supported flag that moves staging into the region.
-    assert "--default-buckets-behavior=REGIONAL_USER_OWNED_BUCKET" in text
+    assert 'BUCKET_BEHAVIOR_FLAG = "--default-buckets-behavior"' in contract
+    assert 'BUCKET_BEHAVIOR = "REGIONAL_USER_OWNED_BUCKET"' in contract
