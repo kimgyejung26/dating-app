@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 import os
+import time
 from types import MappingProxyType
 from typing import Any, Callable, Mapping, Optional, Protocol, Sequence, Tuple
 
@@ -683,6 +684,12 @@ SYMMETRIC_SHADOW_ADAPTER_ERROR = "similarity_adapter_error"
 SYMMETRIC_SHADOW_SCORE_UNAVAILABLE = "similarity_score_unavailable"
 
 
+def _elapsed_ms(started_at: float) -> float:
+    """Coarse wall-clock milliseconds. Telemetry only."""
+
+    return round(max(0.0, (time.perf_counter() - started_at) * 1000.0), 1)
+
+
 def symmetric_identity_shadow_enabled() -> bool:
     """Off unless an operator turns it on.
 
@@ -737,12 +744,17 @@ def _add_symmetric_identity_shadow(
     if candidate_primary_face is None:
         signals["shadowSymmetricIdentityStatus"] = SYMMETRIC_SHADOW_NO_CANDIDATE_FACE
         return
+    # Timers start only past the disabled/no-face returns above, so a run with
+    # the shadow off performs no extra work and reports no timing at all.
+    shadow_started_at = time.perf_counter()
     try:
         # The same detector on both sides. Re-running it here rather than
         # threading geometry down from source admission keeps the box out of
         # any shared structure, and guarantees both boxes are measured in the
         # coordinate frame of the image actually being compared.
+        detect_started_at = time.perf_counter()
         source_faces = face_detector.detect(source_image)
+        detect_ms = _elapsed_ms(detect_started_at)
     except Exception as exc:
         signals["shadowSymmetricIdentityStatus"] = SYMMETRIC_SHADOW_ADAPTER_ERROR
         signals["shadowSymmetricIdentityErrorCode"] = _exception_code(exc)
@@ -759,12 +771,14 @@ def _add_symmetric_identity_shadow(
         return
 
     try:
+        similarity_started_at = time.perf_counter()
         similarity = _run_similarity(
             similarity_adapter,
             source_crop,
             candidate_crop,
             similarity_policy=similarity_policy,
         )
+        similarity_ms = _elapsed_ms(similarity_started_at)
     except Exception as exc:
         signals["shadowSymmetricIdentityStatus"] = SYMMETRIC_SHADOW_ADAPTER_ERROR
         signals["shadowSymmetricIdentityErrorCode"] = _exception_code(exc)
@@ -779,6 +793,14 @@ def _add_symmetric_identity_shadow(
     # Deliberately not faceSimilarityScore, and deliberately long: the name has
     # to make it impossible to consume this by accident.
     signals["shadowSymmetricFaceSimilarityObservedScore"] = score
+    # What enabling this costs, per candidate. Coarse wall-clock only: no
+    # decision, threshold or ranking reads these, and they carry no geometry.
+    # qa_seconds already exists but is job-level and spans two orders of
+    # magnitude in production (0.39s..152s), so the incremental cost of one
+    # extra detection plus one extra comparison cannot be attributed out of it.
+    signals["shadowSourceFaceDetectionMs"] = detect_ms
+    signals["shadowSymmetricSimilarityMs"] = similarity_ms
+    signals["shadowIdentityTotalMs"] = _elapsed_ms(shadow_started_at)
     signals.update(identity_crop_provenance().to_document())
     detector = str(getattr(source_faces, "provider", "") or "")
     signals["identitySourceDetector"] = detector
