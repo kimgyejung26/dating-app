@@ -22,7 +22,11 @@ from .analysis.watermark import (
     resolve_watermark_qa_action,
     watermark_risk_for_action,
 )
-from .qa_contract import OPTIONAL_SIGNAL_NAMES, required_signal_failure_codes
+from .qa_contract import (
+    OPTIONAL_SIGNAL_NAMES,
+    required_signal_failure_codes,
+    unreported_signal_status,
+)
 from .qa_signals import CandidateQASignalResult
 from .trait_policy import (
     TRAIT_QA_MODE_CANONICAL_DISABLED,
@@ -1307,12 +1311,20 @@ def _qa_debug_document(
             "clipSafety": local_safety_status,
             "clip": local_safety_status,
             "localSafetyRisk": local_safety_status,
-            # dino is an optional signal (OPTIONAL_SIGNAL_NAMES). The runtime
-            # signal runner does not emit it, and an absent optional signal is
-            # "not_required", not an outage. An explicit "unavailable" report is
-            # preserved so preview_policy keeps treating it as a systemic gate.
-            "dino": normalized_availability.get("dino", "not_required"),
-            "mediapipe": normalized_availability.get("mediapipe", "unavailable"),
+            # Neither of these is a required signal, so silence about them is
+            # "not_required" rather than an outage -- see
+            # unreported_signal_status. An explicit report is still preserved
+            # verbatim, so a signal that really did fail keeps gating.
+            #
+            # dino learned this on 2026-09-07. mediapipe is a *provider* of the
+            # faceDetector capability, not a capability of its own: the OpenCV
+            # Haar fallback answers face detection without ever mentioning
+            # mediapipe, and hardcoding "unavailable" here turned that healthy
+            # fallback run into a fabricated systemic outage.
+            "dino": normalized_availability.get("dino", unreported_signal_status("dino")),
+            "mediapipe": normalized_availability.get(
+                "mediapipe", unreported_signal_status("mediapipe")
+            ),
         },
         "signalContract": {
             "required": ["faceDetector", "visualRisk", "clipSafety", "faceSimilarity"],

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 
+from .qa_contract import blocking_signal_failure_codes
 from .unique_mark_policy import (
     normalize_unique_mark_qa_state,
     unique_mark_qa_satisfied,
@@ -205,10 +206,12 @@ def passes_unique_mark_qa_check(candidate: Mapping[str, Any]) -> bool:
 
 
 def _qa_model_unavailable(qa: Mapping[str, Any]) -> bool:
-    unavailable = {"unavailable", "critical_unavailable", "uncalibrated"}
     qa_version = str(qa.get("qaVersion") or "").strip().lower()
     if "model_unavailable" in qa_version:
         return True
+    # A reported capability outage. These codes come from
+    # CandidateQASignalResult.models_unavailable, which only ever names a
+    # capability the QA run actually tried and failed to use.
     for reason in qa.get("reviewReasons") or ():
         lowered = str(reason or "").strip().lower()
         if lowered == "model_unavailable" or lowered.endswith("_unavailable"):
@@ -219,10 +222,11 @@ def _qa_model_unavailable(qa: Mapping[str, Any]) -> bool:
     model_availability = debug.get("modelAvailability")
     if not isinstance(model_availability, Mapping):
         return False
-    for value in model_availability.values():
-        if str(value or "").strip().lower() in unavailable:
-            return True
-    return False
+    # Only a *required* capability may withhold a candidate. Scanning every
+    # value made any entry in the flat map a systemic outage, which contradicts
+    # qa_preflight's own rule -- blocking_components is "critical and not
+    # available" -- and withheld candidates over signals no QA decision reads.
+    return bool(blocking_signal_failure_codes(model_availability))
 
 
 def _status_is_pass(value: Any) -> bool:
