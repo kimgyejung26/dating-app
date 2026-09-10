@@ -4,10 +4,7 @@ from dataclasses import dataclass
 import os
 from typing import Any, Mapping, Optional, Sequence
 
-from avatar_generation.qa_contract import (
-    candidate_availability,
-    candidate_blocking_failures,
-)
+from avatar_generation.qa_contract import resolve_candidate_availability
 from avatar_generation.preview_policy import (
     is_hard_reject,
     is_preview_eligible,
@@ -424,9 +421,7 @@ def _systemic_unavailable_reason(candidate: Mapping[str, Any]) -> str:
     # that no QA decision reads -- dino, mediapipe -- could stand down the whole
     # round. Same authority as preview_policy and the worker gate, and as
     # qa_preflight before all three.
-    if not candidate_availability(qa_doc):
-        return ""
-    if candidate_blocking_failures(qa_doc):
+    if resolve_candidate_availability(qa_doc).blocking:
         return "qa_critical_model_unavailable"
     return ""
 

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import Any, Mapping
 
 
@@ -97,14 +98,63 @@ def candidate_availability(qa_doc: Mapping[str, Any]) -> Mapping[str, Any]:
 def candidate_blocking_failures(qa_doc: Mapping[str, Any]) -> tuple[str, ...]:
     """Required-capability failures for one candidate QA document.
 
-    The single entry point for every consumer that asks "may this candidate's
-    availability state withhold something?" -- the preview gate, the generation
-    planner, and the worker's provider-call gate. They differ in how they
-    *aggregate* across candidates (any vs uniform), which is a scope decision;
-    what counts as a blocking failure is decided here, once.
+    Only meaningful once the availability channel is known to have reported --
+    an absent map yields the full required-failure set, which is correct for
+    the raw contract and wrong as a consumer answer. Prefer
+    ``resolve_candidate_availability``, which carries both facts together.
     """
 
     return blocking_signal_failure_codes(candidate_availability(qa_doc))
+
+
+@dataclass(frozen=True)
+class CandidateAvailability:
+    """Whether the availability channel spoke, and what it said.
+
+    Keeping these apart made every consumer restate the same two-step:
+
+        if not candidate_availability(qa):   # did it report?
+            return False
+        if candidate_blocking_failures(qa):  # did it fail?
+            ...
+
+    Three consumers do that today and a fourth would have to remember to. The
+    dangerous half is silent: ``candidate_blocking_failures`` on a document with
+    no map returns every required failure, so a caller that skips the presence
+    check turns "nothing was reported" into "four capabilities failed" and
+    withholds candidates that every prior release allowed. That mistake was
+    made once already, in the worker gate, and the existing max4 suites caught
+    it only because they happened to cover it.
+
+    ``reported`` and ``failures`` therefore travel together, and ``blocking``
+    is the answer consumers actually want.
+    """
+
+    reported: bool
+    failures: tuple[str, ...]
+
+    @property
+    def blocking(self) -> bool:
+        """May this candidate's availability state withhold something?
+
+        False when the channel never reported: silence is not an outage. A
+        genuine outage still arrives through qaVersion, the *_unavailable
+        review reasons, or an explicitly reported required failure.
+        """
+
+        return self.reported and bool(self.failures)
+
+
+def resolve_candidate_availability(qa_doc: Mapping[str, Any]) -> CandidateAvailability:
+    """The single answer for "may availability withhold this candidate?"."""
+
+    availability = candidate_availability(qa_doc)
+    if not availability:
+        return CandidateAvailability(reported=False, failures=())
+    return CandidateAvailability(
+        reported=True,
+        failures=blocking_signal_failure_codes(availability),
+    )
 
 
 def required_signal_failure_codes(availability: Mapping[str, Any]) -> tuple[str, ...]:
@@ -137,7 +187,9 @@ __all__ = [
     "REQUIRED_SIGNAL_ALIASES",
     "blocking_signal_failure_codes",
     "candidate_availability",
+    "CandidateAvailability",
     "candidate_blocking_failures",
+    "resolve_candidate_availability",
     "STATUS_NOT_REQUIRED",
     "STATUS_UNAVAILABLE",
     "required_signal_failure_codes",

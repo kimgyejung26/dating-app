@@ -23,10 +23,7 @@ from avatar_generation.avatar_prompt_contract import (
     AVATAR_GENERAL_PROMPT_V0_TEMP,
     AVATAR_GENERAL_PROMPT_VERSION,
 )
-from avatar_generation.qa_contract import (
-    candidate_availability,
-    candidate_blocking_failures,
-)
+from avatar_generation.qa_contract import resolve_candidate_availability
 from avatar_generation.adaptive_generation import (
     AdaptiveGenerationPolicy,
     GenerationBudget,
@@ -990,7 +987,7 @@ def _qa_critical_models_unavailable(candidate_summaries: Sequence[Mapping[str, A
         # document. Same rule as preview_policy and adaptive_generation, so all
         # three agree. A real outage still arrives via qaVersion, the
         # *_unavailable review reasons, or modelsUnavailable above.
-        if candidate_availability(qa) and candidate_blocking_failures(qa):
+        if resolve_candidate_availability(qa).blocking:
             return True
     return False
 
