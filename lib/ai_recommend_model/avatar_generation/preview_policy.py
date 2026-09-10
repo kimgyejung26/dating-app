@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 
-from .qa_contract import candidate_availability, candidate_blocking_failures
+from .qa_contract import resolve_candidate_availability
 from .unique_mark_policy import (
     normalize_unique_mark_qa_state,
     unique_mark_qa_satisfied,
@@ -221,11 +221,9 @@ def _qa_model_unavailable(qa: Mapping[str, Any]) -> bool:
     # qa_preflight's own rule -- blocking_components is "critical and not
     # available" -- and withheld candidates over signals no QA decision reads.
     # An absent map is not evidence of health, but this gate has always treated
-    # it as "nothing to say"; candidate_blocking_failures preserves that by
-    # returning () only when a map is genuinely present and clean.
-    if not candidate_availability(qa):
-        return False
-    return bool(candidate_blocking_failures(qa))
+    # it as "nothing to say". resolve_candidate_availability carries the
+    # presence and failure facts together so that cannot be skipped.
+    return resolve_candidate_availability(qa).blocking
 
 
 def _status_is_pass(value: Any) -> bool:

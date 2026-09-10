@@ -314,3 +314,61 @@ def test_absent_map_does_not_unlock_anything_a_real_marker_blocks():
         assert _qa_critical_models_unavailable(
             [{"candidateId": "c", "status": "x", "qa": qa}]
         ) is True, marker
+
+
+# ---------------------------------------------------------------------------
+# The two-step is now one step
+# ---------------------------------------------------------------------------
+
+
+def test_resolver_carries_presence_and_failure_together():
+    """Splitting them made every consumer restate the same two-step, and the
+    dangerous half is silent: candidate_blocking_failures on a document with no
+    map returns every required failure, so a caller that skips the presence
+    check turns "nothing was reported" into "four capabilities failed"."""
+
+    from avatar_generation.qa_contract import resolve_candidate_availability
+
+    healthy = resolve_candidate_availability(_qa(HEALTHY))
+    assert healthy.reported is True
+    assert healthy.failures == ()
+    assert healthy.blocking is False
+
+    failed = resolve_candidate_availability(_qa({**HEALTHY, "faceDetector": "unavailable"}))
+    assert failed.reported is True
+    assert "face_detector_unavailable" in failed.failures
+    assert failed.blocking is True
+
+    silent = resolve_candidate_availability({"qaVersion": "x", "rejectReasons": []})
+    assert silent.reported is False
+    assert silent.failures == ()
+    assert silent.blocking is False
+    # the raw contract still fails closed when asked directly
+    assert blocking_signal_failure_codes({}) != ()
+
+
+def test_optional_and_provider_outages_are_not_blocking_via_the_resolver():
+    from avatar_generation.qa_contract import resolve_candidate_availability
+
+    for key in ("dino", "mediapipe"):
+        resolved = resolve_candidate_availability(_qa({**HEALTHY, key: "unavailable"}))
+        assert resolved.reported is True, key
+        assert resolved.blocking is False, key
+
+
+def test_every_consumer_goes_through_the_resolver():
+    """Structural: no consumer may hand-roll the two-step again."""
+
+    from pathlib import Path
+
+    import avatar_generation.adaptive_generation as adaptive
+    import avatar_generation.preview_policy as preview
+    import avatar_generation.worker as worker
+
+    for module in (adaptive, preview, worker):
+        source = Path(module.__file__).read_text(encoding="utf-8")
+        assert "resolve_candidate_availability" in source, module.__name__
+        assert "candidate_blocking_failures(" not in source, (
+            f"{module.__name__} calls candidate_blocking_failures directly; use "
+            "resolve_candidate_availability so the presence check cannot be skipped"
+        )
