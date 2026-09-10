@@ -16,10 +16,12 @@ existing asymmetric score. Replacing the score under a calibration fitted to a
 different distribution would be a silent semantic change, not a fix. The
 symmetric score defined here is therefore telemetry only.
 
-The geometry is not invented for this module. The expansion ratios, the square
-normalisation, the neutral pad colour and the target size are the ones
-``analysis.small_face.cropper.HeadShouldersCropper`` already uses, so the
-convention has one definition in this repository rather than two.
+The geometry is not restated here. ``head_shoulders_window`` and
+``render_head_shoulders_crop`` are the primitives ``HeadShouldersCropper``
+itself uses, so there is one implementation of the convention rather than two
+that can drift. Only the resize target is decided locally: the cropper enlarges
+it for small faces, while a similarity comparison needs both sides at one fixed
+size or they are not comparable after all.
 """
 
 from __future__ import annotations
@@ -27,23 +29,40 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional, Sequence, Tuple
 
-from PIL import Image, ImageOps
+from PIL import Image
 
 from .analysis.small_face.config import SmallFacePipelineConfig
+from .analysis.small_face.cropper import (
+    VERTICAL_CENTRE_BIAS,
+    head_shoulders_window,
+    render_head_shoulders_crop,
+)
+from .analysis.small_face.types import PixelBox
 
 IDENTITY_CROP_METHOD = "head_shoulders_square"
 IDENTITY_CROP_VERSION = "identity_crop_v1"
 
 _CONFIG = SmallFacePipelineConfig()
-# Sourced from the canonical cropper rather than chosen here. Restated as
-# module constants so a change to either definition breaks a test instead of
-# silently desynchronising the two sides of a comparison.
+# Read from the canonical config for provenance only. The geometry itself is
+# computed by the shared primitive, not by these numbers.
 EXPAND_HORIZONTAL = _CONFIG.crop_expand_horizontal
 EXPAND_TOP = _CONFIG.crop_expand_top
 EXPAND_BOTTOM = _CONFIG.crop_expand_bottom
-VERTICAL_CENTRE_BIAS = 0.08
-PAD_FILL = (247, 242, 236)
 TARGET_SIZE = _CONFIG.primary_crop_target_size
+RESAMPLING = Image.Resampling.LANCZOS
+
+__all__ = [
+    "EXPAND_BOTTOM",
+    "EXPAND_HORIZONTAL",
+    "EXPAND_TOP",
+    "IDENTITY_CROP_METHOD",
+    "IDENTITY_CROP_VERSION",
+    "TARGET_SIZE",
+    "VERTICAL_CENTRE_BIAS",
+    "IdentityCropProvenance",
+    "crop_identity_region",
+    "identity_crop_provenance",
+]
 
 
 @dataclass(frozen=True)
@@ -96,53 +115,23 @@ def crop_identity_region(
 
     if bbox is None:
         return None
-    box = _bbox_to_pixels(bbox, image.size)
-    if box is None:
+    face = _bbox_to_pixel_box(bbox, image.size)
+    if face is None:
         return None
-    left, top, right, bottom = box
-    face_width = max(1.0, right - left)
-    face_height = max(1.0, bottom - top)
-    centre_x = (left + right) / 2.0
-    centre_y = (top + bottom) / 2.0 + face_height * VERTICAL_CENTRE_BIAS
-
-    x0 = centre_x - face_width * (0.5 + EXPAND_HORIZONTAL)
-    x1 = centre_x + face_width * (0.5 + EXPAND_HORIZONTAL)
-    y0 = centre_y - face_height * (0.5 + EXPAND_TOP)
-    y1 = centre_y + face_height * (0.5 + EXPAND_BOTTOM)
-
-    side = max(x1 - x0, y1 - y0, 1.0)
-    x0 = int(round(centre_x - side / 2.0))
-    y0 = int(round(centre_y - side / 2.0))
-    x1 = x0 + int(round(side))
-    y1 = y0 + int(round(side))
-
-    width, height = image.size
-    pad_left = max(0, -x0)
-    pad_top = max(0, -y0)
-    pad_right = max(0, x1 - width)
-    pad_bottom = max(0, y1 - height)
-
-    working = image
-    if pad_left or pad_top or pad_right or pad_bottom:
-        # Solid neutral fill, never a reflection: a mirrored border can fold
-        # another face or a sign back into the frame.
-        working = ImageOps.expand(
-            image,
-            border=(pad_left, pad_top, pad_right, pad_bottom),
-            fill=PAD_FILL,
-        )
-    cropped = working.crop(
-        (x0 + pad_left, y0 + pad_top, x1 + pad_left, y1 + pad_top)
-    )
+    window = head_shoulders_window(face, _CONFIG)
+    cropped = render_head_shoulders_crop(image, window)
     if cropped.width <= 0 or cropped.height <= 0:
         return None
-    return cropped.resize((TARGET_SIZE, TARGET_SIZE), Image.Resampling.LANCZOS)
+    return cropped.resize((TARGET_SIZE, TARGET_SIZE), RESAMPLING)
 
 
-def _bbox_to_pixels(
+def _bbox_to_pixel_box(
     bbox: Sequence[float],
     size: Tuple[int, int],
-) -> Optional[Tuple[float, float, float, float]]:
+) -> Optional[PixelBox]:
+    """Interpret a detector box the way `_crop_face` already does, then clamp it
+    the way `HeadShouldersCropper.crop` already does."""
+
     values = [float(value) for value in list(bbox)[:4]]
     if len(values) < 4:
         return None
@@ -155,15 +144,9 @@ def _bbox_to_pixels(
         left, top, right, bottom = x, y, third, fourth
     else:
         left, top, right, bottom = x, y, x + third, y + fourth
-    if right <= left or bottom <= top:
+    box = PixelBox(
+        int(round(left)), int(round(top)), int(round(right)), int(round(bottom))
+    ).clamp(width, height)
+    if box.width <= 0 or box.height <= 0:
         return None
-    return (left, top, right, bottom)
-
-
-__all__ = [
-    "IDENTITY_CROP_METHOD",
-    "IDENTITY_CROP_VERSION",
-    "IdentityCropProvenance",
-    "crop_identity_region",
-    "identity_crop_provenance",
-]
+    return box

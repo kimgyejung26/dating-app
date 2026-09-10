@@ -198,6 +198,11 @@ jobs:
       - run: pytest -q tests/test_avatar_symmetric_identity_shadow.py --maxfail=10
         env:
           PYTHONPATH: .
+      # 같은 config 상수를 읽는다는 것만으로는 "같은 crop"이 증명되지 않는다.
+      # 실제 HeadShouldersCropper 를 호출해 만든 기대값과 pixel 단위로 비교한다.
+      - run: pytest -q tests/test_avatar_identity_crop_parity.py --maxfail=10
+        env:
+          PYTHONPATH: .
       # 배포 가드는 Windows 운영자 셸에서 Hangul env 값을 "???" 로 읽어 바뀐 적
       # 없는 변수를 changed 로 보고했다. 인코딩과 키 단위 승인 계약을 Linux
       # 에서도 고정한다.

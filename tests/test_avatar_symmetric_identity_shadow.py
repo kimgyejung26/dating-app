@@ -217,13 +217,30 @@ def test_the_same_detector_answers_for_both_sides(monkeypatch):
 
 def test_crop_geometry_comes_from_the_canonical_cropper_not_from_this_module():
     """The audit suggested "hull x 1.6". These numbers are the ones the
-    repository's own HeadShouldersCropper already uses."""
+    repository's own HeadShouldersCropper already uses.
+
+    Constant equality is necessary but nowhere near sufficient -- the first
+    version of this module agreed about every constant while re-implementing the
+    arithmetic differently. Pixel parity against the real cropper is asserted in
+    tests/test_avatar_identity_crop_parity.py.
+    """
 
     config = SmallFacePipelineConfig()
     assert EXPAND_HORIZONTAL == config.crop_expand_horizontal
     assert EXPAND_TOP == config.crop_expand_top
     assert EXPAND_BOTTOM == config.crop_expand_bottom
     assert TARGET_SIZE == config.primary_crop_target_size
+
+
+def test_identity_crop_calls_the_shared_primitive_rather_than_restating_it():
+    """SSOT, asserted structurally: the geometry function this module uses must
+    be the one the canonical cropper uses."""
+
+    import avatar_generation.identity_crop as identity_crop
+    from avatar_generation.analysis.small_face import cropper
+
+    assert identity_crop.head_shoulders_window is cropper.head_shoulders_window
+    assert identity_crop.render_head_shoulders_crop is cropper.render_head_shoulders_crop
 
 
 def test_crop_is_square_and_size_invariant():
