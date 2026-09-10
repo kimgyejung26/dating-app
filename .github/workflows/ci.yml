@@ -191,6 +191,14 @@ jobs:
       - run: pytest -q tests/test_avatar_calibration_authority.py --maxfail=10
         env:
           PYTHONPATH: .
+      # 보고되지 않은 신호를 "unavailable" 로 적어 두면 preview_policy 와
+      # adaptive_generation 이 그걸 실제 장애로 읽는다. dino 가 그랬고
+      # mediapipe 도 같은 모양인 채 남아 있었다. 그리고 face detector 가 죽었을
+      # 때 OD 가 본 1인이 secondary person hard reject 로 둔갑하면 안 된다.
+      # required 신호는 여전히 fail-closed 라는 것까지 함께 고정한다.
+      - run: pytest -q tests/test_avatar_outage_semantics_contract.py --maxfail=10
+        env:
+          PYTHONPATH: .
       # 배포 가드는 Windows 운영자 셸에서 Hangul env 값을 "???" 로 읽어 바뀐 적
       # 없는 변수를 changed 로 보고했다. 인코딩과 키 단위 승인 계약을 Linux
       # 에서도 고정한다.
