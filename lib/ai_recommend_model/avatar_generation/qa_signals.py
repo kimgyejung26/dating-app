@@ -118,6 +118,9 @@ class LocalSafetyRiskResult:
     calibration_version: str | None = None
     availability_reason: str | None = None
     needs_review: bool = False
+    # Producer identity for the raw scores. Pooling scores across a model swap
+    # is what makes a calibration corpus silently wrong.
+    model_version: str | None = None
 
     def to_document(self) -> dict[str, object]:
         return {
@@ -127,6 +130,7 @@ class LocalSafetyRiskResult:
             "calibrationVersion": self.calibration_version,
             "availabilityReason": _safe_status(self.availability_reason),
             "needsReview": bool(self.needs_review),
+            "modelVersion": _safe_status(self.model_version),
         }
 
 
@@ -494,6 +498,9 @@ def _add_visual_signals(
     face_anchor_status: str = FACE_ANCHOR_ANCHORED,
 ) -> None:
     signals["visualRiskStatus"] = _safe_status(getattr(visual, "status", None))
+    shadow_ocr = getattr(visual, "shadow_ocr_evidence", None)
+    if isinstance(shadow_ocr, Mapping) and shadow_ocr:
+        signals["shadowOcrEvidence"] = dict(shadow_ocr)
     region_kinds = [getattr(region, "kind", "") for region in getattr(visual, "regions", ())]
     actions = tuple(getattr(visual, "actions_required", ()))
     watermark_decision = evaluate_watermark_risk(
@@ -552,6 +559,15 @@ def _add_visual_signals(
 
 def _add_local_risk_signals(signals: dict[str, Any], availability: dict[str, str], risk: LocalSafetyRiskResult) -> None:
     signals["localSafetyRiskAvailability"] = availability.get("localSafetyRisk", "unavailable")
+    # Which model produced the raw scores below. Without it the numbers cannot
+    # be pooled across runs, because a model or calibration swap is invisible.
+    signals["localSafetyRiskProvider"] = str(risk.provider or "")
+    if risk.model_version:
+        signals["localSafetyRiskModelVersion"] = str(risk.model_version)
+    if risk.calibration_version:
+        signals["localSafetyRiskCalibrationVersion"] = str(risk.calibration_version)
+    if risk.availability_reason:
+        signals["localSafetyRiskUnavailableReason"] = str(risk.availability_reason)
     adult_like = risk.adult_like
     if adult_like is None and risk.adult_like_score is not None:
         adult_like = float(risk.adult_like_score) >= ADULT_LIKE_MINIMUM
@@ -834,6 +850,7 @@ def _normalize_local_risk(value: Any) -> LocalSafetyRiskResult:
             calibration_version=value.calibration_version,
             availability_reason=value.availability_reason,
             needs_review=value.needs_review,
+            model_version=value.model_version,
         )
     return LocalSafetyRiskResult(
         provider=str(_attr(value, "provider", "clip")),
@@ -849,6 +866,7 @@ def _normalize_local_risk(value: Any) -> LocalSafetyRiskResult:
         calibration_version=_attr(value, "calibration_version", None),
         availability_reason=_attr(value, "availability_reason", None),
         needs_review=bool(_attr(value, "needs_review", False)),
+        model_version=_attr(value, "version", None) or _attr(value, "model_version", None),
     )
 
 

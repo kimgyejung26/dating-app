@@ -197,6 +197,11 @@ jobs:
       # 때 OD 가 본 1인이 secondary person hard reject 로 둔갑하면 안 된다.
       # required 신호는 여전히 fail-closed 라는 것까지 함께 고정한다.
       - run: pytest -q tests/test_avatar_outage_semantics_contract.py --maxfail=10
+      # QA 가 실제로 잰 숫자가 문서를 못 넘어가면 다음 calibration 은 근거가
+      # 0 이다. CLIP raw score / 보류된 canonical identity score 의 사유 /
+      # shadow OCR 이 PII 없이 살아남는지, 그리고 그 기록 추가가 결정을 전혀
+      # 바꾸지 않는지(decision diff = 0)를 함께 고정한다.
+      - run: pytest -q tests/test_avatar_measurement_observability.py --maxfail=10
         env:
           PYTHONPATH: .
       # 배포 가드는 Windows 운영자 셸에서 Hangul env 값을 "???" 로 읽어 바뀐 적
