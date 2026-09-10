@@ -344,9 +344,59 @@ export function shouldCleanupCopiedApprovalObject(params: {
   );
 }
 
-function qaPreviewAllowed(candidate: Record<string, unknown>): boolean {
+/**
+ * QA status fields whose "fail" value means the candidate was judged unsafe.
+ * "needs_review" is deliberately NOT a failure: the 2026-09-07 soft-review
+ * product contract offers a needs_review candidate for preview when its only
+ * review reasons are soft calibrated-uncertainty signals, and such candidates
+ * legitimately carry privacyQa="needs_review". Two exist in production today,
+ * one of them already an approved avatar.
+ */
+const QA_HARD_FAIL_STATUS_FIELDS = [
+  "adultQa",
+  "privacyQa",
+  "brandQa",
+  "cropConsistency",
+] as const;
+
+/**
+ * Why a candidate may not be approved, or "" when it may.
+ *
+ * qa.previewAllowed alone was the entire QA gate. It is a summary the worker
+ * writes, and the approval path is the last server-side authority before a
+ * face becomes the user's public profile -- it should not depend on an upstream
+ * invariant it cannot see. The worker does not currently emit a document where
+ * previewAllowed disagrees with the QA verdict (is_preview_eligible checks
+ * is_hard_reject first), and production holds none, so this is defence in
+ * depth: a contradictory document from a partial write, an admin repair, a
+ * migration or a future producer fails closed instead of being approved.
+ *
+ * Contradictions are never normalised into an approval. Fail closed and leave
+ * the data repair as a separate, deliberate act.
+ */
+export function avatarApprovalBlockReason(
+  candidate: Record<string, unknown>,
+): string {
   const qa = readMap(candidate.qa);
-  return qa.previewAllowed === true;
+  if (qa.previewAllowed !== true) {
+    return "qa_preview_not_allowed";
+  }
+  if (normalizeStringList(qa.rejectReasons).length > 0) {
+    return "qa_rejected";
+  }
+  for (const field of QA_HARD_FAIL_STATUS_FIELDS) {
+    if (asString(qa[field]).trim().toLowerCase() === "fail") {
+      return "qa_state_inconsistent";
+    }
+  }
+  if (asString(qa.watermarkQaAction).trim().toLowerCase() === "reject") {
+    return "qa_watermark_rejected";
+  }
+  return "";
+}
+
+function qaPreviewAllowed(candidate: Record<string, unknown>): boolean {
+  return avatarApprovalBlockReason(candidate) === "";
 }
 
 export function canPreviewCandidate(
