@@ -191,6 +191,13 @@ jobs:
       - run: pytest -q tests/test_avatar_calibration_authority.py --maxfail=10
         env:
           PYTHONPATH: .
+      # identity 비교의 source 쪽은 사진 전체, candidate 쪽은 얼굴 crop 이라
+      # 두 숫자가 같은 양이 아니다. 대칭 crop 점수는 shadow 로만 재고,
+      # 기존 asymmetric 점수/threshold/결정은 그대로라는 것을 고정한다.
+      # shadow 에 threshold 가 생기면 이 테스트가 깨져야 한다.
+      - run: pytest -q tests/test_avatar_symmetric_identity_shadow.py --maxfail=10
+        env:
+          PYTHONPATH: .
       # 배포 가드는 Windows 운영자 셸에서 Hangul env 값을 "???" 로 읽어 바뀐 적
       # 없는 변수를 changed 로 보고했다. 인코딩과 키 단위 승인 계약을 Linux
       # 에서도 고정한다.

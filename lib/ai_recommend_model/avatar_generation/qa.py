@@ -1331,6 +1331,53 @@ def _attach_watermark_debug(
     result.debug["watermarkPolicyVersion"] = WATERMARK_POLICY_VERSION
 
 
+def _attach_symmetric_identity_shadow_debug(
+    result: AvatarQAResult,
+    signals: Mapping[str, Any],
+) -> None:
+    """Persist the symmetric identity shadow, or say why there is none.
+
+    Without this the score would be computed and dropped -- which is exactly
+    what happened to shadowOcrEvidence, whose corpus has been empty since it was
+    added. Provenance travels with the number because a score taken under a
+    different crop convention is not poolable with one taken under this one.
+    """
+
+    status = signals.get("shadowSymmetricIdentityStatus")
+    if not isinstance(status, str) or not status.strip():
+        return
+    shadow: Dict[str, Any] = {
+        "status": status.strip(),
+        # Named so it cannot be mistaken for the effective score, and stated
+        # outright: nothing reads this, and no threshold exists for it.
+        "consumedByPolicy": False,
+        "scoreCalibrated": False,
+    }
+    score = signals.get("shadowSymmetricFaceSimilarityObservedScore")
+    if isinstance(score, (int, float)):
+        shadow["symmetricObservedScore"] = _rounded_score(score)
+    for signal_key in (
+        "identityCropMethod",
+        "identityCropVersion",
+        "identityCropExpandHorizontal",
+        "identityCropExpandTop",
+        "identityCropExpandBottom",
+        "identityCropTargetSize",
+        "identitySourceDetector",
+        "identityCandidateDetector",
+        "shadowSymmetricIdentityErrorCode",
+    ):
+        value = signals.get(signal_key)
+        if isinstance(value, (str, int, float)) and str(value).strip():
+            shadow[signal_key] = value
+    # The effective asymmetric score, recorded beside it so a later analysis can
+    # pair them without a join.
+    effective = signals.get("faceSimilarityObservedScore")
+    if isinstance(effective, (int, float)):
+        shadow["asymmetricObservedScore"] = _rounded_score(effective)
+    result.debug["symmetricIdentityShadow"] = shadow
+
+
 def _attach_trait_debug(
     result: AvatarQAResult,
     signals: Mapping[str, Any],
@@ -1624,6 +1671,7 @@ def build_avatar_qa_from_signals(
         soft_pass_reasons=result.softPassReasons,
     )
     _attach_watermark_debug(result, signals)
+    _attach_symmetric_identity_shadow_debug(result, signals)
     if unique_mark_state is not None:
         result.debug.update(unique_mark_state.to_document())
     return result
@@ -1882,6 +1930,7 @@ def run_avatar_candidate_qa(
             result.debug["qaVersion"] = QA_CONTRACT_VERSION
     if runtime_signal_result is not None:
         _attach_visual_risk_debug(result, merged_signals)
+        _attach_symmetric_identity_shadow_debug(result, merged_signals)
         _attach_watermark_debug(result, merged_signals)
         _attach_trait_debug(result, merged_signals)
     if unique_mark_state is not None:

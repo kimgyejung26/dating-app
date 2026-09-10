@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+import os
 from types import MappingProxyType
 from typing import Any, Callable, Mapping, Optional, Protocol, Sequence, Tuple
 
 from PIL import Image
 
 from .analysis.image_quality import analyze_image_quality
+from .identity_crop import crop_identity_region, identity_crop_provenance
 from .analysis.schema import FaceDetection, FaceDetectorResult
 from .analysis.visual_risk import (
     ACTION_NEUTRALIZE_BACKGROUND_PERSON,
@@ -367,6 +369,16 @@ def build_candidate_qa_signals(
                 needs_review = True
             elif not bool(_attr(similarity, "identity_reliable", False)):
                 needs_review = True
+            _add_symmetric_identity_shadow(
+                signals,
+                source_image=source_image,
+                candidate_image=candidate_image,
+                candidate_primary_face=primary_face,
+                face_detector=face_detector,
+                similarity_adapter=similarity_adapter,
+                similarity_policy=similarity_policy,
+                cascade=cascade,
+            )
         except Exception as exc:
             cascade.append("face_similarity")
             availability["faceSimilarity"] = "unavailable"
@@ -553,6 +565,119 @@ def _add_similarity_signals(signals: dict[str, Any], availability: dict[str, str
     signals["faceSimilarityScore"] = observed_score
     signals["faceSimilarityCanonicalScoreAvailable"] = True
     signals["faceSimilarityNeedsReview"] = bool(_attr(similarity, "needs_review", False))
+
+
+SYMMETRIC_IDENTITY_SHADOW_ENV = "AVATAR_QA_SYMMETRIC_IDENTITY_SHADOW_ENABLED"
+
+SYMMETRIC_SHADOW_MEASURED = "measured"
+SYMMETRIC_SHADOW_DISABLED = "disabled"
+SYMMETRIC_SHADOW_NO_SOURCE_FACE = "source_face_not_detected"
+SYMMETRIC_SHADOW_NO_CANDIDATE_FACE = "candidate_face_not_detected"
+SYMMETRIC_SHADOW_CROP_FAILED = "crop_failed"
+SYMMETRIC_SHADOW_ADAPTER_ERROR = "similarity_adapter_error"
+SYMMETRIC_SHADOW_SCORE_UNAVAILABLE = "similarity_score_unavailable"
+
+
+def symmetric_identity_shadow_enabled() -> bool:
+    """Off unless an operator turns it on.
+
+    It costs a second face detection and a second similarity comparison per
+    candidate, and it buys telemetry rather than a decision, so switching it on
+    is a cost decision that belongs to whoever pays for the worker.
+    """
+
+    return str(os.environ.get(SYMMETRIC_IDENTITY_SHADOW_ENV, "")).strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
+
+
+def _add_symmetric_identity_shadow(
+    signals: dict[str, Any],
+    *,
+    source_image: Image.Image,
+    candidate_image: Image.Image,
+    candidate_primary_face: FaceDetection | None,
+    face_detector: FaceDetector,
+    similarity_adapter: SimilarityAdapter | Callable[..., Any],
+    similarity_policy: Any,
+    cascade: list[str],
+) -> None:
+    """Measure identity similarity with the same crop on both sides.
+
+    The effective score above compares ``_crop_face(source_image, bbox)`` with
+    ``_crop_face(candidate_image, face.bbox)``, and the source bbox comes from
+    the persisted sourceAnalysis document -- which never contains one, because a
+    face box is not allowed to persist. So the source side is the whole
+    photograph and the candidate side is a tight face crop, and the two numbers
+    are not the same quantity.
+
+    This does not fix that score. The live calibration (threshold 0.799743,
+    review margin 0.185528) was fitted to the asymmetric distribution, and
+    swapping the score underneath it would silently change what every stored
+    threshold means. The symmetric number is recorded beside it, under its own
+    name, consumed by nothing.
+
+    The source face box exists only inside this function. It is never returned,
+    logged, or written to a document.
+    """
+
+    if not symmetric_identity_shadow_enabled():
+        signals["shadowSymmetricIdentityStatus"] = SYMMETRIC_SHADOW_DISABLED
+        return
+
+    cascade.append("symmetric_identity_shadow")
+    if candidate_primary_face is None:
+        signals["shadowSymmetricIdentityStatus"] = SYMMETRIC_SHADOW_NO_CANDIDATE_FACE
+        return
+    try:
+        # The same detector on both sides. Re-running it here rather than
+        # threading geometry down from source admission keeps the box out of
+        # any shared structure, and guarantees both boxes are measured in the
+        # coordinate frame of the image actually being compared.
+        source_faces = face_detector.detect(source_image)
+    except Exception as exc:
+        signals["shadowSymmetricIdentityStatus"] = SYMMETRIC_SHADOW_ADAPTER_ERROR
+        signals["shadowSymmetricIdentityErrorCode"] = _exception_code(exc)
+        return
+    source_face = _primary_face(source_faces.faces)
+    if source_face is None:
+        signals["shadowSymmetricIdentityStatus"] = SYMMETRIC_SHADOW_NO_SOURCE_FACE
+        return
+
+    source_crop = crop_identity_region(source_image, source_face.bbox)
+    candidate_crop = crop_identity_region(candidate_image, candidate_primary_face.bbox)
+    if source_crop is None or candidate_crop is None:
+        signals["shadowSymmetricIdentityStatus"] = SYMMETRIC_SHADOW_CROP_FAILED
+        return
+
+    try:
+        similarity = _run_similarity(
+            similarity_adapter,
+            source_crop,
+            candidate_crop,
+            similarity_policy=similarity_policy,
+        )
+    except Exception as exc:
+        signals["shadowSymmetricIdentityStatus"] = SYMMETRIC_SHADOW_ADAPTER_ERROR
+        signals["shadowSymmetricIdentityErrorCode"] = _exception_code(exc)
+        return
+
+    score = _rounded(_attr(similarity, "score", None))
+    if score is None:
+        signals["shadowSymmetricIdentityStatus"] = SYMMETRIC_SHADOW_SCORE_UNAVAILABLE
+        return
+
+    signals["shadowSymmetricIdentityStatus"] = SYMMETRIC_SHADOW_MEASURED
+    # Deliberately not faceSimilarityScore, and deliberately long: the name has
+    # to make it impossible to consume this by accident.
+    signals["shadowSymmetricFaceSimilarityObservedScore"] = score
+    signals.update(identity_crop_provenance().to_document())
+    detector = str(getattr(source_faces, "provider", "") or "")
+    signals["identitySourceDetector"] = detector
+    signals["identityCandidateDetector"] = detector
 
 
 def _compare_traits(source_traits: Mapping[str, Any], candidate_traits: Mapping[str, Any]) -> dict[str, str]:
