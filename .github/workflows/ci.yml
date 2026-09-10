@@ -202,6 +202,16 @@ jobs:
       # shadow OCR 이 PII 없이 살아남는지, 그리고 그 기록 추가가 결정을 전혀
       # 바꾸지 않는지(decision diff = 0)를 함께 고정한다.
       - run: pytest -q tests/test_avatar_measurement_observability.py --maxfail=10
+      # identity 비교의 source 쪽은 사진 전체, candidate 쪽은 얼굴 crop 이라
+      # 두 숫자가 같은 양이 아니다. 대칭 crop 점수는 shadow 로만 재고,
+      # 기존 asymmetric 점수/threshold/결정은 그대로라는 것을 고정한다.
+      # shadow 에 threshold 가 생기면 이 테스트가 깨져야 한다.
+      - run: pytest -q tests/test_avatar_symmetric_identity_shadow.py --maxfail=10
+        env:
+          PYTHONPATH: .
+      # 같은 config 상수를 읽는다는 것만으로는 "같은 crop"이 증명되지 않는다.
+      # 실제 HeadShouldersCropper 를 호출해 만든 기대값과 pixel 단위로 비교한다.
+      - run: pytest -q tests/test_avatar_identity_crop_parity.py --maxfail=10
         env:
           PYTHONPATH: .
       # 배포 가드는 Windows 운영자 셸에서 Hangul env 값을 "???" 로 읽어 바뀐 적
