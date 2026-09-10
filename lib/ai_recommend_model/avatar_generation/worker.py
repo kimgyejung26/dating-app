@@ -3685,7 +3685,13 @@ def _apply_preview_selection(
             )
         ):
             status = "preview_ready"
+            # previewAllowed is the QA verdict field, and this line overwrites
+            # it with the *offering* decision, so afterwards the record cannot
+            # say what QA decided. offeredToUser carries the offering half; the
+            # verdict half stays readable at qa.debug.qaDecisionPreviewAllowed.
+            # previewAllowed keeps its existing meaning and existing readers.
             qa_doc["previewAllowed"] = True
+            qa_doc["offeredToUser"] = True
             qa_doc["selectedForPreview"] = True
             if qa_doc.get("reviewTier") == "soft_review":
                 # Offered to the user despite the calibrated identity review
@@ -3695,12 +3701,14 @@ def _apply_preview_selection(
         elif candidate_id in selected_ids:
             status = "needs_review"
             qa_doc["previewAllowed"] = False
+            qa_doc["offeredToUser"] = False
             qa_doc["selectedForPreview"] = False
             qa_doc["previewShortfall"] = _preview_shortfall(len(selected_ids), policy)
             needs_review += 1
         elif status == "preview_ready":
             status = "not_selected"
             qa_doc["previewAllowed"] = False
+            qa_doc["offeredToUser"] = False
             qa_doc["selectedForPreview"] = False
         elif status in {"needs_review", "soft_pass"}:
             needs_review += 1

@@ -123,8 +123,19 @@ def test_active_qa_contract_marks_dino_not_required_without_relaxing_preview_gat
     )
 
     assert result.debug["modelAvailability"]["dino"] == "not_required"
+    # A map that never mentions faceDetector/visualRisk cannot vouch for them,
+    # and an absent *required* capability fails closed. Name them, so this test
+    # asserts what it means to assert -- that not_required dino does not block.
     absolute_qa = _absolute_soft_qa(
-        debug={"modelAvailability": {"faceSimilarity": "available", "clip": "available", "dino": "not_required"}}
+        debug={
+            "modelAvailability": {
+                "faceDetector": "available",
+                "visualRisk": "available",
+                "faceSimilarity": "available",
+                "clip": "available",
+                "dino": "not_required",
+            }
+        }
     )
     assert passes_absolute_preview_checks(
         _candidate("dino_optional", status="soft_pass", qa=absolute_qa)

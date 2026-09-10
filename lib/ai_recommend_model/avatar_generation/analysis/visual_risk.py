@@ -32,6 +32,28 @@ KIND_BACKGROUND_PERSON = "background-person"
 TEXT_LOGO_KINDS = {KIND_TEXT, KIND_LOGO, KIND_SIGN}
 REVIEW_KINDS = {*TEXT_LOGO_KINDS, KIND_BACKGROUND_PERSON}
 
+# Mirrors florence2_visual.SHADOW_OCR_EVIDENCE_KEY. Named here rather than
+# imported so this module stays free of the heavy adapter import.
+SHADOW_OCR_EVIDENCE_KEY = "shadowOcrEvidence"
+# The shadow evidence is a fixed, small producer schema, so it is copied by
+# allowlist rather than by filtering. A scalar filter alone is not enough: OCR
+# text is a scalar, and this payload sits next to the decoded labels.
+SHADOW_OCR_EVIDENCE_FIELDS = frozenset(
+    {
+        "scoreSource",
+        "scoreCalibrated",
+        "scoreAvailable",
+        "scoreUnavailableReason",
+        "generationMode",
+        "numBeams",
+        "lengthPenalty",
+        "regionCount",
+        "attributionScope",
+        "outputTokenCount",
+        "rawSequenceScore",
+    }
+)
+
 
 @dataclass(frozen=True)
 class VisualRiskRegion:
@@ -60,6 +82,10 @@ class VisualRiskAnalysis:
     background_complexity: str = "unknown"
     background_complexity_risk_count: int = 0
     error_code: Optional[str] = None
+    # Telemetry only, and deliberately outside `regions`: the watermark policy
+    # reads VisualRiskRegion.confidence directly, so putting a score there would
+    # change decisions. Carries scores and counts, never OCR text.
+    shadow_ocr_evidence: Mapping[str, object] = field(default_factory=dict)
 
     def to_document(self) -> Dict[str, object]:
         counts: Dict[str, int] = {}
@@ -78,6 +104,8 @@ class VisualRiskAnalysis:
         }
         if self.error_code:
             document["errorCode"] = self.error_code
+        if self.shadow_ocr_evidence:
+            document["shadowOcrEvidence"] = dict(self.shadow_ocr_evidence)
         return document
 
     @property
@@ -159,7 +187,37 @@ def analyze_florence_visual_risk_outputs(
         },
         background_complexity=complexity,
         background_complexity_risk_count=complexity_risk_count,
+        shadow_ocr_evidence=_shadow_ocr_evidence(outputs),
     )
+
+
+def _shadow_ocr_evidence(outputs: Mapping[str, Any]) -> Dict[str, object]:
+    """Carry the OCR shadow score out of the raw adapter payload.
+
+    The adapter attaches it to the OCR task payload, and every reader below
+    consumes only quad_boxes/labels, so it has been dropped on the floor since
+    it was added -- the shadow corpus it was meant to build is empty. Copied by
+    allowlist so no OCR text can ride along even if the adapter changes: the
+    payload sits in the same dict as the decoded labels, and OCR text is itself
+    a scalar, so filtering by type would not stop it.
+    """
+
+    payload = outputs.get(TASK_OCR_WITH_REGION)
+    if isinstance(payload, Mapping) and TASK_OCR_WITH_REGION in payload:
+        nested = payload[TASK_OCR_WITH_REGION]
+        if isinstance(nested, Mapping):
+            payload = nested
+    if not isinstance(payload, Mapping):
+        return {}
+    evidence = payload.get(SHADOW_OCR_EVIDENCE_KEY)
+    if not isinstance(evidence, Mapping):
+        return {}
+    return {
+        str(key): value
+        for key, value in evidence.items()
+        if str(key) in SHADOW_OCR_EVIDENCE_FIELDS
+        and (isinstance(value, (str, int, float, bool)) or value is None)
+    }
 
 
 def _parse_florence_regions(

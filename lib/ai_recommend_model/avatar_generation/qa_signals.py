@@ -12,6 +12,8 @@ from .identity_crop import crop_identity_region, identity_crop_provenance
 from .analysis.schema import FaceDetection, FaceDetectorResult
 from .analysis.visual_risk import (
     ACTION_NEUTRALIZE_BACKGROUND_PERSON,
+    KIND_BACKGROUND_PERSON,
+    KIND_PERSON,
     STATUS_CRITICAL_UNAVAILABLE,
     VisualRiskAnalysis,
 )
@@ -118,6 +120,9 @@ class LocalSafetyRiskResult:
     calibration_version: str | None = None
     availability_reason: str | None = None
     needs_review: bool = False
+    # Producer identity for the raw scores. Pooling scores across a model swap
+    # is what makes a calibration corpus silently wrong.
+    model_version: str | None = None
 
     def to_document(self) -> dict[str, object]:
         return {
@@ -127,7 +132,74 @@ class LocalSafetyRiskResult:
             "calibrationVersion": self.calibration_version,
             "availabilityReason": _safe_status(self.availability_reason),
             "needsReview": bool(self.needs_review),
+            "modelVersion": _safe_status(self.model_version),
         }
+
+
+FACE_ANCHOR_ANCHORED = "anchored"
+FACE_ANCHOR_NO_FACE_DETECTED = "no_face_detected"
+FACE_ANCHOR_DETECTOR_UNAVAILABLE = "detector_unavailable"
+
+PERSON_EVIDENCE_ANCHORED = "anchored"
+PERSON_EVIDENCE_ANCHOR_INDEPENDENT = "anchor_independent_multiple_people"
+PERSON_EVIDENCE_INCONCLUSIVE = "inconclusive_no_face_anchor"
+
+
+@dataclass(frozen=True)
+class PersonEvidence:
+    """Whether a second person was actually observed, or merely not ruled out.
+
+    Florence's object detector labels a person region ``background-person``
+    whenever it does not overlap the primary face box. With no box to compare
+    against, ``_is_primary_person`` returns False for everyone, so a solo
+    portrait taken while the face detector was down came out as
+    ``secondaryPersonGenerated`` -- and that is a hard reject twice over
+    (``secondary_person_generated`` and ``background_leakage``). An outage
+    cannot see a second person; it can only fail to rule one out.
+
+    Two or more person regions is different: whichever one is primary, another
+    one is not, so that conclusion never needed the anchor and is kept.
+    """
+
+    secondary_person_generated: bool
+    background_leakage_risk: str
+    secondary_face_leakage_risk: str
+    status: str
+
+
+def resolve_person_evidence(
+    *,
+    background_person_count: int,
+    person_region_count: int,
+    face_anchor_status: str,
+) -> PersonEvidence:
+    background = max(0, int(background_person_count))
+    count = max(0, int(person_region_count))
+    if face_anchor_status != FACE_ANCHOR_DETECTOR_UNAVAILABLE:
+        # The detector answered. Zero faces is evidence in its own right and
+        # already hard-rejects as no_face_generated; the region labels stand.
+        return PersonEvidence(
+            secondary_person_generated=background >= 1,
+            background_leakage_risk="high" if background >= 1 else "low",
+            secondary_face_leakage_risk="high" if background >= 1 else "low",
+            status=PERSON_EVIDENCE_ANCHORED,
+        )
+    if count >= 2:
+        return PersonEvidence(
+            secondary_person_generated=True,
+            background_leakage_risk="high",
+            secondary_face_leakage_risk="high",
+            status=PERSON_EVIDENCE_ANCHOR_INDEPENDENT,
+        )
+    # Abstain rather than assert. The candidate is still withheld from preview
+    # by the required-signal gate (faceDetector is required), so this is not a
+    # relaxation -- it stops an outage from being recorded as a safety finding.
+    return PersonEvidence(
+        secondary_person_generated=False,
+        background_leakage_risk="medium",
+        secondary_face_leakage_risk="medium",
+        status=PERSON_EVIDENCE_INCONCLUSIVE,
+    )
 
 
 @dataclass(frozen=True, repr=False)
@@ -198,6 +270,9 @@ def build_candidate_qa_signals(
     skipped_heavy_reason: str | None = None
     primary_face: FaceDetection | None = None
     face_count: int | None = None
+    # Why the primary-face anchor is missing, when it is: a detector that could
+    # not run is a different claim from a detector that ran and saw no face.
+    face_anchor_status = FACE_ANCHOR_ANCHORED
 
     quality = analyze_image_quality(candidate_image)
     cascade.append("image_quality")
@@ -216,6 +291,7 @@ def build_candidate_qa_signals(
         signals["primaryFaceConfidence"] = _rounded(primary_face.confidence if primary_face else None)
         if face_unavailable:
             # An unavailable detector cannot support a hard no-face or multi-face decision.
+            face_anchor_status = FACE_ANCHOR_DETECTOR_UNAVAILABLE
             signals["cropConsistent"] = None
             if signals.get("cropIsolationQuality") != "fail":
                 signals["cropIsolationQuality"] = "needs_review"
@@ -224,6 +300,7 @@ def build_candidate_qa_signals(
             if signals.get("cropIsolationQuality") != "fail":
                 signals["cropIsolationQuality"] = "pass" if face_count == 1 else "fail"
             if face_count == 0:
+                face_anchor_status = FACE_ANCHOR_NO_FACE_DETECTED
                 signals["noFaceDetected"] = True
             elif face_count > 1:
                 signals["multipleFacesGenerated"] = True
@@ -234,6 +311,7 @@ def build_candidate_qa_signals(
         availability["faceDetector.error"] = _exception_code(exc)
         unavailable.append("faceDetector")
         needs_review = True
+        face_anchor_status = FACE_ANCHOR_DETECTOR_UNAVAILABLE
         signals["primaryFaceConfidence"] = None
         signals["cropConsistent"] = None
         signals["cropIsolationQuality"] = "needs_review"
@@ -263,6 +341,7 @@ def build_candidate_qa_signals(
             source_visual_risk=source_visual_risk,
             source_image_size=source_visual_image_size,
             image_size=candidate_image.size,
+            face_anchor_status=face_anchor_status,
         )
         if not provider_available or _critical_unavailable(visual):
             signals["watermarkQaAction"] = "review"
@@ -428,8 +507,12 @@ def _add_visual_signals(
     source_visual_risk: VisualRiskAnalysis | None = None,
     source_image_size: tuple[int, int] | None = None,
     image_size: tuple[int, int] = (1, 1),
+    face_anchor_status: str = FACE_ANCHOR_ANCHORED,
 ) -> None:
     signals["visualRiskStatus"] = _safe_status(getattr(visual, "status", None))
+    shadow_ocr = getattr(visual, "shadow_ocr_evidence", None)
+    if isinstance(shadow_ocr, Mapping) and shadow_ocr:
+        signals["shadowOcrEvidence"] = dict(shadow_ocr)
     region_kinds = [getattr(region, "kind", "") for region in getattr(visual, "regions", ())]
     actions = tuple(getattr(visual, "actions_required", ()))
     watermark_decision = evaluate_watermark_risk(
@@ -460,21 +543,43 @@ def _add_visual_signals(
     signals["watermarkDecisionClass"] = watermark_decision.decision_class
     signals["watermarkEvidenceClasses"] = list(watermark_decision.evidence_classes)
     signals["watermarkEvidence"] = watermark_decision.to_document().get("evidence", {})
-    signals["secondaryPersonGenerated"] = bool(has_background_person)
+    person_evidence = resolve_person_evidence(
+        # has_background_person also fires on the action alone, which can
+        # outlive the region list; keep it authoritative for "at least one".
+        background_person_count=max(
+            counts.get(KIND_BACKGROUND_PERSON, 0),
+            1 if has_background_person else 0,
+        ),
+        person_region_count=(
+            counts.get(KIND_PERSON, 0) + counts.get(KIND_BACKGROUND_PERSON, 0)
+        ),
+        face_anchor_status=face_anchor_status,
+    )
+    signals["secondaryPersonGenerated"] = person_evidence.secondary_person_generated
+    signals["secondaryPersonEvidenceStatus"] = person_evidence.status
     provider_available = bool(getattr(visual, "provider_available", False))
     if complexity == "high":
         signals["backgroundComplexityNeedsReview"] = True
-    if has_background_person:
+    if person_evidence.background_leakage_risk == "high":
         signals["backgroundLeakageRisk"] = "high"
     elif not provider_available:
         signals["backgroundLeakageRisk"] = "medium"
     else:
-        signals["backgroundLeakageRisk"] = "low"
-    signals.setdefault("secondaryFaceLeakageRisk", "high" if has_background_person else "low")
+        signals["backgroundLeakageRisk"] = person_evidence.background_leakage_risk
+    signals.setdefault("secondaryFaceLeakageRisk", person_evidence.secondary_face_leakage_risk)
 
 
 def _add_local_risk_signals(signals: dict[str, Any], availability: dict[str, str], risk: LocalSafetyRiskResult) -> None:
     signals["localSafetyRiskAvailability"] = availability.get("localSafetyRisk", "unavailable")
+    # Which model produced the raw scores below. Without it the numbers cannot
+    # be pooled across runs, because a model or calibration swap is invisible.
+    signals["localSafetyRiskProvider"] = str(risk.provider or "")
+    if risk.model_version:
+        signals["localSafetyRiskModelVersion"] = str(risk.model_version)
+    if risk.calibration_version:
+        signals["localSafetyRiskCalibrationVersion"] = str(risk.calibration_version)
+    if risk.availability_reason:
+        signals["localSafetyRiskUnavailableReason"] = str(risk.availability_reason)
     adult_like = risk.adult_like
     if adult_like is None and risk.adult_like_score is not None:
         adult_like = float(risk.adult_like_score) >= ADULT_LIKE_MINIMUM
@@ -870,6 +975,7 @@ def _normalize_local_risk(value: Any) -> LocalSafetyRiskResult:
             calibration_version=value.calibration_version,
             availability_reason=value.availability_reason,
             needs_review=value.needs_review,
+            model_version=value.model_version,
         )
     return LocalSafetyRiskResult(
         provider=str(_attr(value, "provider", "clip")),
@@ -885,6 +991,7 @@ def _normalize_local_risk(value: Any) -> LocalSafetyRiskResult:
         calibration_version=_attr(value, "calibration_version", None),
         availability_reason=_attr(value, "availability_reason", None),
         needs_review=bool(_attr(value, "needs_review", False)),
+        model_version=_attr(value, "version", None) or _attr(value, "model_version", None),
     )
 
 

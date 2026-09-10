@@ -4,6 +4,7 @@ from dataclasses import dataclass
 import os
 from typing import Any, Mapping, Optional, Sequence
 
+from avatar_generation.qa_contract import blocking_signal_failure_codes
 from avatar_generation.preview_policy import (
     is_hard_reject,
     is_preview_eligible,
@@ -421,13 +422,11 @@ def _systemic_unavailable_reason(candidate: Mapping[str, Any]) -> str:
     model_availability = debug.get("modelAvailability")
     if not isinstance(model_availability, Mapping):
         return ""
-    unavailable = {"unavailable", "critical_unavailable", "uncalibrated"}
-    for key, value in model_availability.items():
-        if str(value or "").strip().lower() not in unavailable:
-            continue
-        lowered_key = str(key or "").strip().lower()
-        if "policy" in lowered_key:
-            return "qa_policy_unavailable"
+    # Suppressing the extra round costs the user their remaining candidates, so
+    # only a required capability may do it. Scanning every key meant an entry
+    # that no QA decision reads -- dino, mediapipe -- could stand down the whole
+    # round. Same authority as preview_policy, and as qa_preflight before both.
+    if blocking_signal_failure_codes(model_availability):
         return "qa_critical_model_unavailable"
     return ""
 

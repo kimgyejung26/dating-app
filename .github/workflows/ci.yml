@@ -191,6 +191,17 @@ jobs:
       - run: pytest -q tests/test_avatar_calibration_authority.py --maxfail=10
         env:
           PYTHONPATH: .
+      # 보고되지 않은 신호를 "unavailable" 로 적어 두면 preview_policy 와
+      # adaptive_generation 이 그걸 실제 장애로 읽는다. dino 가 그랬고
+      # mediapipe 도 같은 모양인 채 남아 있었다. 그리고 face detector 가 죽었을
+      # 때 OD 가 본 1인이 secondary person hard reject 로 둔갑하면 안 된다.
+      # required 신호는 여전히 fail-closed 라는 것까지 함께 고정한다.
+      - run: pytest -q tests/test_avatar_outage_semantics_contract.py --maxfail=10
+      # QA 가 실제로 잰 숫자가 문서를 못 넘어가면 다음 calibration 은 근거가
+      # 0 이다. CLIP raw score / 보류된 canonical identity score 의 사유 /
+      # shadow OCR 이 PII 없이 살아남는지, 그리고 그 기록 추가가 결정을 전혀
+      # 바꾸지 않는지(decision diff = 0)를 함께 고정한다.
+      - run: pytest -q tests/test_avatar_measurement_observability.py --maxfail=10
       # identity 비교의 source 쪽은 사진 전체, candidate 쪽은 얼굴 crop 이라
       # 두 숫자가 같은 양이 아니다. 대칭 crop 점수는 shadow 로만 재고,
       # 기존 asymmetric 점수/threshold/결정은 그대로라는 것을 고정한다.

@@ -14,6 +14,7 @@ from PIL import Image, ImageChops, ImageStat
 
 from avatar_generation.environment import is_production_like_environment
 
+from .analysis.visual_risk import SHADOW_OCR_EVIDENCE_FIELDS
 from .analysis.watermark import (
     WATERMARK_POLICY_VERSION,
     WATERMARK_QA_ACTION_REJECT,
@@ -21,7 +22,11 @@ from .analysis.watermark import (
     resolve_watermark_qa_action,
     watermark_risk_for_action,
 )
-from .qa_contract import OPTIONAL_SIGNAL_NAMES, required_signal_failure_codes
+from .qa_contract import (
+    OPTIONAL_SIGNAL_NAMES,
+    required_signal_failure_codes,
+    unreported_signal_status,
+)
 from .qa_signals import CandidateQASignalResult
 from .trait_policy import (
     TRAIT_QA_MODE_CANONICAL_DISABLED,
@@ -579,6 +584,42 @@ FIDELITY_DECISION_MODE_CONFIGURED = "configured_thresholds"
 # this repository. Listing them keeps the record from implying enforcement that
 # does not exist; removing them outright would break existing readers.
 UNENFORCED_QA_THRESHOLD_FLAGS = ("requireReliableFaceSimilarityForTooIdentifiable",)
+
+# How a number in debug.scores got to be what it is. Every key there is a bare
+# value, so a null cannot presently be told apart from "the model was never
+# wired up", "the model ran and could not answer", and "we measured it and
+# deliberately withheld the canonical value". A calibration that cannot make
+# that distinction cannot use the corpus at all.
+MEASUREMENT_MEASURED = "measured"
+MEASUREMENT_UNAVAILABLE = "producer_unavailable"
+MEASUREMENT_WITHHELD = "withheld_by_policy"
+MEASUREMENT_RECORDED_ELSEWHERE = "recorded_in_measurements"
+MEASUREMENT_NO_PRODUCER = "no_producer_in_repository"
+
+# debug.scores keys that nothing in this repository computes. They have been
+# emitted as null since the schema was written, next to real measurements.
+SCORE_KEYS_WITHOUT_PRODUCER = (
+    "ssimScore",
+    "clipSimilarityScore",
+    "dinoStyleScore",
+    "traitConsistencyScore",
+    "privacyPenalty",
+)
+# debug.scores keys whose producer exists but writes into debug.measurements
+# instead. Kept null here so no existing reader's behaviour changes.
+SCORE_KEYS_RECORDED_IN_MEASUREMENTS = (
+    "brandFitScore",
+    "beautificationRiskScore",
+    "childlikeRiskScore",
+)
+
+# CLIP risk scores are a within-group softmax over averaged cosine similarities
+# scaled by the model's own logit_scale. That is a normalised comparison between
+# two hand-written prompts, not a calibrated probability that the concept is
+# present, and calling it "confidence" is what would make a future threshold
+# change unsafe.
+CLIP_SAFETY_SCORE_TYPE = "raw_model_score"
+CLIP_SAFETY_SCORE_SPACE = "within_group_softmax_over_averaged_cosine"
 
 
 def _fidelity_decision_mode(signals: Mapping[str, Any]) -> str:
@@ -1270,12 +1311,20 @@ def _qa_debug_document(
             "clipSafety": local_safety_status,
             "clip": local_safety_status,
             "localSafetyRisk": local_safety_status,
-            # dino is an optional signal (OPTIONAL_SIGNAL_NAMES). The runtime
-            # signal runner does not emit it, and an absent optional signal is
-            # "not_required", not an outage. An explicit "unavailable" report is
-            # preserved so preview_policy keeps treating it as a systemic gate.
-            "dino": normalized_availability.get("dino", "not_required"),
-            "mediapipe": normalized_availability.get("mediapipe", "unavailable"),
+            # Neither of these is a required signal, so silence about them is
+            # "not_required" rather than an outage -- see
+            # unreported_signal_status. An explicit report is still preserved
+            # verbatim, so a signal that really did fail keeps gating.
+            #
+            # dino learned this on 2026-09-07. mediapipe is a *provider* of the
+            # faceDetector capability, not a capability of its own: the OpenCV
+            # Haar fallback answers face detection without ever mentioning
+            # mediapipe, and hardcoding "unavailable" here turned that healthy
+            # fallback run into a fabricated systemic outage.
+            "dino": normalized_availability.get("dino", unreported_signal_status("dino")),
+            "mediapipe": normalized_availability.get(
+                "mediapipe", unreported_signal_status("mediapipe")
+            ),
         },
         "signalContract": {
             "required": ["faceDetector", "visualRisk", "clipSafety", "faceSimilarity"],
@@ -1297,6 +1346,15 @@ def _qa_debug_document(
             "childlikeRiskScore": None,
             "privacyPenalty": None,
         },
+        # Why each debug.scores value is what it is. debug.scores itself is
+        # untouched -- existing readers keep the shape they have -- but a null
+        # there is now attributable instead of ambiguous.
+        "scoreProvenance": _score_provenance(
+            face_similarity_score=face_similarity_score,
+            face_similarity_observed_score=face_similarity_observed_score,
+            perceptual_distance=perceptual_distance,
+            perceptual_similarity_score=perceptual_similarity_score,
+        ),
         "decision": {
             "selectionTier": decision_tier,
             "previewAllowed": decision_tier == "hard_pass",
@@ -1305,7 +1363,48 @@ def _qa_debug_document(
             "needsReviewReasons": list(needs_review_reasons),
             "softPassReasons": list(soft_pass_reasons),
         },
+        # The QA verdict as QA reached it. The worker overwrites the top-level
+        # qa.previewAllowed with its *offering* decision when it selects a
+        # soft-review candidate, which leaves the two questions -- "what did QA
+        # decide" and "what did we show the user" -- sharing one field. This is
+        # the immutable half.
+        "qaDecisionPreviewAllowed": decision_tier == "hard_pass",
     }
+
+
+def _score_provenance(
+    *,
+    face_similarity_score: Optional[float],
+    face_similarity_observed_score: Optional[float],
+    perceptual_distance: Optional[float],
+    perceptual_similarity_score: Optional[float],
+) -> Dict[str, str]:
+    provenance = {key: MEASUREMENT_NO_PRODUCER for key in SCORE_KEYS_WITHOUT_PRODUCER}
+    provenance.update(
+        {key: MEASUREMENT_RECORDED_ELSEWHERE for key in SCORE_KEYS_RECORDED_IN_MEASUREMENTS}
+    )
+    provenance["faceSimilarityObservedScore"] = (
+        MEASUREMENT_MEASURED
+        if face_similarity_observed_score is not None
+        else MEASUREMENT_UNAVAILABLE
+    )
+    if face_similarity_score is not None:
+        provenance["faceSimilarityScore"] = MEASUREMENT_MEASURED
+    elif face_similarity_observed_score is not None:
+        # Measured, then deliberately not promoted to the canonical score --
+        # the producer said identity_reliable=False. Indistinguishable from
+        # "never measured" until now.
+        provenance["faceSimilarityScore"] = MEASUREMENT_WITHHELD
+    else:
+        provenance["faceSimilarityScore"] = MEASUREMENT_UNAVAILABLE
+    for key, value in (
+        ("perceptualHashDistance", perceptual_distance),
+        ("perceptualSimilarityScore", perceptual_similarity_score),
+    ):
+        provenance[key] = (
+            MEASUREMENT_MEASURED if value is not None else MEASUREMENT_UNAVAILABLE
+        )
+    return provenance
 
 
 def _attach_watermark_debug(
@@ -1403,6 +1502,92 @@ def _attach_visual_risk_debug(
     status = signals.get("visualRiskStatus")
     if isinstance(status, str) and status.strip():
         result.debug["visualRiskStatus"] = status.strip()
+
+
+def _attach_measurement_debug(
+    result: AvatarQAResult,
+    signals: Mapping[str, Any],
+) -> None:
+    """Persist the numbers the QA run actually produced.
+
+    Every value here already existed in the in-memory signals and was thrown
+    away at document-build time, so the next calibration has no corpus to work
+    from: on 2026-09-10 all twelve current-contract production candidates carry
+    childlikeRiskScore/beautificationRiskScore/brandFitScore = null even though
+    CLIP ran and answered, and shadowOcrEvidence -- added specifically to build
+    a shadow corpus -- never reached a document at all.
+
+    Nothing here is read by a decision. Names carry their own provenance so a
+    later reader cannot mistake a raw two-way softmax for a probability.
+    """
+
+    measurements: Dict[str, Any] = {}
+
+    clip_scores = {
+        "childlike": signals.get("childlikeScore"),
+        "sexualized": signals.get("sexualizedScore"),
+        "beautification": signals.get("beautificationScore"),
+        "brandMismatch": signals.get("brandMismatchScore"),
+        "severeArtifact": signals.get("severeArtifactScore"),
+    }
+    clip_available = str(
+        signals.get("localSafetyRiskAvailability") or "unavailable"
+    ).strip().lower()
+    clip_block: Dict[str, Any] = {
+        "measurementStatus": (
+            MEASUREMENT_MEASURED
+            if any(value is not None for value in clip_scores.values())
+            else MEASUREMENT_UNAVAILABLE
+        ),
+        "available": clip_available == "available",
+        "availability": clip_available,
+        "scoreType": CLIP_SAFETY_SCORE_TYPE,
+        "scoreSpace": CLIP_SAFETY_SCORE_SPACE,
+        "scoreCalibrated": False,
+        "rawModelScores": {
+            key: _rounded_score(value) for key, value in clip_scores.items()
+        },
+    }
+    for signal_key, document_key in (
+        ("localSafetyRiskProvider", "provider"),
+        ("localSafetyRiskModelVersion", "modelVersion"),
+        ("localSafetyRiskCalibrationVersion", "calibrationVersion"),
+        ("localSafetyRiskUnavailableReason", "unavailableReason"),
+    ):
+        value = signals.get(signal_key)
+        if isinstance(value, str) and value.strip():
+            clip_block[document_key] = value.strip()
+    measurements["clipSafety"] = clip_block
+
+    identity: Dict[str, Any] = {
+        "observedScore": _rounded_score(signals.get("faceSimilarityObservedScore")),
+        "canonicalScoreAvailable": signals.get("faceSimilarityCanonicalScoreAvailable")
+        is True,
+    }
+    for signal_key, document_key in (
+        ("faceSimilarityCanonicalUnavailableReason", "canonicalUnavailableReason"),
+        ("faceSimilarityCalibrationState", "calibrationState"),
+        ("faceSimilarityDecision", "decision"),
+    ):
+        value = signals.get(signal_key)
+        if isinstance(value, str) and value.strip():
+            identity[document_key] = value.strip()
+    measurements["faceSimilarity"] = identity
+
+    shadow_ocr = signals.get("shadowOcrEvidence")
+    if isinstance(shadow_ocr, Mapping) and shadow_ocr:
+        # Allowlist, not a type filter: the OCR text this payload travels beside
+        # is itself a scalar, so admitting "any scalar" would let it through.
+        admitted = {
+            str(key): value
+            for key, value in shadow_ocr.items()
+            if str(key) in SHADOW_OCR_EVIDENCE_FIELDS
+            and (isinstance(value, (str, int, float, bool)) or value is None)
+        }
+        if admitted:
+            measurements["shadowOcr"] = admitted
+
+    result.debug["measurements"] = measurements
 
 
 def _model_unavailable_with_local_similarity(
@@ -1671,6 +1856,7 @@ def build_avatar_qa_from_signals(
         soft_pass_reasons=result.softPassReasons,
     )
     _attach_watermark_debug(result, signals)
+    _attach_measurement_debug(result, signals)
     _attach_symmetric_identity_shadow_debug(result, signals)
     if unique_mark_state is not None:
         result.debug.update(unique_mark_state.to_document())
@@ -1933,6 +2119,10 @@ def run_avatar_candidate_qa(
         _attach_symmetric_identity_shadow_debug(result, merged_signals)
         _attach_watermark_debug(result, merged_signals)
         _attach_trait_debug(result, merged_signals)
+    # Telemetry, so it is attached for every path that produced signals at all,
+    # not only the runtime one -- an offline or replayed run is exactly when the
+    # numbers are wanted.
+    _attach_measurement_debug(result, merged_signals)
     if unique_mark_state is not None:
         result.debug.update(unique_mark_state.to_document())
     return _apply_candidate_trait_consistency(result, eyewear_consistency)
