@@ -191,6 +191,13 @@ jobs:
       - run: pytest -q tests/test_avatar_calibration_authority.py --maxfail=10
         env:
           PYTHONPATH: .
+      # QA 가 실제로 잰 숫자가 문서를 못 넘어가면 다음 calibration 은 근거가
+      # 0 이다. CLIP raw score / 보류된 canonical identity score 의 사유 /
+      # shadow OCR 이 PII 없이 살아남는지, 그리고 그 기록 추가가 결정을 전혀
+      # 바꾸지 않는지(decision diff = 0)를 함께 고정한다.
+      - run: pytest -q tests/test_avatar_measurement_observability.py --maxfail=10
+        env:
+          PYTHONPATH: .
       # 배포 가드는 Windows 운영자 셸에서 Hangul env 값을 "???" 로 읽어 바뀐 적
       # 없는 변수를 changed 로 보고했다. 인코딩과 키 단위 승인 계약을 Linux
       # 에서도 고정한다.
