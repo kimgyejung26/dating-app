@@ -48,7 +48,7 @@ def test_labels_are_human_image_labels_never_model_errors():
 def test_known_positives_exist_for_every_risk_positive_class_that_can_be_drawn():
     labels = {spec.primary_label for spec, _ in build_controls()}
     assert {"OVERLAY_WATERMARK", "GRAPHICAL_LOGO"} <= labels
-    assert labels & set(SCHEMA["sceneNativeClasses"]) >= {"GARMENT_TEXT", "BACKGROUND_SIGNAGE", "NO_VISIBLE_RELEVANT_TEXT"}
+    assert labels & set(SCHEMA["sceneNativeClasses"]) >= {"GARMENT_TEXT", "BACKGROUND_SIGNAGE", "NO_VISIBLE_RELEVANT_TEXT_OR_MARK"}
 
 
 def test_generation_is_deterministic_in_process():
@@ -88,3 +88,46 @@ def test_cli_writes_only_into_the_requested_directory(tmp_path):
     assert controls_module.main(["--out", str(out)]) == 0
     written = sorted(path.name for path in out.iterdir())
     assert written == sorted([f"ctl-{i:02d}.png" for i in range(1, 11)] + ["manifest.json"])
+
+
+# ---------------------------------------------------------------------------
+# Approved schema contract (2026-09-11)
+# ---------------------------------------------------------------------------
+
+
+def test_negative_class_name_covers_marks_not_only_text():
+    """Renamed while zero labels existed: the class means no lettering, logo,
+    brand mark or watermark, and GRAPHICAL_LOGO / BRAND_TEXT_OR_MARK are in the
+    same taxonomy, so a text-only name was narrower than its meaning."""
+
+    human = set(SCHEMA["humanImageLabels"])
+    assert "NO_VISIBLE_RELEVANT_TEXT_OR_MARK" in human
+    assert "NO_VISIBLE_RELEVANT_TEXT" not in human
+    assert SCHEMA["renamedClasses"] == {"NO_VISIBLE_RELEVANT_TEXT": "NO_VISIBLE_RELEVANT_TEXT_OR_MARK"}
+    assert "NO_VISIBLE_RELEVANT_TEXT_OR_MARK" in SCHEMA["sceneNativeClasses"]
+    assert "NO_VISIBLE_RELEVANT_TEXT_OR_MARK" in SCHEMA["primaryLabelPrecedence"]
+    assert "NO_VISIBLE_RELEVANT_TEXT_OR_MARK" in SCHEMA["derivedModelErrors"]["OCR_HALLUCINATION"]["derivation"]
+
+
+def test_transcriptions_are_ephemeral_and_only_a_typed_outcome_is_stored():
+    handling = SCHEMA["transcriptionHandling"]
+    assert set(handling["appliesTo"]) == {"human transcription", "raw OCR transcription"}
+    assert "ephemeral" in handling["allowedUse"]
+    assert handling["afterDerivation"] == "discard"
+    for store in ("persistent label dataset", "committed file", "Firestore", "logs"):
+        assert any(store in entry for entry in handling["mustNotBeStoredIn"]), store
+    mismatch = SCHEMA["derivedModelErrors"]["OCR_TRANSCRIPTION_MISMATCH"]
+    assert mismatch["storedOutcome"] == "typed only: match | mismatch | not_evaluated"
+    assert {"raw OCR text", "human transcription"} <= set(SCHEMA["storage"]["forbidden"])
+    assert not {"transcription", "rawText", "ocrText"} & set(SCHEMA["storage"]["allowedFields"])
+
+
+def test_approval_does_not_extend_to_g004_or_production_images():
+    approval = SCHEMA["approval"]
+    assert SCHEMA["status"] == "APPROVED"
+    assert set(approval["scope"]) == {
+        "label schema", "label guide", "storage and privacy contract", "synthetic controls",
+    }
+    not_covered = " ".join(approval["notCovered"])
+    assert "G004_LABELING_AUTHORIZATION_UNVERIFIED" in not_covered
+    assert "production" in not_covered

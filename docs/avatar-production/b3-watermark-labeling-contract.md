@@ -1,6 +1,8 @@
 # B3-L1 Watermark Human-Label Evidence Contract
 
-Status: `PROPOSED_PENDING_OWNER_APPROVAL`
+Status: `APPROVED` 2026-09-11 for the label schema, label guide, storage and
+privacy contract, and synthetic controls. **This approval does not authorize any
+G004 raw image (§2) or any production image (§3).**
 Date: 2026-09-11
 Schema: [`tests/fixtures/avatar_watermark_label_schema_v2.json`](../../tests/fixtures/avatar_watermark_label_schema_v2.json)
 Controls: [`scripts/avatar_watermark_controls.py`](../../scripts/avatar_watermark_controls.py)
@@ -59,7 +61,8 @@ To unblock, the owner records either the consent text or a data-use decision
 showing that (a) watermark/text/logo labeling of generated results falls within
 `g004_quality_calibration` human review, and (b) the bundle is still inside its
 bounded retention window. Until then **no G004 image is opened**, and G004
-supplies no labels.
+supplies no labels. The 2026-09-11 approval of this contract covers the schema,
+guide, storage rules and synthetic controls only; it is **not** that record.
 
 Even when authorized, G004 is exploratory. It has 20 candidates from 5
 participants, and its machine evidence has confidence `unknown` on every region.
@@ -82,7 +85,7 @@ it cannot inherit the OCR model's region errors.
 ## 5. Taxonomy
 
 **Human image labels** (what a rater sees):
-`NO_VISIBLE_RELEVANT_TEXT`, `GARMENT_TEXT`, `BACKGROUND_SIGNAGE`,
+`NO_VISIBLE_RELEVANT_TEXT_OR_MARK`, `GARMENT_TEXT`, `BACKGROUND_SIGNAGE`,
 `BRAND_TEXT_OR_MARK`, `OVERLAY_TEXT`, `OVERLAY_WATERMARK`, `GRAPHICAL_LOGO`,
 `GENERATIVE_TEXT_ARTIFACT`, `UNCERTAIN`.
 
@@ -90,10 +93,10 @@ it cannot inherit the OCR model's region errors.
 
 | error | derivation |
 |---|---|
-| `OCR_HALLUCINATION` | primary label `NO_VISIBLE_RELEVANT_TEXT`, and OCR reported at least one region |
+| `OCR_HALLUCINATION` | primary label `NO_VISIBLE_RELEVANT_TEXT_OR_MARK`, and OCR reported at least one region |
 | `OCR_MISS` | primary label is a visible-text class, and OCR reported no region |
 | `REGION_MISS` | a human region with no overlapping OCR region (overlap cut pre-registered) |
-| `OCR_TRANSCRIPTION_MISMATCH` | a human transcription that differs from the normalised OCR text (evaluation-local, never persisted) |
+| `OCR_TRANSCRIPTION_MISMATCH` | a human transcription that differs from the normalised OCR text; only the typed outcome (`match` / `mismatch` / `not_evaluated`) is stored, see §7 |
 
 When several classes are visible, the primary label follows
 `primaryLabelPrecedence`, and every visible class goes in `allVisibleClasses`.
@@ -102,7 +105,7 @@ When several classes are visible, the primary label follows
 
 Each class is judged from the image alone.
 
-**NO_VISIBLE_RELEVANT_TEXT**
+**NO_VISIBLE_RELEVANT_TEXT_OR_MARK**
 - Include: nothing letter-like, logo-like or mark-like anywhere.
 - Exclude: faint texture that reads as letters to you (→ `GENERATIVE_TEXT_ARTIFACT` or `UNCERTAIN`).
 - Boundary: a pattern on fabric with no glyphs counts as no text.
@@ -172,6 +175,12 @@ Each class is judged from the image alone.
   image URLs or storage paths, private source references, or participant
   ordinals. Any `evaluationId`-to-image mapping stays in a separate restricted
   local authority and is never committed or exported.
+- **Transcriptions (human and raw OCR):** usable only ephemerally, inside an
+  authorized evaluation process, to derive `OCR_TRANSCRIPTION_MISMATCH`. They are
+  never written to the persistent label dataset, never committed, never stored
+  in production debug or Firestore documents, and never logged or exported.
+  After the derivation they are discarded; the stored result is the typed
+  outcome only (`match` / `mismatch` / `not_evaluated`).
 
 ## 8. Known controls
 
@@ -198,8 +207,8 @@ the additional sample needed. The synthetic controls do not count toward it.
 | requirement | status |
 |---|---|
 | Labeling authorization verified | **No**: G004 unverified, production not authorized |
-| Label schema finalized | Proposed (v2), pending owner approval |
-| Label guide finalized | Proposed (§6), pending owner approval |
+| Label schema finalized | **Yes**: v2 approved 2026-09-11 |
+| Label guide finalized | **Yes**: §6 approved 2026-09-11 |
 | Independent labels obtained | **No**: 0 labels |
 | Disagreements handled | n/a (0 labels) |
 | Known-positive controls exist | **Yes**: synthetic controls (§8) |

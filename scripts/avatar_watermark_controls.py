@@ -175,7 +175,7 @@ CONTROLS: tuple[tuple[ControlSpec, Callable[[Image.Image], Image.Image]], ...] =
                  {"placement": "clothing_zone", "word": "fictitious"}), _brand_text),
     (ControlSpec("ctl-08", "graphical_logo", "GRAPHICAL_LOGO", ("GRAPHICAL_LOGO",),
                  {"placement": "corner", "hasText": False}), _graphical_logo),
-    (ControlSpec("ctl-09", "no_text", "NO_VISIBLE_RELEVANT_TEXT", (),
+    (ControlSpec("ctl-09", "no_text", "NO_VISIBLE_RELEVANT_TEXT_OR_MARK", (),
                  {}), _no_text),
     (ControlSpec("ctl-10", "generative_text_artifact", "GENERATIVE_TEXT_ARTIFACT", ("GENERATIVE_TEXT_ARTIFACT",),
                  {"placement": "clothing_zone", "seed": 20260911}), _generative_text_artifact),
