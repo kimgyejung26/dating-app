@@ -1,0 +1,1358 @@
+{
+  "benchmarkVersion": "avatar_florence_ceiling_v1",
+  "conditionCounts": {
+    "GENERATED_AVATAR_DOMAIN": {
+      "core": 180,
+      "curve": 72,
+      "raw": 20
+    },
+    "PURE_SYNTHETIC_CONTROL_DOMAIN": {
+      "control": 10
+    },
+    "SOURCE_PHOTO_DOMAIN": {
+      "core": 72,
+      "curve": 72,
+      "raw": 8
+    }
+  },
+  "crossDomainDelta": {
+    "V1": {
+      "boxRecall": {
+        "avatar": 1.0,
+        "deltaAvatarMinusSource": 0.0,
+        "source": 1.0
+      },
+      "construct": "corner_opaque_watermark",
+      "imageHitRate": {
+        "avatar": 1.0,
+        "deltaAvatarMinusSource": 0.0,
+        "source": 1.0
+      }
+    },
+    "V2": {
+      "boxRecall": {
+        "avatar": 1.0,
+        "deltaAvatarMinusSource": 0.0,
+        "source": 1.0
+      },
+      "construct": "edge_small_watermark",
+      "imageHitRate": {
+        "avatar": 1.0,
+        "deltaAvatarMinusSource": 0.0,
+        "source": 1.0
+      }
+    },
+    "V3": {
+      "boxRecall": {
+        "avatar": 0.95,
+        "deltaAvatarMinusSource": 0.2,
+        "source": 0.75
+      },
+      "construct": "transparent_watermark",
+      "imageHitRate": {
+        "avatar": 0.95,
+        "deltaAvatarMinusSource": 0.2,
+        "source": 0.75
+      }
+    },
+    "V4": {
+      "boxRecall": {
+        "avatar": 0.8875,
+        "deltaAvatarMinusSource": -0.0604,
+        "source": 0.9479
+      },
+      "construct": "tiled_repeated_watermark",
+      "imageHitRate": {
+        "avatar": 1.0,
+        "deltaAvatarMinusSource": 0.0,
+        "source": 1.0
+      }
+    },
+    "V5": {
+      "boxRecall": {
+        "avatar": 1.0,
+        "deltaAvatarMinusSource": 0.0,
+        "source": 1.0
+      },
+      "construct": "center_overlay_text",
+      "imageHitRate": {
+        "avatar": 1.0,
+        "deltaAvatarMinusSource": 0.0,
+        "source": 1.0
+      }
+    },
+    "V6": {
+      "boxRecall": {
+        "avatar": 1.0,
+        "deltaAvatarMinusSource": 0.0,
+        "source": 1.0
+      },
+      "construct": "fragmented_corner_text",
+      "imageHitRate": {
+        "avatar": 1.0,
+        "deltaAvatarMinusSource": 0.0,
+        "source": 1.0
+      }
+    },
+    "V7": {
+      "boxRecall": {
+        "avatar": 1.0,
+        "deltaAvatarMinusSource": 0.125,
+        "source": 0.875
+      },
+      "construct": "fragmented_center_text",
+      "imageHitRate": {
+        "avatar": 1.0,
+        "deltaAvatarMinusSource": 0.125,
+        "source": 0.875
+      }
+    },
+    "V8": {
+      "boxRecall": {
+        "avatar": 0.25,
+        "deltaAvatarMinusSource": 0.25,
+        "source": 0.0
+      },
+      "construct": "graphical_logo_like_mark",
+      "imageHitRate": {
+        "avatar": 0.25,
+        "deltaAvatarMinusSource": 0.25,
+        "source": 0.0
+      }
+    },
+    "V9": {
+      "boxRecall": {
+        "avatar": 1.0,
+        "deltaAvatarMinusSource": 0.0,
+        "source": 1.0
+      },
+      "construct": "benign_fragmented_garment_text",
+      "imageHitRate": {
+        "avatar": 1.0,
+        "deltaAvatarMinusSource": 0.0,
+        "source": 1.0
+      }
+    }
+  },
+  "domains": {
+    "GENERATED_AVATAR_DOMAIN": {
+      "currentActionByVariant": {
+        "A1": {
+          "allow": 20
+        },
+        "A2": {
+          "allow": 20
+        },
+        "A3": {
+          "allow": 20
+        },
+        "A4": {
+          "reject": 20
+        },
+        "A5": {
+          "allow": 20
+        },
+        "A6": {
+          "allow": 20
+        },
+        "A7": {
+          "allow": 20
+        },
+        "A8": {
+          "allow": 18,
+          "review": 2
+        },
+        "A9": {
+          "allow": 1,
+          "review": 19
+        }
+      },
+      "curves": {
+        "alphaAtMediumSize": {
+          "center|a015": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.9236,
+            "medianIoU": 0.9301,
+            "missRate": 0.0
+          },
+          "center|a035": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.9155,
+            "medianIoU": 0.9221,
+            "missRate": 0.0
+          },
+          "center|a065": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.9166,
+            "medianIoU": 0.9243,
+            "missRate": 0.0
+          },
+          "center|a100": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.9253,
+            "medianIoU": 0.9243,
+            "missRate": 0.0
+          },
+          "corner|a015": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.9108,
+            "medianIoU": 0.897,
+            "missRate": 0.0
+          },
+          "corner|a035": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.9054,
+            "medianIoU": 0.897,
+            "missRate": 0.0
+          },
+          "corner|a065": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.9077,
+            "medianIoU": 0.8995,
+            "missRate": 0.0
+          },
+          "corner|a100": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.896,
+            "medianIoU": 0.8781,
+            "missRate": 0.0
+          },
+          "edge|a015": {
+            "boxRecall": 0.75,
+            "conditions": 4,
+            "imageHitRate": 0.75,
+            "meanIoU": 0.6606,
+            "medianIoU": 0.8631,
+            "missRate": 0.25
+          },
+          "edge|a035": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.9093,
+            "medianIoU": 0.9069,
+            "missRate": 0.0
+          },
+          "edge|a065": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.9005,
+            "medianIoU": 0.8989,
+            "missRate": 0.0
+          },
+          "edge|a100": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.8954,
+            "medianIoU": 0.8968,
+            "missRate": 0.0
+          }
+        },
+        "sizeAtAlpha100": {
+          "center|large": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.9341,
+            "medianIoU": 0.9304,
+            "missRate": 0.0
+          },
+          "center|medium": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.9253,
+            "medianIoU": 0.9243,
+            "missRate": 0.0
+          },
+          "center|small": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.7673,
+            "medianIoU": 0.7799,
+            "missRate": 0.0
+          },
+          "corner|large": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.9328,
+            "medianIoU": 0.9214,
+            "missRate": 0.0
+          },
+          "corner|medium": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.896,
+            "medianIoU": 0.8781,
+            "missRate": 0.0
+          },
+          "corner|small": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.7806,
+            "medianIoU": 0.7766,
+            "missRate": 0.0
+          },
+          "edge|large": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.9319,
+            "medianIoU": 0.9296,
+            "missRate": 0.0
+          },
+          "edge|medium": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.8954,
+            "medianIoU": 0.8968,
+            "missRate": 0.0
+          },
+          "edge|small": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.7593,
+            "medianIoU": 0.7799,
+            "missRate": 0.0
+          }
+        }
+      },
+      "h1": {
+        "benignFalseFlag": {
+          "current": {
+            "flagged": 19,
+            "n": 20,
+            "rate": 0.95
+          },
+          "h1": {
+            "flagged": 0,
+            "n": 20,
+            "rate": 0.0
+          }
+        },
+        "generativeArtifactMiss": {
+          "current": {
+            "allowed": 20,
+            "n": 20
+          },
+          "h1": {
+            "allowed": 20,
+            "n": 20
+          }
+        },
+        "hardRejectBypass": 0,
+        "overlayMiss": {
+          "current": {
+            "allowed": 118,
+            "n": 140
+          },
+          "h1": {
+            "allowed": 118,
+            "n": 140
+          }
+        },
+        "riskPositiveFlagRate": {
+          "current": {
+            "flagged": 22,
+            "n": 160,
+            "rate": 0.1375
+          },
+          "h1": {
+            "flagged": 22,
+            "n": 160,
+            "rate": 0.1375
+          }
+        },
+        "transitionsByVariant": {
+          "V1": {
+            "same": 20
+          },
+          "V2": {
+            "same": 20
+          },
+          "V3": {
+            "same": 20
+          },
+          "V4": {
+            "same": 20
+          },
+          "V5": {
+            "same": 20
+          },
+          "V6": {
+            "same": 20
+          },
+          "V7": {
+            "same": 20
+          },
+          "V8": {
+            "same": 20
+          },
+          "V9": {
+            "review->allow": 19,
+            "same": 1
+          }
+        }
+      },
+      "latency": {
+        "combined": {
+          "mean": 33.73,
+          "median": 32.07,
+          "n": 200,
+          "p90": 39.83
+        },
+        "ocr": {
+          "mean": 17.28,
+          "median": 15.92,
+          "n": 272,
+          "p90": 19.77
+        },
+        "od": {
+          "mean": 16.04,
+          "median": 15.83,
+          "n": 200,
+          "p90": 17.02
+        }
+      },
+      "logoEvidence": {
+        "currentActions": {
+          "allow": 18,
+          "review": 2
+        },
+        "n": 20,
+        "odLogoOrSignKindHits": 0,
+        "table": {
+          "both": 0,
+          "neither": 15,
+          "ocrOnly": 5,
+          "odOnly": 0
+        }
+      },
+      "modelMissByVariant": {
+        "A1": 0,
+        "A2": 0,
+        "A3": 1,
+        "A4": 0,
+        "A5": 0,
+        "A6": 0,
+        "A7": 0,
+        "A8": 15,
+        "A9": 0
+      },
+      "odVocabulary": {
+        "boy": 50,
+        "human face": 200,
+        "man": 60,
+        "person": 10,
+        "shirt": 8,
+        "woman": 80
+      },
+      "policyMissByVariant": {
+        "A1": {
+          "current": 20,
+          "h1": 20
+        },
+        "A2": {
+          "current": 20,
+          "h1": 20
+        },
+        "A3": {
+          "current": 19,
+          "h1": 19
+        },
+        "A4": {
+          "current": 0,
+          "h1": 0
+        },
+        "A5": {
+          "current": 20,
+          "h1": 20
+        },
+        "A6": {
+          "current": 20,
+          "h1": 20
+        },
+        "A7": {
+          "current": 20,
+          "h1": 20
+        },
+        "A8": {
+          "current": 5,
+          "h1": 5
+        },
+        "A9": {
+          "current": 0,
+          "h1": 0
+        }
+      },
+      "rawClean": {
+        "currentActions": {
+          "allow": 17,
+          "review": 3
+        },
+        "currentDecisionClasses": {
+          "ambiguous_text_evidence": 17,
+          "generated_text_artifact": 3
+        },
+        "fragmentedEvidenceRate": 0.15,
+        "h1Actions": {
+          "allow": 17,
+          "review": 3
+        },
+        "label": "OBSERVED_RESPONSE_DISTRIBUTION",
+        "locationCounts": {
+          "clothing_zone": 4,
+          "corner": 12,
+          "edge": 4
+        },
+        "multiRegionRate": 0.0,
+        "n": 20,
+        "noRegionRate": 0.0,
+        "ocrRegionCountBuckets": {
+          "1": 20
+        },
+        "odRegionCountMean": 2.05,
+        "overlayLikeEvidenceRate": 0.75,
+        "repeatedEvidenceRate": 0.0,
+        "transitions": {
+          "same": 20
+        }
+      },
+      "regionRecallByVariant": {
+        "A1": {
+          "boxRecall": 1.0,
+          "conditions": 20,
+          "imageHitRate": 1.0,
+          "meanIoU": 0.849,
+          "medianIoU": 0.8416,
+          "missRate": 0.0
+        },
+        "A2": {
+          "boxRecall": 1.0,
+          "conditions": 20,
+          "imageHitRate": 1.0,
+          "meanIoU": 0.819,
+          "medianIoU": 0.8084,
+          "missRate": 0.0
+        },
+        "A3": {
+          "boxRecall": 0.95,
+          "conditions": 20,
+          "imageHitRate": 0.95,
+          "meanIoU": 0.8414,
+          "medianIoU": 0.8848,
+          "missRate": 0.05
+        },
+        "A4": {
+          "boxRecall": 0.8875,
+          "conditions": 20,
+          "imageHitRate": 1.0,
+          "meanIoU": 0.7016,
+          "medianIoU": 0.823,
+          "missRate": 0.1125
+        },
+        "A5": {
+          "boxRecall": 1.0,
+          "conditions": 20,
+          "imageHitRate": 1.0,
+          "meanIoU": 0.9081,
+          "medianIoU": 0.9101,
+          "missRate": 0.0
+        },
+        "A6": {
+          "boxRecall": 1.0,
+          "conditions": 20,
+          "imageHitRate": 1.0,
+          "meanIoU": 0.8334,
+          "medianIoU": 0.8363,
+          "missRate": 0.0
+        },
+        "A7": {
+          "boxRecall": 1.0,
+          "conditions": 20,
+          "imageHitRate": 1.0,
+          "meanIoU": 0.7826,
+          "medianIoU": 0.7698,
+          "missRate": 0.0
+        },
+        "A8": {
+          "boxRecall": 0.25,
+          "conditions": 20,
+          "imageHitRate": 0.25,
+          "meanIoU": 0.2334,
+          "medianIoU": 0.0,
+          "missRate": 0.75
+        },
+        "A9": {
+          "boxRecall": 1.0,
+          "conditions": 20,
+          "imageHitRate": 1.0,
+          "meanIoU": 0.8411,
+          "medianIoU": 0.8433,
+          "missRate": 0.0
+        }
+      },
+      "transcriptionByVariant": {
+        "A1": {
+          "cerMean": 0.0,
+          "conditions": 20,
+          "normalizedExactMatchRate": 1.0,
+          "werMean": null
+        },
+        "A2": {
+          "cerMean": 0.0,
+          "conditions": 20,
+          "normalizedExactMatchRate": 1.0,
+          "werMean": null
+        },
+        "A3": {
+          "cerMean": 0.15,
+          "conditions": 20,
+          "normalizedExactMatchRate": 0.75,
+          "werMean": null
+        },
+        "A4": {
+          "cerMean": 0.1875,
+          "conditions": 20,
+          "normalizedExactMatchRate": 0.5625,
+          "werMean": null
+        },
+        "A5": {
+          "cerMean": 0.0,
+          "conditions": 20,
+          "normalizedExactMatchRate": 1.0,
+          "werMean": null
+        },
+        "A6": {
+          "cerMean": 0.0,
+          "conditions": 20,
+          "normalizedExactMatchRate": 1.0,
+          "werMean": 1.0
+        },
+        "A7": {
+          "cerMean": 0.05,
+          "conditions": 20,
+          "normalizedExactMatchRate": 0.85,
+          "werMean": 1.0
+        },
+        "A8": {
+          "conditions": 0
+        },
+        "A9": {
+          "cerMean": 0.0,
+          "conditions": 20,
+          "normalizedExactMatchRate": 1.0,
+          "werMean": 0.05
+        }
+      }
+    },
+    "PURE_SYNTHETIC_CONTROL_DOMAIN": {
+      "controls": {
+        "ctl-01": {
+          "currentAction": "allow",
+          "currentDecisionClass": "ambiguous_text_evidence",
+          "h1Action": "allow",
+          "ocrRegionCount": 7,
+          "odRegionCount": 1
+        },
+        "ctl-02": {
+          "currentAction": "allow",
+          "currentDecisionClass": "ambiguous_text_evidence",
+          "h1Action": "allow",
+          "ocrRegionCount": 1,
+          "odRegionCount": 1
+        },
+        "ctl-03": {
+          "currentAction": "allow",
+          "currentDecisionClass": "ambiguous_text_evidence",
+          "h1Action": "allow",
+          "ocrRegionCount": 1,
+          "odRegionCount": 1
+        },
+        "ctl-04": {
+          "currentAction": "allow",
+          "currentDecisionClass": "ambiguous_text_evidence",
+          "h1Action": "allow",
+          "ocrRegionCount": 1,
+          "odRegionCount": 1
+        },
+        "ctl-05": {
+          "currentAction": "allow",
+          "currentDecisionClass": "ambiguous_text_evidence",
+          "h1Action": "allow",
+          "ocrRegionCount": 1,
+          "odRegionCount": 1
+        },
+        "ctl-06": {
+          "currentAction": "allow",
+          "currentDecisionClass": "ambiguous_text_evidence",
+          "h1Action": "allow",
+          "ocrRegionCount": 1,
+          "odRegionCount": 1
+        },
+        "ctl-07": {
+          "currentAction": "allow",
+          "currentDecisionClass": "ambiguous_text_evidence",
+          "h1Action": "allow",
+          "ocrRegionCount": 1,
+          "odRegionCount": 1
+        },
+        "ctl-08": {
+          "currentAction": "allow",
+          "currentDecisionClass": "ambiguous_text_evidence",
+          "h1Action": "allow",
+          "ocrRegionCount": 1,
+          "odRegionCount": 1
+        },
+        "ctl-09": {
+          "currentAction": "allow",
+          "currentDecisionClass": "ambiguous_text_evidence",
+          "h1Action": "allow",
+          "ocrRegionCount": 1,
+          "odRegionCount": 1
+        },
+        "ctl-10": {
+          "currentAction": "review",
+          "currentDecisionClass": "generated_text_artifact",
+          "h1Action": "allow",
+          "ocrRegionCount": 1,
+          "odRegionCount": 1
+        }
+      },
+      "latency": {
+        "combined": {
+          "mean": 33.11,
+          "median": 31.46,
+          "n": 10,
+          "p90": 49.12
+        },
+        "ocr": {
+          "mean": 17.84,
+          "median": 16.03,
+          "n": 10,
+          "p90": 34.04
+        },
+        "od": {
+          "mean": 15.28,
+          "median": 15.2,
+          "n": 10,
+          "p90": 16.05
+        }
+      },
+      "odVocabulary": {
+        "ball": 1,
+        "book": 1,
+        "miniskirt": 1,
+        "poster": 7
+      }
+    },
+    "SOURCE_PHOTO_DOMAIN": {
+      "currentActionByVariant": {
+        "V1": {
+          "allow": 8
+        },
+        "V2": {
+          "allow": 7,
+          "review": 1
+        },
+        "V3": {
+          "allow": 8
+        },
+        "V4": {
+          "reject": 8
+        },
+        "V5": {
+          "allow": 8
+        },
+        "V6": {
+          "allow": 8
+        },
+        "V7": {
+          "allow": 8
+        },
+        "V8": {
+          "allow": 8
+        },
+        "V9": {
+          "review": 8
+        }
+      },
+      "curves": {
+        "alphaAtMediumSize": {
+          "center|a015": {
+            "boxRecall": 0.75,
+            "conditions": 4,
+            "imageHitRate": 0.75,
+            "meanIoU": 0.7084,
+            "medianIoU": 0.9307,
+            "missRate": 0.25
+          },
+          "center|a035": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.8826,
+            "medianIoU": 0.9209,
+            "missRate": 0.0
+          },
+          "center|a065": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.9206,
+            "medianIoU": 0.9244,
+            "missRate": 0.0
+          },
+          "center|a100": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.9199,
+            "medianIoU": 0.9118,
+            "missRate": 0.0
+          },
+          "corner|a015": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.7909,
+            "medianIoU": 0.8851,
+            "missRate": 0.0
+          },
+          "corner|a035": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.8943,
+            "medianIoU": 0.8879,
+            "missRate": 0.0
+          },
+          "corner|a065": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.8943,
+            "medianIoU": 0.8879,
+            "missRate": 0.0
+          },
+          "corner|a100": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.8943,
+            "medianIoU": 0.8879,
+            "missRate": 0.0
+          },
+          "edge|a015": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.9056,
+            "medianIoU": 0.9062,
+            "missRate": 0.0
+          },
+          "edge|a035": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.9203,
+            "medianIoU": 0.9269,
+            "missRate": 0.0
+          },
+          "edge|a065": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.9199,
+            "medianIoU": 0.925,
+            "missRate": 0.0
+          },
+          "edge|a100": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.9224,
+            "medianIoU": 0.9148,
+            "missRate": 0.0
+          }
+        },
+        "sizeAtAlpha100": {
+          "center|large": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.9222,
+            "medianIoU": 0.9215,
+            "missRate": 0.0
+          },
+          "center|medium": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.9199,
+            "medianIoU": 0.9118,
+            "missRate": 0.0
+          },
+          "center|small": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.8012,
+            "medianIoU": 0.8083,
+            "missRate": 0.0
+          },
+          "corner|large": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.925,
+            "medianIoU": 0.9349,
+            "missRate": 0.0
+          },
+          "corner|medium": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.8943,
+            "medianIoU": 0.8879,
+            "missRate": 0.0
+          },
+          "corner|small": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.8399,
+            "medianIoU": 0.8506,
+            "missRate": 0.0
+          },
+          "edge|large": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.9363,
+            "medianIoU": 0.9398,
+            "missRate": 0.0
+          },
+          "edge|medium": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.9224,
+            "medianIoU": 0.9148,
+            "missRate": 0.0
+          },
+          "edge|small": {
+            "boxRecall": 1.0,
+            "conditions": 4,
+            "imageHitRate": 1.0,
+            "meanIoU": 0.8467,
+            "medianIoU": 0.8466,
+            "missRate": 0.0
+          }
+        }
+      },
+      "h1": {
+        "benignFalseFlag": {
+          "current": {
+            "flagged": 8,
+            "n": 8,
+            "rate": 1.0
+          },
+          "h1": {
+            "flagged": 0,
+            "n": 8,
+            "rate": 0.0
+          }
+        },
+        "generativeArtifactMiss": {
+          "current": {
+            "allowed": 8,
+            "n": 8
+          },
+          "h1": {
+            "allowed": 8,
+            "n": 8
+          }
+        },
+        "hardRejectBypass": 0,
+        "overlayMiss": {
+          "current": {
+            "allowed": 47,
+            "n": 56
+          },
+          "h1": {
+            "allowed": 48,
+            "n": 56
+          }
+        },
+        "riskPositiveFlagRate": {
+          "current": {
+            "flagged": 9,
+            "n": 64,
+            "rate": 0.1406
+          },
+          "h1": {
+            "flagged": 8,
+            "n": 64,
+            "rate": 0.125
+          }
+        },
+        "transitionsByVariant": {
+          "V1": {
+            "same": 8
+          },
+          "V2": {
+            "review->allow": 1,
+            "same": 7
+          },
+          "V3": {
+            "same": 8
+          },
+          "V4": {
+            "same": 8
+          },
+          "V5": {
+            "same": 8
+          },
+          "V6": {
+            "same": 8
+          },
+          "V7": {
+            "same": 8
+          },
+          "V8": {
+            "same": 8
+          },
+          "V9": {
+            "review->allow": 8
+          }
+        }
+      },
+      "latency": {
+        "combined": {
+          "mean": 38.09,
+          "median": 33.77,
+          "n": 79,
+          "p90": 48.37
+        },
+        "ocr": {
+          "mean": 20.47,
+          "median": 15.79,
+          "n": 151,
+          "p90": 29.84
+        },
+        "od": {
+          "mean": 17.78,
+          "median": 17.63,
+          "n": 79,
+          "p90": 19.57
+        }
+      },
+      "logoEvidence": {
+        "currentActions": {
+          "allow": 8
+        },
+        "n": 8,
+        "odLogoOrSignKindHits": 0,
+        "table": {
+          "both": 0,
+          "neither": 8,
+          "ocrOnly": 0,
+          "odOnly": 0
+        }
+      },
+      "modelMissByVariant": {
+        "V1": 0,
+        "V2": 0,
+        "V3": 2,
+        "V4": 0,
+        "V5": 0,
+        "V6": 0,
+        "V7": 1,
+        "V8": 8,
+        "V9": 0
+      },
+      "odVocabulary": {
+        "bracelet": 10,
+        "building": 12,
+        "chair": 1,
+        "coffee cup": 10,
+        "desk": 8,
+        "drinking straw": 13,
+        "fancy dress": 5,
+        "flower": 1,
+        "handbag": 1,
+        "human ear": 4,
+        "human eye": 14,
+        "human face": 80,
+        "human head": 5,
+        "human mouth": 17,
+        "human nose": 5,
+        "lantern": 10,
+        "man": 9,
+        "mirror": 17,
+        "mobile phone": 19,
+        "person": 62,
+        "picture frame": 7,
+        "tablet computer": 2,
+        "television": 28,
+        "walking shoe": 1,
+        "watermelon": 20,
+        "woman": 27
+      },
+      "policyMissByVariant": {
+        "V1": {
+          "current": 8,
+          "h1": 8
+        },
+        "V2": {
+          "current": 7,
+          "h1": 8
+        },
+        "V3": {
+          "current": 6,
+          "h1": 6
+        },
+        "V4": {
+          "current": 0,
+          "h1": 0
+        },
+        "V5": {
+          "current": 8,
+          "h1": 8
+        },
+        "V6": {
+          "current": 8,
+          "h1": 8
+        },
+        "V7": {
+          "current": 7,
+          "h1": 7
+        },
+        "V8": {
+          "current": 0,
+          "h1": 0
+        },
+        "V9": {
+          "current": 0,
+          "h1": 0
+        }
+      },
+      "rawClean": {
+        "currentActions": {
+          "allow": 8
+        },
+        "currentDecisionClasses": {
+          "ambiguous_text_evidence": 8
+        },
+        "fragmentedEvidenceRate": 0.0,
+        "h1Actions": {
+          "allow": 8
+        },
+        "label": "OBSERVED_RESPONSE_DISTRIBUTION",
+        "locationCounts": {
+          "central": 2,
+          "clothing_zone": 3,
+          "corner": 3,
+          "edge": 4
+        },
+        "multiRegionRate": 0.125,
+        "n": 8,
+        "noRegionRate": 0.0,
+        "ocrRegionCountBuckets": {
+          "1": 7,
+          "4+": 1
+        },
+        "odRegionCountMean": 6.625,
+        "overlayLikeEvidenceRate": 0.625,
+        "repeatedEvidenceRate": 0.0,
+        "transitions": {
+          "same": 8
+        }
+      },
+      "regionRecallByVariant": {
+        "V1": {
+          "boxRecall": 1.0,
+          "conditions": 8,
+          "imageHitRate": 1.0,
+          "meanIoU": 0.8722,
+          "medianIoU": 0.8825,
+          "missRate": 0.0
+        },
+        "V2": {
+          "boxRecall": 1.0,
+          "conditions": 8,
+          "imageHitRate": 1.0,
+          "meanIoU": 0.8404,
+          "medianIoU": 0.8424,
+          "missRate": 0.0
+        },
+        "V3": {
+          "boxRecall": 0.75,
+          "conditions": 8,
+          "imageHitRate": 0.75,
+          "meanIoU": 0.635,
+          "medianIoU": 0.866,
+          "missRate": 0.25
+        },
+        "V4": {
+          "boxRecall": 0.9479,
+          "conditions": 8,
+          "imageHitRate": 1.0,
+          "meanIoU": 0.7703,
+          "medianIoU": 0.8214,
+          "missRate": 0.0521
+        },
+        "V5": {
+          "boxRecall": 1.0,
+          "conditions": 8,
+          "imageHitRate": 1.0,
+          "meanIoU": 0.9104,
+          "medianIoU": 0.9053,
+          "missRate": 0.0
+        },
+        "V6": {
+          "boxRecall": 1.0,
+          "conditions": 8,
+          "imageHitRate": 1.0,
+          "meanIoU": 0.8878,
+          "medianIoU": 0.8895,
+          "missRate": 0.0
+        },
+        "V7": {
+          "boxRecall": 0.875,
+          "conditions": 8,
+          "imageHitRate": 0.875,
+          "meanIoU": 0.7191,
+          "medianIoU": 0.8183,
+          "missRate": 0.125
+        },
+        "V8": {
+          "boxRecall": 0.0,
+          "conditions": 8,
+          "imageHitRate": 0.0,
+          "meanIoU": 0.0,
+          "medianIoU": 0.0,
+          "missRate": 1.0
+        },
+        "V9": {
+          "boxRecall": 1.0,
+          "conditions": 8,
+          "imageHitRate": 1.0,
+          "meanIoU": 0.8397,
+          "medianIoU": 0.8472,
+          "missRate": 0.0
+        }
+      },
+      "transcriptionByVariant": {
+        "V1": {
+          "cerMean": 0.0,
+          "conditions": 8,
+          "normalizedExactMatchRate": 1.0,
+          "werMean": null
+        },
+        "V2": {
+          "cerMean": 0.0,
+          "conditions": 8,
+          "normalizedExactMatchRate": 1.0,
+          "werMean": null
+        },
+        "V3": {
+          "cerMean": 0.2812,
+          "conditions": 8,
+          "normalizedExactMatchRate": 0.625,
+          "werMean": null
+        },
+        "V4": {
+          "cerMean": 0.1163,
+          "conditions": 8,
+          "normalizedExactMatchRate": 0.6667,
+          "werMean": null
+        },
+        "V5": {
+          "cerMean": 0.0,
+          "conditions": 8,
+          "normalizedExactMatchRate": 1.0,
+          "werMean": null
+        },
+        "V6": {
+          "cerMean": 0.0,
+          "conditions": 8,
+          "normalizedExactMatchRate": 1.0,
+          "werMean": 1.0
+        },
+        "V7": {
+          "cerMean": 0.1667,
+          "conditions": 8,
+          "normalizedExactMatchRate": 0.75,
+          "werMean": 1.0
+        },
+        "V8": {
+          "conditions": 0
+        },
+        "V9": {
+          "cerMean": 0.0,
+          "conditions": 8,
+          "normalizedExactMatchRate": 1.0,
+          "werMean": 0.0
+        }
+      }
+    }
+  },
+  "g004GroupLevelSimulation": {
+    "candidatesPerGroup": [
+      4
+    ],
+    "groups": 5,
+    "groupsChanged": 0,
+    "label": "G004_GROUP_LEVEL_SIMULATION",
+    "scope": "watermark action only; other QA gates not modelled",
+    "watermarkAllowedDistribution": {
+      "current": {
+        "two_plus": 5
+      },
+      "h1": {
+        "two_plus": 5
+      }
+    }
+  },
+  "meta": {
+    "benchmarkLabel": "LOCAL_CPU_BENCHMARK",
+    "device": "cpu",
+    "dtype": "torch.float32",
+    "florenceRepo": "florence-community/Florence-2-large-ft",
+    "florenceRevision": "26b734a54fdfbf9c398351eedfabb7f27fc470b7",
+    "modelLoadSec": 6.7,
+    "originalsUnchanged": true,
+    "peakRssGb": 4.51,
+    "pillow": "11.3.0",
+    "planDigestPrefix": "91e0caae719d",
+    "torch": "2.8.0+cpu",
+    "torchThreads": 4,
+    "transformers": "4.57.6"
+  }
+}
