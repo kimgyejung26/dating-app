@@ -14,9 +14,11 @@ no tokenisation of it can make "the letters s-i-g-n occur in the transcription"
 mean "the image contains a sign". A literal region reading SIGN is still just a
 transcription.
 
-It is action-inert today: forcing text/logo/sign on identical geometry and
-tokens changes the watermark action in 0 cases, because kind only renames the
-decision class (overlay_watermark vs generated_overlay_logo, both reject). What
+It is action-inert under the current policy: forcing text/logo/sign on
+identical geometry and tokens changes the watermark action in 0 cases, because
+kind only renames the decision class (overlay_watermark vs
+generated_overlay_logo, both reject). Actions are driven by typed evidence --
+text quality, overlay geometry, repetition, confidence state. What
 it poisons is meaning -- every persisted ``visualRegionCounts`` entry keyed by
 kind, and any future rule that reads kind as if it were a detector.
 
@@ -44,8 +46,10 @@ real generated text artifact that happens to land mid-image. Neither is
 measured yet -- there are no human labels -- which is why this is shadow.
 
 Every other branch reproduces the live policy exactly, including the repeated
-overlay hard reject and the high-confidence branch (unreachable in production:
-Florence OCR emits no per-region score, so every band is "unknown").
+overlay hard reject and the high-confidence branch. That branch is unreachable
+with the current Florence <OCR_WITH_REGION> adapter and region-confidence
+schema, which carry no per-region score, so every band is "unknown". A future
+adapter that emits a real per-region score would make it reachable.
 
 What current evidence cannot distinguish
 ----------------------------------------

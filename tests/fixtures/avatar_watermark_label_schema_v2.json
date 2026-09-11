@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "avatar_watermark_label_schema_v2",
+  "status": "PROPOSED_PENDING_OWNER_APPROVAL",
+  "supersedes": "avatar_watermark_label_schema_v1, never merged. It asked humans to label OCR_HALLUCINATION, which is a model error: a human looking at an image can only see that no text is there. v2 keeps what a person observes separate from what is derived by comparing that observation with model output.",
+  "labelUnit": "One generated candidate image is one unit with one primary image-level label. Region annotations are optional and added only when an evaluation needs localisation. Ground truth is image-first so it cannot inherit the OCR model's region errors.",
+  "humanImageLabels": {
+    "NO_VISIBLE_RELEVANT_TEXT": {"definition": "No visible lettering, logo or watermark anywhere in the image.", "currentEvidenceCanDistinguish": true},
+    "GARMENT_TEXT": {"definition": "Lettering printed on clothing or accessories the subject wears, following fabric folds and lighting.", "currentEvidenceCanDistinguish": false},
+    "BACKGROUND_SIGNAGE": {"definition": "A sign, poster or screen that belongs to the photographed scene.", "currentEvidenceCanDistinguish": false},
+    "BRAND_TEXT_OR_MARK": {"definition": "A brand name or mark rendered on a real object in the scene, not composited over the image.", "currentEvidenceCanDistinguish": false},
+    "OVERLAY_TEXT": {"definition": "Text composited over the image, independent of scene geometry and lighting, that is not a creator or provider mark.", "currentEvidenceCanDistinguish": false},
+    "OVERLAY_WATERMARK": {"definition": "A creator, tool, platform or stock-provider mark composited over the image: often semi-transparent, repeated, or at an edge or corner.", "currentEvidenceCanDistinguish": false},
+    "GRAPHICAL_LOGO": {"definition": "A logo composited over the image, with or without text.", "currentEvidenceCanDistinguish": false},
+    "GENERATIVE_TEXT_ARTIFACT": {"definition": "Letter-like shapes the generator invented that do not read as a real word.", "currentEvidenceCanDistinguish": false},
+    "UNCERTAIN": {"definition": "The rater cannot decide. Excluded from primary metrics and reported separately.", "currentEvidenceCanDistinguish": false}
+  },
+  "visibleTextClasses": ["GARMENT_TEXT", "BACKGROUND_SIGNAGE", "BRAND_TEXT_OR_MARK", "OVERLAY_TEXT", "OVERLAY_WATERMARK", "GRAPHICAL_LOGO", "GENERATIVE_TEXT_ARTIFACT"],
+  "riskPositiveClasses": ["OVERLAY_TEXT", "OVERLAY_WATERMARK", "GRAPHICAL_LOGO"],
+  "sceneNativeClasses": ["NO_VISIBLE_RELEVANT_TEXT", "GARMENT_TEXT", "BACKGROUND_SIGNAGE", "BRAND_TEXT_OR_MARK"],
+  "artifactClasses": ["GENERATIVE_TEXT_ARTIFACT"],
+  "excludedFromPrimaryMetrics": ["UNCERTAIN"],
+  "primaryLabelPrecedence": ["OVERLAY_WATERMARK", "GRAPHICAL_LOGO", "OVERLAY_TEXT", "GENERATIVE_TEXT_ARTIFACT", "BRAND_TEXT_OR_MARK", "BACKGROUND_SIGNAGE", "GARMENT_TEXT", "NO_VISIBLE_RELEVANT_TEXT"],
+  "multiLabelRule": "When several classes are visible, the primary label is the first in primaryLabelPrecedence; every visible class is also recorded in allVisibleClasses.",
+  "derivedModelErrors": {
+    "OCR_HALLUCINATION": {"derivation": "Primary human label NO_VISIBLE_RELEVANT_TEXT, and OCR reported at least one text region.", "labeledByHumans": false},
+    "OCR_MISS": {"derivation": "Primary human label in visibleTextClasses, and OCR reported no text region.", "labeledByHumans": false},
+    "REGION_MISS": {"derivation": "A human region annotation with no overlapping OCR region, using a cut pre-registered before the evaluation runs.", "labeledByHumans": false, "requires": "region annotations"},
+    "OCR_TRANSCRIPTION_MISMATCH": {"derivation": "A human transcription that differs from the normalised OCR text for the same region.", "labeledByHumans": false, "requires": "region annotations and human transcription, both evaluation-local and never persisted"}
+  },
+  "blinding": {
+    "raterMustNotSee": ["OCR transcription", "OCR sequence score", "current watermarkQaAction", "current decision or evidence class", "rejectReasons and reviewReasons", "shadow class or action", "preview or approval outcome", "the other rater's label during the first pass"],
+    "raterSees": ["the candidate image", "optionally the source image, only to judge whether a visible mark was already present in it"],
+    "rationale": "A label derived from the policy's own output measures agreement with the policy, not correctness."
+  },
+  "storage": {
+    "allowedFields": ["evaluationId", "primaryLabel", "allVisibleClasses", "labelConfidence", "raterId", "labeledAt", "adjudicationState", "provenanceCategory"],
+    "forbidden": ["uid", "email", "raw OCR text", "human transcription", "image URL or storage path", "private source reference", "participant ordinal"],
+    "mappingRule": "Any evaluationId-to-image mapping lives in a separate restricted local authority and is never committed or exported."
+  },
+  "provenanceRequirements": {
+    "allowedSources": ["repo_or_locally_generated_synthetic_without_user_data", "public_or_permissively_licensed_imagery_where_repo_policy_permits", "evaluation_corpus_whose_recorded_consent_and_retention_cover_this_labeling"],
+    "forbidden": ["production user images repurposed without consent covering this purpose", "copying production images to a new store", "extending retention of any media for labeling"]
+  },
+  "metrics": {
+    "candidateLevel": ["risk-positive recall", "risk-positive precision", "scene-native flag rate per class", "generative-artifact flag rate", "OCR_HALLUCINATION and OCR_MISS rates (derived)", "abstention (review) rate"],
+    "jobLevel": ["zero / one / two-plus preview distribution", "no_previewable_candidates", "mean previewable candidates", "extra-generation demand"],
+    "acceptance": "No policy change is accepted on candidate metrics alone. Lower scene-native flag rate with higher risk-positive miss rate is not accepted automatically; higher recall that worsens zero-preview jobs is not accepted automatically. B1 (2026-08) looked better per candidate and moved zero-preview jobs from 1/5 to 4/5."
+  }
+}

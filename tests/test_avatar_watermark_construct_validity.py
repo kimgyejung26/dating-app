@@ -7,9 +7,10 @@ no per-region score. Two consequences are pinned here rather than "fixed":
   * the substring kind classifier (DESIGN -> sign, LOGON -> logo) reads a
     transcription as if it were a semantic class. It is construct-invalid, and
     today it is action-inert: kind only renames the decision class.
-  * every OCR region's confidence is None, so the high-confidence hard-reject
-    branch is unreachable; the only live path to a watermark reject is
-    repetition in overlay geometry.
+  * with the current Florence adapter and region-confidence schema every OCR
+    region's confidence is None, so the high-confidence hard-reject branch is
+    unreachable there; the only live path to a watermark reject is repetition
+    in overlay geometry. A future adapter with per-region scores changes this.
 
 The construct-valid shadow (analysis/watermark_construct_shadow.py) is read by
 nothing. These tests pin that it changes no effective decision, persists no
@@ -67,7 +68,7 @@ FIXTURES = json.loads(
     )
 )
 LABEL_SCHEMA = json.loads(
-    (REPO_ROOT / "tests" / "fixtures" / "avatar_watermark_label_schema_v1.json").read_text(
+    (REPO_ROOT / "tests" / "fixtures" / "avatar_watermark_label_schema_v2.json").read_text(
         encoding="utf-8"
     )
 )
@@ -208,7 +209,7 @@ def test_with_production_confidence_reject_is_reachable_only_through_repeated_ov
         assert rejected == (overlay and repeated), (area, location, overlay, repeated, quality, consistent, hint)
 
 
-def test_high_confidence_branch_exists_but_needs_a_score_production_never_has():
+def test_high_confidence_branch_exists_but_needs_a_score_the_current_adapter_never_emits():
     decision = classify_watermark_evidence_document(
         _evidence(_typed_region(overlayLike=True, confidenceBand="high", textQuality="implausible"))
     )
@@ -225,10 +226,33 @@ def test_high_confidence_branch_exists_but_needs_a_score_production_never_has():
 
 
 def test_fixture_labels_come_from_the_label_schema():
-    classes = set(LABEL_SCHEMA["classes"])
+    classes = set(LABEL_SCHEMA["humanImageLabels"])
     assert FIXTURES["labelProvenance"] == "synthetic_by_construction"
+    assert FIXTURES["labelSchema"] == LABEL_SCHEMA["schemaVersion"]
     for fixture in FIXTURES["fixtures"]:
         assert fixture["label"] in classes, fixture["id"]
+
+
+def test_humans_never_label_a_model_error():
+    """A person looking at an image can see that no text is there; they cannot
+    see that the OCR invented some. Model errors are derived, never labelled."""
+
+    human = set(LABEL_SCHEMA["humanImageLabels"])
+    derived = set(LABEL_SCHEMA["derivedModelErrors"])
+    assert human.isdisjoint(derived)
+    assert "OCR_HALLUCINATION" in derived and "OCR_HALLUCINATION" not in human
+    assert all(entry["labeledByHumans"] is False for entry in LABEL_SCHEMA["derivedModelErrors"].values())
+    for group in ("visibleTextClasses", "riskPositiveClasses", "sceneNativeClasses", "artifactClasses"):
+        assert set(LABEL_SCHEMA[group]) <= human, group
+    assert set(LABEL_SCHEMA["primaryLabelPrecedence"]) == human - {"UNCERTAIN"}
+
+
+def test_model_errors_are_derived_from_label_and_output():
+    report = evaluate_fixture_outputs(FIXTURES)
+    for row in report["rows"]:
+        fixture = next(f for f in FIXTURES["fixtures"] if f["id"] == row["id"])
+        assert row["derivedModelError"] == fixture.get("expectedDerivedModelError"), row["id"]
+    assert report["derivedModelErrors"] == {"OCR_HALLUCINATION": 1}
 
 
 @pytest.mark.parametrize("fixture", FIXTURES["fixtures"], ids=lambda f: f["id"])
@@ -274,10 +298,15 @@ def test_shadow_replay_agrees_with_evidence_replay_except_h1():
 
 def test_evaluator_reports_the_synthetic_construct_honestly():
     report = evaluate_fixture_outputs(FIXTURES)
-    assert report["scope"].startswith("synthetic")
-    # two real overlays are false negatives in BOTH policies; H1 does not touch them
-    assert report["realPositiveCaught"]["current"] == report["realPositiveCaught"]["shadow"]
-    assert report["benignFlagged"]["shadow"]["flagged"] < report["benignFlagged"]["current"]["flagged"]
+    assert report["scope"].startswith("synthetic known-positive")
+    assert "not Florence recall" in report["scope"]
+    assert "realPositiveCaught" not in report and "benignFlagged" not in report
+    # two synthetic known-positive rows are missed by BOTH policies; H1 does not touch them
+    known = report["syntheticKnownPositiveFlagged"]
+    assert known["current"] == known["shadow"] == {"n": 4, "flagged": 2}
+    native = report["syntheticSceneNativeFlagged"]
+    assert native["current"] == {"n": 8, "flagged": 3}
+    assert native["shadow"] == {"n": 8, "flagged": 0}
 
 
 # ---------------------------------------------------------------------------

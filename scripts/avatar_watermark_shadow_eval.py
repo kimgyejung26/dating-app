@@ -3,13 +3,15 @@
 Never opens an image, loads a model, calls a network service, or writes
 anywhere except stdout / --out. Two modes:
 
-  fixtures  Florence-shaped synthetic outputs with labels fixed by construction.
-            Exercises the policy construct only -- NOT production accuracy.
+  fixtures  Florence-shaped synthetic OUTPUTS with human image labels fixed by
+            construction. These are known-positive / known-negative evidence
+            rows for evaluating policy LOGIC. They are not images, involve no
+            model, and say nothing about Florence's image-level recall.
 
   replay    A JSON export of already-persisted candidate documents. Uses only the
             typed watermark evidence each document carries (no raw OCR exists
-            in them), and reports candidate- and job-level diffs. Production
-            documents carry no human label, so replay reports disagreement, never
+            in them) and reports candidate- and job-level disagreement.
+            Production documents carry no human label, so replay never reports
             precision or recall.
 
 Output is aggregate only: no candidate, job or user identifier is emitted.
@@ -23,7 +25,7 @@ import json
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
-from typing import Any, Iterable, Mapping
+from typing import Any, Iterable, Mapping, Optional
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 AI_MODEL_DIR = REPO_ROOT / "lib" / "ai_recommend_model"
@@ -45,22 +47,37 @@ from avatar_generation.analysis.watermark_construct_shadow import (  # noqa: E40
 )
 from avatar_generation.preview_policy import is_preview_eligible  # noqa: E402
 
-LABEL_SCHEMA_PATH = REPO_ROOT / "tests" / "fixtures" / "avatar_watermark_label_schema_v1.json"
-REPORT_VERSION = "avatar_watermark_shadow_eval_v1"
+LABEL_SCHEMA_PATH = REPO_ROOT / "tests" / "fixtures" / "avatar_watermark_label_schema_v2.json"
+REPORT_VERSION = "avatar_watermark_shadow_eval_v2"
 
 
-def _label_schema() -> Mapping[str, Any]:
+def label_schema() -> Mapping[str, Any]:
     return json.loads(LABEL_SCHEMA_PATH.read_text(encoding="utf-8"))
 
 
-def _caught(action: str) -> bool:
+def _flagged(action: Optional[str]) -> bool:
     return action in {"review", "reject"}
 
 
+def derive_model_error(
+    human_label: str,
+    ocr_region_count: int,
+    schema: Mapping[str, Any],
+) -> Optional[str]:
+    """Model errors are derived from a human image label and model output; a
+    human is never asked to label one."""
+
+    if human_label == "NO_VISIBLE_RELEVANT_TEXT" and ocr_region_count > 0:
+        return "OCR_HALLUCINATION"
+    if human_label in schema["visibleTextClasses"] and ocr_region_count == 0:
+        return "OCR_MISS"
+    return None
+
+
 def evaluate_fixture_outputs(payload: Mapping[str, Any]) -> dict[str, Any]:
-    schema = _label_schema()
-    real = set(schema["realPositiveClasses"])
-    benign = set(schema["benignClasses"])
+    schema = label_schema()
+    risk_positive = set(schema["riskPositiveClasses"])
+    scene_native = set(schema["sceneNativeClasses"])
     width, height = payload["imageSize"]
     rows = []
     for fixture in payload["fixtures"]:
@@ -75,6 +92,9 @@ def evaluate_fixture_outputs(payload: Mapping[str, Any]) -> dict[str, Any]:
             {
                 "id": fixture["id"],
                 "label": fixture["label"],
+                "derivedModelError": derive_model_error(
+                    fixture["label"], len(fixture["ocr"]["labels"]), schema
+                ),
                 "currentAction": decision.watermark_qa_action,
                 "shadowAction": shadow.get("shadowWatermarkAction"),
                 "shadowClass": shadow.get("shadowWatermarkClass"),
@@ -83,20 +103,23 @@ def evaluate_fixture_outputs(payload: Mapping[str, Any]) -> dict[str, Any]:
 
     def rate(selector, key):
         chosen = [row for row in rows if selector(row["label"])]
-        return {"n": len(chosen), "flagged": sum(1 for row in chosen if _caught(row[key]))}
+        return {"n": len(chosen), "flagged": sum(1 for row in chosen if _flagged(row[key]))}
 
     return {
         "reportVersion": REPORT_VERSION,
         "mode": "fixtures",
-        "scope": "synthetic policy-construct fixtures; not production accuracy",
+        "scope": (
+            "synthetic known-positive/known-negative evidence rows for policy-logic "
+            "evaluation; not images, not Florence recall, not production accuracy"
+        ),
         "rows": rows,
-        "realPositiveCaught": {
-            "current": rate(lambda label: label in real, "currentAction"),
-            "shadow": rate(lambda label: label in real, "shadowAction"),
+        "syntheticKnownPositiveFlagged": {
+            "current": rate(lambda label: label in risk_positive, "currentAction"),
+            "shadow": rate(lambda label: label in risk_positive, "shadowAction"),
         },
-        "benignFlagged": {
-            "current": rate(lambda label: label in benign, "currentAction"),
-            "shadow": rate(lambda label: label in benign, "shadowAction"),
+        "syntheticSceneNativeFlagged": {
+            "current": rate(lambda label: label in scene_native, "currentAction"),
+            "shadow": rate(lambda label: label in scene_native, "shadowAction"),
         },
         "byLabel": {
             label: {
@@ -105,6 +128,9 @@ def evaluate_fixture_outputs(payload: Mapping[str, Any]) -> dict[str, Any]:
             }
             for label in sorted({row["label"] for row in rows})
         },
+        "derivedModelErrors": dict(
+            Counter(row["derivedModelError"] for row in rows if row["derivedModelError"])
+        ),
         "actionDiff": sum(1 for row in rows if row["currentAction"] != row["shadowAction"]),
     }
 
@@ -178,7 +204,10 @@ def replay_candidate_documents(
     return {
         "reportVersion": REPORT_VERSION,
         "mode": "replay",
-        "scope": "persisted typed evidence; no human labels, so disagreement only",
+        "scope": (
+            "persisted typed evidence; no human labels, so disagreement only. "
+            "Eligibility, not realised preview: selection and preview counts are not modelled."
+        ),
         "candidatesEvaluated": evaluated,
         "evidenceReplayParityMismatches": parity_mismatch,
         "liveVsShadowAction": {f"{live}->{shadow}": count for (live, shadow), count in sorted(action_pairs.items())},
