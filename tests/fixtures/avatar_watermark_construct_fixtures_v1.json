@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "avatar_watermark_construct_fixtures_v1",
+  "labelSchema": "avatar_watermark_label_schema_v1",
+  "labelProvenance": "synthetic_by_construction",
+  "scope": "Florence-shaped model OUTPUTS, not images. Each label is the intent the fixture was built to represent, fixed before any policy ran. These exercise the POLICY construct only; they say nothing about whether Florence would produce these outputs from a real image, and they must never be reported as production accuracy.",
+  "imageSize": [512, 768],
+  "fixtures": [
+    {
+      "id": "overlay_watermark_repeated_corners",
+      "label": "REAL_OVERLAY_WATERMARK",
+      "ocr": {"quad_boxes": [[10, 10, 110, 10, 110, 30, 10, 30], [400, 738, 500, 738, 500, 758, 400, 758]], "labels": ["SHUTTERSTOCK", "SHUTTERSTOCK"]},
+      "expectedCurrentAction": "reject",
+      "expectedShadowAction": "reject"
+    },
+    {
+      "id": "overlay_watermark_single_corner",
+      "label": "REAL_OVERLAY_WATERMARK",
+      "note": "Known false negative in BOTH policies: one plausible corner token with no confidence is allowed.",
+      "ocr": {"quad_boxes": [[10, 10, 90, 10, 90, 28, 10, 28]], "labels": ["iStock"]},
+      "expectedCurrentAction": "allow",
+      "expectedShadowAction": "allow"
+    },
+    {
+      "id": "overlay_watermark_edge_tiny",
+      "label": "REAL_OVERLAY_WATERMARK",
+      "note": "Known false negative in BOTH policies: overlay geometry alone never escalates.",
+      "ocr": {"quad_boxes": [[230, 5, 290, 5, 290, 20, 230, 20]], "labels": ["Getty"]},
+      "expectedCurrentAction": "allow",
+      "expectedShadowAction": "allow"
+    },
+    {
+      "id": "overlay_text_fragmented_corner",
+      "label": "REAL_OVERLAY_TEXT",
+      "ocr": {"quad_boxes": [[12, 740, 120, 740, 120, 758, 12, 758]], "labels": ["AI gen v2"]},
+      "expectedCurrentAction": "review",
+      "expectedShadowAction": "review"
+    },
+    {
+      "id": "garment_text_fragmented",
+      "label": "BENIGN_GARMENT_TEXT",
+      "note": "The H1 target: current reviews fragmented text wherever it is.",
+      "ocr": {"quad_boxes": [[200, 470, 310, 470, 310, 500, 200, 500]], "labels": ["NEW YORK NY"]},
+      "expectedCurrentAction": "review",
+      "expectedShadowAction": "allow"
+    },
+    {
+      "id": "garment_text_design_substring_sign",
+      "label": "BENIGN_GARMENT_TEXT",
+      "note": "Live kind: sign (substring). Action-inert.",
+      "ocr": {"quad_boxes": [[210, 480, 300, 480, 300, 505, 210, 505]], "labels": ["DESIGN"]},
+      "expectedCurrentAction": "allow",
+      "expectedShadowAction": "allow"
+    },
+    {
+      "id": "garment_text_logon_substring_logo",
+      "label": "BENIGN_GARMENT_TEXT",
+      "note": "Live kind: logo (substring). Action-inert.",
+      "ocr": {"quad_boxes": [[215, 480, 295, 480, 295, 505, 215, 505]], "labels": ["LOGON"]},
+      "expectedCurrentAction": "allow",
+      "expectedShadowAction": "allow"
+    },
+    {
+      "id": "garment_brand_text",
+      "label": "BENIGN_BRAND_TEXT",
+      "ocr": {"quad_boxes": [[220, 480, 290, 480, 290, 505, 220, 505]], "labels": ["NIKE"]},
+      "expectedCurrentAction": "allow",
+      "expectedShadowAction": "allow"
+    },
+    {
+      "id": "background_sign_plausible",
+      "label": "BENIGN_BACKGROUND_SIGN",
+      "ocr": {"quad_boxes": [[120, 120, 400, 120, 400, 220, 120, 220]], "labels": ["CAFE OPEN"]},
+      "expectedCurrentAction": "allow",
+      "expectedShadowAction": "allow"
+    },
+    {
+      "id": "background_sign_fragmented",
+      "label": "BENIGN_BACKGROUND_SIGN",
+      "ocr": {"quad_boxes": [[120, 120, 400, 120, 400, 220, 120, 220]], "labels": ["NO 23 ST"]},
+      "expectedCurrentAction": "review",
+      "expectedShadowAction": "allow"
+    },
+    {
+      "id": "ocr_hallucination_fragments",
+      "label": "OCR_HALLUCINATION",
+      "note": "Not distinguishable from evidence. Shadow allowing it is coincidence of H1, not detection.",
+      "ocr": {"quad_boxes": [[240, 300, 280, 300, 280, 318, 240, 318]], "labels": ["l1 ll"]},
+      "expectedCurrentAction": "review",
+      "expectedShadowAction": "allow"
+    },
+    {
+      "id": "no_text",
+      "label": "NO_TEXT",
+      "ocr": {"quad_boxes": [], "labels": []},
+      "expectedCurrentAction": "allow",
+      "expectedShadowAction": "allow"
+    }
+  ]
+}

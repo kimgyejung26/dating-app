@@ -15,6 +15,7 @@ from PIL import Image, ImageChops, ImageStat
 from avatar_generation.environment import is_production_like_environment
 
 from .analysis.visual_risk import SHADOW_OCR_EVIDENCE_FIELDS
+from .analysis.watermark_construct_shadow import sanitize_watermark_construct_shadow
 from .analysis.watermark import (
     WATERMARK_POLICY_VERSION,
     WATERMARK_QA_ACTION_REJECT,
@@ -1591,6 +1592,12 @@ def _attach_measurement_debug(
         }
         if admitted:
             measurements["shadowOcr"] = admitted
+
+    # Construct-valid watermark shadow. Every string is checked against a fixed
+    # vocabulary on the way in, so no transcription can be persisted through it.
+    shadow_watermark = sanitize_watermark_construct_shadow(signals.get("shadowWatermark"))
+    if shadow_watermark:
+        measurements["shadowWatermark"] = shadow_watermark
 
     result.debug["measurements"] = measurements
 

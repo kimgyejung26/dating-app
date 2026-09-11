@@ -31,10 +31,18 @@ def _load_module(name, path):
     return module
 
 
-visual_risk = _load_module("avatar_generation.analysis.visual_risk", VISUAL_RISK_PATH)
-sys.modules.setdefault("avatar_generation", types.ModuleType("avatar_generation"))
-sys.modules.setdefault("avatar_generation.analysis", types.ModuleType("avatar_generation.analysis"))
-setattr(sys.modules["avatar_generation.analysis"], "visual_risk", visual_risk)
+# Import the real package. This file used to register plain (non-package)
+# ModuleType stubs for avatar_generation / avatar_generation.analysis and
+# re-execute visual_risk.py into sys.modules. Collected before anything imported
+# the real package, the stubs won and every later
+# `from avatar_generation.analysis.watermark import ...` failed with "not a
+# package" -- which is why these watermark tests could not be run together, and
+# why none of them were in CI. Re-executing visual_risk.py also let two
+# VisualRiskRegion classes coexist.
+AI_MODEL_DIR = REPO_ROOT / "lib" / "ai_recommend_model"
+if str(AI_MODEL_DIR) not in sys.path:
+    sys.path.insert(0, str(AI_MODEL_DIR))
+import avatar_generation.analysis.visual_risk as visual_risk  # noqa: E402
 florence2_visual = _load_module("florence2_visual_under_test", ADAPTER_PATH)
 
 TASK_MORE_DETAILED_CAPTION = visual_risk.TASK_MORE_DETAILED_CAPTION

@@ -18,6 +18,7 @@ from .analysis.visual_risk import (
     STATUS_CRITICAL_UNAVAILABLE,
     VisualRiskAnalysis,
 )
+from .analysis.watermark_construct_shadow import classify_watermark_construct_shadow
 from .analysis.watermark import (
     WATERMARK_POLICY_VERSION,
     evaluate_watermark_risk,
@@ -544,6 +545,12 @@ def _add_visual_signals(
     signals["watermarkDecisionClass"] = watermark_decision.decision_class
     signals["watermarkEvidenceClasses"] = list(watermark_decision.evidence_classes)
     signals["watermarkEvidence"] = watermark_decision.to_document().get("evidence", {})
+    # Construct-valid shadow classification from the same typed evidence. Read
+    # by nothing: see analysis/watermark_construct_shadow.py for why the
+    # substring-derived region kind is not an input.
+    shadow_watermark = classify_watermark_construct_shadow(watermark_decision.evidence)
+    if shadow_watermark is not None:
+        signals["shadowWatermark"] = shadow_watermark
     person_evidence = resolve_person_evidence(
         # has_background_person also fires on the action alone, which can
         # outlive the region list; keep it authoritative for "at least one".
