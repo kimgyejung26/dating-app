@@ -207,6 +207,13 @@ jobs:
       - run: pytest -q tests/test_avatar_worker_availability_authority.py --maxfail=10
         env:
           PYTHONPATH: .
+      # Python 의 hard-reject 의미론과 TypeScript 승인 게이트가 갈라지면
+      # QA 가 거부한 후보가 approved avatar 가 될 수 있다. 공유 계약
+      # functions/src/avatarQaHardRejectContract.json 을 양쪽이 각각
+      # 실행해서 검증한다(TS 쪽은 npm test 가 돌린다).
+      - run: pytest -q tests/test_avatar_qa_hard_reject_parity.py --maxfail=10
+        env:
+          PYTHONPATH: .
       # QA 가 실제로 잰 숫자가 문서를 못 넘어가면 다음 calibration 은 근거가
       # 0 이다. CLIP raw score / 보류된 canonical identity score 의 사유 /
       # shadow OCR 이 PII 없이 살아남는지, 그리고 그 기록 추가가 결정을 전혀

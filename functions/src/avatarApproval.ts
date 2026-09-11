@@ -357,7 +357,25 @@ const QA_HARD_FAIL_STATUS_FIELDS = [
   "privacyQa",
   "brandQa",
   "cropConsistency",
+  "cropIsolationQuality",
 ] as const;
+
+/**
+ * Risk fields whose "high" band is a canonical hard reject in
+ * apply_avatar_qa_rejection_logic. "medium" is the soft-review band and must
+ * stay approvable.
+ */
+const QA_HARD_REJECT_RISK_FIELDS = [
+  "childlikeRisk",
+  "beautificationRisk",
+  "identifiabilityRisk",
+  "uniqueMarkCopyRisk",
+  "backgroundLeakageRisk",
+  "secondaryFaceLeakageRisk",
+] as const;
+
+/** qa._risk_is_high in lib/ai_recommend_model/avatar_generation/qa.py. */
+const QA_RISK_HIGH_VALUES = new Set(["high", "critical", "fail", "failed"]);
 
 /**
  * Why a candidate may not be approved, or "" when it may.
@@ -370,6 +388,15 @@ const QA_HARD_FAIL_STATUS_FIELDS = [
  * is_hard_reject first), and production holds none, so this is defence in
  * depth: a contradictory document from a partial write, an admin repair, a
  * migration or a future producer fails closed instead of being approved.
+ *
+ * The conditions mirror apply_avatar_qa_rejection_logic, which owns the
+ * semantics. functions/src/avatarQaHardRejectContract.json states them in a
+ * form both languages verify behaviourally, so a hard reject added on one side
+ * without the other fails a test rather than drifting silently.
+ *
+ * "fail"/"high" block; "needs_review"/"medium"/"review" do not -- that band is
+ * the 2026-09-07 soft-review product contract, which deliberately offers such
+ * candidates. An absent field is not evidence of danger either.
  *
  * Contradictions are never normalised into an approval. Fail closed and leave
  * the data repair as a separate, deliberate act.
@@ -386,6 +413,14 @@ export function avatarApprovalBlockReason(
   }
   for (const field of QA_HARD_FAIL_STATUS_FIELDS) {
     if (asString(qa[field]).trim().toLowerCase() === "fail") {
+      return "qa_state_inconsistent";
+    }
+  }
+  for (const field of QA_HARD_REJECT_RISK_FIELDS) {
+    const value = asString(qa[field]).trim().toLowerCase();
+    // An absent field is not evidence of danger -- legacy documents predate
+    // several of these -- so only a stated high-band value blocks.
+    if (value && QA_RISK_HIGH_VALUES.has(value)) {
       return "qa_state_inconsistent";
     }
   }
