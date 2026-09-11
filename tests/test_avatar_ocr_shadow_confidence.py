@@ -39,13 +39,15 @@ def _load_module(name, path):
     return module
 
 
-visual_risk = _load_module("avatar_generation.analysis.visual_risk", VISUAL_RISK_PATH)
-sys.modules.setdefault("avatar_generation", types.ModuleType("avatar_generation"))
-sys.modules.setdefault(
-    "avatar_generation.analysis", types.ModuleType("avatar_generation.analysis")
-)
-setattr(sys.modules["avatar_generation.analysis"], "visual_risk", visual_risk)
-watermark = _load_module("avatar_generation.analysis.watermark_shadow", WATERMARK_PATH)
+# Real package, not ModuleType stubs: see test_avatar_visual_risk.py. The
+# watermark module used to be re-executed under the private name
+# avatar_generation.analysis.watermark_shadow, giving a second copy of the
+# policy module that nothing else in the process used.
+AI_MODEL_DIR = REPO_ROOT / "lib" / "ai_recommend_model"
+if str(AI_MODEL_DIR) not in sys.path:
+    sys.path.insert(0, str(AI_MODEL_DIR))
+import avatar_generation.analysis.visual_risk as visual_risk  # noqa: E402
+import avatar_generation.analysis.watermark as watermark  # noqa: E402
 florence2_visual = _load_module("florence2_visual_shadow_under_test", ADAPTER_PATH)
 
 TASK_OCR_WITH_REGION = visual_risk.TASK_OCR_WITH_REGION
