@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "avatar_qa_hard_reject_parity_v1",
+  "note": "Canonical hard-reject conditions of lib/ai_recommend_model/avatar_generation/qa.py::apply_avatar_qa_rejection_logic. Python owns the semantics; this file is the machine-readable statement of them, and BOTH sides verify it behaviourally. tests/test_avatar_qa_hard_reject_parity.py executes the real Python function for every entry; functions/src/avatarApprovalParity.test.ts asserts avatarApprovalBlockReason refuses every entry even when previewAllowed=true and rejectReasons is empty. Adding a hard reject on either side without the other fails one of those two tests.",
+  "healthyQa": {
+    "previewAllowed": true,
+    "rejectReasons": [],
+    "adultQa": "pass",
+    "privacyQa": "pass",
+    "brandQa": "pass",
+    "cropConsistency": "pass",
+    "cropIsolationQuality": "pass",
+    "childlikeRisk": "low",
+    "beautificationRisk": "low",
+    "identifiabilityRisk": "low",
+    "uniqueMarkCopyRisk": "low",
+    "logoTextWatermarkRisk": "low",
+    "textLogoWatermarkRisk": "low",
+    "backgroundLeakageRisk": "low",
+    "secondaryFaceLeakageRisk": "low",
+    "watermarkQaAction": "allow"
+  },
+  "hardRejectConditions": [
+    { "id": "adult_qa_fail", "pythonMatch": "exact", "band": "status_fail", "field": "adultQa", "value": "fail", "rejectReason": "childlike_or_teenager" },
+    { "id": "childlike_risk_high", "pythonMatch": "exact", "band": "risk_high", "field": "childlikeRisk", "value": "high", "rejectReason": "childlike_or_teenager" },
+    { "id": "privacy_qa_fail", "pythonMatch": "exact", "band": "status_fail", "field": "privacyQa", "value": "fail", "rejectReason": "too_identifiable" },
+    { "id": "identifiability_risk_high", "pythonMatch": "exact", "band": "risk_high", "field": "identifiabilityRisk", "value": "high", "rejectReason": "too_identifiable" },
+    { "id": "unique_mark_copy_risk_high", "pythonMatch": "exact", "band": "risk_high", "field": "uniqueMarkCopyRisk", "value": "high", "rejectReason": "unique_mark_copied" },
+    { "id": "beautification_risk_high", "pythonMatch": "exact", "band": "risk_high", "field": "beautificationRisk", "value": "high", "rejectReason": "too_beautified" },
+    { "id": "crop_consistency_fail", "pythonMatch": "exact", "band": "status_fail", "field": "cropConsistency", "value": "fail", "rejectReason": "crop_expanded_to_unseen_body" },
+    { "id": "crop_isolation_quality_fail", "pythonMatch": "exact", "band": "status_fail", "field": "cropIsolationQuality", "value": "fail", "rejectReason": "crop_expanded_to_unseen_body" },
+    { "id": "watermark_action_reject", "pythonMatch": "exact", "band": "action_reject", "field": "watermarkQaAction", "value": "reject", "rejectReason": "logo_text_watermark" },
+    { "id": "background_leakage_high", "pythonMatch": "risk_high_vocabulary", "band": "risk_high", "field": "backgroundLeakageRisk", "value": "high", "rejectReason": "background_leakage" },
+    { "id": "secondary_face_leakage_high", "pythonMatch": "risk_high_vocabulary", "band": "risk_high", "field": "secondaryFaceLeakageRisk", "value": "high", "rejectReason": "secondary_face_leakage" },
+    { "id": "brand_qa_fail", "pythonMatch": "exact", "band": "status_fail", "field": "brandQa", "value": "fail", "rejectReason": "not_adult_university_student_tone" }
+  ],
+  "softValuesThatMustNotHardReject": [
+    { "field": "adultQa", "value": "needs_review" },
+    { "field": "privacyQa", "value": "needs_review" },
+    { "field": "brandQa", "value": "needs_review" },
+    { "field": "cropConsistency", "value": "needs_review" },
+    { "field": "cropIsolationQuality", "value": "needs_review" },
+    { "field": "childlikeRisk", "value": "medium" },
+    { "field": "beautificationRisk", "value": "medium" },
+    { "field": "identifiabilityRisk", "value": "medium" },
+    { "field": "uniqueMarkCopyRisk", "value": "medium" },
+    { "field": "backgroundLeakageRisk", "value": "medium" },
+    { "field": "secondaryFaceLeakageRisk", "value": "medium" },
+    { "field": "watermarkQaAction", "value": "review" }
+  ],
+  "riskHighVocabulary": ["high", "critical", "fail", "failed"],
+  "pythonMatchNote": "Python is not uniform. childlikeRisk, identifiabilityRisk, uniqueMarkCopyRisk and beautificationRisk are compared with an exact == \"high\"; backgroundLeakageRisk and secondaryFaceLeakageRisk go through _risk_is_high, which also accepts critical/fail/failed. The asymmetry is latent today because those four fields are produced by _risk_from_score, whose domain is low/medium/high only, so \"critical\" is unreachable from the worker. The approval gate deliberately applies the FULL vocabulary to all six: its whole premise is a document the producer did not write, and refusing a value that says \"critical\" cannot be wrong at the last authority before a face goes public. Being stricter than Python here is intentional, and tested."
+}
