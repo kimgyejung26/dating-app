@@ -256,7 +256,7 @@
     },
     {
       "id": "ocr_hallucination_fragments",
-      "label": "NO_VISIBLE_RELEVANT_TEXT",
+      "label": "NO_VISIBLE_RELEVANT_TEXT_OR_MARK",
       "note": "A human sees no text; the OCR output nonetheless reports a region. OCR_HALLUCINATION is derived from that comparison, never labelled by a human. Shadow allowing it is a coincidence of H1, not detection.",
       "ocr": {
         "quad_boxes": [
@@ -281,7 +281,7 @@
     },
     {
       "id": "no_text",
-      "label": "NO_VISIBLE_RELEVANT_TEXT",
+      "label": "NO_VISIBLE_RELEVANT_TEXT_OR_MARK",
       "ocr": {
         "quad_boxes": [],
         "labels": []

@@ -249,6 +249,12 @@ jobs:
       - run: pytest -q tests/test_avatar_visual_risk.py tests/test_avatar_ocr_shadow_confidence.py tests/test_avatar_watermark_construct_validity.py tests/test_avatar_watermark_decision.py tests/test_avatar_watermark_evidence_authority.py tests/test_avatar_watermark_product_contract.py tests/test_avatar_watermark_contract_report.py tests/test_avatar_watermark_benchmark.py --maxfail=10
         env:
           PYTHONPATH: .
+      # B3-L1: 사용자 데이터 없이 그린 known control 이미지. 결정적이고,
+      # 네트워크를 쓰지 않고, 라벨이 schema v2 의 human image label 이며,
+      # manifest 가 production prevalence 추정 금지를 명시한다는 것을 고정한다.
+      - run: pytest -q tests/test_avatar_watermark_controls.py --maxfail=10
+        env:
+          PYTHONPATH: .
       # 배포 가드는 Windows 운영자 셸에서 Hangul env 값을 "???" 로 읽어 바뀐 적
       # 없는 변수를 changed 로 보고했다. 인코딩과 키 단위 승인 계약을 Linux
       # 에서도 고정한다.

@@ -67,7 +67,7 @@ def derive_model_error(
     """Model errors are derived from a human image label and model output; a
     human is never asked to label one."""
 
-    if human_label == "NO_VISIBLE_RELEVANT_TEXT" and ocr_region_count > 0:
+    if human_label == "NO_VISIBLE_RELEVANT_TEXT_OR_MARK" and ocr_region_count > 0:
         return "OCR_HALLUCINATION"
     if human_label in schema["visibleTextClasses"] and ocr_region_count == 0:
         return "OCR_MISS"
