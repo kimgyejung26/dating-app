@@ -255,6 +255,13 @@ jobs:
       - run: pytest -q tests/test_avatar_watermark_controls.py --maxfail=10
         env:
           PYTHONPATH: .
+      # B3-L4: Florence model-ceiling benchmark. Florence weights 와 G004 이미지는
+      # CI 에 없으므로 추론은 로컬에서만 돈다. 여기서는 derivative 결정성, 두
+      # authorized set 개수, 원본 불변, raw OCR/파일명/경로 비유출, model miss 와
+      # policy miss 분리, H1 shadow-only, 도메인별 집계를 고정한다.
+      - run: pytest -q tests/test_avatar_florence_ceiling.py --maxfail=10
+        env:
+          PYTHONPATH: .
       # 배포 가드는 Windows 운영자 셸에서 Hangul env 값을 "???" 로 읽어 바뀐 적
       # 없는 변수를 changed 로 보고했다. 인코딩과 키 단위 승인 계약을 Linux
       # 에서도 고정한다.
