@@ -274,6 +274,14 @@ jobs:
       - run: pytest -q tests/test_avatar_logo_detector_benchmark.py --maxfail=10
         env:
           PYTHONPATH: .
+      # B3-L6: 사람 라벨링 UI 는 network 0 / opaque ID / detector 예측 비노출이어야
+      # 하고, 두 rater 독립성과 라벨 필드 allowlist 가 깨지면 안 된다. H3 는
+      # escalate-only 라 hard-reject bypass 와 miss 증가가 구조적으로 0,
+      # H3-C 는 human 필드를 요구하므로 runtime rule 이 될 수 없다는 것까지 고정.
+      # 모델 추론·사람 라벨·사용자 이미지는 CI 에 없다.
+      - run: pytest -q tests/test_avatar_detector_assisted_shadow.py --maxfail=10
+        env:
+          PYTHONPATH: .
       # 배포 가드는 Windows 운영자 셸에서 Hangul env 값을 "???" 로 읽어 바뀐 적
       # 없는 변수를 changed 로 보고했다. 인코딩과 키 단위 승인 계약을 Linux
       # 에서도 고정한다.

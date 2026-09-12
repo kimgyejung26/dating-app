@@ -85,6 +85,21 @@ MAX_LONG_SIDE = 2048
 CTL08_GROUND_TRUTH = [424.0, 16.0, 496.0, 88.0]
 
 
+def _group_key_for(entry) -> str | None:
+    """Opaque participant-group key from the avatar filename pattern (P##_C##).
+
+    The group identity is a property of the corpus, not of any result, which is
+    why the pre-registered development/holdout split can be assigned from it.
+    """
+
+    import re
+
+    if entry.get("domain") != bench.DOMAIN_AVATAR:
+        return None
+    match = re.search(r"P(\d{2})_C\d{2}", Path(entry["path"]).name)
+    return f"G{int(match.group(1))}" if match else None
+
+
 def _load(kind: str, path: Path):
     import torch
     from transformers import AutoProcessor
