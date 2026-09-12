@@ -94,6 +94,12 @@
     },
     "threshold": 0.1
   },
+  "provisionalGate": {
+    "evidenceLabel": "PROVISIONAL_G004_SHADOW_EVIDENCE",
+    "gateVersion": "owlv2_provisional_shadow_gate_v1",
+    "note": "criteria A and B require an adjudicated two-rater label artifact",
+    "status": "BLOCKED_HUMAN_LABELS_REQUIRED"
+  },
   "repo": "google/owlv2-base-patch16-ensemble",
   "reportVersion": "avatar_owlv2_calibration_v1",
   "revision": "cfd3195ba4ea9592eec887ded089f4c08eff231d",
