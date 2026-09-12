@@ -26,10 +26,12 @@ license authority.
 | owlv2-base-patch16-ensemble | `google/owlv2-base-patch16-ensemble` | `cfd3195ba4ea9592eec887ded089f4c08eff231d` | apache-2.0 | none stated | 593 MB |
 | grounding-dino-tiny | `IDEA-Research/grounding-dino-tiny` | `a2bb814dd30d776dcf7e30523b00659f4f141c71` | apache-2.0 | none stated | 658 MB |
 
-Considered and **not** downloaded: Ultralytics YOLOv8 / YOLO-World (AGPL-3.0 —
-`MODEL_LICENSE_UNCLEAR` for this product's distribution model, so excluded
-rather than guessed at), and `google/owlvit-base-patch32` (apache-2.0, the
-OWLv2 predecessor) which was dropped for local disk headroom, not on merit.
+Considered and **not** downloaded or evaluated: Ultralytics YOLOv8 / YOLO-World.
+Its licence (AGPL-3.0) carries obligations whose fit with this product's
+distribution model is an owner decision, not one this benchmark makes, so it is
+`EXCLUDED_PENDING_PRODUCT_LICENSE_DECISION` — not a statement that the licence
+forbids use. Also not benchmarked: `google/owlvit-base-patch32` (apache-2.0, the
+OWLv2 predecessor), dropped for local disk headroom, not on merit.
 
 Frozen before inference: prompts `("a logo", "a watermark", "a brand emblem",
 "a graphic symbol")` — generic, no brand name; OWLv2 threshold 0.10; Grounding
@@ -94,7 +96,7 @@ this 16 GB machine, so each ran in its own process.
 |---|---|---|
 | owlv2-base-patch16-ensemble | **SUITABLE_FOR_SHADOW** | recall 1.00 on all 29 injected conditions, tightest IoU, quietest on clean avatars, apache-2.0, 593 MB. Caveat: 5.82 GB peak RSS. |
 | grounding-dino-tiny | SUITABLE_FOR_SHADOW (second) | recall 1.00 avatar / 0.875 source, looser boxes, 2.8× the clean-avatar response rate. Lighter (2.89 GB). |
-| Ultralytics YOLO-World | LICENSE_BLOCKED | AGPL-3.0; commercial compatibility not assumed, not downloaded. |
+| Ultralytics YOLO-World | LICENSE_REVIEW_REQUIRED | AGPL-3.0. Obligation acceptance is an owner decision; not downloaded, not evaluated, no compatibility claim made either way. |
 
 Overall: `LOGO_DETECTOR_SHADOW_CANDIDATE_FOUND`.
 
