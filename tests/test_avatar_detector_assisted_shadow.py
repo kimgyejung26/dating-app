@@ -357,3 +357,66 @@ def test_preregistration_is_frozen_and_matches_the_code():
     assert "BLOCKED_HUMAN_LABELS_REQUIRED" in text
     assert "H3_LIVE_POLICY_READY` is not a permitted outcome" in text
     assert "upper bound" in text.lower()
+
+
+# ---------------------------------------------------------------- owner gate
+
+
+def test_provisional_gate_constants_are_frozen():
+    assert calib.GATE_VERSION == "owlv2_provisional_shadow_gate_v1"
+    assert calib.PROVISIONAL_PRECISION_FLOOR == 0.80
+    assert calib.CLEAN_NEGATIVE_NEW_REVIEW_CEILING == 0.10
+    assert calib.INJECTED_RECALL_REQUIREMENT == 1.0
+    assert calib.PILOT_EVIDENCE_LABEL == "PROVISIONAL_G004_SHADOW_EVIDENCE"
+
+
+def test_provisional_gate_is_blocked_without_human_labels():
+    blocked = calib.evaluate_provisional_gate(
+        precision=None,
+        clean_negative_total=None,
+        clean_negative_new_reviews=None,
+        injected_recall=1.0,
+        generative_artifact_regressions=0,
+        hard_reject_bypass=0,
+    )
+    assert blocked["status"] == "BLOCKED_HUMAN_LABELS_REQUIRED"
+    assert "criteria" not in blocked
+
+
+def test_provisional_gate_applies_every_criterion():
+    passing = dict(
+        precision=0.80,
+        clean_negative_total=20,
+        clean_negative_new_reviews=2,
+        injected_recall=1.0,
+        generative_artifact_regressions=0,
+        hard_reject_bypass=0,
+    )
+    result = calib.evaluate_provisional_gate(**passing)
+    assert result["status"] == "PILOT_GATE_PASSED"
+    assert result["productionValidation"] is False
+    assert result["criteria"]["B_clean_negative_new_review_rate"]["maxImagesAtThisN"] == 2
+    for override, criterion in (
+        ({"precision": 0.79}, "A_precision_floor"),
+        ({"clean_negative_new_reviews": 3}, "B_clean_negative_new_review_rate"),
+        ({"injected_recall": 0.95}, "C_injected_recall"),
+        ({"generative_artifact_regressions": 1}, "D_generative_artifact_regression"),
+        ({"hard_reject_bypass": 1}, "E_hard_reject_bypass"),
+    ):
+        failed = calib.evaluate_provisional_gate(**{**passing, **override})
+        assert failed["status"] == "PILOT_GATE_FAILED"
+        assert failed["criteria"][criterion]["pass"] is False
+
+
+def test_gate_never_claims_production_validation_language():
+    result = calib.evaluate_provisional_gate(
+        precision=1.0,
+        clean_negative_total=20,
+        clean_negative_new_reviews=0,
+        injected_recall=1.0,
+        generative_artifact_regressions=0,
+        hard_reject_bypass=0,
+    )
+    text = json.dumps(result).lower()
+    for banned in ("production precision", "validated for production", "proven"):
+        assert banned not in text

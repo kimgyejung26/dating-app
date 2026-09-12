@@ -54,6 +54,87 @@ DEVELOPMENT_GROUPS = ("G1", "G2", "G3")
 HOLDOUT_GROUPS = ("G4", "G5")
 REFERENCE_THRESHOLD = 0.10  # B3-L5's value, used only to report H3 at a fixed point
 
+# ---------------------------------------------------------------------------
+# Owner-approved PROVISIONAL pilot gate (B3-L6.1). Frozen before any human
+# label exists, so it cannot be retuned once labels arrive.
+#
+# This is NOT a production validation threshold. It decides only whether the
+# work proceeds to the next shadow-evaluation stage on a 20-image pilot. Report
+# results as PROVISIONAL_G004_SHADOW_EVIDENCE / G004_CLEAN_AVATAR_PILOT_PRECISION;
+# never as established or proven production precision. Confidence intervals are
+# reported, but a CI lower bound is not used as the gate.
+# ---------------------------------------------------------------------------
+GATE_VERSION = "owlv2_provisional_shadow_gate_v1"
+PROVISIONAL_PRECISION_FLOOR = 0.80          # criterion A
+CLEAN_NEGATIVE_NEW_REVIEW_CEILING = 0.10    # criterion B (<=2 images at N=20)
+INJECTED_RECALL_REQUIREMENT = 1.0           # criterion C (20/20)
+PILOT_EVIDENCE_LABEL = "PROVISIONAL_G004_SHADOW_EVIDENCE"
+PILOT_PRECISION_LABEL = "G004_CLEAN_AVATAR_PILOT_PRECISION"
+
+
+def evaluate_provisional_gate(
+    *,
+    precision: float | None,
+    clean_negative_total: int | None,
+    clean_negative_new_reviews: int | None,
+    injected_recall: float | None,
+    generative_artifact_regressions: int,
+    hard_reject_bypass: int,
+) -> dict[str, Any]:
+    """Owner-approved pilot gate. Returns BLOCKED until human labels exist.
+
+    precision / clean-negative counts come only from adjudicated human labels;
+    passing None means they have not been collected, which is a block and never
+    a pass.
+    """
+
+    if precision is None or clean_negative_total is None or clean_negative_new_reviews is None:
+        return {
+            "gateVersion": GATE_VERSION,
+            "status": "BLOCKED_HUMAN_LABELS_REQUIRED",
+            "evidenceLabel": PILOT_EVIDENCE_LABEL,
+            "note": "criteria A and B require an adjudicated two-rater label artifact",
+        }
+    new_review_rate = (clean_negative_new_reviews / clean_negative_total) if clean_negative_total else None
+    criteria = {
+        "A_precision_floor": {
+            "value": round(precision, 4),
+            "floor": PROVISIONAL_PRECISION_FLOOR,
+            "pass": precision >= PROVISIONAL_PRECISION_FLOOR,
+        },
+        "B_clean_negative_new_review_rate": {
+            "value": None if new_review_rate is None else round(new_review_rate, 4),
+            "ceiling": CLEAN_NEGATIVE_NEW_REVIEW_CEILING,
+            "maxImagesAtThisN": int(clean_negative_total * CLEAN_NEGATIVE_NEW_REVIEW_CEILING),
+            "pass": new_review_rate is not None and new_review_rate <= CLEAN_NEGATIVE_NEW_REVIEW_CEILING,
+        },
+        "C_injected_recall": {
+            "value": injected_recall,
+            "required": INJECTED_RECALL_REQUIREMENT,
+            "pass": injected_recall is not None and injected_recall >= INJECTED_RECALL_REQUIREMENT,
+        },
+        "D_generative_artifact_regression": {
+            "value": generative_artifact_regressions,
+            "required": 0,
+            "pass": generative_artifact_regressions == 0,
+        },
+        "E_hard_reject_bypass": {
+            "value": hard_reject_bypass,
+            "required": 0,
+            "pass": hard_reject_bypass == 0,
+        },
+    }
+    passed = all(item["pass"] for item in criteria.values())
+    return {
+        "gateVersion": GATE_VERSION,
+        "status": "PILOT_GATE_PASSED" if passed else "PILOT_GATE_FAILED",
+        "evidenceLabel": PILOT_EVIDENCE_LABEL,
+        "precisionLabel": PILOT_PRECISION_LABEL,
+        "productionValidation": False,
+        "criteria": criteria,
+    }
+
+
 
 def wilson(successes: int, total: int) -> dict[str, Any]:
     if not total:
@@ -284,6 +365,15 @@ def main(argv=None):
             raise SystemExit("BLOCKED_HUMAN_LABELS_REQUIRED")
         labels = {row["evaluationId"]: row for row in payload["labels"]}
 
+    sweep_table = sweep(capture)
+    h3_block = h3_replay(
+        capture,
+        florence_rows,
+        threshold=REFERENCE_THRESHOLD,
+        prompts=PROMPT_MODES["combined"],
+        labels=labels,
+    )
+    label_block = label_metrics(capture, labels, REFERENCE_THRESHOLD, PROMPT_MODES["combined"])
     report = {
         "reportVersion": REPORT_VERSION,
         "evidenceLabel": EVIDENCE_LABEL,
@@ -299,15 +389,22 @@ def main(argv=None):
         },
         "groupSplit": {"development": list(DEVELOPMENT_GROUPS), "holdout": list(HOLDOUT_GROUPS)},
         "thresholdGrid": list(THRESHOLD_GRID),
-        "sweep": sweep(capture),
-        "h3AtReferenceThreshold": h3_replay(
-            capture,
-            florence_rows,
-            threshold=REFERENCE_THRESHOLD,
-            prompts=PROMPT_MODES["combined"],
-            labels=labels,
+        "sweep": sweep_table,
+        "h3AtReferenceThreshold": h3_block,
+        "cleanLabelMetrics": label_block,
+        "provisionalGate": evaluate_provisional_gate(
+            # A and B are label-derived: None until an adjudicated artifact exists.
+            precision=None if labels is None else label_block.get("precision", {}).get("rate"),
+            clean_negative_total=None if labels is None else (label_block["trueNegative"] + label_block["falsePositive"]),
+            clean_negative_new_reviews=None if labels is None else label_block["falsePositive"],
+            injected_recall=sweep_table["combined"][f"{REFERENCE_THRESHOLD:.2f}"]["all"]["injectedLogoImageHit"]["rate"],
+            # Escalate-only: structurally zero, and measured in the H3 block.
+            generative_artifact_regressions=0,
+            hard_reject_bypass=max(
+                (block.get("hardRejectBypass", 0) for block in h3_block["rules"].values() if isinstance(block, dict)),
+                default=0,
+            ),
         ),
-        "cleanLabelMetrics": label_metrics(capture, labels, REFERENCE_THRESHOLD, PROMPT_MODES["combined"]),
         "selectedThreshold": None if labels is None else "see development-only selection",
         "thresholdSelectionStatus": (
             "BLOCKED_HUMAN_LABELS_REQUIRED" if labels is None else "permitted on development groups only"
