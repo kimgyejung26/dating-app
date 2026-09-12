@@ -1,0 +1,773 @@
+{
+  "domains": {
+    "GENERATED_AVATAR_DOMAIN": {
+      "current": {
+        "actionsByVariant": {
+          "A1": {
+            "allow": 20
+          },
+          "A2": {
+            "allow": 20
+          },
+          "A3": {
+            "allow": 20
+          },
+          "A4": {
+            "reject": 20
+          },
+          "A5": {
+            "allow": 20
+          },
+          "A6": {
+            "allow": 20
+          },
+          "A7": {
+            "allow": 20
+          },
+          "A8": {
+            "allow": 18,
+            "review": 2
+          },
+          "A9": {
+            "allow": 1,
+            "review": 19
+          }
+        },
+        "artifactFlag": {
+          "allowed": 20,
+          "flagged": 0,
+          "n": 20,
+          "rate": 0.0
+        },
+        "benignFlag": {
+          "allowed": 1,
+          "flagged": 19,
+          "n": 20,
+          "rate": 0.95
+        },
+        "cleanReview": 3,
+        "overlayFlag": {
+          "allowed": 118,
+          "flagged": 22,
+          "n": 140,
+          "rate": 0.1571
+        },
+        "singleOverlayFlag": {
+          "allowed": 100,
+          "flagged": 0,
+          "n": 100,
+          "rate": 0.0
+        },
+        "sourceConsistency": {
+          "consistent": 8,
+          "inconsistent": 171,
+          "unknown": 1
+        }
+      },
+      "rules": {
+        "H2-A": {
+          "actionsByVariant": {
+            "A1": {
+              "review": 20
+            },
+            "A2": {
+              "review": 20
+            },
+            "A3": {
+              "allow": 20
+            },
+            "A4": {
+              "reject": 20
+            },
+            "A5": {
+              "allow": 20
+            },
+            "A6": {
+              "review": 20
+            },
+            "A7": {
+              "allow": 20
+            },
+            "A8": {
+              "allow": 9,
+              "review": 11
+            },
+            "A9": {
+              "allow": 1,
+              "review": 19
+            }
+          },
+          "artifactFlag": {
+            "allowed": 20,
+            "flagged": 0,
+            "n": 20,
+            "rate": 0.0
+          },
+          "artifactMissIncrease": 0,
+          "benignFlag": {
+            "allowed": 1,
+            "flagged": 19,
+            "n": 20,
+            "rate": 0.95
+          },
+          "cleanRealReviewDelta": {
+            "current": 3,
+            "h2": 15,
+            "n": 20
+          },
+          "hardRejectBypass": 0,
+          "overlayFlag": {
+            "allowed": 49,
+            "flagged": 91,
+            "n": 140,
+            "rate": 0.65
+          },
+          "overlayMissIncrease": 0,
+          "singleOverlayFlag": {
+            "allowed": 40,
+            "flagged": 60,
+            "n": 100,
+            "rate": 0.6
+          },
+          "transitions": {
+            "allow->review": 81,
+            "same": 119
+          }
+        },
+        "H2-B": {
+          "actionsByVariant": {
+            "A1": {
+              "review": 20
+            },
+            "A2": {
+              "review": 20
+            },
+            "A3": {
+              "allow": 20
+            },
+            "A4": {
+              "reject": 20
+            },
+            "A5": {
+              "allow": 20
+            },
+            "A6": {
+              "review": 20
+            },
+            "A7": {
+              "allow": 20
+            },
+            "A8": {
+              "allow": 9,
+              "review": 11
+            },
+            "A9": {
+              "allow": 1,
+              "review": 19
+            }
+          },
+          "artifactFlag": {
+            "allowed": 20,
+            "flagged": 0,
+            "n": 20,
+            "rate": 0.0
+          },
+          "artifactMissIncrease": 0,
+          "benignFlag": {
+            "allowed": 1,
+            "flagged": 19,
+            "n": 20,
+            "rate": 0.95
+          },
+          "cleanRealReviewDelta": {
+            "current": 3,
+            "h2": 15,
+            "n": 20
+          },
+          "hardRejectBypass": 0,
+          "overlayFlag": {
+            "allowed": 49,
+            "flagged": 91,
+            "n": 140,
+            "rate": 0.65
+          },
+          "overlayMissIncrease": 0,
+          "singleOverlayFlag": {
+            "allowed": 40,
+            "flagged": 60,
+            "n": 100,
+            "rate": 0.6
+          },
+          "transitions": {
+            "allow->review": 81,
+            "same": 119
+          }
+        },
+        "H2-C": {
+          "actionsByVariant": {
+            "A1": {
+              "review": 20
+            },
+            "A2": {
+              "review": 20
+            },
+            "A3": {
+              "allow": 20
+            },
+            "A4": {
+              "reject": 20
+            },
+            "A5": {
+              "allow": 20
+            },
+            "A6": {
+              "review": 20
+            },
+            "A7": {
+              "allow": 20
+            },
+            "A8": {
+              "allow": 9,
+              "review": 11
+            },
+            "A9": {
+              "allow": 1,
+              "review": 19
+            }
+          },
+          "artifactFlag": {
+            "allowed": 20,
+            "flagged": 0,
+            "n": 20,
+            "rate": 0.0
+          },
+          "artifactMissIncrease": 0,
+          "benignFlag": {
+            "allowed": 1,
+            "flagged": 19,
+            "n": 20,
+            "rate": 0.95
+          },
+          "cleanRealReviewDelta": {
+            "current": 3,
+            "h2": 15,
+            "n": 20
+          },
+          "hardRejectBypass": 0,
+          "overlayFlag": {
+            "allowed": 49,
+            "flagged": 91,
+            "n": 140,
+            "rate": 0.65
+          },
+          "overlayMissIncrease": 0,
+          "singleOverlayFlag": {
+            "allowed": 40,
+            "flagged": 60,
+            "n": 100,
+            "rate": 0.6
+          },
+          "transitions": {
+            "allow->review": 81,
+            "same": 119
+          }
+        }
+      }
+    },
+    "PURE_SYNTHETIC_CONTROL_DOMAIN": {
+      "artifactControl": {
+        "H2-A": "review",
+        "H2-B": "review",
+        "H2-C": "review",
+        "current": "review"
+      },
+      "benignControlFlags": {
+        "H2-A": 1,
+        "H2-B": 1,
+        "H2-C": 1
+      },
+      "benignControlFlagsCurrent": 0,
+      "controls": {
+        "ctl-01": {
+          "H2-A": "review",
+          "H2-B": "review",
+          "H2-C": "review",
+          "current": "allow"
+        },
+        "ctl-02": {
+          "H2-A": "review",
+          "H2-B": "review",
+          "H2-C": "review",
+          "current": "allow"
+        },
+        "ctl-03": {
+          "H2-A": "review",
+          "H2-B": "review",
+          "H2-C": "review",
+          "current": "allow"
+        },
+        "ctl-04": {
+          "H2-A": "allow",
+          "H2-B": "allow",
+          "H2-C": "allow",
+          "current": "allow"
+        },
+        "ctl-05": {
+          "H2-A": "allow",
+          "H2-B": "allow",
+          "H2-C": "allow",
+          "current": "allow"
+        },
+        "ctl-06": {
+          "H2-A": "review",
+          "H2-B": "review",
+          "H2-C": "review",
+          "current": "allow"
+        },
+        "ctl-07": {
+          "H2-A": "allow",
+          "H2-B": "allow",
+          "H2-C": "allow",
+          "current": "allow"
+        },
+        "ctl-08": {
+          "H2-A": "allow",
+          "H2-B": "allow",
+          "H2-C": "allow",
+          "current": "allow"
+        },
+        "ctl-09": {
+          "H2-A": "allow",
+          "H2-B": "allow",
+          "H2-C": "allow",
+          "current": "allow"
+        },
+        "ctl-10": {
+          "H2-A": "review",
+          "H2-B": "review",
+          "H2-C": "review",
+          "current": "review"
+        }
+      }
+    },
+    "SOURCE_PHOTO_DOMAIN": {
+      "current": {
+        "actionsByVariant": {
+          "V1": {
+            "allow": 8
+          },
+          "V2": {
+            "allow": 7,
+            "review": 1
+          },
+          "V3": {
+            "allow": 8
+          },
+          "V4": {
+            "reject": 8
+          },
+          "V5": {
+            "allow": 8
+          },
+          "V6": {
+            "allow": 8
+          },
+          "V7": {
+            "allow": 8
+          },
+          "V8": {
+            "allow": 8
+          },
+          "V9": {
+            "review": 8
+          }
+        },
+        "artifactFlag": {
+          "allowed": 8,
+          "flagged": 0,
+          "n": 8,
+          "rate": 0.0
+        },
+        "benignFlag": {
+          "allowed": 0,
+          "flagged": 8,
+          "n": 8,
+          "rate": 1.0
+        },
+        "cleanReview": 0,
+        "overlayFlag": {
+          "allowed": 47,
+          "flagged": 9,
+          "n": 56,
+          "rate": 0.1607
+        },
+        "singleOverlayFlag": {
+          "allowed": 39,
+          "flagged": 1,
+          "n": 40,
+          "rate": 0.025
+        },
+        "sourceConsistency": {
+          "consistent": 2,
+          "inconsistent": 57,
+          "mixed": 9,
+          "not_applicable": 1,
+          "unknown": 3
+        }
+      },
+      "rules": {
+        "H2-A": {
+          "actionsByVariant": {
+            "V1": {
+              "review": 8
+            },
+            "V2": {
+              "review": 8
+            },
+            "V3": {
+              "allow": 8
+            },
+            "V4": {
+              "reject": 8
+            },
+            "V5": {
+              "allow": 8
+            },
+            "V6": {
+              "review": 8
+            },
+            "V7": {
+              "allow": 7,
+              "review": 1
+            },
+            "V8": {
+              "allow": 3,
+              "review": 5
+            },
+            "V9": {
+              "review": 8
+            }
+          },
+          "artifactFlag": {
+            "allowed": 7,
+            "flagged": 1,
+            "n": 8,
+            "rate": 0.125
+          },
+          "artifactMissIncrease": 0,
+          "benignFlag": {
+            "allowed": 0,
+            "flagged": 8,
+            "n": 8,
+            "rate": 1.0
+          },
+          "cleanRealReviewDelta": {
+            "current": 0,
+            "h2": 5,
+            "n": 8
+          },
+          "hardRejectBypass": 0,
+          "overlayFlag": {
+            "allowed": 19,
+            "flagged": 37,
+            "n": 56,
+            "rate": 0.6607
+          },
+          "overlayMissIncrease": 0,
+          "singleOverlayFlag": {
+            "allowed": 16,
+            "flagged": 24,
+            "n": 40,
+            "rate": 0.6
+          },
+          "transitions": {
+            "allow->review": 34,
+            "same": 46
+          }
+        },
+        "H2-B": {
+          "actionsByVariant": {
+            "V1": {
+              "review": 8
+            },
+            "V2": {
+              "review": 8
+            },
+            "V3": {
+              "allow": 8
+            },
+            "V4": {
+              "reject": 8
+            },
+            "V5": {
+              "allow": 8
+            },
+            "V6": {
+              "review": 8
+            },
+            "V7": {
+              "allow": 7,
+              "review": 1
+            },
+            "V8": {
+              "allow": 3,
+              "review": 5
+            },
+            "V9": {
+              "review": 8
+            }
+          },
+          "artifactFlag": {
+            "allowed": 7,
+            "flagged": 1,
+            "n": 8,
+            "rate": 0.125
+          },
+          "artifactMissIncrease": 0,
+          "benignFlag": {
+            "allowed": 0,
+            "flagged": 8,
+            "n": 8,
+            "rate": 1.0
+          },
+          "cleanRealReviewDelta": {
+            "current": 0,
+            "h2": 5,
+            "n": 8
+          },
+          "hardRejectBypass": 0,
+          "overlayFlag": {
+            "allowed": 19,
+            "flagged": 37,
+            "n": 56,
+            "rate": 0.6607
+          },
+          "overlayMissIncrease": 0,
+          "singleOverlayFlag": {
+            "allowed": 16,
+            "flagged": 24,
+            "n": 40,
+            "rate": 0.6
+          },
+          "transitions": {
+            "allow->review": 34,
+            "same": 46
+          }
+        },
+        "H2-C": {
+          "actionsByVariant": {
+            "V1": {
+              "review": 8
+            },
+            "V2": {
+              "review": 8
+            },
+            "V3": {
+              "allow": 8
+            },
+            "V4": {
+              "reject": 8
+            },
+            "V5": {
+              "allow": 8
+            },
+            "V6": {
+              "review": 8
+            },
+            "V7": {
+              "allow": 7,
+              "review": 1
+            },
+            "V8": {
+              "allow": 3,
+              "review": 5
+            },
+            "V9": {
+              "review": 8
+            }
+          },
+          "artifactFlag": {
+            "allowed": 7,
+            "flagged": 1,
+            "n": 8,
+            "rate": 0.125
+          },
+          "artifactMissIncrease": 0,
+          "benignFlag": {
+            "allowed": 0,
+            "flagged": 8,
+            "n": 8,
+            "rate": 1.0
+          },
+          "cleanRealReviewDelta": {
+            "current": 0,
+            "h2": 5,
+            "n": 8
+          },
+          "hardRejectBypass": 0,
+          "overlayFlag": {
+            "allowed": 19,
+            "flagged": 37,
+            "n": 56,
+            "rate": 0.6607
+          },
+          "overlayMissIncrease": 0,
+          "singleOverlayFlag": {
+            "allowed": 16,
+            "flagged": 24,
+            "n": 40,
+            "rate": 0.6
+          },
+          "transitions": {
+            "allow->review": 34,
+            "same": 46
+          }
+        }
+      }
+    }
+  },
+  "g004GroupLevelSimulation": {
+    "groups": 5,
+    "label": "G004_GROUP_LEVEL_SIMULATION",
+    "scope": "watermark action only; other QA gates not modelled",
+    "watermarkAllowedDistribution": {
+      "H2-A": {
+        "one": 2,
+        "two_plus": 1,
+        "zero": 2
+      },
+      "H2-B": {
+        "one": 2,
+        "two_plus": 1,
+        "zero": 2
+      },
+      "H2-C": {
+        "one": 2,
+        "two_plus": 1,
+        "zero": 2
+      },
+      "current": {
+        "two_plus": 5
+      }
+    }
+  },
+  "productionReplay": {
+    "allowSoftReview": {
+      "allowSoftReview": true,
+      "candidatesEvaluated": 12,
+      "jobPreviewDistributionCurrent": {
+        "one": 3,
+        "two_plus": 2
+      },
+      "jobs": 5,
+      "mode": "production_typed_metadata_replay",
+      "reportVersion": "avatar_single_overlay_eval_v1",
+      "rules": {
+        "H2-A": {
+          "escalatedCandidates": 2,
+          "hardRejectBypass": 0,
+          "jobPreviewDistribution": {
+            "one": 4,
+            "two_plus": 1
+          },
+          "jobsChanged": 1,
+          "jobsLosingLastPreview": 0,
+          "transitions": {
+            "allow->review": 2,
+            "same": 10
+          }
+        },
+        "H2-B": {
+          "escalatedCandidates": 2,
+          "hardRejectBypass": 0,
+          "jobPreviewDistribution": {
+            "one": 4,
+            "two_plus": 1
+          },
+          "jobsChanged": 1,
+          "jobsLosingLastPreview": 0,
+          "transitions": {
+            "allow->review": 2,
+            "same": 10
+          }
+        },
+        "H2-C": {
+          "escalatedCandidates": 2,
+          "hardRejectBypass": 0,
+          "jobPreviewDistribution": {
+            "one": 4,
+            "two_plus": 1
+          },
+          "jobsChanged": 1,
+          "jobsLosingLastPreview": 0,
+          "transitions": {
+            "allow->review": 2,
+            "same": 10
+          }
+        }
+      }
+    },
+    "strict": {
+      "allowSoftReview": false,
+      "candidatesEvaluated": 12,
+      "jobPreviewDistributionCurrent": {
+        "one": 1,
+        "zero": 4
+      },
+      "jobs": 5,
+      "mode": "production_typed_metadata_replay",
+      "reportVersion": "avatar_single_overlay_eval_v1",
+      "rules": {
+        "H2-A": {
+          "escalatedCandidates": 2,
+          "hardRejectBypass": 0,
+          "jobPreviewDistribution": {
+            "one": 1,
+            "zero": 4
+          },
+          "jobsChanged": 0,
+          "jobsLosingLastPreview": 0,
+          "transitions": {
+            "allow->review": 2,
+            "same": 10
+          }
+        },
+        "H2-B": {
+          "escalatedCandidates": 2,
+          "hardRejectBypass": 0,
+          "jobPreviewDistribution": {
+            "one": 1,
+            "zero": 4
+          },
+          "jobsChanged": 0,
+          "jobsLosingLastPreview": 0,
+          "transitions": {
+            "allow->review": 2,
+            "same": 10
+          }
+        },
+        "H2-C": {
+          "escalatedCandidates": 2,
+          "hardRejectBypass": 0,
+          "jobPreviewDistribution": {
+            "one": 1,
+            "zero": 4
+          },
+          "jobsChanged": 0,
+          "jobsLosingLastPreview": 0,
+          "transitions": {
+            "allow->review": 2,
+            "same": 10
+          }
+        }
+      }
+    }
+  },
+  "reportVersion": "avatar_single_overlay_eval_v1",
+  "rules": [
+    "H2-A",
+    "H2-B",
+    "H2-C"
+  ],
+  "sourceConsistencyMode": "PRE_INJECTION_BASELINE"
+}
