@@ -262,6 +262,18 @@ jobs:
       - run: pytest -q tests/test_avatar_florence_ceiling.py --maxfail=10
         env:
           PYTHONPATH: .
+      # B3-L5: H2 single-overlay shadow. escalate-only 라서 hard-reject bypass /
+      # overlay miss / artifact miss 증가가 구조적으로 0 이어야 하고, pre-registration
+      # 문서와 코드가 같이 움직여야 한다. 모델/이미지 없이 로직만 고정한다.
+      - run: pytest -q tests/test_avatar_single_overlay_shadow.py --maxfail=10
+        env:
+          PYTHONPATH: .
+      # B3-L5 Part B: logo detector benchmark 는 가중치와 G004 이미지가 CI 에 없으므로
+      # 추론은 로컬 전용이다. 후보 pin/license, ground-truth 매칭, clean 이미지가
+      # false positive 로 집계되지 않는다는 것, privacy 가드만 CI 에서 고정한다.
+      - run: pytest -q tests/test_avatar_logo_detector_benchmark.py --maxfail=10
+        env:
+          PYTHONPATH: .
       # 배포 가드는 Windows 운영자 셸에서 Hangul env 값을 "???" 로 읽어 바뀐 적
       # 없는 변수를 changed 로 보고했다. 인코딩과 키 단위 승인 계약을 Linux
       # 에서도 고정한다.

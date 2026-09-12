@@ -1,0 +1,178 @@
+{
+  "benchmarkVersion": "avatar_logo_detector_benchmark_v1",
+  "candidates": {
+    "grounding-dino-tiny": {
+      "license": "apache-2.0",
+      "modelDiskBytes": 690306400,
+      "modelLoadSeconds": 9.7,
+      "peakRssGb": 2.89,
+      "prompts": [
+        "a logo",
+        "a watermark",
+        "a brand emblem",
+        "a graphic symbol"
+      ],
+      "repo": "IDEA-Research/grounding-dino-tiny",
+      "revision": "a2bb814dd30d776dcf7e30523b00659f4f141c71",
+      "thresholds": {
+        "box_threshold": 0.25,
+        "text_threshold": 0.25
+      }
+    },
+    "owlv2-base-patch16-ensemble": {
+      "license": "apache-2.0",
+      "modelDiskBytes": 621506385,
+      "modelLoadSeconds": 9.3,
+      "peakRssGb": 5.82,
+      "prompts": [
+        "a logo",
+        "a watermark",
+        "a brand emblem",
+        "a graphic symbol"
+      ],
+      "repo": "google/owlv2-base-patch16-ensemble",
+      "revision": "cfd3195ba4ea9592eec887ded089f4c08eff231d",
+      "thresholds": {
+        "threshold": 0.1
+      }
+    }
+  },
+  "detectors": {
+    "grounding-dino-tiny": {
+      "GENERATED_AVATAR_DOMAIN": {
+        "cleanImageRegionResponseRate": {
+          "imagesWithAnyDetection": 17,
+          "label": "CLEAN_IMAGE_REGION_RESPONSE_RATE",
+          "meanDetectionsPerImage": 2.65,
+          "n": 20
+        },
+        "injected": {
+          "boxRecall": 1.0,
+          "imageHitRate": 1.0,
+          "meanIoU": 0.8684,
+          "n": 20
+        },
+        "latencySeconds": {
+          "max": 14.89,
+          "mean": 9.34
+        }
+      },
+      "PURE_SYNTHETIC_CONTROL_DOMAIN": {
+        "cleanImageRegionResponseRate": {
+          "imagesWithAnyDetection": 9,
+          "label": "CLEAN_IMAGE_REGION_RESPONSE_RATE",
+          "meanDetectionsPerImage": 8.778,
+          "n": 9
+        },
+        "injected": {
+          "boxRecall": 1.0,
+          "imageHitRate": 1.0,
+          "meanIoU": 0.8522,
+          "n": 1
+        },
+        "latencySeconds": {
+          "max": 12.63,
+          "mean": 12.31
+        }
+      },
+      "SOURCE_PHOTO_DOMAIN": {
+        "cleanImageRegionResponseRate": {
+          "imagesWithAnyDetection": 8,
+          "label": "CLEAN_IMAGE_REGION_RESPONSE_RATE",
+          "meanDetectionsPerImage": 2.875,
+          "n": 8
+        },
+        "injected": {
+          "boxRecall": 0.875,
+          "imageHitRate": 0.875,
+          "meanIoU": 0.7334,
+          "n": 8
+        },
+        "latencySeconds": {
+          "max": 12.74,
+          "mean": 11.65
+        }
+      }
+    },
+    "owlv2-base-patch16-ensemble": {
+      "GENERATED_AVATAR_DOMAIN": {
+        "cleanImageRegionResponseRate": {
+          "imagesWithAnyDetection": 12,
+          "label": "CLEAN_IMAGE_REGION_RESPONSE_RATE",
+          "meanDetectionsPerImage": 0.95,
+          "n": 20
+        },
+        "injected": {
+          "boxRecall": 1.0,
+          "imageHitRate": 1.0,
+          "meanIoU": 0.9244,
+          "n": 20
+        },
+        "latencySeconds": {
+          "max": 13.12,
+          "mean": 12.16
+        }
+      },
+      "PURE_SYNTHETIC_CONTROL_DOMAIN": {
+        "cleanImageRegionResponseRate": {
+          "imagesWithAnyDetection": 9,
+          "label": "CLEAN_IMAGE_REGION_RESPONSE_RATE",
+          "meanDetectionsPerImage": 3.333,
+          "n": 9
+        },
+        "injected": {
+          "boxRecall": 1.0,
+          "imageHitRate": 1.0,
+          "meanIoU": 0.9495,
+          "n": 1
+        },
+        "latencySeconds": {
+          "max": 12.53,
+          "mean": 11.89
+        }
+      },
+      "SOURCE_PHOTO_DOMAIN": {
+        "cleanImageRegionResponseRate": {
+          "imagesWithAnyDetection": 5,
+          "label": "CLEAN_IMAGE_REGION_RESPONSE_RATE",
+          "meanDetectionsPerImage": 4.625,
+          "n": 8
+        },
+        "injected": {
+          "boxRecall": 1.0,
+          "imageHitRate": 1.0,
+          "meanIoU": 0.9284,
+          "n": 8
+        },
+        "latencySeconds": {
+          "max": 16.11,
+          "mean": 13.47
+        }
+      }
+    }
+  },
+  "florenceBaseline": {
+    "GENERATED_AVATAR_DOMAIN": {
+      "cleanOcrRegionsPerImage": 1.0,
+      "n": 20,
+      "ocrImageHitRate": 0.25,
+      "odImageHitRate": 0.0,
+      "odLogoOrSignKindHits": 0
+    },
+    "SOURCE_PHOTO_DOMAIN": {
+      "cleanOcrRegionsPerImage": 1.5,
+      "n": 8,
+      "ocrImageHitRate": 0.0,
+      "odImageHitRate": 0.0,
+      "odLogoOrSignKindHits": 0
+    }
+  },
+  "iouMatch": 0.3,
+  "label": "LOCAL_CPU_BENCHMARK",
+  "prompts": [
+    "a logo",
+    "a watermark",
+    "a brand emblem",
+    "a graphic symbol"
+  ]
+}
